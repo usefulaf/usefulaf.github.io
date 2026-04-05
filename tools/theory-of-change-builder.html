@@ -5,3 +5,803 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Theory of Change Builder — Useful AF</title>
 <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8f9fa; color: #1a1a2e; }
+  .header { background: #1a1a2e; color: white; padding: 24px 32px; }
+  .header h1 { font-size: 22px; font-weight: 700; }
+  .header p { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+  .badge { display: inline-block; background: #00d4aa; color: #1a1a2e; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 32px 24px; }
+  .intro-card { background: white; border-radius: 12px; padding: 20px 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 24px; border-left: 4px solid #00d4aa; }
+  .intro-card p { font-size: 14px; color: #555; line-height: 1.6; }
+  .step-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media(max-width: 720px) { .step-grid { grid-template-columns: 1fr; } }
+  .card { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-bottom: 20px; }
+  .card h2 { font-size: 15px; font-weight: 700; margin-bottom: 4px; color: #1a1a2e; display: flex; align-items: center; gap: 8px; }
+  .card .step-num { background: #1a1a2e; color: #00d4aa; font-size: 11px; font-weight: 800; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card .card-desc { font-size: 12px; color: #888; margin-bottom: 16px; margin-top: 4px; line-height: 1.5; }
+  .form-group { margin-bottom: 14px; }
+  label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px; }
+  input, select, textarea { width: 100%; border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 10px 12px; font-size: 14px; color: #1a1a2e; background: #fafafa; transition: border-color 0.2s; resize: vertical; }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: #00d4aa; background: white; }
+  .tag-input-wrap { border: 1.5px solid #e0e0e0; border-radius: 8px; padding: 8px 10px; background: #fafafa; min-height: 46px; display: flex; flew-wrap: wrap; gap: 6px; align-items: center; cursor: text; transition: border-color 0.2s; }
+  .tag-input-wrap:focus-within { border-color: #00d4aa; background: white; }
+  .tag-item { background: #1a1a2e; color: white; border-radius: 20px; padding: 3px 10px 3px 12px; font-size: 12px; display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .tag-item .remove { cursor: pointer; color: #00d4aa; font-size: 14px; line-height: 1; font-weight: 700; }
+  .tag-item .remove:hover { color: #ff6b6b; }
+  .tag-input { border: none; outline: none; background: transparent; font-size: 13px; color: #1a1a2e; min-width: 120px; flex: 1; padding: 2px 0; }
+  .tag-hint { font-size: 11px; color: #aaa; margin-top: 4px; }
+  .add-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .add-row input { flex: 1; margin: 0; }
+  .add-btn { background: #00d4aa; color: #1a1a2e; border: none; border-radius: 8px; padding: 10px 16px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  .add-btn:hover { background: #00bfa5; }
+  .item-list { list-style: none; margin-top: 8px; }
+  .item-list li { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 6px; font-size: 13px; line-height: 1.5; }
+  .item-list li .num { background: #00d4aa; color: #1a1a2e; font-size: 10px; font-weight: 800; width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .item-list li .del { cursor: pointer; color: #ccc; font-size: 16px; line-height: 1; margin-left: auto; padding-left: 8px; flex-shrink: 0; }
+  .item-list li .del:hover { color: #e74c3c; }
+  .btn { background: #1a1a2e; color: white; border: none; border-radius: 8px; padding: 14px 28px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; transition: background 0.2s; }
+  .btn:hover { background: #2d2d4e; }
+  .btn-green { background: #00d4aa; color: #1a1a2e; }
+  .btn-green:hover { background: #00bfa5; }
+  .btn-outline { background: transparent; color: #1a1a2e; border: 2px solid #1a1a2e; }
+  .btn-outline:hover { background: #1a1a2e; color: white; }
+  .btn-sm { padding: 8px 16px; font-size: 13px; width: auto; margin-top: 0; }
+  .actions { display: flex; gap: 12px; margin-top: 8px; }
+  .actions .btn { flex: 1; }
+  /* Results */
+  .results { background: white; border-radius: 12px; padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); margin-top: 24px; display: none; }
+  .results.show { display: block; }
+  .results h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  /* ToC Chain Visual */
+  .toc-chain { overflow-x: auto; padding-bottom: 12px; margin-bottom: 28px; }
+  .chain-inner { display: flex; align-items: stretch; gap: 0; min-width: 700px; }
+  .chain-box { flex: 1; background: #f8f9fa; border-radius: 10px; padding: 16px 14px; border: 2px solid #e0e0e0; position: relative; }
+  .chain-box h3 { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .chain-box ul { list-style: none; }
+  .chain-box ul li { font-size: 12px; color: #333; line-height: 1.45; padding: 4px 0; border-bottom: 1px solid #ebebeb; }
+  .chain-box ul li:last-child { border-bottom: none; }
+  .chain-box ul li::before { content: "•"; color: #00d4aa; font-weight: 900; margin-right: 5px; }
+  .chain-arrow { display: flex; align-items: center; padding: 0 4px; color: #ccc; font-size: 20px; flex-shrink: 0; }
+  .chain-inputs { border-color: #1a1a2e; }
+  .chain-inputs h3 { color: #1a1a2e; }
+  .chain-activities { border-color: #6c63ff; }
+  .chain-activities h3 { color: #6c63ff; }
+  .chain-outputs { border-color: #f4a261; }
+  .chain-outputs h3 { color: #f4a261; }
+  .chain-outcomes { border-color: #00d4aa; }
+  .chain-outcomes h3 { color: #00a87a; }
+  .chain-impact { border-color: #1a1a2e; background: #1a1a2e; }
+  .chain-impact h3 { color: #00d4aa; }
+  .chain-impact ul li { color: #fff; border-color: rgba(255,255,255,0.1); }
+  .chain-impact ul li::before { color: #00d4aa; }
+  /* Assumption & Risk */
+  .table-section { margin-bottom: 24px; }
+  .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; background: #f8f9fa; font-weight: 700; color: #555; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+  td { padding: 10px 12px; border-top: 1px solid #f0f0f0; vertical-align: top; line-height: 1.5; }
+  tr:nth-child(even) td { background: #fafafa; }
+  .badge-pill { display: inline-block; border-radius: 20px; padding: 2px 9px; font-size: 10px; font-weight: 700; }
+  .pill-high { background: #ffe0e0; color: #c0392b; }
+  .pill-med { background: #fff3cd; color: #856404; }
+  .pill-low { background: #d1f2eb; color: #1a7a5e; }
+  /* Indicator table */
+  .indicator-section { margin-bottom: 24px; }
+  /* Narrative */
+  .narrative-box { background: #f8f9fa; border-radius: 10px; padding: 20px; margin-bottom: 24px; border: 1.5px solid #e8e8e8; }
+  .narrative-box p { font-size: 14px; color: #333; line-height: 1.8; }
+  /* Prompt */
+  .prompt-box { background: #f0f8ff; border: 1.5px solid #b3d9ff; border-radius: 10px; padding: 18px; margin-top: 20px; }
+  .prompt-box h3 { font-size: 13px; font-weight: 700; color: #0066cc; margin-bottom: 10px; }
+  .prompt-box pre { font-size: 12px; line-height: 1.6; color: #333; white-space: pre-wrap; font-family: inherit; }
+  .copy-btn { display: inline-block; background: #0066cc; color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+  .copy-btn:hover { background: #0052a3; }
+  .info { font-size: 12px; color: #888; margin-top: 6px; line-height: 1.5; }
+  .success-flash { background: #d1f2eb; color: #1a7a5e; border-radius: 6px; padding: 8px 12px; font-size: 12px; font-weight: 600; display: none; margin-top: 8px; }
+  .divider { border: none; border-top: 2px solid #f0f0f0; margin: 24px 0; }
+  /* Outcome levels */
+  .level-tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+  .level-tab { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1.5px solid #e0e0e0; background: white; cursor: pointer; color: #888; transition: all 0.15s; }
+  .level-tab.active { background: #00d4aa; border-color: #00d4aa; color: #1a1a2e; }
+  /* Short/long term outcomes */
+  .outcomes-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width: 600px) { .outcomes-pair { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Theory of Change Builder <span class="badge">Useful AF Tool</span></h1>
+  <p>Build a structured, evidence-informed Theory of Change for your programme or organisation</p>
+</div>
+
+<div class="container">
+
+  <div class="intro-card">
+    <p>A Theory of Change (ToC) maps <strong>how and why</strong> your activities will lead to the change you want to see. Complete each section below and this tool will generate a visual outcomes chain, suggested indicators, key assumptions, and a ready-to-use Claude prompt for deeper analysis.</p>
+  </div>
+
+  <!-- SECTION 1: Context & Problem -->
+  <div class="card">
+    <h2><span class="step-num">1</span> Context &amp; Problem Statement</h2>
+    <div class="card-desc">Define the problem you're addressing and the population you serve.</div>
+    <div class="step-grid">
+      <div class="form-group">
+        <label>Organisation / Programme Name</label>
+        <input type="text" id="orgName" placeholder="e.g. Green Futures Kenya" />
+      </div>
+      <div class="form-group">
+        <label>Sector</label>
+        <select id="sector">
+          <option value="">Select sector...</option>
+          <option>🌿 Ecotourism &amp; Conservation</option>
+          <option>🏘️ Affordable Housing</option>
+          <option>⚡ Clean Energy</option>
+          <option>🌾 Agriculture &amp; Food Security</option>
+          <option>📚 Education &amp; Skills</option>
+          <option>🏥 Health &amp; Wellbeing</option>
+          <option>💰 Financial Inclusion</option>
+          <option>💧 Water &amp; Sanitation</option>
+          <option>♻️ Waste &amp; Circular Economy</option>
+          <option>👩 Gender Equality</option>
+          <option>🌍 Community Development</option>
+          <option>🤝 Social Enterprise Support</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Problem Statement <span style="font-weight:400;text-transform:none;">(what issue does your work address?)</span></label>
+      <textarea id="problemStatement" rows="3" placeholder="e.g. Rural communities in northern Kenya lack reliable clean energy, forcing households to spend 20–30% of income on kerosene, limiting children's study time and women's economic activity."></textarea>
+    </div>
+    <div class="step-grid">
+      <div class="form-group">
+        <label>Target Population</label>
+        <input type="text" id="targetPop" placeholder="e.g. 5,000 rural households in Isiolo County" />
+      </div>
+      <div class="form-group">
+        <label>Geographic Focus</label>
+        <input type="text" id="geography" placeholder="e.g. Isiolo County, Kenya" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Root Causes <span style="font-weight:400;text-transform:none;">(underlying drivers of the problem)</span></label>
+      <div class="tag-input-wrap" id="rootCausesWrap" onclick="focusTagInput('rootCauses')">
+        <input class="tag-input" id="rootCauses" placeholder="Type a root cause, press Enter" onkeydown="addTag(event,'rootCauses','rootCausesWrap','rootCausesData')" />
+      </div>
+      <div class="tag-hint">Press Enter after each cause. Example: "No grid infrastructure", "High upfront equipment cost", "Limited financial literacy"</div>
+      <input type="hidden" id="rootCausesData" value="[]" />
+    </div>
+  </div>
+
+  <!-- SECTION 2: Inputs -->
+  <div class="card">
+    <h2><span class="step-num">2</span> Inputs</h2>
+    <div class="card-desc">What resources are you investing? (funding, staff, partnerships, technology, knowledge)</div>
+    <div class="add-row">
+      <input type="text" id="inputText" placeholder="e.g. $2M grant funding over 3 years" onkeydown="if(event.key==='Enter'){addListItem('inputText','inputList','inputsData')}" />
+      <button class="add-btn" onclick="addListItem('inputText','inputList','inputsData')">+ Add</button>
+    </div>
+    <ul class="item-list" id="inputList"></ul>
+    <input type="hidden" id="inputsData" value="[]" />
+    <div class="info">Examples: Grant funding, Loan capital, Staff (FTEs), Volunteer hours, Partner networks, Technology, Land/facilities, Community trust</div>
+  </div>
+
+  <!-- SECTION 3: Activities -->
+  <div class="card">
+    <h2><span class="step-num">3</span> Activities</h2>
+    <div class="card-desc">What will you actually do? List the key programme activities.</div>
+    <div class="add-row">
+      <input type="text" id="activityText" placeholder="e.g. Install solar home systems for 1,000 households" onkeydown="if(event.key==='Enter'){addListItem('activityText','activityList','activitiesData')}" />
+      <button class="add-btn" onclick="addListItem('activityText','activityList','activitiesData')">+ Add</button>
+    </div>
+    <ul class="item-list" id="activityList"></ul>
+    <input type="hidden" id="activitiesData" value="[]" />
+    <div class="info">Examples: Training workshops, Equipment installation, Loans disbursed, Advocacy campaigns, Research, Case management, Construction</div>
+  </div>
+
+  <!-- SECTION 4: Outputs -->
+  <div class="card">
+    <h2><span class="step-num">4</span> Outputs</h2>
+    <div class="card-desc">Direct, measurable products of your activities — the things you can count immediately.</div>
+    <div class="add-row">
+      <input type="text" id="outputText" placeholder="e.g. 1,000 solar systems installed" onkeydown="if(event.key==='Enter'){addListItem('outputText','outputList','outputsData')}" />
+      <button class="add-btn" onclick="addListItem('outputText','outputList','outputsData')">+ Add</button>
+    </div>
+    <ul class="item-list" id="outputList"></ul>
+    <input type="hidden" id="outputsData" value="[]" />
+    <div class="info">Outputs are what you produce, not what changes. Example: "200 people trained" (output) vs "200 people employed" (outcome)</div>
+  </div>
+
+  <!-- SECTION 5: Outcomes -->
+  <div class="card">
+    <h2><span class="step-num">5</span> Outcomes</h2>
+    <div class="card-desc">Changes in people, communities, or systems. Short-term (1–2 yrs) lead to long-term (3–5 yrs).</div>
+    <div class="outcomes-pair">
+      <div>
+        <label style="margin-bottom:8px;">Short-Term Outcomes <span style="font-weight:400;text-transform:none;">(1–2 years)</span></label>
+        <div class="add-row">
+          <input type="text" id="stOutcomeText" placeholder="e.g. Households have reliable lighting" onkeydown="if(event.key==='Enter'){addListItem('stOutcomeText','stOutcomeList','stOutcomesData')}" />
+          <button class="add-btn" onclick="addListItem('stOutcomeText','stOutcomeList','stOutcomesData')">+</button>
+        </div>
+        <ul class="item-list" id="stOutcomeList"></ul>
+        <input type="hidden" id="stOutcomesData" value="[]" />
+      </div>
+      <div>
+        <label style="margin-bottom:8px;">Long-Term Outcomes <span style="font-weight:400;text-transform:none;">(3–5 years)</span></label>
+        <div class="add-row">
+          <input type="text" id="ltOutcomeText" placeholder="e.g. Increased household income" onkeydown="if(event.key==='Enter'){addListItem('ltOutcomeText','ltOutcomeList','ltOutcomesData')}" />
+          <button class="add-btn" onclick="addListItem('ltOutcomeText','ltOutcomeList','ltOutcomesData')">+</button>
+        </div>
+        <ul class="item-list" id="ltOutcomeList"></ul>
+        <input type="hidden" id="ltOutcomesData" value="[]" />
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Impact -->
+  <div class="card">
+    <h2><span class="step-num">6</span> Impact</h2>
+    <div class="card-desc">The long-term, systemic change you contribute to — usually beyond your direct control.</div>
+    <div class="form-group">
+      <label>Impact Statement <span style="font-weight:400;text-transform:none;">(1–2 sentences describing the ultimate change)</span></label>
+      <textarea id="impactStatement" rows="2" placeholder="e.g. Reduced energy poverty and accelerated low-carbon development in rural Kenya, contributing to SDG 7 (Affordable and Clean Energy) and SDG 1 (No Poverty)."></textarea>
+    </div>
+    <div class="form-group">
+      <label>SDG Alignment <span style="font-weight:400;text-transform:none;">(which SDGs does your work contribute to?)</span></label>
+      <div class="tag-input-wrap" id="sdgWrap" onclick="focusTagInput('sdgInput')">
+        <input class="tag-input" id="sdgInput" placeholder="e.g. SDG 7, SDG 1 — press Enter" onkeydown="addTag(event,'sdgInput','sdgWrap','sdgData')" />
+      </div>
+      <input type="hidden" id="sdgData" value="[]" />
+    </div>
+  </div>
+
+  <!-- SECTION 7: Assumptions & Risks -->
+  <div class="card">
+    <h2><span class="step-num">7</span> Key Assumptions &amp; Risks</h2>
+    <div class="card-desc">What must be true for your Theory of Change to hold? What could go wrong?</div>
+    <div class="form-group">
+      <label>Key Assumptions</label>
+      <div class="add-row">
+        <input type="text" id="assumptionText" placeholder="e.g. Communities will maintain and use solar systems" onkeydown="if(event.key==='Enter'){addListItem('assumptionText','assumptionList','assumptionsData')}" />
+        <button class="add-btn" onclick="addListItem('assumptionText','assumptionList','assumptionsData')">+ Add</button>
+      </div>
+      <ul class="item-list" id="assumptionList"></ul>
+      <input type="hidden" id="assumptionsData" value="[]" />
+    </div>
+    <div class="form-group">
+      <label>Key Risks</label>
+      <div class="add-row">
+        <input type="text" id="riskText" placeholder="e.g. Climate shocks reduce community purchasing power" onkeydown="if(event.key==='Enter'){addListItem('riskText','riskList','risksData')}" />
+        <button class="add-btn" onclick="addListItem('riskText','riskList','risksData')">+ Add</button>
+      </div>
+      <ul class="item-list" id="riskList"></ul>
+      <input type="hidden" id="risksData" value="[]" />
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-green" onclick="buildToC()">⚡ Build My Theory of Change</button>
+    <button class="btn btn-outline btn-sm" style="flex:0;padding:14px 24px;" onclick="loadExample()">Load Example</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+    <h2>🗺️ Your Theory of Change</h2>
+
+    <div class="section-title">Outcomes Chain</div>
+    <div class="toc-chain" id="tocChain"></div>
+
+    <hr class="divider" />
+
+    <div class="section-title">Programme Narrative</div>
+    <div class="narrative-box" id="narrativeBox"></div>
+
+    <hr class="divider" />
+
+    <div class="table-section">
+      <div class="section-title">Suggested Indicators</div>
+      <table id="indicatorsTable">
+        <thead>
+          <tr>
+            <th>Chain Stage</th>
+            <th>Suggested Indicator</th>
+            <th>Data Source</th>
+            <th>Frequency</th>
+          </tr>
+        </thead>
+        <tbody id="indicatorsBody"></tbody>
+      </table>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="table-section">
+      <div class="section-title">5-Year Outcome Milestone Timeline</div>
+      <table id="timelineTable">
+        <thead>
+          <tr>
+            <th>Year</th>
+            <th>Focus</th>
+            <th>Expected Milestones</th>
+            <th>Key Metric</th>
+          </tr>
+        </thead>
+        <tbody id="timelineBody"></tbody>
+      </table>
+    </div>
+
+    <hr class="divider" />
+
+    <div class="table-section">
+      <div class="section-title">Assumptions &amp; Risk Register</div>
+      <table id="assumptionsTable">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Statement</th>
+            <th>Risk Level</th>
+            <th>Mitigation / Verification</th>
+          </tr>
+        </thead>
+        <tbody id="assumptionsBody"></tbody>
+      </table>
+    </div>
+
+    <hr class="divider" />
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn btn-green btn-sm" onclick="exportCSV()">📥 Export CSV</button>
+      <button class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+    <div class="success-flash" id="exportFlash">CSV downloaded successfully!</div>
+
+    <div class="prompt-box">
+      <h3>🤖 Generate Claude Prompt</h3>
+      <p style="font-size:12px;color:#555;margin-bottom:10px;">Copy this prompt and paste it into Claude for a deeper critique, gap analysis, and suggested improvements to your Theory of Change.</p>
+      <pre id="claudePrompt"></pre>
+      <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── Tag Input System ────────────────────────────────────────────
+function focusTagInput(id) {
+  document.getElementById(id).focus();
+}
+
+function addTag(event, inputId, wrapId, dataId) {
+  if (event.key !== 'Enter' && event.key !== ',') return;
+  event.preventDefault();
+  const input = document.getElementById(inputId);
+  const val = input.value.trim().replace(/,$/,'');
+  if (!val) return;
+  const data = JSON.parse(document.getElementById(dataId).value);
+  data.push(val);
+  document.getElementById(dataId).value = JSON.stringify(data);
+  const wrap = document.getElementById(wrapId);
+  const tag = document.createElement('span');
+  tag.className = 'tag-item';
+  tag.innerHTML = `${val}<span class="remove" onclick="removeTag(this,'${dataId}','${wrapId}','${inputId}')">×</span>`;
+  tag.dataset.val = val;
+  wrap.insertBefore(tag, input);
+  input.value = '';
+}
+
+function removeTag(el, dataId, wrapId, inputId) {
+  const tagEl = el.parentElement;
+  const val = tagEl.dataset.val;
+  let data = JSON.parse(document.getElementById(dataId).value);
+  data = data.filter(d => d !== val);
+  document.getElementById(dataId).value = JSON.stringify(data);
+  tagEl.remove();
+}
+
+// ─── List Input System ───────────────────────────────────────────
+function addListItem(inputId, listId, dataId) {
+  const input = document.getElementById(inputId);
+  const val = input.value.trim();
+  if (!val) return;
+  const data = JSON.parse(document.getElementById(dataId).value);
+  data.push(val);
+  document.getElementById(dataId).value = JSON.stringify(data);
+  renderList(listId, data, dataId);
+  input.value = '';
+  input.focus();
+}
+
+function renderList(listId, data, dataId) {
+  const ul = document.getElementById(listId);
+  ul.innerHTML = '';
+  data.forEach((item, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="num">${i+1}</span><span style="flex:1">${escHtml(item)}</span><span class="del" onclick="removeListItem(${i},'${listId}','${dataId}')">×</span>`;
+    ul.appendChild(li);
+  });
+}
+
+function removeListItem(idx, listId, dataId) {
+  let data = JSON.parse(document.getElementById(dataId).value);
+  data.splice(idx, 1);
+  document.getElementById(dataId).value = JSON.stringify(data);
+  renderList(listId, data, dataId);
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ─── Load Example ────────────────────────────────────────────────
+function loadExample() {
+  document.getElementById('orgName').value = 'Bright Horizons Solar';
+  document.getElementById('sector').value = '⚡ Clean Energy';
+  document.getElementById('problemStatement').value = 'Rural households in Isiolo County, Kenya lack reliable electricity, forcing reliance on expensive kerosene. This limits children\'s study hours, women\'s economic productivity, and exposes families to indoor air pollution.';
+  document.getElementById('targetPop').value = '5,000 households (approx. 25,000 people) in Isiolo County';
+  document.getElementById('geography').value = 'Isiolo County, Northern Kenya';
+  document.getElementById('impactStatement').value = 'A measurable reduction in energy poverty across rural Kenya, contributing to SDG 7 (Affordable and Clean Energy), SDG 1 (No Poverty), and SDG 13 (Climate Action) through displacement of fossil fuel use.';
+
+  // Root causes
+  const rootCauses = ['Absence of national grid infrastructure', 'High upfront cost of solar equipment', 'Low household income and credit access', 'Limited awareness of solar technology'];
+  setTagData('rootCausesData', 'rootCausesWrap', 'rootCauses', rootCauses);
+
+  // SDGs
+  setTagData('sdgData', 'sdgWrap', 'sdgInput', ['SDG 7', 'SDG 1', 'SDG 13', 'SDG 5']);
+
+  // Inputs
+  setListData('inputsData', 'inputList', [
+    '$2.5M blended finance (grant + concessional loan)',
+    '12 FTE staff including community energy officers',
+    'Partnership with M-KOPA for equipment supply chain',
+    'Government co-operation for import duty waivers'
+  ]);
+
+  // Activities
+  setListData('activitiesData', 'activityList', [
+    'Install solar home systems (10–100W) for 5,000 households via pay-as-you-go model',
+    'Train 50 community technicians for ongoing maintenance',
+    'Run financial literacy workshops for 5,000 households',
+    'Establish local repair hubs in 5 sub-counties'
+  ]);
+
+  // Outputs
+  setListData('outputsData', 'outputList', [
+    '5,000 solar systems installed and activated',
+    '50 community technicians trained and certified',
+    '5,000 households enrolled in PAYG payment plans',
+    '5 community repair hubs established'
+  ]);
+
+  // Short-term outcomes
+  setListData('stOutcomesData', 'stOutcomeList', [
+    'Households have reliable, clean lighting and phone charging',
+    'Children study for 2+ additional hours per evening',
+    'Households save $8–15/month previously spent on kerosene'
+  ]);
+
+  // Long-term outcomes
+  setListData('ltOutcomesData', 'ltOutcomeList', [
+    'Household income increases as savings are reinvested',
+    'Women launch or expand micro-enterprises using evening hours',
+    'Improved health outcomes from reduced indoor air pollution',
+    'Community technician employment creates local economic activity'
+  ]);
+
+  // Assumptions
+  setListData('assumptionsData', 'assumptionList', [
+    'Households can afford and maintain PAYG payments',
+    'M-KOPA supply chain remains reliable',
+    'Community technicians remain active after training',
+    'No major policy changes affecting import duties'
+  ]);
+
+  // Risks
+  setListData('risksData', 'riskList', [
+    'Drought and crop failure reduces household income, increasing PAYG defaults',
+    'Currency depreciation increases equipment replacement costs',
+    'Competitor dumping of low-quality solar products undermines trust'
+  ]);
+}
+
+function setTagData(dataId, wrapId, inputId, items) {
+  document.getElementById(dataId).value = JSON.stringify(items);
+  const wrap = document.getElementById(wrapId);
+  const input = document.getElementById(inputId);
+  // Clear existing tags
+  Array.from(wrap.querySelectorAll('.tag-item')).forEach(t => t.remove());
+  items.forEach(val => {
+    const tag = document.createElement('span');
+    tag.className = 'tag-item';
+    tag.innerHTML = `${val}<span class="remove" onclick="removeTag(this,'${dataId}','${wrapId}','${inputId}')">×</span>`;
+    tag.dataset.val = val;
+    wrap.insertBefore(tag, input);
+  });
+}
+
+function setListData(dataId, listId, items) {
+  document.getElementById(dataId).value = JSON.stringify(items);
+  renderList(listId, items, dataId);
+}
+
+// ─── Build ToC ───────────────────────────────────────────────────
+function buildToC() {
+  const org = document.getElementById('orgName').value || 'Your Organisation';
+  const sector = document.getElementById('sector').value || 'Impact Sector';
+  const problem = document.getElementById('problemStatement').value;
+  const targetPop = document.getElementById('targetPop').value;
+  const geography = document.getElementById('geography').value;
+  const impactStatement = document.getElementById('impactStatement').value;
+  const rootCauses = JSON.parse(document.getElementById('rootCausesData').value);
+  const inputs = JSON.parse(document.getElementById('inputsData').value);
+  const activities = JSON.parse(document.getElementById('activitiesData').value);
+  const outputs = JSON.parse(document.getElementById('outputsData').value);
+  const stOutcomes = JSON.parse(document.getElementById('stOutcomesData').value);
+  const ltOutcomes = JSON.parse(document.getElementById('ltOutcomesData').value);
+  const sdgs = JSON.parse(document.getElementById('sdgData').value);
+  const assumptions = JSON.parse(document.getElementById('assumptionsData').value);
+  const risks = JSON.parse(document.getElementById('risksData').value);
+
+  if (!activities.length || !outputs.length) {
+    alert('Please add at least some Activities and Outputs to build your Theory of Change.');
+    return;
+  }
+
+  // ── Outcomes Chain Visual ──
+  const chainEl = document.getElementById('tocChain');
+  const chainInner = document.createElement('div');
+  chainInner.className = 'chain-inner';
+
+  const stages = [
+    { cls: 'chain-inputs', label: '📦 Inputs', items: inputs.length ? inputs : ['(not specified)'] },
+    { arrow: true },
+    { cls: 'chain-activities', label: '⚙️ Activities', items: activities.length ? activities : ['(not specified)'] },
+    { arrow: true },
+    { cls: 'chain-outputs', label: '📊 Outputs', items: outputs.length ? outputs : ['(not specified)'] },
+    { arrow: true },
+    { cls: 'chain-outcomes', label: '🌱 Outcomes', items: [...(stOutcomes.map(o=>'Short: '+o)), ...(ltOutcomes.map(o=>'Long: '+o))].length ? [...(stOutcomes.map(o=>'↗ '+o)), ...(ltOutcomes.map(o=>'🎯 '+o))] : ['(not specified)'] },
+    { arrow: true },
+    { cls: 'chain-impact', label: '🌍 Impact', items: impactStatement ? [impactStatement] : ['(not specified)'] }
+  ];
+
+  stages.forEach(stage => {
+    if (stage.arrow) {
+      const a = document.createElement('div');
+      a.className = 'chain-arrow';
+      a.innerHTML = '→';
+      chainInner.appendChild(a);
+    } else {
+      const box = document.createElement('div');
+      box.className = 'chain-box ' + stage.cls;
+      box.innerHTML = `<h3>${stage.label}</h3><ul>${stage.items.map(i => `<li>${escHtml(i)}</li>`).join('')}</ul>`;
+      chainInner.appendChild(box);
+    }
+  });
+  chainEl.innerHTML = '';
+  chainEl.appendChild(chainInner);
+
+  // ── Narrative ──
+  const narrative = buildNarrative(org, sector, problem, targetPop, geography, activities, outputs, stOutcomes, ltOutcomes, impactStatement, assumptions, sdgs);
+  document.getElementById('narrativeBox').innerHTML = `<p>${narrative}</p>`;
+
+  // ── Indicators ──
+  const indicatorsBody = document.getElementById('indicatorsBody');
+  indicatorsBody.innerHTML = '';
+  const indicators = generateIndicators(inputs, activities, outputs, stOutcomes, ltOutcomes);
+  indicators.forEach(ind => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escHtml(ind.stage)}</td><td>${escHtml(ind.indicator)}</td><td>${escHtml(ind.source)}</td><td>${escHtml(ind.freq)}</td>`;
+    indicatorsBody.appendChild(tr);
+  });
+
+  // ── Assumptions & Risks ──
+  const assumBody = document.getElementById('assumptionsBody');
+  assumBody.innerHTML = '';
+  assumptions.forEach(a => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><span class="badge-pill pill-low">Assumption</span></td><td>${escHtml(a)}</td><td><span class="badge-pill pill-med">Medium</span></td><td>Verify through community baseline survey; monitor quarterly</td>`;
+    assumBody.appendChild(tr);
+  });
+  risks.forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><span class="badge-pill pill-high">Risk</span></td><td>${escHtml(r)}</td><td><span class="badge-pill pill-high">High</span></td><td>Develop contingency plan; track early warning indicators monthly</td>`;
+    assumBody.appendChild(tr);
+  });
+  if (!assumptions.length && !risks.length) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="4" style="color:#aaa;text-align:center;padding:20px;">No assumptions or risks entered — add them in Step 7 for a complete register</td>`;
+    assumBody.appendChild(tr);
+  }
+
+  // ── 5-Year Timeline ──
+  const timelineBody = document.getElementById('timelineBody');
+  timelineBody.innerHTML = '';
+  const timeline = buildTimeline(outputs, stOutcomes, ltOutcomes, impactStatement, activities);
+  timeline.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td style="font-weight:700;white-space:nowrap">${escHtml(row.year)}</td><td>${escHtml(row.focus)}</td><td>${escHtml(row.milestones)}</td><td>${escHtml(row.metric)}</td>`;
+    timelineBody.appendChild(tr);
+  });
+
+  // ── Claude Prompt ──
+  const prompt = buildPrompt(org, sector, problem, targetPop, geography, inputs, activities, outputs, stOutcomes, ltOutcomes, impactStatement, assumptions, risks, sdgs, rootCauses);
+  document.getElementById('claudePrompt').textContent = prompt;
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function buildNarrative(org, sector, problem, targetPop, geography, activities, outputs, stOutcomes, ltOutcomes, impactStatement, assumptions, sdgs) {
+  const actStr = activities.length ? activities.slice(0,3).join(', ').toLowerCase() + (activities.length > 3 ? ', and more' : '') : 'a range of activities';
+  const outStr = outputs.length ? outputs.slice(0,2).join(' and ').toLowerCase() : 'measurable outputs';
+  const stStr = stOutcomes.length ? stOutcomes[0].toLowerCase() : 'improved outcomes for participants';
+  const ltStr = ltOutcomes.length ? ltOutcomes[0].toLowerCase() : 'lasting systemic change';
+  const sdgStr = sdgs.length ? ` This work contributes to ${sdgs.join(', ')}.` : '';
+  const geo = geography || 'the target geography';
+  const pop = targetPop || 'the target population';
+  const assumStr = assumptions.length ? ` This pathway rests on key assumptions including: ${assumptions.slice(0,2).join('; ')}.` : '';
+  return `<strong>${org}</strong> works in the ${sector} sector to address ${problem ? problem.toLowerCase() : 'key challenges facing ' + pop}. Working with ${pop} in ${geo}, the programme will deliver ${actStr}, producing ${outStr}. In the short term (1–2 years), this is expected to lead to ${stStr}. Over a longer horizon (3–5 years), these changes accumulate into ${ltStr}, ultimately contributing to: <em>${impactStatement || 'lasting positive impact'}</em>.${sdgStr}${assumStr}`;
+}
+
+function generateIndicators(inputs, activities, outputs, stOutcomes, ltOutcomes) {
+  const inds = [];
+  // Inputs
+  if (inputs.length) {
+    inds.push({ stage: 'Inputs', indicator: '% of planned budget disbursed on schedule', source: 'Finance system', freq: 'Quarterly' });
+  }
+  // Activities (up to 2)
+  activities.slice(0,2).forEach(a => {
+    inds.push({ stage: 'Activities', indicator: `# of ${a.toLowerCase().substring(0,60)}... completed`, source: 'Programme MIS / Activity log', freq: 'Monthly' });
+  });
+  // Outputs (up to 3)
+  outputs.slice(0,3).forEach(o => {
+    inds.push({ stage: 'Outputs', indicator: o.charAt(0).toUpperCase() + o.slice(1), source: 'Programme MIS', freq: 'Monthly' });
+  });
+  // Short-term outcomes
+  stOutcomes.slice(0,2).forEach(o => {
+    inds.push({ stage: 'Short-Term Outcome', indicator: `% of beneficiaries reporting: ${o.toLowerCase()}`, source: 'Beneficiary survey', freq: 'Bi-annual' });
+  });
+  // Long-term outcomes
+  ltOutcomes.slice(0,2).forEach(o => {
+    inds.push({ stage: 'Long-Term Outcome', indicator: `Change in: ${o.toLowerCase()} vs baseline`, source: 'Longitudinal survey / administrative data', freq: 'Annual' });
+  });
+  // Impact
+  inds.push({ stage: 'Impact', indicator: 'Population-level change in target indicator (aligned to SDGs)', source: 'National statistics / third-party research', freq: 'Annual' });
+  return inds;
+}
+
+function buildPrompt(org, sector, problem, targetPop, geography, inputs, activities, outputs, stOutcomes, ltOutcomes, impactStatement, assumptions, risks, sdgs, rootCauses) {
+  return `You are an expert in impact measurement, Theory of Change design, and social programme evaluation.
+
+Please review the following Theory of Change for ${org || 'this organisation'} and provide:
+
+1. **Logical coherence check** — Does the chain from inputs → activities → outputs → outcomes → impact hold together? Identify any logical gaps.
+2. **Missing links** — Are there outcomes or steps that should be in the chain but aren't currently included?
+3. **Assumption stress-test** — Which assumptions are most critical and most likely to fail? What would break the chain?
+4. **Indicator improvements** — For each chain stage, suggest 2–3 robust, measurable indicators (including at least one disaggregated by gender or vulnerability).
+5. **Counterfactual consideration** — What would happen without this intervention? How does this strengthen the ToC?
+6. **SDG alignment review** — How well does the stated SDG alignment (${sdgs.join(', ') || 'not specified'}) match the outcomes chain?
+7. **Overall rating** — Rate the ToC on a scale of 1–10 for: (a) logical rigour, (b) measurability, (c) plausibility of impact.
+
+--- THEORY OF CHANGE DATA ---
+
+Organisation: ${org}
+Sector: ${sector}
+Problem: ${problem}
+Target Population: ${targetPop}
+Geography: ${geography}
+
+Root Causes Addressed:
+${rootCauses.map((r,i) => `${i+1}. ${r}`).join('\n') || '(not specified)'}
+
+Inputs:
+${inputs.map((r,i) => `${i+1}. ${r}`).join('\n') || '(not specified)'}
+
+Activities:
+${activities.map((r,i) => `${i+1}. ${r}`).join('\n') || '(not specified)'}
+
+Outputs:
+${outputs.map((r,i) => `${i+1}. ${r}`).join('\n') || '(not specified)'}
+
+Short-Term Outcomes (1–2 years):
+${stOutcomes.map((r,i) => `${i+1}. ${r}`).join('\n') || '(not specified)'}
+
+Long-Term Outcomes (3–5 years):
+${ltOutcomes.map((r,i) => `${i+1}. ${r}`).join('\n') || '(not specified)'}
+
+Impact Statement: ${impactStatement}
+
+SDG Alignment: ${sdgs.join(', ') || '(not specified)'}
+
+Key Assumptions:
+${assumptions.map((r,i) => `${i+1}. ${r}`).join('\n') || '(none listed)'}
+
+Key Risks:
+${risks.map((r,i) => `${i+1}. ${r}`).join('\n') || '(none listed)'}
+---
+
+Please provide constructive, specific feedback that would help this team strengthen their Theory of Change before presenting it to funders or boards.`;
+}
+
+// ─── 5-Year Timeline Builder ─────────────────────────────────────
+function buildTimeline(outputs, stOutcomes, ltOutcomes, impactStatement, activities) {
+  const out1 = outputs.length ? outputs[0] : 'Initial outputs delivered';
+  const out2 = outputs.length > 1 ? outputs[1] : (outputs[0] || 'Programme fully operational');
+  const st1 = stOutcomes.length ? stOutcomes[0] : 'Initial behaviour changes observed';
+  const st2 = stOutcomes.length > 1 ? stOutcomes[1] : 'Early outcomes stabilising';
+  const lt1 = ltOutcomes.length ? ltOutcomes[0] : 'Sustained outcomes achieved';
+  const lt2 = ltOutcomes.length > 1 ? ltOutcomes[1] : 'Systemic change emerging';
+  const imp = impactStatement ? impactStatement.substring(0,80) + (impactStatement.length > 80 ? '...' : '') : 'Impact contribution demonstrated';
+
+  return [
+    { year: 'Year 1', focus: 'Setup & Early Delivery', milestones: `Establish operations. ${out1}. First beneficiaries engaged.`, metric: '% of Year 1 output targets met' },
+    { year: 'Year 2', focus: 'Scale & First Outcomes', milestones: `${out2}. ${st1}.`, metric: '# beneficiaries served vs target; % reporting early change' },
+    { year: 'Year 3', focus: 'Consolidation & Evidence', milestones: `${st2}. Outcome evidence collected. Learning loop active.`, metric: 'Beneficiary survey: % achieving key short-term outcome' },
+    { year: 'Year 4', focus: 'Deepening Impact', milestones: `${lt1}. Programme refinements applied. Sustainability plans active.`, metric: 'Longitudinal data: change vs baseline on primary outcome' },
+    { year: 'Year 5', focus: 'Impact & Sustainability', milestones: `${lt2}. ${imp}. Transition / scale plan confirmed.`, metric: 'SROI / cost-per-outcome; evidence of systemic change' }
+  ];
+}
+
+// ─── Copy Prompt ─────────────────────────────────────────────────
+function copyPrompt() {
+  const text = document.getElementById('claudePrompt').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copied!';
+    btn.style.background = '#00a87a';
+    setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+  });
+}
+
+// ─── CSV Export ──────────────────────────────────────────────────
+function exportCSV() {
+  const org = document.getElementById('orgName').value || 'Organisation';
+  const inputs = JSON.parse(document.getElementById('inputsData').value);
+  const activities = JSON.parse(document.getElementById('activitiesData').value);
+  const outputs = JSON.parse(document.getElementById('outputsData').value);
+  const stOutcomes = JSON.parse(document.getElementById('stOutcomesData').value);
+  const ltOutcomes = JSON.parse(document.getElementById('ltOutcomesData').value);
+  const assumptions = JSON.parse(document.getElementById('assumptionsData').value);
+  const risks = JSON.parse(document.getElementById('risksData').value);
+  const problem = document.getElementById('problemStatement').value;
+  const impactStatement = document.getElementById('impactStatement').value;
+  const sdgs = JSON.parse(document.getElementById('sdgData').value);
+
+  let csv = 'Theory of Change Export\n';
+  csv += `Organisation,${csvEsc(org)}\n`;
+  csv += `Problem Statement,${csvEsc(problem)}\n`;
+  csv += `Impact Statement,${csvEsc(impactStatement)}\n`;
+  csv += `SDG Alignment,${csvEsc(sdgs.join('; '))}\n\n`;
+  csv += 'Chain Stage,Item\n';
+  inputs.forEach(i => csv += `Inputs,${csvEsc(i)}\n`);
+  activities.forEach(a => csv += `Activities,${csvEsc(a)}\n`);
+  outputs.forEach(o => csv += `Outputs,${csvEsc(o)}\n`);
+  stOutcomes.forEach(o => csv += `Short-Term Outcome,${csvEsc(o)}\n`);
+  ltOutcomes.forEach(o => csv += `Long-Term Outcome,${csvEsc(o)}\n`);
+  csv += '\nAssumptions & Risks\nType,Statement\n';
+  assumptions.forEach(a => csv += `Assumption,${csvEsc(a)}\n`);
+  risks.forEach(r => csv += `Risk,${csvEsc(r)}\n`);
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const date = new Date().toISOString().slice(0,10);
+  a.download = `theory-of-change-${(org || 'export').replace(/\s+/g,'-').toLowerCase()}-${date}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  const flash = document.getElementById('exportFlash');
+  flash.style.display = 'block';
+  setTimeout(() => { flash.style.display = 'none'; }, 3000);
+}
+
+function csvEsc(str) {
+  if (!str) return '';
+  return '"' + String(str).replace(/"/g, '""') + '"';
+}
+</script>
+
+</body>
+</html>
