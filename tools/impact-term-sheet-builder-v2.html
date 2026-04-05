@@ -50,3 +50,205 @@
             font-weight: 600;
             letter-spacing: -0.5px;
         }
+
+        .deal-type-selector {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .deal-type-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            background-color: transparent;
+            color: var(--white);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .deal-type-btn:hover {
+            border-color: var(--gold);
+            background-color: rgba(184, 134, 11, 0.1);
+        }
+
+        .deal-type-btn.active {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 350px 1fr 380px;
+            gap: 1rem;
+            padding: 1rem;
+            height: calc(100vh - 100px);
+            overflow: hidden;
+        }
+
+        .panel {
+            background-color: var(--white);
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background-color: #f5f5f5;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 1rem;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-green);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .label-with-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: var(--teal);
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: help;
+            position: relative;
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            background-color: var(--text-dark);
+            color: var(--white);
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            width: 200px;
+            z-index: 1000;
+            top: 100%;
+            left: 0;
+            margin-top: 0.5rem;
+            line-height: 1.4;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .info-icon:hover .tooltip {
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(-primary-green);
+            box-shadow: 0 0 0 3px rgba(45, 125, 70, 0.1);
+        }
+
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background-color: #ccc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            border: none;
+            padding: 2px;
+        }
+
+        .toggle-switch.active {
+            background-color: var(-primary-green);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: var(--white);
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            left: 22px;
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            color: var(-text-dark);
+            flex: 1;
+        }
