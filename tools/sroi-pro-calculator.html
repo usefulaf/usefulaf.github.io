@@ -1,6 +1,1292 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SROI Pro Calculator औ Useful AF</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SROI Pro Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a2730 0%, #1a6b6b 100%);
+            color: white;
+            padding: 40px 20px;
+            margin: -20px -20px 40px -20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            background: white;
+            height: 4px;
+            margin: 30px 0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: #2d7d46;
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+
+        .step-indicator .step {
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            flex: 1;
+        }
+
+        .step-indicator .step.active {
+            color: #2d7d46;
+            font-weight: 600;
+        }
+
+        .step-indicator .step.active::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 24px;
+            background: #2d7d46;
+            color: white;
+            border-radius: 50%;
+            margin: 0 auto 5px;
+            font-size: 12px;
+            line-height: 24px;
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1a2730;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2d7d46;
+            box-shadow: 0 0 0 3px rgba(45, 125, 70, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .guidance {
+            background: #f0f8f6;
+            padding: 12px;
+            border-left: 4px solid #1a6b6b;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #333;
+            border-radius: 4px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2d7d46;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #235a34;
+        }
+
+        .btn-secondary {
+            background: #eee;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #ddd;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+
+        .btn-add {
+            background: #1a6b6b;
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-add:hover {
+            background: #145555;
+        }
+
+        .outcome-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #b8860b;
+        }
+
+        .outcome-card h3 {
+            margin-bottom: 15px;
+            color: #1a2730;
+            font-size: 16px;
+        }
+
+        .outcome-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .outcome-grid .form-group {
+            margin-bottom: 0;
+        }
+
+        .outcome-value {
+            background: #f0f8f6;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 15px;
+            border-left: 4px solid #2d7d46;
+        }
+
+        .outcome-value strong {
+            color: #2d7d46;
+        }
+
+        .outcome-delete {
+            margin-top: 15px;
+        }
+
+        .proxy-search {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .proxy-options {
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            max-height: 250px;
+            overflow-y: auto;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .proxy-option {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .proxy-option:hover {
+            background: #f9f9f9;
+        }
+
+        .proxy-option strong {
+            display: block;
+            color: #2d7d46;
+        }
+
+        .proxy-option small {
+            display: block;
+            color: #999;
+            margin-top: 2px;
+        }
+
+        .results-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .sroi-ratio {
+            background: linear-gradient(135deg, #1a2730 0%, #1a6b6b 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sroi-ratio .label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .sroi-ratio .value {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .sroi-ratio .context {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        .breakdown-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .breakdown-table th {
+            background: #f5f7fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #1a2730;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .breakdown-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+
+        .bar-chart {
+            margin-bottom: 30px;
+        }
+
+        .bar-item {
+            margin-bottom: 20px;
+        }
+
+        .bar-label {
+            font-size: 13px;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .bar-label strong {
+            color: #1a2730;
+        }
+
+        .bar-label span {
+            color: #2d7d46;
+            font-weight: 600;
+        }
+
+        .bar-container {
+            background: #f0f0f0;
+            height: 24px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            background: linear-gradient(90deg, #2d7d46 0%, #1a6b6b 100%);
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.3s;
+        }
+
+        .sensitivity-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .sensitivity-table th {
+            background: #f5f7fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #1a2730;
+        }
+
+        .sensitivity-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+        }
+
+        .sensitivity-table .scenario-down {
+            color: #dc3545;
+        }
+
+        .sensitivity-table .scenario-base {
+            color: #2d7d46;
+            font-weight: 600;
+        }
+
+        .sensitivity-table .scenario-up {
+            color: #1a6b6b;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a2730;
+            margin-bottom: 20px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+            border-top: none;
+            padding-top: 0;
+        }
+
+        .assumptions-list {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .assumptions-list li {
+            margin-bottom: 10px;
+            list-style: none;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .assumptions-list li:before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #2d7d46;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .export-buttons button {
+            flex: 1;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #dc3545;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+        }
+
+        @media (max-width: 768px) {
+            .input-row, .outcome-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sroi-ratio .value {
+                font-size: 36px;
+            }
+
+            header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SROI Pro Calculator</h1>
+            <p>Social Return on Investment Calculator for Impact Practitioners</p>
+        </header>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="step-indicator">
+            <div class="step active" data-step="1">Project Setup</div>
+            <div class="step" data-step="2">Outcomes</div>
+            <div class="step" data-step="3">Results</div>
+            <div class="step" data-step="4">Report</div>
+        </div>
+
+        <!-- STEP 1: PROJECT SETUP -->
+        <div class="step-content active" id="step1">
+            <form id="setupForm">
+                <div class="form-group">
+                    <label>Organisation Name</label>
+                    <input type="text" id="orgName" placeholder="e.g., Impact47" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Project Name</label>
+                    <input type="text" id="projectName" placeholder="e.g., Employment Training Programme" required>
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label>Geography</label>
+                        <select id="geography" required onchange="updateDiscountRate()">
+                            <option value="">Select geography...</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="us">United States</option>
+                            <option value="eu">Europe (excl. UK)</option>
+                            <option value="south">Global South</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Currency</label>
+                        <select id="currency" required>
+                            <option value="GBP">GBP (£)</option>
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div class="form-group">
+                        <label>Total Investment Amount</label>
+                        <input type="number" id="investment" placeholder="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Evaluation Time Horizon (years)</label>
+                        <select id="timeHorizon" required>
+                            <option value="1">1 year</option>
+                            <option value="2">2 years</option>
+                            <option value="3" selected>3 years</option>
+                            <option value="4">4 years</option>
+                            <option value="5">5 years</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Social Discount Rate (%)</label>
+                    <input type="number" id="discountRate" step="0.1" required>
+                    <div class="guidance" id="discountGuidance"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Project Description</label>
+                    <textarea id="description" placeholder="Briefly describe your project and its social goals..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn-primary" onclick="nextStep()">Next: Add Outcomes</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- STEP 2: OUTCOMES -->
+        <div class="step-content" id="step2">
+            <div id="outcomesContainer"></div>
+            <button type="button" class="btn-add" onclick="addOutcome()">+ Add Outcome</button>
+            <div class="button-group" style="margin-top: 30px;">
+                <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
+                <button type="button" class="btn-primary" onclick="nextStep()">Calculate Results</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: RESULTS -->
+        <div class="step-content" id="step3">
+            <div id="resultsContainer"></div>
+            <div class="button-group">
+                <button type="button" class="btn-secondary" onclick="prevStep()">Back to Outcomes</button>
+                <button type="button" class="btn-primary" onclick="nextStep()">View Report</button>
+            </div>
+        </div>
+
+        <!-- STEP 4: REPORT -->
+        <div class="step-content" id="step4">
+            <div id="reportContainer"></div>
+            <div class="export-buttons">
+                <button type="button" class="btn-secondary" onclick="exportAsText()">Copy Report</button>
+                <button type="button" class="btn-secondary" onclick="exportAsCSV()">Download CSV</button>
+            </div>
+            <div class="button-group" style="margin-top: 20px;">
+                <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
+                <button type="button" class="btn-primary" onclick="startOver()">Start New Analysis</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // PROXY VALUE LIBRARY
+        const proxyLibrary = {
+            employment: [
+                { name: "Moving unemployed person into employment", value: 13524, source: "UK Exchequer benefit, New Economics Foundation", annual: true },
+                { name: "Moving long-term unemployed into work", value: 15900, source: "DWP Cost Benefit Model", annual: true },
+                { name: "Living wage employment uplift", value: 3200, source: "Living wage vs minimum wage", annual: true },
+                { name: "Youth employment (NEET to employed)", value: 12900, source: "UK Government NEET costs", annual: true },
+                { name: "Skills training leading to employment", value: 8000, source: "DWP, cost of benefits avoided", oneOff: true },
+                { name: "Microenterprise creation (developing country)", value: 2400, source: "World Bank estimate", annual: true }
+            ],
+            health: [
+                { name: "QALY - UK (Quality-Adjusted Life Year)", value: 25000, source: "NICE threshold UK", annual: true },
+                { name: "QALY - US", value: 100000, source: "US standard", annual: true },
+                { name: "QALY - Global South", value: 5000, source: "Global South estimate", annual: true },
+                { name: "Preventing hospital admission", value: 2500, source: "NHS reference costs", oneOff: true },
+                { name: "Reducing GP visits (per visit avoided)", value: 39, source: "NHS, Curtis & Burns 2022", annual: true },
+                { name: "Mental health: severe to moderate depression", value: 8500, source: "PSSRU", annual: true },
+                { name: "Addiction recovery - substance abuse", value: 16000, source: "Home Office cost of addiction", annual: true },
+                { name: "Domestic abuse prevention (per case avoided)", value: 33000, source: "Home Office", oneOff: true },
+                { name: "Wellbeing improvement (+1 point ONS scale)", value: 13000, source: "HM Treasury Green Book", annual: true },
+                { name: "Preventing premature death", value: 1800000, source: "Value of Statistical Life, UK Government", oneOff: true }
+            ],
+            education: [
+                { name: "Child completing primary school (developing country)", value: 2500, source: "World Bank", annual: true },
+                { name: "Adult literacy achievement", value: 3200, source: "Basic Skills Agency UK", oneOff: true },
+                { name: "University degree completion", value: 230000, source: "UK lifetime earnings premium", annual: true },
+                { name: "Early childhood education (ECD)", value: 15, source: "Heckman Equation ROI per $1", annual: true },
+                { name: "School dropout prevention", value: 8000, source: "UK Government", annual: true }
+            ],
+            environment: [
+                { name: "Carbon tonne sequestered/avoided (conservative)", value: 50, source: "Voluntary carbon market", annual: true },
+                { name: "Carbon tonne sequestered/avoided (high estimate)", value: 150, source: "Social cost of carbon", annual: true },
+                { name: "Hectare of forest protected (per year)", value: 1000, source: "TEEB ecosystem services", annual: true },
+                { name: "Tree planted to maturity", value: 250, source: "Woodland Trust proxy", annual: true },
+                { name: "Plastic waste prevented (per tonne)", value: 400, source: "Environmental cost of plastic", oneOff: true },
+                { name: "Water saved (per megalitre)", value: 700, source: "World Bank, medium scarcity", annual: true },
+                { name: "Biodiversity unit (UK BNG)", value: 300, source: "UK Biodiversity Net Gain", annual: true }
+            ],
+            housing: [
+                { name: "Rough sleeper housed (annual savings)", value: 18000, source: "Crisis, cost of rough sleeping services avoided", annual: true },
+                { name: "Preventing eviction", value: 11700, source: "Crisis", oneOff: true },
+                { name: "Social housing provision subsidy value", value: 4200, source: "Subsidy per unit vs private market", annual: true }
+            ],
+            community: [
+                { name: "Volunteer hour value", value: 17.29, source: "NCVO 2023 UK", annual: true },
+                { name: "Volunteer hour value (US)", value: 28, source: "Independent Sector US", annual: true },
+                { name: "Reduction in loneliness (severe to moderate)", value: 5000, source: "Campaign to End Loneliness proxy", annual: true },
+                { name: "Community space use (per user per year)", value: 550, source: "CABE/Heritage Lottery valuations", annual: true },
+                { name: "Burglary crime prevented", value: 8000, source: "UK Government", oneOff: true },
+                { name: "Violent crime prevented", value: 40000, source: "UK Government", oneOff: true }
+            ],
+            financial: [
+                { name: "Microfinance loan income return (per $1 lent)", value: 10, source: "Grameen Foundation average", annual: true },
+                { name: "Moving unbanked person to banked", value: 200, source: "World Bank financial inclusion", annual: true },
+                { name: "Savings account opened (developing country)", value: 150, source: "Financial resilience proxy", annual: true }
+            ]
+        };
+
+        // STATE
+        let currentStep = 1;
+        let outcomes = [];
+
+        // UTILITIES
+        function getCurrentCurrency() {
+            return document.getElementById("currency").value;
+        }
+
+        function formatCurrency(value) {
+            const currency = getCurrentCurrency();
+            const symbols = { GBP: "£", USD: "$", EUR: "€" };
+            return symbols[currency] + value.toLocaleString("en-US", { maximumFractionDigits: 0 });
+        }
+
+        function updateDiscountRate() {
+            const geo = document.getElementById("geography").value;
+            const rates = {
+                uk: 3.5,
+                us: 7,
+                eu: 4,
+                south: 8
+            };
+            if (geo && rates[geo]) {
+                document.getElementById("discountRate").value = rates[geo];
+                updateDiscountGuidance();
+            }
+        }
+
+        function updateDiscountGuidance() {
+            const geo = document.getElementById("geography").value;
+            const guidance = {
+                uk: "Standard UK government appraisal discount rate (HM Treasury Green Book)",
+                us: "US standard social discount rate",
+                eu: "European average social discount rate",
+                south: "Higher rate typical for developing economies"
+            };
+            document.getElementById("discountGuidance").textContent = guidance[geo] || "";
+        }
+
+        // STEP NAVIGATION
+        function goToStep(step) {
+            if (step === 1 && !validateSetup()) return;
+            if (step === 3 && !validateOutcomes()) return;
+
+            document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
+            document.getElementById("step" + step).classList.add("active");
+
+            document.querySelectorAll(".step").forEach(el => el.classList.remove("active"));
+            document.querySelector(`[data-step="${step}"]`).classList.add("active");
+
+            const progress = (step / 4) * 100;
+            document.getElementById("progressFill").style.width = progress + "%";
+
+            currentStep = step;
+
+            if (step === 3) calculateResults();
+            if (step === 4) generateReport();
+        }
+
+        function nextStep() {
+            goToStep(currentStep + 1);
+        }
+
+        function prevStep() {
+            goToStep(currentStep - 1);
+        }
+
+        function validateSetup() {
+            const form = document.getElementById("setupForm");
+            return form.checkValidity();
+        }
+
+        function validateOutcomes() {
+            if (outcomes.length === 0) {
+                alert("Please add at least one outcome");
+                return false;
+            }
+            return true;
+        }
+
+        // OUTCOME MANAGEMENT
+        function addOutcome() {
+            const id = outcomes.length;
+            outcomes.push({
+                id,
+                name: "",
+                category: "employment",
+                beneficiaries: 0,
+                proxyValue: 0,
+                deadweight: 30,
+                attribution: 100,
+                displacement: 0,
+                duration: parseInt(document.getElementById("timeHorizon").value),
+                dropoff: -20
+            });
+            renderOutcomes();
+        }
+
+        function renderOutcomes() {
+            const container = document.getElementById("outcomesContainer");
+            container.innerHTML = outcomes.map((o, idx) => `
+                <div class="outcome-card">
+                    <h3>Outcome ${idx + 1}</h3>
+                    <div class="outcome-grid">
+                        <div class="form-group">
+                            <label>Outcome Name</label>
+                            <input type="text" value="${o.name || ""}" onchange="updateOutcome(${o.id}, 'name', this.value)" placeholder="e.g., Participants moved to employment">
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select onchange="updateOutcome(${o.id}, 'category', this.value)">
+                                <option value="employment" ${o.category === "employment" ? "selected" : ""}>Employment & Livelihoods</option>
+                                <option value="health" ${o.category === "health" ? "selected" : ""}>Health & Wellbeing</option>
+                                <option value="education" ${o.category === "education" ? "selected" : ""}>Education</option>
+                                <option value="environment" ${o.category === "environment" ? "selected" : ""}>Environment & Climate</option>
+                                <option value="housing" ${o.category === "housing" ? "selected" : ""}>Housing & Homelessness</option>
+                                <option value="community" ${o.category === "community" ? "selected" : ""}>Community & Social</option>
+                                <option value="financial" ${o.category === "financial" ? "selected" : ""}>Financial Inclusion</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Beneficiaries</label>
+                            <input type="number" value="${o.beneficiaries || ""}" onchange="updateOutcome(${o.id}, 'beneficiaries', parseFloat(this.value))">
+                        </div>
+                        <div class="form-group">
+                            <label>Proxy Value per Beneficiary</label>
+                            <select onchange="updateOutcome(${o.id}, 'proxyValue', parseFloat(this.value))">
+                                <option value="">Select proxy from library...</option>
+                                ${(proxyLibrary[o.category] || []).map(p => `<option value="${p.value}">${p.name}</option>`).join("")}
+                            </select>
+                            <div class="guidance">Enter custom value or select from library. This is the annual or one-off financial benefit per beneficiary.</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Custom Proxy Value (optional)</label>
+                            <input type="number" value="${o.customProxy || ""}" onchange="updateOutcome(${o.id}, 'customProxy', parseFloat(this.value) || null)" placeholder="Override library value">
+                        </div>
+                    </div>
+
+                    <div class="outcome-grid">
+                        <div class="form-group">
+                            <label>Deadweight (%)</label>
+                            <input type="number" value="${o.deadweight}" min="0" max="100" step="5" onchange="updateOutcome(${o.id}, 'deadweight', parseFloat(this.value))">
+                            <div class="guidance">What % would have happened anyway? Typical range: 10-50%</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Attribution (%)</label>
+                            <input type="number" value="${o.attribution}" min="0" max="100" step="5" onchange="updateOutcome(${o.id}, 'attribution', parseFloat(this.value))">
+                            <div class="guidance">What % of outcome is due to your intervention? 100% = full credit</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Displacement (%)</label>
+                            <input type="number" value="${o.displacement}" min="0" max="100" step="5" onchange="updateOutcome(${o.id}, 'displacement', parseFloat(this.value))">
+                            <div class="guidance">Does this displace activity elsewhere? Usually 0% for social outcomes</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Duration (years)</label>
+                            <input type="number" value="${o.duration}" min="1" max="10" onchange="updateOutcome(${o.id}, 'duration', parseFloat(this.value))">
+                        </div>
+                        <div class="form-group">
+                            <label>Annual Drop-off (%)</label>
+                            <input type="number" value="${o.dropoff}" min="-100" max="0" step="5" onchange="updateOutcome(${o.id}, 'dropoff', parseFloat(this.value))">
+                            <div class="guidance">E.g., -20% = benefit reduces 20% each year</div>
+                        </div>
+                    </div>
+
+                    <div class="outcome-value">
+                        <strong>Calculated Annual Value: ${formatCurrency(calculateOutcomeValue(o))}</strong>
+                    </div>
+                    <div class="outcome-delete">
+                        <button type="button" class="btn-danger" onclick="removeOutcome(${o.id})">Delete Outcome</button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function updateOutcome(id, field, value) {
+            const outcome = outcomes.find(o => o.id === id);
+            if (outcome) {
+                outcome[field] = value;
+                renderOutcomes();
+            }
+        }
+
+        function removeOutcome(id) {
+            outcomes = outcomes.filter(o => o.id !== id);
+            renderOutcomes();
+        }
+
+        function calculateOutcomeValue(outcome) {
+            const proxyValue = outcome.customProxy || outcome.proxyValue;
+            if (!proxyValue || !outcome.beneficiaries) return 0;
+
+            const deadweightMultiplier = 1 - (outcome.deadweight / 100);
+            const attributionMultiplier = outcome.attribution / 100;
+            const displacementMultiplier = 1 - (outcome.displacement / 100);
+
+            return outcome.beneficiaries * proxyValue * deadweightMultiplier * attributionMultiplier * displacementMultiplier;
+        }
+
+        // CALCULATIONS
+        function calculateResults() {
+            const timeHorizon = parseInt(document.getElementById("timeHorizon").value);
+            const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
+            const investment = parseFloat(document.getElementById("investment").value) || 0;
+
+            let totalPV = 0;
+            const outcomeResults = outcomes.map(o => {
+                const annualValue = calculateOutcomeValue(o);
+                let pv = 0;
+
+                for (let year = 1; year <= Math.min(o.duration, timeHorizon); year++) {
+                    const dropoffFactor = Math.pow(1 + (o.dropoff / 100), year - 1);
+                    const discountFactor = 1 / Math.pow(1 + discountRate, year - 1);
+                    pv += annualValue * dropoffFactor * discountFactor;
+                }
+
+                totalPV += pv;
+                return {
+                    name: o.name || "Unnamed Outcome",
+                    beneficiaries: o.beneficiaries,
+                    proxyValue: o.customProxy || o.proxyValue,
+                    deadweight: o.deadweight,
+                    attribution: o.attribution,
+                    displacement: o.displacement,
+                    annualValue: annualValue,
+                    pv: pv
+                };
+            });
+
+            const sroiRatio = investment > 0 ? totalPV / investment : 0;
+
+            // Sensitivity Analysis (±20%)
+            const sensitivity = calculateSensitivity(totalPV, investment, discountRate, timeHorizon);
+
+            renderResults(sroiRatio, totalPV, outcomeResults, sensitivity);
+        }
+
+        function calculateSensitivity(baseTotalPV, investment, discountRate, timeHorizon) {
+            // Vary key assumptions by ±20%
+            const adjustedTotalPV_down = baseTotalPV * 0.8;
+            const adjustedTotalPV_up = baseTotalPV * 1.2;
+
+            return {
+                down: investment > 0 ? adjustedTotalPV_down / investment : 0,
+                base: investment > 0 ? baseTotalPV / investment : 0,
+                up: investment > 0 ? adjustedTotalPV_up / investment : 0
+            };
+        }
+
+        function renderResults(sroiRatio, totalPV, outcomeResults, sensitivity) {
+            const container = document.getElementById("resultsContainer");
+
+            let context = "Most credible SROI studies find 3:1–8:1";
+            if (sroiRatio < 1.5) context = "Below typical range – consider strengthening evidence or increasing impact";
+            else if (sroiRatio < 3) context = "Below typical range – focus on scaling or deepening outcomes";
+            else if (sroiRatio > 15) context = "Exceptionally high – validate assumptions and verify attribution";
+
+            const maxOutcome = Math.max(...outcomeResults.map(o => o.pv));
+
+            container.innerHTML = `
+                <div class="results-section">
+                    <div class="sroi-ratio">
+                        <div class="label">Social Return on Investment</div>
+                        <div class="value">${sroiRatio.toFixed(2)}:1</div>
+                        <div class="context">${context}</div>
+                    </div>
+
+                    <div class="section-title">Total Social Value (Present Value)</div>
+                    <div style="background: #f0f8f6; padding: 20px; border-radius: 6px; margin-bottom: 30px; border-left: 4px solid #2d7d46;">
+                        <strong style="color: #2d7d46; font-size: 24px;">${formatCurrency(totalPV)}</strong>
+                        <div style="color: #666; margin-top: 5px;">Generated from ${formatCurrency(parseFloat(document.getElementById("investment").value) || 0)} investment</div>
+                    </div>
+
+                    <div class="section-title">Outcome Breakdown</div>
+                    <div class="bar-chart">
+                        ${outcomeResults.map(o => {
+                            const percentage = maxOutcome > 0 ? (o.pv / maxOutcome) * 100 : 0;
+                            return `
+                                <div class="bar-item">
+                                    <div class="bar-label">
+                                        <strong>${o.name}</strong>
+                                        <span>${formatCurrency(o.pv)}</span>
+                                    </div>
+                                    <div class="bar-container">
+                                        <div class="bar-fill" style="width: ${percentage}%"></div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join("")}
+                    </div>
+
+                    <div class="section-title">Outcome Calculation Details</div>
+                    <table class="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>Outcome</th>
+                                <th>Beneficiaries</th>
+                                <th>Annual Value</th>
+                                <th>Present Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${outcomeResults.map(o => `
+                                <tr>
+                                    <td>${o.name}</td>
+                                    <td>${o.beneficiaries}</td>
+                                    <td>${formatCurrency(o.annualValue)}</td>
+                                    <td>${formatCurrency(o.pv)}</td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+
+                    <div class="section-title">Sensitivity Analysis (What if key assumptions vary?)</div>
+                    <div style="font-size: 13px; color: #666; margin-bottom: 15px;">
+                        This table shows how your SROI ratio changes if social value estimates shift ±20%
+                    </div>
+                    <table class="sensitivity-table">
+                        <thead>
+                            <tr>
+                                <th>Scenario</th>
+                                <th>SROI Ratio</th>
+                                <th>Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="scenario-down">20% Lower Estimate</td>
+                                <td class="scenario-down">${sensitivity.down.toFixed(2)}:1</td>
+                                <td class="scenario-down">-${((1 - sensitivity.down / sensitivity.base) * 100).toFixed(1)}%</td>
+                            </tr>
+                            <tr>
+                                <td class="scenario-base">Base Case (Your Assumptions)</td>
+                                <td class="scenario-base">${sensitivity.base.toFixed(2)}:1</td>
+                                <td class="scenario-base">—</td>
+                            </tr>
+                            <tr>
+                                <td class="scenario-up">20% Higher Estimate</td>
+                                <td class="scenario-up">${sensitivity.up.toFixed(2)}:1</td>
+                                <td class="scenario-up">+${((sensitivity.up / sensitivity.base - 1) * 100).toFixed(1)}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // REPORT GENERATION
+        function generateReport() {
+            const timeHorizon = parseInt(document.getElementById("timeHorizon").value);
+            const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
+            const investment = parseFloat(document.getElementById("investment").value) || 0;
+
+            let totalPV = 0;
+            const outcomeResults = outcomes.map(o => {
+                const annualValue = calculateOutcomeValue(o);
+                let pv = 0;
+
+                for (let year = 1; year <= Math.min(o.duration, timeHorizon); year++) {
+                    const dropoffFactor = Math.pow(1 + (o.dropoff / 100), year - 1);
+                    const discountFactor = 1 / Math.pow(1 + discountRate, year - 1);
+                    pv += annualValue * dropoffFactor * discountFactor;
+                }
+
+                totalPV += pv;
+                return {
+                    name: o.name || "Unnamed Outcome",
+                    beneficiaries: o.beneficiaries,
+                    proxyValue: o.customProxy || o.proxyValue,
+                    deadweight: o.deadweight,
+                    attribution: o.attribution,
+                    displacement: o.displacement,
+                    duration: o.duration,
+                    dropoff: o.dropoff,
+                    annualValue: annualValue,
+                    pv: pv
+                };
+            });
+
+            const sroiRatio = investment > 0 ? totalPV / investment : 0;
+
+            const orgName = document.getElementById("orgName").value;
+            const projectName = document.getElementById("projectName").value;
+            const geography = document.getElementById("geography").value;
+            const currency = getCurrentCurrency();
+
+            const timestamp = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+            const container = document.getElementById("reportContainer");
+            container.innerHTML = `
+                <div class="results-section">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <h2 style="color: #1a2730; margin-bottom: 10px;">SROI Analysis Report</h2>
+                        <p style="color: #666; font-size: 14px;">${orgName} | ${projectName}</p>
+                        <p style="color: #999; font-size: 12px;">Generated: ${timestamp}</p>
+                    </div>
+
+                    <div class="section-title">Executive Summary</div>
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 6px; line-height: 1.6; margin-bottom: 25px;">
+                        <p><strong>${orgName}'s ${projectName}</strong> generated a Social Return on Investment (SROI) ratio of <strong>${sroiRatio.toFixed(2)}:1</strong> over a ${timeHorizon}-year evaluation period.</p>
+                        <p style="margin-top: 10px;">This means that for every ${currency} 1 invested, the programme generated ${currency} ${sroiRatio.toFixed(2)} of social and environmental value. The total estimated present value of outcomes was <strong>${formatCurrency(totalPV)}</strong>, compared to an investment of <strong>${formatCurrency(investment)}</strong>.</p>
+                    </div>
+
+                    <div class="section-title">Key Findings</div>
+                    <table class="breakdown-table">
+                        <tr>
+                            <td><strong>SROI Ratio</strong></td>
+                            <td style="text-align: right; color: #2d7d46; font-weight: 600;">${sroiRatio.toFixed(2)}:1</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Investment</strong></td>
+                            <td style="text-align: right;">${formatCurrency(investment)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Social Value (PV)</strong></td>
+                            <td style="text-align: right; color: #2d7d46; font-weight: 600;">${formatCurrency(totalPV)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Net Social Value</strong></td>
+                            <td style="text-align: right;">${formatCurrency(totalPV - investment)}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Evaluation Period</strong></td>
+                            <td style="text-align: right;">${timeHorizon} years</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Discount Rate</strong></td>
+                            <td style="text-align: right;">${document.getElementById("discountRate").value}%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Geography</strong></td>
+                            <td style="text-align: right;">${{ uk: "United Kingdom", us: "United States", eu: "Europe", south: "Global South" }[geography]}</td>
+                        </tr>
+                    </table>
+
+                    <div class="section-title">Outcomes Analysed</div>
+                    <table class="breakdown-table">
+                        <thead>
+                            <tr>
+                                <th>Outcome</th>
+                                <th>Beneficiaries</th>
+                                <th>Proxy Value</th>
+                                <th>Annual Value</th>
+                                <th>Present Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${outcomeResults.map(o => `
+                                <tr>
+                                    <td><strong>${o.name}</strong></td>
+                                    <td>${o.beneficiaries}</td>
+                                    <td>${formatCurrency(o.proxyValue)}</td>
+                                    <td>${formatCurrency(o.annualValue)}</td>
+                                    <td><strong>${formatCurrency(o.pv)}</strong></td>
+                                </tr>
+                            `).join("")}
+                        </tbody>
+                    </table>
+
+                    <div class="section-title">Methodology & Assumptions</div>
+                    <div class="assumptions-list">
+                        <strong style="display: block; margin-bottom: 15px;">This analysis applied the standard SROI methodology with six key adjustments:</strong>
+                        <ul>
+                            ${outcomeResults.map((o, idx) => `
+                                <li><strong>${o.name}</strong>: Deadweight ${o.deadweight}%, Attribution ${o.attribution}%, Displacement ${o.displacement}%, Duration ${o.duration} year(s), Annual drop-off ${o.dropoff}%</li>
+                            `).join("")}
+                            <li><strong>Discount Rate:</strong> ${document.getElementById("discountRate").value}% (applied to convert future values to present value)</li>
+                            <li><strong>Proxy Sources:</strong> Values sourced from UK Government, NHS, DWP, World Bank, and impact measurement literature (2022–2024)</li>
+                            <li><strong>Evaluation Period:</strong> ${timeHorizon} years</li>
+                        </ul>
+                    </div>
+
+                    <div class="section-title">SROI Interpretation & Context</div>
+                    <div style="background: #f0f8f6; padding: 20px; border-radius: 6px; font-size: 13px; line-height: 1.7;">
+                        <strong style="display: block; margin-bottom: 10px;">What does the SROI ratio mean?</strong>
+                        <p>An SROI of ${sroiRatio.toFixed(2)}:1 indicates that the programme returned ${currency} ${sroiRatio.toFixed(2)} in social value for every ${currency} 1 spent.</p>
+                        <p style="margin-top: 10px;"><strong>Credibility Context:</strong> Typical SROI ratios range from 1.5:1 to 15:1. Most rigorous, evidence-based studies find ratios of 3:1–8:1. Higher ratios should be treated with caution and warrant sensitivity testing.</p>
+                        <p style="margin-top: 10px;"><strong>Next Steps:</strong> To strengthen this analysis: (1) triangulate proxy values with programme-specific data; (2) validate deadweight, attribution, and displacement assumptions with comparison groups; (3) conduct interviews with beneficiaries; (4) conduct sensitivity analysis on key variables.</p>
+                    </div>
+
+                    <div class="section-title">Additional Resources</div>
+                    <div style="font-size: 13px; color: #666; line-height: 1.8;">
+                        <p><strong>SROI Network:</strong> www.socialvalueuk.org</p>
+                        <p><strong>UK Government Green Book:</strong> HM Treasury guidance on social discount rates and valuation</p>
+                        <p><strong>What Works Centre:</strong> Evidence on outcome proxies and programme effectiveness</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // EXPORT FUNCTIONS
+        function exportAsText() {
+            const orgName = document.getElementById("orgName").value;
+            const projectName = document.getElementById("projectName").value;
+            const timestamp = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+
+            const timeHorizon = parseInt(document.getElementById("timeHorizon").value);
+            const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
+            const investment = parseFloat(document.getElementById("investment").value) || 0;
+
+            let totalPV = 0;
+            const outcomeResults = outcomes.map(o => {
+                const annualValue = calculateOutcomeValue(o);
+                let pv = 0;
+                for (let year = 1; year <= Math.min(o.duration, timeHorizon); year++) {
+                    const dropoffFactor = Math.pow(1 + (o.dropoff / 100), year - 1);
+                    const discountFactor = 1 / Math.pow(1 + discountRate, year - 1);
+                    pv += annualValue * dropoffFactor * discountFactor;
+                }
+                totalPV += pv;
+                return { name: o.name || "Unnamed", beneficiaries: o.beneficiaries, proxyValue: o.customProxy || o.proxyValue, annualValue, pv, deadweight: o.deadweight, attribution: o.attribution, displacement: o.displacement, duration: o.duration, dropoff: o.dropoff };
+            });
+
+            const sroiRatio = investment > 0 ? totalPV / investment : 0;
+            const currency = getCurrentCurrency();
+
+            let text = `SROI ANALYSIS REPORT\n`;
+            text += `${orgName} | ${projectName}\n`;
+            text += `Generated: ${timestamp}\n\n`;
+            text += `=====================================\n`;
+            text += `KEY FINDINGS\n`;
+            text += `=====================================\n\n`;
+            text += `SROI Ratio: ${sroiRatio.toFixed(2)}:1\n`;
+            text += `Total Investment: ${currency} ${investment.toLocaleString("en-US", { maximumFractionDigits: 2 })}\n`;
+            text += `Total Social Value (PV): ${currency} ${totalPV.toLocaleString("en-US", { maximumFractionDigits: 0 })}\n`;
+            text += `Net Social Value: ${currency} ${(totalPV - investment).toLocaleString("en-US", { maximumFractionDigits: 0 })}\n`;
+            text += `Evaluation Period: ${timeHorizon} years\n`;
+            text += `Discount Rate: ${document.getElementById("discountRate").value}%\n\n`;
+            text += `=====================================\n`;
+            text += `OUTCOMES ANALYSED\n`;
+            text += `=====================================\n\n`;
+            outcomeResults.forEach((o, idx) => {
+                text += `${idx + 1}. ${o.name}\n`;
+                text += `   Beneficiaries: ${o.beneficiaries}\n`;
+                text += `   Proxy Value: ${currency} ${o.proxyValue.toLocaleString("en-US", { maximumFractionDigits: 2 })}\n`;
+                text += `   Annual Value: ${currency} ${o.annualValue.toLocaleString("en-US", { maximumFractionDigits: 0 })}\n`;
+                text += `   Present Value: ${currency} ${o.pv.toLocaleString("en-US", { maximumFractionDigits: 0 })}\n`;
+                text += `   Adjustments: Deadweight ${o.deadweight}%, Attribution ${o.attribution}%, Displacement ${o.displacement}%, Duration ${o.duration} yrs, Drop-off ${o.dropoff}%/yr\n\n`;
+            });
+            text += `=====================================\n`;
+            text += `INTERPRETATION\n`;
+            text += `=====================================\n\n`;
+            text += `For every ${currency} 1 invested, this programme generated ${currency} ${sroiRatio.toFixed(2)} in social value.\n`;
+            text += `Typical SROI ratios range from 1.5:1 to 15:1. Most rigorous studies find 3:1–8:1.\n\n`;
+            text += `Report generated by SROI Pro Calculator\n`;
+
+            const blob = new Blob([text], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `SROI_Report_${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert("Report downloaded as text file");
+        }
+
+        function exportAsCSV() {
+            const timeHorizon = parseInt(document.getElementById("timeHorizon").value);
+            const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
+            const investment = parseFloat(document.getElementById("investment").value) || 0;
+
+            let totalPV = 0;
+            const outcomeResults = outcomes.map(o => {
+                const annualValue = calculateOutcomeValue(o);
+                let pv = 0;
+                for (let year = 1; year <= Math.min(o.duration, timeHorizon); year++) {
+                    const dropoffFactor = Math.pow(1 + (o.dropoff / 100), year - 1);
+                    const discountFactor = 1 / Math.pow(1 + discountRate, year - 1);
+                    pv += annualValue * dropoffFactor * discountFactor;
+                }
+                totalPV += pv;
+                return { name: o.name || "Unnamed", beneficiaries: o.beneficiaries, proxyValue: o.customProxy || o.proxyValue, annualValue, pv, deadweight: o.deadweight, attribution: o.attribution, displacement: o.displacement };
+            });
+
+            const sroiRatio = investment > 0 ? totalPV / investment : 0;
+
+            let csv = "Outcome,Beneficiaries,Proxy Value,Annual Value,Present Value,Deadweight %,Attribution %,Displacement %\n";
+            outcomeResults.forEach(o => {
+                csv += `"${o.name}",${o.beneficiaries},${o.proxyValue.toFixed(2)},${o.annualValue.toFixed(2)},${o.pv.toFixed(2)},${o.deadweight},${o.attribution},${o.displacement}\n`;
+            });
+            csv += `\nSROI Summary\n`;
+            csv += `SROI Ratio,${sroiRatio.toFixed(2)}:1\n`;
+            csv += `Total Investment,${investment.toFixed(2)}\n`;
+            csv += `Total Social Value (PV),${totalPV.toFixed(2)}\n`;
+
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `SROI_Data_${Date.now()}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            alert("Data exported as CSV");
+        }
+
+        function startOver() {
+            document.getElementById("setupForm").reset();
+            outcomes = [];
+            goToStep(1);
+        }
+
+        // INITIALIZATION
+        document.addEventListener("DOMContentLoaded", () => {
+            updateDiscountGuidance();
+        });
+    </script>
+</body>
+</html>
