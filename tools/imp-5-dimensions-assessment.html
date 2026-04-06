@@ -1,0 +1,2067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IMP 5-Dimensions Impact Assessment | Useful AF</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --accent: #2563eb;
+    --accent-light: #eff6ff;
+    --green: #059669;
+    --green-light: #ecfdf5;
+    --amber: #d97706;
+    --amber-light: #fffbeb;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --border: #e5e7eb;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, #1a3a5c 0%, #1e40af 100%);
+    color: white;
+    padding: 28px 32px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -80px;
+    width: 300px; height: 300px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 50%;
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 14px; opacity: 0.85; max-width: 600px; }
+  .header-meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .header-meta span {
+    font-size: 12px;
+    opacity: 0.75;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* Layout */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* Progress Nav */
+  .progress-nav {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .progress-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  .prog-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+    cursor: pointer;
+    position: relative;
+  }
+  .prog-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 60%;
+    right: -40%;
+    height: 2px;
+    background: var(--gray-200);
+    z-index: 0;
+  }
+  .prog-step.completed:not(:last-child)::after { background: var(--green); }
+  .prog-step.active:not(:last-child)::after { background: var(--gray-200); }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    background: var(--gray-200);
+    color: var(--gray-400);
+    position: relative; z-index: 1;
+    transition: all 0.2s;
+    margin-bottom: 6px;
+  }
+  .prog-step.active .step-num {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 0 4px rgba(37,99,235,0.15);
+  }
+  .prog-step.completed .step-num {
+    background: var(--green);
+    color: white;
+  }
+  .step-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gray-400);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .prog-step.active .step-label { color: var(--accent); }
+  .prog-step.completed .step-label { color: var(--green); }
+
+  /* Cards */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--gray-600);
+    margin-bottom: 20px;
+  }
+
+  /* Dimension pills */
+  .dim-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .dim-who { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+  .dim-what { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+  .dim-howmuch { background: #fdf4ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+  .dim-contribution { background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }
+  .dim-risk { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+  /* Section panel */
+  .section-panel {
+    display: none;
+  }
+  .section-panel.active {
+    display: block;
+  }
+
+  /* Dimension header */
+  .dim-header {
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .dim-header.who { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-left: 4px solid #3b82f6; }
+  .dim-header.what { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-left: 4px solid #22c55e; }
+  .dim-header.howmuch { background: linear-gradient(135deg, #fdf4ff, #f3e8ff); border-left: 4px solid #a855f7; }
+  .dim-header.contribution { background: linear-gradient(135deg, #fff7ed, #ffedd5); border-left: 4px solid #f97316; }
+  .dim-header.risk { background: linear-gradient(135deg, #fef2f2, #fee2e2); border-left: 4px solid #ef4444; }
+  .dim-icon { font-size: 32px; }
+  .dim-info h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .dim-info p { font-size: 13px; color: var(--gray-700); max-width: 600px; }
+  .imp-ref { font-size: 11px; color: var(--gray-400); margin-top: 6px; font-style: italic; }
+
+  /* Form elements */
+  .form-group {
+    margin-bottom: 18px;
+  }
+  .form-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 6px;
+  }
+  .form-label .required { color: var(--red); margin-left: 2px; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--gray-800);
+    background: white;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+  .form-textarea { resize: vertical; min-height: 80px; }
+  .form-hint {
+    font-size: 11px;
+    color: var(--gray-400);
+    margin-top: 4px;
+  }
+
+  /* Radio/checkbox groups */
+  .option-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .option-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .option-item:hover { border-color: var(--accent); background: var(--accent-light); }
+  .option-item.selected { border-color: var(--accent); background: var(--accent-light); }
+  .option-item input { margin-top: 2px; accent-color: var(--accent); }
+  .option-label { font-size: 13px; font-weight: 500; color: var(--gray-800); }
+  .option-desc { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+  /* Evidence level selector */
+  .evidence-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .ev-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 2px solid var(--gray-200);
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--gray-600);
+  }
+  .ev-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .ev-btn.active { border-color: var(--accent); background: var(--accent); color: white; }
+  .ev-btn.level-basic.active { border-color: #f59e0b; background: #f59e0b; }
+  .ev-btn.level-intermediate.active { border-color: #3b82f6; background: #3b82f6; }
+  .ev-btn.level-advanced.active { border-color: #059669; background: #059669; }
+
+  /* IMP Data Matrix */
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .matrix-table th {
+    background: var(--primary);
+    color: white;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .matrix-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--gray-100);
+    vertical-align: top;
+  }
+  .matrix-table tr:hover td { background: var(--gray-50); }
+  .matrix-table tr:nth-child(even) td { background: #fafafa; }
+  .matrix-table tr:nth-child(even):hover td { background: var(--gray-100); }
+
+  /* Score display */
+  .score-ring {
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    font-weight: 700;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .score-ring .score-num { font-size: 24px; line-height: 1; }
+  .score-ring .score-label { font-size: 10px; opacity: 0.8; text-transform: uppercase; }
+  .score-ring.excellent { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #15803d; border: 3px solid #22c55e; }
+  .score-ring.good { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1d4ed8; border: 3px solid #3b82f6; }
+  .score-ring.developing { background: linear-gradient(135deg, #fff7ed, #fed7aa); color: #c2410c; border: 3px solid #f97316; }
+  .score-ring.early { background: linear-gradient(135deg, #fef2f2, #fecaca); color: #b91c1c; border: 3px solid #ef4444; }
+
+  /* Dimension score cards */
+  .dim-scores {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .dim-score-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .dim-score-card .dim-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); margin-bottom: 8px; }
+  .dim-score-card .score-val { font-size: 28px; font-weight: 700; }
+  .dim-score-card .score-max { font-size: 12px; color: var(--gray-400); }
+  .dim-score-card .score-bar-wrap { background: var(--gray-100); border-radius: 4px; height: 6px; margin-top: 8px; overflow: hidden; }
+  .dim-score-card .score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+
+  /* Output profile */
+  .profile-section {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .profile-section h3 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+
+  /* Recommendation box */
+  .rec-box {
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .rec-box.priority { background: #fef2f2; border-left: 3px solid var(--red); }
+  .rec-box.action { background: #fff7ed; border-left: 3px solid var(--amber); }
+  .rec-box.strength { background: var(--green-light); border-left: 3px solid var(--green); }
+  .rec-box .rec-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .rec-box .rec-content { font-size: 12px; color: var(--gray-700); }
+  .rec-box .rec-content strong { display: block; margin-bottom: 2px; font-size: 13px; color: var(--gray-900); }
+
+  /* IRIS+ mapping */
+  .iris-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .iris-card {
+    background: var(--accent-light);
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  .iris-card .iris-id { font-size: 10px; font-weight: 700; color: var(--accent); font-family: monospace; margin-bottom: 3px; }
+  .iris-card .iris-name { font-size: 12px; font-weight: 600; color: var(--gray-800); }
+  .iris-card .iris-desc { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+  /* Nav buttons */
+  .nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: none;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #1d4ed8; }
+  .btn-secondary { background: white; color: var(--gray-700); border: 1px solid var(--gray-300); }
+  .btn-secondary:hover { background: var(--gray-50); border-color: var(--gray-400); }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #047857; }
+  .btn-danger { background: white; color: var(--red); border: 1px solid #fca5a5; }
+  .btn-danger:hover { background: #fef2f2; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Grid helpers */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Tooltip */
+  .tooltip-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tooltip-icon {
+    width: 16px; height: 16px;
+    background: var(--gray-200);
+    color: var(--gray-600);
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: help;
+  }
+  .tooltip-box {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gray-900);
+    color: white;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    width: 220px;
+    z-index: 100;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .tooltip-wrap:hover .tooltip-box { display: block; }
+
+  /* Callout */
+  .callout {
+    background: var(--accent-light);
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #1e40af;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .callout-icon { font-size: 16px; flex-shrink: 0; }
+
+  /* Claude prompt box */
+  .claude-prompt {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    border-radius: 10px;
+    padding: 20px;
+    color: #e2e8f0;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    position: relative;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .claude-prompt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .claude-prompt-title {
+    font-family: -apple-system, sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Print */
+  @media print {
+    .nav-buttons, .progress-nav, .no-print { display: none !important; }
+    .section-panel { display: block !important; }
+    .card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+    body { background: white; }
+  }
+
+  /* Tag */
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag-blue { background: #dbeafe; color: #1d4ed8; }
+  .tag-green { background: #dcfce7; color: #15803d; }
+  .tag-orange { background: #ffedd5; color: #c2410c; }
+  .tag-red { background: #fee2e2; color: #b91c1c; }
+  .tag-purple { background: #f3e8ff; color: #7e22ce; }
+
+  /* Info table */
+  .info-table { width: 100%; border-collapse: collapse; }
+  .info-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); font-size: 13px; }
+  .info-table td:first-child { font-weight: 600; color: var(--gray-600); width: 38%; }
+
+  .section-divider { height: 1px; background: var(--gray-100); margin: 20px 0; }
+
+  .integrity-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid;
+  }
+  .integrity-a { background: #dcfce7; color: #15803d; border-color: #86efac; }
+  .integrity-b { background: #dbeafe; color: #1d4ed8; border-color: #93c5fd; }
+  .integrity-c { background: #fff7ed; color: #c2410c; border-color: #fdba74; }
+  .integrity-d { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+
+  .summary-top { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+  .summary-top .score-ring { width: 110px; height: 110px; }
+  .summary-top .score-ring .score-num { font-size: 30px; }
+
+  .action-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .action-table th { background: var(--gray-700); color: white; padding: 8px 10px; text-align: left; }
+  .action-table td { padding: 8px 10px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+  .action-table tr:hover td { background: var(--gray-50); }
+
+  .copy-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #94a3b8;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="max-width:1100px;margin:0 auto;">
+    <span class="header-badge">🌍 Useful AF — Impact Management Tools</span>
+    <h1>IMP 5-Dimensions Impact Assessment</h1>
+    <p>Generate a structured Impact Management Profile aligned with the Impact Management Project (IMP) framework — the global standard used by 2,000+ impact investors, DFIs, and impact managers.</p>
+    <div class="header-meta">
+      <span>📐 IMP Framework v2.0 (2021)</span>
+      <span>🔗 IRIS+ Metric Alignment</span>
+      <span>📊 Impact Management Profile Output</span>
+      <span>🤖 Claude Analysis Prompt Included</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Progress Navigation -->
+  <div class="progress-nav no-print">
+    <div class="progress-steps">
+      <div class="prog-step" id="nav-0" onclick="goToSection(0)">
+        <div class="step-num">1</div>
+        <div class="step-label">Context</div>
+      </div>
+      <div class="prog-step" id="nav-1" onclick="goToSection(1)">
+        <div class="step-num">2</div>
+        <div class="step-label">WHO</div>
+      </div>
+      <div class="prog-step" id="nav-2" onclick="goToSection(2)">
+        <div class="step-num">3</div>
+        <div class="step-label">WHAT</div>
+      </div>
+      <div class="prog-step" id="nav-3" onclick="goToSection(3)">
+        <div class="step-num">4</div>
+        <div class="step-label">HOW MUCH</div>
+      </div>
+      <div class="prog-step" id="nav-4" onclick="goToSection(4)">
+        <div class="step-num">5</div>
+        <div class="step-label">CONTRIBUTION</div>
+      </div>
+      <div class="prog-step" id="nav-5" onclick="goToSection(5)">
+        <div class="step-num">6</div>
+        <div class="step-label">RISK</div>
+      </div>
+      <div class="prog-step" id="nav-6" onclick="goToSection(6)">
+        <div class="step-num">7</div>
+        <div class="step-label">Profile</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 0: CONTEXT ======= -->
+  <div class="section-panel active" id="section-0">
+    <div class="card">
+      <div class="card-title">🏢 Organisation & Initiative Context</div>
+      <div class="card-subtitle">Establish the scope of this IMP assessment. This information anchors all five dimension analyses.</div>
+
+      <div class="callout">
+        <span class="callout-icon">💡</span>
+        <span><strong>About the IMP Framework:</strong> The Impact Management Project (IMP) was convened in 2016 and engaged 2,000+ impact practitioners to establish a consensus framework. It defines five dimensions that all impactful activities share: WHO is affected, WHAT outcomes occur, HOW MUCH change happens, the CONTRIBUTION this represents, and RISK of the outcomes not occurring as expected. The framework is endorsed by GIIN, GRI, SASB, OECD and used by major DFIs including IFC, CDC, FMO and DEG.</span>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Organisation Name <span class="required">*</span></label>
+          <input type="text" class="form-input" id="org-name" placeholder="e.g. Solar Sisters Africa Ltd">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Initiative / Programme Name <span class="required">*</span></label>
+          <input type="text" class="form-input" id="initiative-name" placeholder="e.g. Rural Solar Access Programme, Kenya">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Sector / Thematic Area</label>
+          <select class="form-select" id="sector">
+            <option value="">Select sector...</option>
+            <option value="clean-energy">Clean Energy</option>
+            <option value="financial-inclusion">Financial Inclusion / Fintech</option>
+            <option value="agri-food">Agriculture / Food Systems</option>
+            <option value="health">Health</option>
+            <option value="education">Education</option>
+            <option value="water-sanitation">Water & Sanitation</option>
+            <option value="housing">Affordable Housing</option>
+            <option value="employment">Employment & Livelihoods</option>
+            <option value="gender">Gender Equality</option>
+            <option value="environment">Environment & Biodiversity</option>
+            <option value="climate">Climate / Resilience</option>
+            <option value="digital">Digital Inclusion</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Geography</label>
+          <input type="text" class="form-input" id="geography" placeholder="e.g. Sub-Saharan Africa, South Asia, Global">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Organisation Type</label>
+          <select class="form-select" id="org-type">
+            <option value="">Select type...</option>
+            <option value="social-enterprise">Social Enterprise</option>
+            <option value="ngo">NGO / INGO</option>
+            <option value="impact-fund">Impact Fund / Investment Vehicle</option>
+            <option value="dfi">DFI / Development Finance Institution</option>
+            <option value="corporate">Corporate / CSR Programme</option>
+            <option value="government">Government / Public Sector</option>
+            <option value="foundation">Foundation / Philanthropy</option>
+            <option value="coop">Cooperative / Community Organisation</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Assessment Purpose</label>
+          <select class="form-select" id="purpose">
+            <option value="">Select purpose...</option>
+            <option value="investor-reporting">Investor / Funder Reporting</option>
+            <option value="due-diligence">Investment Due Diligence</option>
+            <option value="strategy">Strategy / Programme Design</option>
+            <option value="learning">Internal Learning & Improvement</option>
+            <option value="grant-application">Grant Application</option>
+            <option value="impact-report">Annual Impact Report</option>
+            <option value="ifc-ps">IFC Performance Standards Alignment</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Brief description of what the initiative does</label>
+        <textarea class="form-textarea" id="initiative-desc" rows="3" placeholder="Describe the core activities and intended outcomes in 2-3 sentences..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">SDG Alignment (select all that apply)</label>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px;margin-top:6px;" id="sdg-select">
+          <!-- SDGs generated by JS -->
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <div></div>
+        <button class="btn btn-primary" onclick="goToSection(1)">Begin Assessment: WHO Dimension →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 1: WHO ======= -->
+  <div class="section-panel" id="section-1">
+    <div class="card">
+      <div class="dim-header who">
+        <div class="dim-icon">👥</div>
+        <div class="dim-info">
+          <h2>WHO experiences the outcome?</h2>
+          <p>Identify the people (or planet) affected by your activities, their level of underservice, and the depth of your relationship with them. IMP distinguishes between primary stakeholders (direct beneficiaries), secondary stakeholders (indirect), and the natural environment.</p>
+          <div class="imp-ref">IMP Dimension 1 | IRIS+ Categories: Stakeholder Engagement, Beneficiary Characteristics</div>
+        </div>
+      </div>
+
+      <!-- WHO: Primary stakeholders -->
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Primary Stakeholder Group(s) <span class="required">*</span>
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">The individuals or communities who directly experience your intended outcomes. IMP requires you to specify who is affected at the level of individual people, not aggregated populations.</div>
+          </div>
+        </label>
+        <input type="text" class="form-input" id="who-primary" placeholder="e.g. Rural households without grid electricity in Kenya (BOP, HH income <$5/day)">
+      </div>
+
+      <!-- Underservice level -->
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Level of underservice / vulnerability
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">IMP's ABC analysis distinguishes between "Acting to avoid harm" (A), "Benefiting stakeholders" (B), and "Contributing to solutions for underserved" (C). Higher underservice strengthens the case for additionality.</div>
+          </div>
+        </label>
+        <div class="option-group" id="who-underservice">
+          <label class="option-item">
+            <input type="radio" name="who-underservice" value="high">
+            <div>
+              <div class="option-label">🔴 Highly underserved — no viable alternatives exist</div>
+              <div class="option-desc">Target group has little/no access to this outcome through markets, government, or NGOs. BOP populations, remote geographies, discriminated groups.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="who-underservice" value="moderate">
+            <div>
+              <div class="option-label">🟡 Moderately underserved — limited or poor-quality alternatives</div>
+              <div class="option-desc">Some access exists but is costly, low quality, or requires significant barriers to access. Improving access rather than creating it.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="who-underservice" value="low">
+            <div>
+              <div class="option-label">🟢 Served population — alternatives exist; this improves quality/affordability</div>
+              <div class="option-desc">Target group has reasonable access; initiative improves experience, cost, or quality. Meaningful but lower social need.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Geographic context of stakeholders</label>
+          <select class="form-select" id="who-geo-context">
+            <option value="">Select...</option>
+            <option value="ldc">LDC (Least Developed Country)</option>
+            <option value="lmic">LMIC (Lower-Middle Income Country)</option>
+            <option value="umic">UMIC (Upper-Middle Income Country)</option>
+            <option value="hic">High-Income Country</option>
+            <option value="fragile">Fragile / Conflict-Affected State</option>
+            <option value="mixed">Mixed / Multiple Contexts</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            <div class="tooltip-wrap">
+              Stakeholder engagement level
+              <span class="tooltip-icon">?</span>
+              <div class="tooltip-box">IMP emphasises stakeholder engagement as critical to understanding whether outcomes are truly experienced positively. Higher engagement = stronger impact evidence.</div>
+            </div>
+          </label>
+          <select class="form-select" id="who-engagement">
+            <option value="">Select...</option>
+            <option value="none">No formal engagement — estimated based on activity data</option>
+            <option value="surveys">Surveys / Questionnaires (periodic)</option>
+            <option value="focus-groups">Focus Groups / Qualitative Research</option>
+            <option value="longitudinal">Longitudinal Tracking (same individuals over time)</option>
+            <option value="co-design">Co-design / Participatory approaches</option>
+            <option value="continuous">Continuous Feedback Loops</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Secondary or indirect stakeholders affected</label>
+        <input type="text" class="form-input" id="who-secondary" placeholder="e.g. Children of primary beneficiaries (improved study time), local economy (income effects)">
+        <div class="form-hint">Consider households, communities, workers in supply chains, local ecosystems, future generations.</div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Evidence that this is the right target group</label>
+        <select class="form-select" id="who-evidence">
+          <option value="">Select evidence level...</option>
+          <option value="none">No formal evidence — assumed based on programme design</option>
+          <option value="secondary">Secondary research / needs assessments by others</option>
+          <option value="baseline">Baseline survey of target population (own data)</option>
+          <option value="formative">Formative research conducted with target group</option>
+          <option value="co-design">Co-designed with beneficiaries; ongoing consultation</option>
+        </select>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection(0)">← Back</button>
+        <button class="btn btn-primary" onclick="goToSection(2)">Next: WHAT Dimension →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 2: WHAT ======= -->
+  <div class="section-panel" id="section-2">
+    <div class="card">
+      <div class="dim-header what">
+        <div class="dim-icon">🎯</div>
+        <div class="dim-info">
+          <h2>WHAT outcomes occur for stakeholders?</h2>
+          <p>Specify the outcomes experienced by stakeholders — the changes in their lives or wellbeing — distinguishing between outcomes (changes people experience) and outputs (activities you deliver). IMP classifies outcomes by importance to stakeholders and their position in the impact value chain.</p>
+          <div class="imp-ref">IMP Dimension 2 | IRIS+ Categories: Product / Service Quality, Outcome Type</div>
+        </div>
+      </div>
+
+      <!-- Primary outcome -->
+      <div class="form-group">
+        <label class="form-label">Primary outcome (the core change you intend to create) <span class="required">*</span></label>
+        <input type="text" class="form-input" id="what-primary-outcome" placeholder="e.g. Increased access to reliable electricity for cooking and lighting">
+        <div class="form-hint">An outcome is a change in the condition, behaviour, attitude, knowledge or status of stakeholders — NOT an activity or output.</div>
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">
+            <div class="tooltip-wrap">
+              Outcome type
+              <span class="tooltip-icon">?</span>
+              <div class="tooltip-box">IMP classifies outcomes as positive or negative, and intended or unintended. Most programmes primarily track positive/intended but IMP requires disclosure of potential negative outcomes (harm).</div>
+            </div>
+          </label>
+          <select class="form-select" id="what-outcome-type">
+            <option value="">Select...</option>
+            <option value="positive-intended">Positive / Intended (primary focus)</option>
+            <option value="positive-unintended">Positive / Unintended (co-benefit)</option>
+            <option value="negative-intended">Negative / Intended (necessary harm, e.g. deforestation to build clinic)</option>
+            <option value="negative-unintended">Negative / Unintended (side effect — must disclose)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">
+            <div class="tooltip-wrap">
+              Outcome importance to stakeholders
+              <span class="tooltip-icon">?</span>
+              <div class="tooltip-box">Importance is rated from the stakeholder's perspective, not the programme's. "Critical" means this outcome has transformative impact on their life situation. IMP requires evidence of stakeholder-defined importance.</div>
+            </div>
+          </label>
+          <select class="form-select" id="what-importance">
+            <option value="">Select...</option>
+            <option value="critical">Critical — transformative for this population</option>
+            <option value="high">High — significantly improves wellbeing</option>
+            <option value="moderate">Moderate — meaningful improvement</option>
+            <option value="low">Low — marginal or supplementary benefit</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Outcome chain position -->
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Position in the impact value chain
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">IMP aligns with the "impact chain" logic: Inputs → Activities → Outputs → Outcomes → Impact. Measuring outcomes (vs. outputs) is essential for IMP alignment. "Impact" = the portion of outcome attributable to your work after accounting for what would have happened anyway.</div>
+          </div>
+        </label>
+        <div class="option-group" id="what-chain-pos">
+          <label class="option-item">
+            <input type="radio" name="what-chain" value="output">
+            <div>
+              <div class="option-label">Output level — We measure what we deliver (activities, products, services)</div>
+              <div class="option-desc">e.g. "Number of solar kits distributed." Outputs are necessary but NOT outcomes.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="what-chain" value="outcome">
+            <div>
+              <div class="option-label">Outcome level — We measure change in stakeholder conditions</div>
+              <div class="option-desc">e.g. "% of households with 12+ hours reliable electricity per day." Requires direct measurement of beneficiary experience.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="what-chain" value="impact">
+            <div>
+              <div class="option-label">Impact level — We attribute the change to our specific contribution</div>
+              <div class="option-desc">e.g. "Reduction in kerosene use attributable to our programme after controlling for grid expansion." Requires counterfactual analysis.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <!-- Secondary outcomes -->
+      <div class="form-group">
+        <label class="form-label">Secondary outcomes (list up to 3 co-benefits or indirect outcomes)</label>
+        <textarea class="form-textarea" id="what-secondary" rows="3" placeholder="e.g. 1. Reduced indoor air pollution (health co-benefit)&#10;2. Time savings for women previously collecting firewood&#10;3. Reduced household energy expenditure (economic co-benefit)"></textarea>
+      </div>
+
+      <!-- Negative / harm disclosure -->
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Potential negative outcomes or harms
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">IMP explicitly requires disclosure of negative outcomes — both to stakeholders and to the environment. This includes displacement effects (displacing workers in fossil fuel sector), cultural disruption, privacy risks, debt burden, or environmental impacts from production/disposal.</div>
+          </div>
+        </label>
+        <textarea class="form-textarea" id="what-negative" rows="2" placeholder="e.g. E-waste risk from end-of-life battery disposal; potential displacement of kerosene traders..."></textarea>
+        <div class="form-hint">IMP Best Practice: Disclose potential negative outcomes even if the net impact is positive. Omitting this reduces assessment credibility.</div>
+      </div>
+
+      <!-- IRIS+ alignment -->
+      <div class="form-group">
+        <label class="form-label">Primary IRIS+ metric category (select closest match)</label>
+        <select class="form-select" id="what-iris">
+          <option value="">Select IRIS+ category...</option>
+          <optgroup label="Social Outcomes">
+            <option value="FS">Financial Services Sector (FS) — financial inclusion, access to capital</option>
+            <option value="HE">Health (HE) — health access, disease prevention, wellbeing</option>
+            <option value="ED">Education (ED) — access to quality education</option>
+            <option value="EW">Employment / Workforce (EW) — jobs, income, skills</option>
+            <option value="FA">Food & Agriculture (FA) — food security, smallholder income</option>
+            <option value="HO">Housing (HO) — affordable, safe housing</option>
+            <option value="WS">Water & Sanitation (WS) — WASH outcomes</option>
+          </optgroup>
+          <optgroup label="Environmental Outcomes">
+            <option value="CE">Clean Energy (CE) — energy access, renewable generation</option>
+            <option value="CC">Climate (CC) — GHG reduction, climate resilience</option>
+            <option value="LA">Land Use (LA) — biodiversity, sustainable land use</option>
+            <option value="WM">Waste Management (WM) — circularity, waste reduction</option>
+          </optgroup>
+          <optgroup label="Cross-Cutting">
+            <option value="DI">Diversity & Inclusion (DI) — gender, disability, ethnicity</option>
+            <option value="CG">Corporate Governance (CG) — transparency, accountability</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection(1)">← Back: WHO</button>
+        <button class="btn btn-primary" onclick="goToSection(3)">Next: HOW MUCH Dimension →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 3: HOW MUCH ======= -->
+  <div class="section-panel" id="section-3">
+    <div class="card">
+      <div class="dim-header howmuch">
+        <div class="dim-icon">📊</div>
+        <div class="dim-info">
+          <h2>HOW MUCH change occurs?</h2>
+          <p>Quantify the scale, depth, and duration of outcomes. IMP requires three sub-elements: (1) Scale — how many people experience the outcome; (2) Depth — how significant is the change for each person; and (3) Duration — how long does the change last. Source: IMP "How Much" guidance, GIIN IRIS+ core metrics.</p>
+          <div class="imp-ref">IMP Dimension 3 | Sub-elements: Scale, Depth, Duration</div>
+        </div>
+      </div>
+
+      <!-- Scale -->
+      <div class="card-title" style="font-size:14px;margin-bottom:12px;">📏 Scale — How many stakeholders experience the outcome?</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Current reach (current year) <span class="required">*</span></label>
+          <input type="number" class="form-input" id="scale-current" placeholder="e.g. 12500" min="0">
+          <div class="form-hint">Number of people (or hectares/tonnes for environmental) currently experiencing the outcome.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target reach (5 years)</label>
+          <input type="number" class="form-input" id="scale-target" placeholder="e.g. 150000" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            How is reach counted?
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">IMP recommends counting unique individuals rather than "beneficiary-events" (the same person counted multiple times). State clearly whether you count individuals or interactions.</div>
+          </div>
+        </label>
+        <select class="form-select" id="scale-counting">
+          <option value="">Select methodology...</option>
+          <option value="unique">Unique individuals (unduplicated count)</option>
+          <option value="households">Households (typically multiply by 4.5 HH size for individual estimate)</option>
+          <option value="interactions">Beneficiary-events / interactions (may overcount individuals)</option>
+          <option value="customers">Paying customers (proxy for those receiving the service)</option>
+          <option value="indirect">Indirect/estimated reach based on proxy data</option>
+        </select>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- Depth -->
+      <div class="card-title" style="font-size:14px;margin-bottom:12px;">🔬 Depth — How significant is the change?</div>
+      <div class="form-group">
+        <label class="form-label">Primary depth metric used <span class="required">*</span></label>
+        <input type="text" class="form-input" id="depth-metric" placeholder="e.g. % increase in daily energy access (hours/day); Income change (USD/year)">
+        <div class="form-hint">Specify the unit of measurement. IMP recommends measuring change from baseline rather than absolute end-state.</div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Baseline value (pre-intervention)</label>
+          <input type="text" class="form-input" id="depth-baseline" placeholder="e.g. 0-2 hrs electricity/day">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target / achieved value (post-intervention)</label>
+          <input type="text" class="form-input" id="depth-achieved" placeholder="e.g. 10-14 hrs electricity/day">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Depth assessment
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">IMP defines "transformative" depth as outcomes that substantially change the life trajectory of beneficiaries. "Incremental" improvements are meaningful but lower on the depth scale.</div>
+          </div>
+        </label>
+        <div class="option-group">
+          <label class="option-item">
+            <input type="radio" name="depth-level" value="transformative">
+            <div>
+              <div class="option-label">🔴 Transformative — fundamentally changes life circumstances</div>
+              <div class="option-desc">e.g. Moving from energy poverty to reliable electricity; lift out of extreme poverty; cure of disease.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="depth-level" value="significant">
+            <div>
+              <div class="option-label">🟠 Significant — meaningfully improves conditions</div>
+              <div class="option-desc">e.g. Doubling farm income; 50% reduction in disease burden; meaningful improvement in educational attainment.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="depth-level" value="moderate">
+            <div>
+              <div class="option-label">🟡 Moderate — noticeable improvement in wellbeing</div>
+              <div class="option-desc">e.g. 10-30% income gain; reduced but not eliminated access barriers; marginal health improvement.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="depth-level" value="incremental">
+            <div>
+              <div class="option-label">🟢 Incremental — small, meaningful improvement</div>
+              <div class="option-desc">e.g. <10% improvement; convenience / time savings; quality upgrade.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- Duration -->
+      <div class="card-title" style="font-size:14px;margin-bottom:12px;">⏱ Duration — How long does the change last?</div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Expected duration of the outcome</label>
+          <select class="form-select" id="duration-expected">
+            <option value="">Select...</option>
+            <option value="short">&lt;1 year — short-term / transitional</option>
+            <option value="medium">1-3 years — medium-term</option>
+            <option value="long">3-10 years — long-term sustained change</option>
+            <option value="permanent">10+ years / permanent — structural change</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Is the outcome maintained after your involvement ends?</label>
+          <select class="form-select" id="duration-post">
+            <option value="">Select...</option>
+            <option value="depends-entirely">No — outcome disappears if programme stops (full dependency)</option>
+            <option value="partial">Partially — some residual benefit after programme ends</option>
+            <option value="sustained">Yes — outcome is embedded; beneficiaries maintain it</option>
+            <option value="systemic">Yes — systemic / structural change, independent of programme</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection(2)">← Back: WHAT</button>
+        <button class="btn btn-primary" onclick="goToSection(4)">Next: CONTRIBUTION Dimension →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 4: CONTRIBUTION ======= -->
+  <div class="section-panel" id="section-4">
+    <div class="card">
+      <div class="dim-header contribution">
+        <div class="dim-icon">⚡</div>
+        <div class="dim-info">
+          <h2>What is your CONTRIBUTION to the outcome?</h2>
+          <p>Assess what would have happened anyway (counterfactual), and what your specific role is in causing the outcome. IMP's contribution analysis draws on the OECD DAC criterion of "additionality" and distinguishes between direct causation, facilitation, and indirect influence. This dimension requires the most honest self-assessment.</p>
+          <div class="imp-ref">IMP Dimension 4 | Related: OECD DAC Additionality, SROI Deadweight & Attribution</div>
+        </div>
+      </div>
+
+      <!-- Counterfactual -->
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Counterfactual: What would have happened without your involvement? <span class="required">*</span>
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">The counterfactual is the single most important factor in IMP's contribution analysis. It asks: "Would this outcome have occurred anyway?" Honest counterfactual assessment distinguishes genuine impact from activity that would have happened regardless. Sources for estimating counterfactual: government programmes, competitor analysis, control groups, historical trend data.</div>
+          </div>
+        </label>
+        <textarea class="form-textarea" id="contrib-counterfactual" rows="3" placeholder="e.g. Without this programme, households would have continued relying on kerosene lamps (grid rollout planned but 5-8 years away in these rural areas). Government electrification programme covers urban areas only. Off-grid solar market is emerging but premium pricing excludes BOP households."></textarea>
+      </div>
+
+      <!-- Deadweight -->
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Estimated deadweight (what % of outcome would have occurred anyway?)
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">Deadweight is the portion of the outcome that would have happened regardless of your activities. SROI standard requires deadweight estimation; IMP requires it at a conceptual level. Typical ranges: 5-15% for highly underserved populations; 20-40% for moderately served; 40-70% for well-served markets. Source: SROI Network Standard 2012, updated 2019.</div>
+          </div>
+        </label>
+        <select class="form-select" id="contrib-deadweight">
+          <option value="">Estimate deadweight...</option>
+          <option value="0-5">0-5% — Outcome almost certain not to occur without us</option>
+          <option value="5-15">5-15% — Low deadweight; our role is clearly additive</option>
+          <option value="15-30">15-30% — Moderate deadweight; meaningful additionality</option>
+          <option value="30-50">30-50% — High deadweight; significant portions would have occurred anyway</option>
+          <option value="50+">50%+ — Very high deadweight; weak additionality</option>
+        </select>
+      </div>
+
+      <!-- Attribution -->
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Attribution — what portion of the outcome is attributable to your work vs. others?
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">Attribution distinguishes your organisation's contribution from the contributions of partners, government, beneficiaries' own efforts, and market forces. SROI recommends attribution analysis through consultation with stakeholders and partners. IMP requires disclosure of other actors' contributions.</div>
+          </div>
+        </label>
+        <select class="form-select" id="contrib-attribution">
+          <option value="">Select attribution level...</option>
+          <option value="sole">Sole actor — we are the only organisation producing this outcome</option>
+          <option value="primary">Primary actor — we drive 60-80% of the outcome; some partner contributions</option>
+          <option value="major">Major contributor — we drive 40-60% alongside significant partners</option>
+          <option value="one-of-many">One of many — our contribution is 20-40%; ecosystem-level change</option>
+          <option value="minor">Minor / enabling role — we facilitate others who drive the outcomes</option>
+        </select>
+      </div>
+
+      <!-- Evidence of contribution -->
+      <div class="form-group">
+        <label class="form-label">
+          <div class="tooltip-wrap">
+            Evidence of contribution claim
+            <span class="tooltip-icon">?</span>
+            <div class="tooltip-box">How do you know YOUR activities caused the outcome? IMP requires evidence appropriate to the claim. Robust evidence: RCT, difference-in-differences, matched comparison group. Moderate: pre-post with plausible attribution. Weak: activity-to-outcome correlation without counterfactual.</div>
+          </div>
+        </label>
+        <div class="option-group">
+          <label class="option-item">
+            <input type="radio" name="contrib-evidence" value="rct">
+            <div>
+              <div class="option-label">🟢 Experimental — RCT or quasi-experimental (matched control group, diff-in-diff)</div>
+              <div class="option-desc">Gold standard. Random or well-matched comparison group establishes causal link. Meets IFC Performance Standards Level 3.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="contrib-evidence" value="pre-post-control">
+            <div>
+              <div class="option-label">🔵 Comparison — Pre/post with non-equivalent comparison group</div>
+              <div class="option-desc">Moderate evidence. Comparison group exists but not randomly assigned. Reduces but doesn't eliminate selection bias.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="contrib-evidence" value="pre-post">
+            <div>
+              <div class="option-label">🟡 Pre/post — Baseline and endline measurement for same beneficiaries</div>
+              <div class="option-desc">Acceptable evidence. No control group. External factors cannot be fully ruled out. Most common in development practice.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="contrib-evidence" value="activity-output">
+            <div>
+              <div class="option-label">🟠 Output-based — We track activities/outputs and assume outcomes follow</div>
+              <div class="option-desc">Weak causal chain. Relies on theory of change logic without direct outcome measurement. Common at early stage.</div>
+            </div>
+          </label>
+          <label class="option-item">
+            <input type="radio" name="contrib-evidence" value="none">
+            <div>
+              <div class="option-label">🔴 Assumed — No formal evidence; contribution assumed from programme design</div>
+              <div class="option-desc">Early stage or resource-constrained programmes. High risk of undetected ineffectiveness or harm.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">What additional evidence is planned to strengthen contribution claim?</label>
+        <textarea class="form-textarea" id="contrib-planned" rows="2" placeholder="e.g. Planning RCT with JPAL partnership in Year 3; collecting comparison community data from 2025..."></textarea>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection(3)">← Back: HOW MUCH</button>
+        <button class="btn btn-primary" onclick="goToSection(5)">Next: RISK Dimension →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 5: RISK ======= -->
+  <div class="section-panel" id="section-5">
+    <div class="card">
+      <div class="dim-header risk">
+        <div class="dim-icon">⚠️</div>
+        <div class="dim-info">
+          <h2>What is the RISK to the impact?</h2>
+          <p>Assess the likelihood and consequences of outcomes not materialising as expected. IMP identifies six types of impact risk that apply across all initiatives. Disclosing risk does not weaken your case — it demonstrates credibility. Source: IMP "A Guide to Classifying the Impact of an Investment" (2019), adapted from IRIS+ risk taxonomy.</p>
+          <div class="imp-ref">IMP Dimension 5 | 6 Impact Risk Types | Source: IMP (2019)</div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <span class="callout-icon">📋</span>
+        <span>Rate each of the 6 IMP impact risk types below. For each, assess: How likely is this risk to materialise? (High/Medium/Low) and what mitigation is in place?</span>
+      </div>
+
+      <!-- Risk 1: Evidence Risk -->
+      <div class="card" style="margin-bottom:12px;padding:16px;border-left:3px solid #ef4444;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px;">1️⃣ Evidence Risk — Our evidence for the impact claim may be insufficient</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:10px;">The outcomes claimed may not actually occur or may be weaker than assumed. Evidence may be too thin to support the impact narrative. Source: IMP Risk Type 1.</div>
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Risk level</label>
+            <select class="form-select risk-level" id="risk1-level">
+              <option value="">Select...</option>
+              <option value="high">🔴 High — limited or no outcome evidence</option>
+              <option value="medium">🟡 Medium — some evidence, gaps remain</option>
+              <option value="low">🟢 Low — strong, replicated evidence base</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Mitigation in place</label>
+            <input type="text" class="form-input" id="risk1-mitigation" placeholder="e.g. Partnering with university for RCT evaluation...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 2: Execution Risk -->
+      <div class="card" style="margin-bottom:12px;padding:16px;border-left:3px solid #f97316;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px;">2️⃣ Execution Risk — Activities may not be delivered as planned</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:10px;">Even if the theory of change is correct, operational failures (staffing, technology, logistics, partners) may prevent outcomes. Source: IMP Risk Type 2.</div>
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Risk level</label>
+            <select class="form-select risk-level" id="risk2-level">
+              <option value="">Select...</option>
+              <option value="high">🔴 High — significant operational challenges</option>
+              <option value="medium">🟡 Medium — some operational risks</option>
+              <option value="low">🟢 Low — strong operational track record</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Mitigation in place</label>
+            <input type="text" class="form-input" id="risk2-mitigation" placeholder="e.g. Experienced management team; established supply chain...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 3: Alignment Risk -->
+      <div class="card" style="margin-bottom:12px;padding:16px;border-left:3px solid #eab308;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px;">3️⃣ Alignment Risk — Stakeholder expectations may not match what we deliver</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:10px;">The outcomes we claim to deliver may not match what stakeholders actually want or need. Our theory of change may be misaligned with beneficiary priorities. Source: IMP Risk Type 3.</div>
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Risk level</label>
+            <select class="form-select risk-level" id="risk3-level">
+              <option value="">Select...</option>
+              <option value="high">🔴 High — no formal stakeholder engagement</option>
+              <option value="medium">🟡 Medium — some but limited engagement</option>
+              <option value="low">🟢 Low — co-designed with beneficiaries; continuous feedback</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Mitigation in place</label>
+            <input type="text" class="form-input" id="risk3-mitigation" placeholder="e.g. Annual beneficiary survey; community advisory board...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 4: Efficiency Risk -->
+      <div class="card" style="margin-bottom:12px;padding:16px;border-left:3px solid #22c55e;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px;">4️⃣ Efficiency Risk — Better alternatives may exist for producing these outcomes</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:10px;">Another organisation or approach may produce the same or better outcomes at lower cost or risk. Resources may not be optimally allocated. Source: IMP Risk Type 4.</div>
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Risk level</label>
+            <select class="form-select risk-level" id="risk4-level">
+              <option value="">Select...</option>
+              <option value="high">🔴 High — no cost-effectiveness benchmarking done</option>
+              <option value="medium">🟡 Medium — some benchmarking; not comprehensive</option>
+              <option value="low">🟢 Low — compared to alternatives; strong cost-effectiveness case</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Mitigation in place</label>
+            <input type="text" class="form-input" id="risk4-mitigation" placeholder="e.g. Benchmarked against GiveWell and 3ie databases...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 5: Endurance Risk -->
+      <div class="card" style="margin-bottom:12px;padding:16px;border-left:3px solid #3b82f6;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px;">5️⃣ Endurance Risk — Positive outcomes may not last</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:10px;">Outcomes may fade after your programme ends. Dependency created rather than sustainable change. Drop-off rate may be higher than assumed. Source: IMP Risk Type 5. SROI Standard requires drop-off % per year.</div>
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Risk level</label>
+            <select class="form-select risk-level" id="risk5-level">
+              <option value="">Select...</option>
+              <option value="high">🔴 High — outcomes fully dependent on ongoing programme support</option>
+              <option value="medium">🟡 Medium — some dependency; partial sustainability</option>
+              <option value="low">🟢 Low — structural change; outcomes persist beyond programme</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Mitigation in place</label>
+            <input type="text" class="form-input" id="risk5-mitigation" placeholder="e.g. Local partner capacity-building; government handover plan...">
+          </div>
+        </div>
+      </div>
+
+      <!-- Risk 6: Unexpected Risk -->
+      <div class="card" style="margin-bottom:12px;padding:16px;border-left:3px solid #a855f7;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:4px;">6️⃣ Unexpected Impact Risk — Negative unintended consequences may occur</div>
+        <div style="font-size:11px;color:#6b7280;margin-bottom:10px;">Actions may cause harm to stakeholders, the environment, or third parties that wasn't anticipated. Displacement effects, market distortions, cultural harm, or exacerbating inequality. Source: IMP Risk Type 6.</div>
+        <div class="grid-2">
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Risk level</label>
+            <select class="form-select risk-level" id="risk6-level">
+              <option value="">Select...</option>
+              <option value="high">🔴 High — potential for significant unintended harm</option>
+              <option value="medium">🟡 Medium — some unintended effects identified; monitored</option>
+              <option value="low">🟢 Low — low harm potential; safeguards in place</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Mitigation in place</label>
+            <input type="text" class="form-input" id="risk6-mitigation" placeholder="e.g. Do No Harm framework; IFC Exclusion List compliance...">
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToSection(4)">← Back: CONTRIBUTION</button>
+        <button class="btn btn-green" onclick="generateProfile()">🎯 Generate Impact Management Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======= SECTION 6: PROFILE OUTPUT ======= -->
+  <div class="section-panel" id="section-6">
+    <div class="card" id="profile-output">
+      <div id="profile-content">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// =====================
+// STATE
+// =====================
+let currentSection = 0;
+const totalSections = 7;
+
+// SDG data
+const sdgs = [
+  {n:1, label:"No Poverty"}, {n:2, label:"Zero Hunger"}, {n:3, label:"Good Health"},
+  {n:4, label:"Quality Education"}, {n:5, label:"Gender Equality"}, {n:6, label:"Clean Water"},
+  {n:7, label:"Affordable Energy"}, {n:8, label:"Decent Work"}, {n:9, label:"Industry & Innovation"},
+  {n:10, label:"Reduced Inequalities"}, {n:11, label:"Sustainable Cities"}, {n:12, label:"Responsible Consumption"},
+  {n:13, label:"Climate Action"}, {n:14, label:"Life Below Water"}, {n:15, label:"Life on Land"},
+  {n:16, label:"Peace & Justice"}, {n:17, label:"Partnerships"}
+];
+
+const sdgColors = {
+  1:'#e5243b',2:'#dda63a',3:'#4c9f38',4:'#c5192d',5:'#ff3a21',6:'#26bde2',
+  7:'#fcc30b',8:'#a21942',9:'#fd6925',10:'#dd1367',11:'#fd9d24',12:'#bf8b2e',
+  13:'#3f7e44',14:'#0a97d9',15:'#56c02b',16:'#00689d',17:'#19486a'
+};
+
+// Init SDG selector
+function initSDGs() {
+  const container = document.getElementById('sdg-select');
+  sdgs.forEach(sdg => {
+    const div = document.createElement('div');
+    div.style.cssText = `display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:6px;cursor:pointer;border:1px solid #e5e7eb;font-size:12px;transition:all 0.15s;`;
+    div.innerHTML = `<input type="checkbox" id="sdg-${sdg.n}" value="${sdg.n}" style="accent-color:${sdgColors[sdg.n]}"><label for="sdg-${sdg.n}" style="cursor:pointer;display:flex;align-items:center;gap:5px;"><span style="display:inline-block;width:20px;height:20px;background:${sdgColors[sdg.n]};color:white;border-radius:3px;font-size:9px;font-weight:700;text-align:center;line-height:20px;flex-shrink:0;">${sdg.n}</span>${sdg.label}</label>`;
+    div.onclick = function(e) {
+      if (e.target.tagName !== 'INPUT') div.querySelector('input').click();
+      const checked = div.querySelector('input').checked;
+      div.style.background = checked ? `${sdgColors[sdg.n]}15` : '';
+      div.style.borderColor = checked ? sdgColors[sdg.n] : '#e5e7eb';
+    };
+    container.appendChild(div);
+  });
+}
+
+// Option item click handler
+document.addEventListener('click', function(e) {
+  const item = e.target.closest('.option-item');
+  if (!item) return;
+  const radio = item.querySelector('input[type="radio"]');
+  if (!radio) return;
+  const name = radio.getAttribute('name');
+  document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+    r.closest('.option-item').classList.remove('selected');
+  });
+  item.classList.add('selected');
+  radio.checked = true;
+});
+
+// Navigation
+function goToSection(n) {
+  document.getElementById(`section-${currentSection}`).classList.remove('active');
+  document.getElementById(`section-${n}`).classList.add('active');
+
+  // Update nav
+  for (let i = 0; i < totalSections; i++) {
+    const nav = document.getElementById(`nav-${i}`);
+    if (!nav) continue;
+    nav.classList.remove('active', 'completed');
+    if (i < n) nav.classList.add('completed');
+    else if (i === n) nav.classList.add('active');
+  }
+
+  currentSection = n;
+  window.scrollTo(0, 0);
+}
+
+// =====================
+// SCORING ENGINE
+// =====================
+function scoreWHO() {
+  let score = 0;
+  let max = 25;
+
+  // Underservice (0-10)
+  const underservice = document.querySelector('input[name="who-underservice"]:checked');
+  if (underservice) {
+    if (underservice.value === 'high') score += 10;
+    else if (underservice.value === 'moderate') score += 6;
+    else score += 3;
+  }
+
+  // Geo context (0-5)
+  const geo = document.getElementById('who-geo-context').value;
+  if (geo === 'ldc' || geo === 'fragile') score += 5;
+  else if (geo === 'lmic') score += 4;
+  else if (geo === 'umic') score += 2;
+  else if (geo) score += 1;
+
+  // Engagement (0-6)
+  const eng = document.getElementById('who-engagement').value;
+  const engMap = {'none':0,'surveys':2,'focus-groups':3,'longitudinal':5,'co-design':6,'continuous':6};
+  if (eng) score += (engMap[eng] || 0);
+
+  // Evidence of right target (0-4)
+  const ev = document.getElementById('who-evidence').value;
+  const evMap = {'none':0,'secondary':1,'baseline':2,'formative':3,'co-design':4};
+  if (ev) score += (evMap[ev] || 0);
+
+  return {score, max};
+}
+
+function scoreWHAT() {
+  let score = 0;
+  let max = 25;
+
+  // Outcome importance (0-8)
+  const imp = document.getElementById('what-importance').value;
+  const impMap = {'critical':8,'high':6,'moderate':4,'low':2};
+  if (imp) score += (impMap[imp] || 0);
+
+  // Chain position (0-10)
+  const chain = document.querySelector('input[name="what-chain"]:checked');
+  if (chain) {
+    if (chain.value === 'impact') score += 10;
+    else if (chain.value === 'outcome') score += 7;
+    else score += 2;
+  }
+
+  // Outcome type (0-4)
+  const type = document.getElementById('what-outcome-type').value;
+  if (type === 'positive-intended') score += 4;
+  else if (type === 'positive-unintended') score += 3;
+  else if (type) score += 1;
+
+  // IRIS+ (0-3)
+  if (document.getElementById('what-iris').value) score += 3;
+
+  return {score, max};
+}
+
+function scoreHOWMUCH() {
+  let score = 0;
+  let max = 25;
+
+  // Scale (0-8) — based on counting methodology quality
+  const counting = document.getElementById('scale-counting').value;
+  const countMap = {'unique':8,'households':7,'customers':5,'interactions':3,'indirect':2};
+  if (counting) score += (countMap[counting] || 0);
+  if (document.getElementById('scale-current').value) score += 2; // bonus for having data
+
+  // Depth (0-10)
+  const depth = document.querySelector('input[name="depth-level"]:checked');
+  if (depth) {
+    if (depth.value === 'transformative') score += 10;
+    else if (depth.value === 'significant') score += 7;
+    else if (depth.value === 'moderate') score += 4;
+    else score += 2;
+  }
+  if (document.getElementById('depth-baseline').value) score += 1;
+  if (document.getElementById('depth-achieved').value) score += 1;
+
+  // Duration (0-7)
+  const dur = document.getElementById('duration-expected').value;
+  const durMap = {'short':2,'medium':3,'long':5,'permanent':7};
+  if (dur) score += (durMap[dur] || 0);
+
+  const post = document.getElementById('duration-post').value;
+  if (post === 'systemic') score += 3;
+  else if (post === 'sustained') score += 2;
+  else if (post === 'partial') score += 1;
+
+  return {score, max: 30};
+}
+
+function scoreCONTRIBUTION() {
+  let score = 0;
+  let max = 25;
+
+  // Evidence (0-12)
+  const ev = document.querySelector('input[name="contrib-evidence"]:checked');
+  if (ev) {
+    const evMap = {'rct':12,'pre-post-control':9,'pre-post':6,'activity-output':3,'none':1};
+    score += (evMap[ev.value] || 0);
+  }
+
+  // Attribution (0-8)
+  const attr = document.getElementById('contrib-attribution').value;
+  const attrMap = {'sole':5,'primary':8,'major':6,'one-of-many':4,'minor':2};
+  if (attr) score += (attrMap[attr] || 0);
+
+  // Deadweight (0-5): lower deadweight = higher score
+  const dw = document.getElementById('contrib-deadweight').value;
+  const dwMap = {'0-5':5,'5-15':4,'15-30':3,'30-50':2,'50+':1};
+  if (dw) score += (dwMap[dw] || 0);
+
+  return {score, max: 25};
+}
+
+function scoreRISK() {
+  let score = 0;
+  let max = 25;
+  let riskCount = 0;
+
+  for (let i = 1; i <= 6; i++) {
+    const level = document.getElementById(`risk${i}-level`).value;
+    const mitigation = document.getElementById(`risk${i}-mitigation`).value;
+    if (level) {
+      riskCount++;
+      if (level === 'low') score += 4;
+      else if (level === 'medium') score += 2;
+      else score += 0;
+      if (mitigation.length > 10) score += 0.5;
+    }
+  }
+
+  // Normalize: if all 6 assessed, max is 6*4 + 6*0.5 = 27, so cap at 25
+  score = Math.min(score, 25);
+  return {score: Math.round(score), max: 25};
+}
+
+function getScoreClass(pct) {
+  if (pct >= 75) return 'excellent';
+  if (pct >= 55) return 'good';
+  if (pct >= 35) return 'developing';
+  return 'early';
+}
+
+function getScoreLabel(pct) {
+  if (pct >= 75) return 'Advanced';
+  if (pct >= 55) return 'Proficient';
+  if (pct >= 35) return 'Developing';
+  return 'Early Stage';
+}
+
+function getIntegrityLevel(totalPct) {
+  if (totalPct >= 75) return {level:'A', label:'Impact Integrity Level A', desc:'Advanced impact management — credible to institutional investors and DFIs', cls:'integrity-a'};
+  if (totalPct >= 55) return {level:'B', label:'Impact Integrity Level B', desc:'Proficient impact management — suitable for most impact investors', cls:'integrity-b'};
+  if (totalPct >= 35) return {level:'C', label:'Impact Integrity Level C', desc:'Developing — building blocks in place; significant gaps to address', cls:'integrity-c'};
+  return {level:'D', label:'Impact Integrity Level D', desc:'Early Stage — foundational work needed across multiple dimensions', cls:'integrity-d'};
+}
+
+function getSelectedSDGs() {
+  return sdgs.filter(s => document.getElementById(`sdg-${s.n}`) && document.getElementById(`sdg-${s.n}`).checked)
+             .map(s => `SDG ${s.n}: ${s.label}`);
+}
+
+function getRiskSummary() {
+  const levels = [];
+  let highCount = 0, medCount = 0, lowCount = 0;
+  for (let i = 1; i <= 6; i++) {
+    const v = document.getElementById(`risk${i}-level`).value;
+    if (v === 'high') highCount++;
+    else if (v === 'medium') medCount++;
+    else if (v === 'low') lowCount++;
+  }
+  return {highCount, medCount, lowCount};
+}
+
+function getIRISMetrics(category) {
+  const iris = {
+    'CE': [
+      {id:'CE9810',name:'Energy Access',desc:'Access to reliable energy service'},
+      {id:'CE4060',name:'Clean Energy Generated',desc:'MWh of clean energy produced'},
+      {id:'CE7765',name:'GHG Emissions Avoided',desc:'tCO2e avoided vs. baseline fuel'},
+      {id:'CE8930',name:'Households with Clean Cooking',desc:'HH using clean cooking solutions'},
+    ],
+    'FS': [
+      {id:'FS0060',name:'Borrowers',desc:'Number of active loan clients'},
+      {id:'FS1370',name:'Depositors',desc:'Number of deposit account holders'},
+      {id:'FS8030',name:'Financial Services Clients',desc:'Total unique clients served'},
+      {id:'FS0101',name:'Women Clients',desc:'% female clients'},
+    ],
+    'HE': [
+      {id:'PD0500',name:'Clients: Individuals',desc:'Individuals receiving health services'},
+      {id:'HE0084',name:'Preventable Deaths Avoided',desc:'Estimated mortality reduction'},
+      {id:'HE0082',name:'DALYs Averted',desc:'Disability-adjusted life years saved'},
+      {id:'HE0100',name:'Health Facility Utilisation',desc:'Visits per year'},
+    ],
+    'ED': [
+      {id:'ED0010',name:'Students Enrolled',desc:'Enrolled in programme'},
+      {id:'ED0020',name:'Completion Rate',desc:'% completing full programme'},
+      {id:'ED4050',name:'Employment Post-Training',desc:'% employed 6mo post-graduation'},
+      {id:'ED0030',name:'Learning Outcome Score',desc:'Standardised test improvement'},
+    ],
+    'EW': [
+      {id:'EW0400',name:'Jobs Created',desc:'Full-time equivalent jobs'},
+      {id:'EW0440',name:'Jobs Maintained',desc:'Jobs preserved'},
+      {id:'PD3420',name:'Wages',desc:'Average annual wage (USD)'},
+      {id:'EW5710',name:'Women Employed',desc:'% female workers'},
+    ],
+    'FA': [
+      {id:'FA0050',name:'Smallholder Farmers Reached',desc:'Farmers receiving support'},
+      {id:'FA5500',name:'Agricultural Income',desc:'Change in avg. farm income (USD/yr)'},
+      {id:'FA5530',name:'Crop Yield',desc:'% yield improvement'},
+      {id:'OI9540',name:'Food Security Score',desc:'Household Food Insecurity score'},
+    ],
+    'HO': [
+      {id:'HO0070',name:'Housing Units',desc:'Affordable units financed or built'},
+      {id:'HO5500',name:'Housing Affordability',desc:'Rent as % of household income'},
+      {id:'HO0030',name:'Below-Market Units',desc:'Units at <80% AMI'},
+      {id:'PI7030',name:'Household Size',desc:'Average HH size in units'},
+    ],
+    'WS': [
+      {id:'WS0050',name:'People with Water Access',desc:'Gaining clean water access'},
+      {id:'WS6420',name:'Water Quality',desc:'% meeting WHO standards'},
+      {id:'WS5170',name:'Sanitation Coverage',desc:'% with improved sanitation'},
+      {id:'WS0025',name:'Open Defecation Free',desc:'ODF communities achieved'},
+    ],
+    'CC': [
+      {id:'EN0580',name:'GHG Emissions (Scope 1+2)',desc:'tCO2e direct and indirect'},
+      {id:'EN5680',name:'GHG Avoided',desc:'tCO2e reduction vs. baseline'},
+      {id:'EN8850',name:'Climate Resilience Score',desc:'Community resilience index'},
+      {id:'EN0760',name:'Carbon Intensity',desc:'tCO2e per unit of production'},
+    ],
+    'LA': [
+      {id:'EN0580',name:'Land Under Conservation',desc:'Hectares protected or restored'},
+      {id:'EN4220',name:'Biodiversity Index',desc:'Species presence/health score'},
+      {id:'EN0940',name:'Reforestation Area',desc:'Hectares replanted'},
+      {id:'EN5040',name:'Deforestation Rate',desc:'% reduction in deforestation'},
+    ],
+    'WM': [
+      {id:'WM0020',name:'Waste Diverted',desc:'Tonnes from landfill per year'},
+      {id:'WM5540',name:'Recycling Rate',desc:'% materials recovered'},
+      {id:'WM0040',name:'Waste Treated',desc:'Tonnes properly treated'},
+      {id:'WM5520',name:'Circular Revenue',desc:'% revenue from circular models'},
+    ],
+    'DI': [
+      {id:'PI2785',name:'Women Beneficiaries',desc:'% or # female'},
+      {id:'PI5085',name:'Disability Inclusion',desc:'% with disability'},
+      {id:'PI8035',name:'Marginalized Groups',desc:'% from excluded populations'},
+      {id:'OI9540',name:'Gender Wage Gap',desc:'Male:female wage ratio'},
+    ],
+    'CG': [
+      {id:'OI8430',name:'Board Independence',desc:'% independent directors'},
+      {id:'OI1545',name:'ESG Policy',desc:'Formal ESG policy in place'},
+      {id:'OI7250',name:'Whistleblower Policy',desc:'Formal mechanism in place'},
+      {id:'OI5020',name:'Impact Report Published',desc:'Annual impact disclosure'},
+    ],
+  };
+  return iris[category] || [];
+}
+
+function generateProfile() {
+  goToSection(6);
+
+  const who = scoreWHO();
+  const what = scoreWHAT();
+  const howmuch = scoreHOWMUCH();
+  const contrib = scoreCONTRIBUTION();
+  const risk = scoreRISK();
+
+  const totalScore = who.score + what.score + howmuch.score + contrib.score + risk.score;
+  const totalMax = who.max + what.max + 30 + contrib.max + risk.max; // HOW MUCH max is 30
+  const totalPct = Math.round((totalScore / totalMax) * 100);
+
+  const integrity = getIntegrityLevel(totalPct);
+  const sdgs = getSelectedSDGs();
+  const riskSummary = getRiskSummary();
+
+  const orgName = document.getElementById('org-name').value || 'Organisation';
+  const initiative = document.getElementById('initiative-name').value || 'Initiative';
+  const sector = document.getElementById('sector').value || '';
+  const geo = document.getElementById('geography').value || '';
+  const desc = document.getElementById('initiative-desc').value || '';
+
+  const primaryOutcome = document.getElementById('what-primary-outcome').value || '';
+  const whoText = document.getElementById('who-primary').value || '';
+
+  const irisCategory = document.getElementById('what-iris').value;
+  const irisMetrics = getIRISMetrics(irisCategory);
+
+  // Build recommendations
+  const recs = [];
+  const whoPct = Math.round((who.score/who.max)*100);
+  const whatPct = Math.round((what.score/what.max)*100);
+  const howPct = Math.round((howmuch.score/30)*100);
+  const contribPct = Math.round((contrib.score/contrib.max)*100);
+  const riskPct = Math.round((risk.score/risk.max)*100);
+
+  if (contribPct < 50) recs.push({type:'priority',icon:'🔴',title:'Strengthen contribution evidence',body:'Your evidence of contribution is the weakest dimension. This is the most critical gap for institutional investors. Consider implementing a pre/post measurement design with a comparison group, or partnering with an academic institution for independent evaluation.'});
+  if (whoPct < 50) recs.push({type:'priority',icon:'🔴',title:'Deepen stakeholder engagement',body:'WHO evidence is below threshold. Conduct a formal beneficiary research study. At minimum, implement a standardised feedback survey. Investors with IMP requirements will ask specifically about how you know the outcomes are valued by beneficiaries.'});
+  if (riskSummary.highCount >= 3) recs.push({type:'priority',icon:'🔴',title:`${riskSummary.highCount} high impact risks identified`,body:'Multiple high-rated risks require mitigation plans. Prioritise evidence risk and execution risk as these most directly undermine your impact claim. Document specific mitigations in your Impact Management Plan.'});
+
+  if (whatPct < 55) recs.push({type:'action',icon:'🟡',title:'Upgrade from output to outcome measurement',body:'Ensure at least your primary metric captures change in stakeholder conditions (not just activities delivered). Map your indicators to IRIS+ standards for investor credibility.'});
+  if (howPct < 50) recs.push({type:'action',icon:'🟡',title:'Establish a clear baseline measurement',body:'Collect baseline data before your next programme cycle. Even a simple pre-intervention survey significantly strengthens depth and contribution claims.'});
+  if (riskSummary.medCount >= 3) recs.push({type:'action',icon:'🟡',title:'Develop formal risk mitigation plans',body:`${riskSummary.medCount} medium risks noted. Document mitigation actions and assign responsibility. Review quarterly.`});
+
+  if (whoPct >= 70) recs.push({type:'strength',icon:'🟢',title:'Strong stakeholder-centred approach',body:'Your WHO evidence is above the IMP threshold for stakeholder engagement. This is a differentiator — highlight in investor communications.'});
+  if (contribPct >= 70) recs.push({type:'strength',icon:'🟢',title:'Credible contribution evidence',body:'Your evidence of contribution meets institutional standards. Ensure this is clearly documented and accessible for due diligence.'});
+  if (riskPct >= 70) recs.push({type:'strength',icon:'🟢',title:'Comprehensive risk management',body:'Strong risk assessment across all 6 IMP risk types. This level of transparency strengthens investor confidence.'});
+
+  // Build Claude prompt
+  const chainVal = document.querySelector('input[name="what-chain"]:checked')?.value || 'outcome';
+  const depthVal = document.querySelector('input[name="depth-level"]:checked')?.value || '';
+  const evVal = document.querySelector('input[name="contrib-evidence"]:checked')?.value || '';
+  const underservice = document.querySelector('input[name="who-underservice"]:checked')?.value || '';
+
+  const claudePrompt = `I have completed an IMP 5-Dimensions Impact Assessment for ${orgName} (${initiative}${sector ? ', ' + sector : ''}${geo ? ', ' + geo : ''}).
+
+Overall Impact Integrity Score: ${totalScore}/${totalMax} (${totalPct}%) — ${integrity.label}
+
+Dimension Scores:
+- WHO (${who.score}/${who.max}, ${whoPct}%): Stakeholder underservice: ${underservice}; Engagement: ${document.getElementById('who-engagement').value || 'not specified'}
+- WHAT (${what.score}/${what.max}, ${whatPct}%): Primary outcome: "${primaryOutcome}"; Importance: ${document.getElementById('what-importance').value || 'not specified'}; Chain position: ${chainVal}
+- HOW MUCH (${howmuch.score}/30, ${howPct}%): Scale: ${document.getElementById('scale-current').value || '?'} current / ${document.getElementById('scale-target').value || '?'} target; Depth: ${depthVal}; Duration: ${document.getElementById('duration-expected').value || 'not specified'}
+- CONTRIBUTION (${contrib.score}/${contrib.max}, ${contribPct}%): Evidence type: ${evVal}; Attribution: ${document.getElementById('contrib-attribution').value || 'not specified'}; Deadweight: ${document.getElementById('contrib-deadweight').value || 'not specified'}
+- RISK (${risk.score}/${risk.max}, ${riskPct}%): High risks: ${riskSummary.highCount}; Medium: ${riskSummary.medCount}; Low: ${riskSummary.lowCount}
+
+Please provide:
+1. A critical assessment of the three biggest gaps in this impact management profile and what closing each gap would require (be specific about methods, not general advice)
+2. An analysis of whether the impact integrity level is appropriate given the evidence — are there areas where the score may be overestimated?
+3. Three specific IRIS+ metrics from the ${irisCategory || 'relevant'} category that would be most material for this initiative, and how to collect each with limited resources
+4. How this profile would be viewed by: (a) an impact-first investor, (b) a commercial investor with ESG requirements, and (c) a major donor/grant maker
+5. One systemic risk this profile does not capture that practitioners in ${sector || 'this sector'} commonly encounter`;
+
+  // Generate HTML output
+  const dimColors = {
+    who: '#3b82f6', what: '#22c55e', howmuch: '#a855f7', contribution: '#f97316', risk: '#ef4444'
+  };
+
+  const output = `
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;margin-bottom:24px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#6b7280;margin-bottom:6px;">Impact Management Profile</div>
+        <div style="font-size:22px;font-weight:700;color:#1a3a5c;margin-bottom:4px;">${orgName}</div>
+        <div style="font-size:14px;color:#4b5563;">${initiative}${sector ? ' · ' + sector : ''}${geo ? ' · ' + geo : ''}</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="integrity-badge ${integrity.cls}">${integrity.label}</span>
+          ${sdgs.slice(0,3).map(s => `<span class="tag tag-blue">${s.replace('SDG ','')}</span>`).join('')}
+        </div>
+      </div>
+      <div class="summary-top">
+        <div class="score-ring ${getScoreClass(totalPct)}">
+          <div class="score-num">${totalPct}</div>
+          <div class="score-label">/ 100</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;color:#6b7280;margin-bottom:20px;padding:10px 14px;background:#f8fafc;border-radius:8px;border:1px solid #e5e7eb;">${integrity.desc}. Assessment generated ${new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})} using the IMP 5-Dimensions Framework (IMP, 2019) and IRIS+ v5.0 (GIIN, 2021).</div>
+
+    <!-- Dimension scores -->
+    <div class="dim-scores">
+      ${[
+        {key:'who',label:'WHO',s:who.score,m:who.max},
+        {key:'what',label:'WHAT',s:what.score,m:what.max},
+        {key:'howmuch',label:'HOW MUCH',s:howmuch.score,m:30},
+        {key:'contribution',label:'CONTRIBUTION',s:contrib.score,m:contrib.max},
+        {key:'risk',label:'RISK',s:risk.score,m:risk.max}
+      ].map(d => {
+        const pct = Math.round((d.s/d.m)*100);
+        const cls = getScoreClass(pct);
+        const clsColors = {excellent:'#059669',good:'#3b82f6',developing:'#f97316',early:'#ef4444'};
+        return `<div class="dim-score-card">
+          <div class="dim-name">${d.label}</div>
+          <div class="score-val" style="color:${clsColors[cls]}">${d.s}</div>
+          <div class="score-max">/ ${d.m} points</div>
+          <div class="score-bar-wrap"><div class="score-bar-fill" style="width:${pct}%;background:${clsColors[cls]};"></div></div>
+          <div style="font-size:10px;color:#9ca3af;margin-top:4px;">${getScoreLabel(pct)}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <!-- IMP Data Requirements Matrix -->
+    <div class="profile-section">
+      <h3>📋 IMP Data Requirements Matrix</h3>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Key Question</th>
+            <th>Your Response</th>
+            <th>Evidence Level</th>
+            <th>IRIS+ Alignment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="dim-pill dim-who">👥 WHO</span></td>
+            <td>Who experiences the outcome?</td>
+            <td style="font-size:11px;">${whoText || '—'}</td>
+            <td><span class="tag ${whoPct>=70?'tag-green':whoPct>=45?'tag-blue':'tag-orange'}">${whoPct>=70?'Strong':whoPct>=45?'Moderate':'Basic'}</span></td>
+            <td style="font-size:11px;">OI7250, PI2785</td>
+          </tr>
+          <tr>
+            <td><span class="dim-pill dim-what">🎯 WHAT</span></td>
+            <td>What outcomes occur?</td>
+            <td style="font-size:11px;">${primaryOutcome || '—'}</td>
+            <td><span class="tag ${whatPct>=70?'tag-green':whatPct>=45?'tag-blue':'tag-orange'}">${whatPct>=70?'Strong':whatPct>=45?'Moderate':'Basic'}</span></td>
+            <td style="font-size:11px;">${irisCategory ? irisCategory + ' category' : 'Not mapped'}</td>
+          </tr>
+          <tr>
+            <td><span class="dim-pill dim-howmuch">📊 HOW MUCH</span></td>
+            <td>How much change? (Scale, Depth, Duration)</td>
+            <td style="font-size:11px;">Scale: ${document.getElementById('scale-current').value||'?'} → ${document.getElementById('scale-target').value||'?'} | ${depthVal || 'depth not set'}</td>
+            <td><span class="tag ${howPct>=70?'tag-green':howPct>=45?'tag-blue':'tag-orange'}">${howPct>=70?'Strong':howPct>=45?'Moderate':'Basic'}</span></td>
+            <td style="font-size:11px;">${document.getElementById('depth-metric').value || 'No metric defined'}</td>
+          </tr>
+          <tr>
+            <td><span class="dim-pill dim-contribution">⚡ CONTRIBUTION</span></td>
+            <td>What is our specific contribution?</td>
+            <td style="font-size:11px;">Evidence: ${evVal || '—'} | Attribution: ${document.getElementById('contrib-attribution').value||'—'}</td>
+            <td><span class="tag ${contribPct>=70?'tag-green':contribPct>=45?'tag-blue':'tag-orange'}">${contribPct>=70?'Strong':contribPct>=45?'Moderate':'Basic'}</span></td>
+            <td style="font-size:11px;">Counterfactual: ${document.getElementById('contrib-deadweight').value||'—'} deadweight</td>
+          </tr>
+          <tr>
+            <td><span class="dim-pill dim-risk">⚠️ RISK</span></td>
+            <td>What are the impact risks?</td>
+            <td style="font-size:11px;">🔴 ${riskSummary.highCount} High · 🟡 ${riskSummary.medCount} Medium · 🟢 ${riskSummary.lowCount} Low</td>
+            <td><span class="tag ${riskPct>=70?'tag-green':riskPct>=45?'tag-blue':'tag-orange'}">${riskPct>=70?'Strong':riskPct>=45?'Moderate':'Basic'}</span></td>
+            <td style="font-size:11px;">6 IMP risk types assessed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- IRIS+ Suggested Metrics -->
+    ${irisMetrics.length > 0 ? `
+    <div class="profile-section">
+      <h3>🔗 Suggested IRIS+ Metrics (${irisCategory} Category)</h3>
+      <div class="iris-grid">
+        ${irisMetrics.map(m => `<div class="iris-card"><div class="iris-id">${m.id}</div><div class="iris-name">${m.name}</div><div class="iris-desc">${m.desc}</div></div>`).join('')}
+      </div>
+      <div style="font-size:11px;color:#9ca3af;margin-top:8px;">Source: IRIS+ v5.0, Global Impact Investing Network (GIIN) 2021. Full catalog at iris.thegiin.org</div>
+    </div>` : ''}
+
+    <!-- Priority Actions -->
+    ${recs.length > 0 ? `
+    <div class="profile-section">
+      <h3>📌 Priority Actions & Strengths</h3>
+      ${recs.filter(r=>r.type==='priority').map(r=>`<div class="rec-box priority"><span class="rec-icon">${r.icon}</span><div class="rec-content"><strong>${r.title}</strong>${r.body}</div></div>`).join('')}
+      ${recs.filter(r=>r.type==='action').map(r=>`<div class="rec-box action"><span class="rec-icon">${r.icon}</span><div class="rec-content"><strong>${r.title}</strong>${r.body}</div></div>`).join('')}
+      ${recs.filter(r=>r.type==='strength').map(r=>`<div class="rec-box strength"><span class="rec-icon">${r.icon}</span><div class="rec-content"><strong>${r.title}</strong>${r.body}</div></div>`).join('')}
+    </div>` : ''}
+
+    <!-- Impact Classes per IMP ABC -->
+    <div class="profile-section">
+      <h3>🏷️ IMP Impact Class (ABC Framework)</h3>
+      <table class="info-table">
+        <tr>
+          <td>Acting to Avoid Harm (A)</td>
+          <td style="font-size:12px;">Minimising negative effects on stakeholders and environment — baseline expectation for all responsible enterprises. ${riskSummary.highCount === 0 ? '✅ No high risks identified.' : '⚠️ High risks present — review mitigation plans.'}</td>
+        </tr>
+        <tr>
+          <td>Benefiting Stakeholders (B)</td>
+          <td style="font-size:12px;">Creating positive outcomes for stakeholders — going beyond harm avoidance. ${whatPct >= 50 && howPct >= 50 ? '✅ WHAT and HOW MUCH dimensions suggest genuine beneficiary impact.' : '⚠️ Strengthen outcome measurement to substantiate beneficiary impact claim.'}</td>
+        </tr>
+        <tr>
+          <td>Contributing to Solutions (C)</td>
+          <td style="font-size:12px;">Addressing outcomes for underserved populations where otherwise unavailable. ${document.querySelector('input[name="who-underservice"]:checked')?.value === 'high' ? '✅ Target population identified as highly underserved.' : '⚠️ Clarify level of underservice to support C-class claim.'}</td>
+        </tr>
+      </table>
+      <div style="font-size:11px;color:#9ca3af;margin-top:8px;">Source: IMP, "A Guide to Classifying the Impact of an Investment" (2019). ABC framework used by major DFIs including IFC, CDC, FMO, DEG and by the Operating Principles for Impact Management (OPIM) signatories.</div>
+    </div>
+
+    <!-- Claude Analysis Prompt -->
+    <div style="margin-top:20px;">
+      <div class="claude-prompt-header">
+        <div class="claude-prompt-title">🤖 Claude Analysis Prompt</div>
+        <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+      </div>
+      <div class="claude-prompt" id="claude-prompt-text">${claudePrompt}</div>
+    </div>
+
+    <!-- Export buttons -->
+    <div style="display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;" class="no-print">
+      <button class="btn btn-green" onclick="exportCSV()">⬇️ Export as CSV</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      <button class="btn btn-secondary" onclick="goToSection(0)">← Start New Assessment</button>
+    </div>
+
+    <div style="font-size:10px;color:#9ca3af;margin-top:16px;padding-top:12px;border-top:1px solid #e5e7eb;">
+      Generated by Useful AF IMP Assessment Tool · Based on Impact Management Project Framework v2.0 (2021) · IRIS+ v5.0 (GIIN, 2021) · SROI Standard (Social Value International, 2019) · IFC Performance Standards (2012, updated 2020) · OECD DAC Evaluation Criteria (2019) · useful-af.circle.so
+    </div>
+  `;
+
+  document.getElementById('profile-content').innerHTML = output;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('claude-prompt-text').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => { btn.textContent = 'Copy Prompt'; }, 2000);
+  });
+}
+
+function exportCSV() {
+  const orgName = document.getElementById('org-name').value || 'Organisation';
+  const initiative = document.getElementById('initiative-name').value || 'Initiative';
+
+  const who = scoreWHO();
+  const what = scoreWHAT();
+  const howmuch = scoreHOWMUCH();
+  const contrib = scoreCONTRIBUTION();
+  const risk = scoreRISK();
+  const totalScore = who.score + what.score + howmuch.score + contrib.score + risk.score;
+  const totalMax = who.max + what.max + 30 + contrib.max + risk.max;
+  const totalPct = Math.round((totalScore / totalMax) * 100);
+  const riskSummary = getRiskSummary();
+
+  const rows = [
+    ['IMP 5-Dimensions Assessment Export'],
+    ['Generated', new Date().toLocaleDateString()],
+    ['Organisation', orgName],
+    ['Initiative', initiative],
+    ['Sector', document.getElementById('sector').value],
+    ['Geography', document.getElementById('geography').value],
+    [],
+    ['DIMENSION', 'SCORE', 'MAX', 'PERCENT', 'LEVEL'],
+    ['WHO', who.score, who.max, Math.round((who.score/who.max)*100)+'%', getScoreLabel(Math.round((who.score/who.max)*100))],
+    ['WHAT', what.score, what.max, Math.round((what.score/what.max)*100)+'%', getScoreLabel(Math.round((what.score/what.max)*100))],
+    ['HOW MUCH', howmuch.score, 30, Math.round((howmuch.score/30)*100)+'%', getScoreLabel(Math.round((howmuch.score/30)*100))],
+    ['CONTRIBUTION', contrib.score, contrib.max, Math.round((contrib.score/contrib.max)*100)+'%', getScoreLabel(Math.round((contrib.score/contrib.max)*100))],
+    ['RISK', risk.score, risk.max, Math.round((risk.score/risk.max)*100)+'%', getScoreLabel(Math.round((risk.score/risk.max)*100))],
+    ['TOTAL', totalScore, totalMax, totalPct+'%', getIntegrityLevel(totalPct).label],
+    [],
+    ['IMPACT RISK SUMMARY'],
+    ['High Risks', riskSummary.highCount],
+    ['Medium Risks', riskSummary.medCount],
+    ['Low Risks', riskSummary.lowCount],
+    [],
+    ['KEY INPUTS'],
+    ['Primary Stakeholders', document.getElementById('who-primary').value],
+    ['Primary Outcome', document.getElementById('what-primary-outcome').value],
+    ['Current Reach', document.getElementById('scale-current').value],
+    ['Target Reach', document.getElementById('scale-target').value],
+    ['Depth Metric', document.getElementById('depth-metric').value],
+    ['Contribution Evidence', document.querySelector('input[name="contrib-evidence"]:checked')?.value || ''],
+    ['Deadweight', document.getElementById('contrib-deadweight').value],
+    ['IRIS+ Category', document.getElementById('what-iris').value],
+  ];
+
+  const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `IMP-Assessment-${orgName.replace(/[^a-z0-9]/gi,'-')}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// Init
+initSDGs();
+goToSection(0);
+</script>
+
+</body>
+</html>
