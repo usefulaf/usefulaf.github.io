@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blended Finance Structurer | Useful AF</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --dark-navy: #1a2730;
+            --impact-green: #2d7d46;
+            --gold-accent: #b8860b;
+            --first-loss: #e74c3c;
+            --mezzanine: #e67e22;
+            --senior: #3498db;
+            --equity: #9b59b6;
+            --guarantee: #1abc9c;
+            --grant: #27ae60;
+            --light-bg: #f5f5f5;
+            --border-gray: #d0d0d0;
+            --text-dark: #333;
+            --text-light: #666;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f9f9f9;
+            color: var(--text-dark);
+            line-height: 1.5;
+        }
+        .header {
+            background: var(--dark-navy);
+            color: white;
+            padding: 18px 30px;
+            border-bottom: 4px solid var(--impact-green);
+        }
+        .header h1 { font-size: 22px; font-weight: 600; margin-bottom: 3px; }
+        .header p { font-size: 12px; opacity: 0.85; }
+        .container {
+            display: grid;
+            grid-template-columns: 360px 1fr 320px;
+            gap: 16px;
+            padding: 16px;
+            max-width: 1600px;
+            margin: 0 auto;
+            height: calc(100vh - 80px);
+            overflow: hidden;
+        }
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .panel-header {
+            background: var(--dark-navy);
+            color: white;
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 2px solid var(--impact-green);
+            flex-shrink: 0;
+        }
+        .panel-body { overflow-y: auto; flex: 1; padding: 14px; }
+        .section { margin-bottom: 16px; }
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--impact-green);
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .form-row { margin-bottom: 10px; }
+        label { display: block; font-size: 12px; color: var(--text-light); margin-bottom: 3px; font-weight: 500; }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%; padding: 7px 10px; border: 1px solid var(--border-gray);
+            border-radius: 5px; font-size: 13px; color: var(--text-dark);
+            background: white; transition: border-color 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--impact-green); }
+        textarea { resize: vertical; min-height: 60px; font-size: 12px; }
+
+        /* Tranche Builder */
+        .tranche-list { margin-bottom: 12px; }
+        .tranche-item {
+            border: 1px solid var(--border-gray);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        .tranche-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            cursor: pointer;
+            user-select: none;
+            gap: 8px;
+        }
+        .tranche-color-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+        .tranche-name { font-size: 13px; font-weight: 600; flex: 1; }
+        .tranche-amount { font-size: 13px; font-weight: 700; color: var(--text-dark); }
+        .tranche-pct { font-size: 11px; color: var(--text-light); margin-left: 4px; }
+        .tranche-remove {
+            background: none; border: none; color: #ccc; cursor: pointer;
+            font-size: 16px; padding: 0 2px; line-height: 1;
+        }
+        .tranche-remove:hover { color: var(--first-loss); }
+        .tranche-body { padding: 10px 12px; border-top: 1px solid #f0f0f0; background: #fafafa; display: none; }
+        .tranche-body.open { display: block; }
+        .tranche-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .add-tranche-btn {
+            width: 100%; padding: 8px; border: 2px dashed var(--border-gray);
+            background: none; border-radius: 6px; color: var(--text-light);
+            font-size: 12px; cursor: pointer; transition: all 0.2s;
+        }
+        .add-tranche-btn:hover { border-color: var(--impact-green); color: var(--impact-green); }
+
+        /* Stack Visual */
+        .stack-visual {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .stack-chart {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-gray);
+        }
+        .stack-bar { display: flex; height: 48px; transition: all 0.3s; }
+        .stack-segment {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .stack-segment:hover { filter: brightness(1.1); }
+        .stack-segment-label { text-align: center; padding: 2px; line-height: 1.2; }
+
+        .stack-details { display: flex; flex-direction: column; gap: 6px; }
+        .stack-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border-gray);
+            gap: 10px;
+        }
+        .stack-row-dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+        .stack-row-info { flex: 1; }
+        .stack-row-name { font-size: 13px; font-weight: 600; }
+        .stack-row-meta { font-size: 11px; color: var(--text-light); }
+        .stack-row-numbers { text-align: right; }
+        .stack-row-amount { font-size: 14px; font-weight: 700; }
+        .stack-row-pct { font-size: 11px; color: var(--text-light); }
+
+        .total-row {
+            background: var(--dark-navy);
+            color: white;
+            border-radius: 6px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .total-row-label { font-size: 13px; font-weight: 600; }
+        .total-row-amount { font-size: 18px; font-weight: 700; }
+
+        /* Metrics Grid */
+        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+        .metric-card {
+            background: var(--light-bg);
+            border-radius: 6px;
+            padding: 12px;
+            border-left: 3px solid var(--impact-green);
+        }
+        .metric-card.warning { border-left-color: var(--mezzanine); }
+        .metric-card.danger { border-left-color: var(--first-loss); }
+        .metric-card.info { border-left-color: var(--senior); }
+        .metric-label { font-size: 11px; color: var(--text-light); margin-bottom: 4px; }
+        .metric-value { font-size: 20px; font-weight: 700; color: var(--text-dark); }
+        .metric-sub { font-size: 10px; color: var(--text-light); margin-top: 2px; }
+
+        /* Analysis Panel */
+        .analysis-section { margin-bottom: 14px; }
+        .analysis-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--dark-navy);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .flag-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 5px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+        .flag-item.green { background: #e8f5e9; }
+        .flag-item.amber { background: #fff8e1; }
+        .flag-item.red { background: #fdecea; }
+        .flag-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            flex-shrink: 0; margin-top: 3px;
+        }
+        .flag-dot.green { background: #27ae60; }
+        .flag-dot.amber { background: #f39c12; }
+        .flag-dot.red { background: #e74c3c; }
+
+        .benchmark-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .benchmark-table th {
+            text-align: left; padding: 6px 8px;
+            background: var(--light-bg); font-weight: 600;
+            border-bottom: 1px solid var(--border-gray);
+            font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px;
+        }
+        .benchmark-table td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; }
+        .benchmark-table tr:last-child td { border-bottom: none; }
+        .bm-match { color: var(--impact-green); font-weight: 600; }
+        .bm-warn { color: var(--mezzanine); font-weight: 600; }
+
+        .scenario-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+        .scenario-tab {
+            padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: 600;
+            border: 1px solid var(--border-gray); background: white; cursor: pointer;
+        }
+        .scenario-tab.active { background: var(--dark-navy); color: white; border-color: var(--dark-navy); }
+
+        .waterfall-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+        .waterfall-table th { padding: 6px 8px; background: var(--dark-navy); color: white; text-align: left; font-size: 10px; }
+        .waterfall-table td { padding: 6px 8px; border-bottom: 1px solid #f0f0f0; }
+        .waterfall-table tr.total-row-wf td { background: var(--light-bg); font-weight: 700; border-top: 2px solid var(--border-gray); }
+        .pos { color: var(--impact-green); }
+        .neg { color: var(--first-loss); }
+
+        .print-btn {
+            width: 100%; padding: 10px; background: var(--impact-green); color: white;
+            border: none; border-radius: 6px; font-size: 13px; font-weight: 600;
+            cursor: pointer; margin-top: 8px;
+        }
+        .print-btn:hover { background: #236338; }
+
+        .template-select { margin-bottom: 10px; }
+
+        @media print {
+            .header, .panel-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .container { grid-template-columns: 1fr; height: auto; }
+            .panel { overflow: visible; box-shadow: none; margin-bottom: 16px; }
+            .panel-body { overflow: visible; }
+            .add-tranche-btn, .print-btn, .tranche-remove { display: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>🏗️ Blended Finance Structurer</h1>
+    <p>Model multi-tranche capital stacks for impact deals — first-loss, mezzanine, senior, equity, guarantees & TA grants | Useful AF by Impact47</p>
+</div>
+
+<div class="container">
+    <!-- LEFT: Configuration -->
+    <div class="panel">
+        <div class="panel-header">⚙️ Deal Configuration</div>
+        <div class="panel-body">
+
+            <div class="section">
+                <div class="section-label">Quick-Load Template</div>
+                <div class="form-row template-select">
+                    <select id="templateSelect" onchange="loadTemplate()">
+                        <option value="">— Select a template —</option>
+                        <option value="affordable_housing">Affordable Housing Fund (UK)</option>
+                        <option value="climate_fund">Climate Finance Facility (DFI-backed)</option>
+                        <option value="social_impact_bond">Social Impact Bond / PbR</option>
+                        <option value="microfinance">Microfinance Investment Vehicle</option>
+                        <option value="agri_value_chain">Agricultural Value Chain</option>
+                        <option value="health_outcomes">Health Outcomes Fund</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-label">Deal Overview</div>
+                <div class="form-row">
+                    <label>Deal / Fund Name</label>
+                    <input type="text" id="dealName" placeholder="e.g. Affordable Homes Impact Fund II" oninput="render()">
+                </div>
+                <div class="form-row">
+                    <label>Currency</label>
+                    <select id="currency" onchange="render()">
+                        <option value="£">GBP (£)</option>
+                        <option value="$">USD ($)</option>
+                        <option value="€">EUR (€)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Deal Stage</label>
+                    <select id="dealStage" onchange="render()">
+                        <option value="concept">Concept / Early Structuring</option>
+                        <option value="design">Design / Feasibility</option>
+                        <option value="negotiation">Active Negotiation</option>
+                        <option value="closed">Closed / Deployed</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>Investment Horizon (years)</label>
+                    <input type="number" id="horizon" value="7" min="1" max="30" oninput="render()">
+                </div>
+                <div class="form-row">
+                    <label>Target Sector / Geography</label>
+                    <input type="text" id="sector" placeholder="e.g. Social housing, Sub-Saharan Africa" oninput="render()">
+                </div>
+                <div class="form-row">
+                    <label>Primary Impact Metric (IRIS+)</label>
+                    <select id="impactMetric" onchange="render()">
+                        <option value="">— Select metric —</option>
+                        <option value="PI9470">PI9470 — Jobs created / sustained</option>
+                        <option value="OI9563">OI9563 — Individuals: improved income/assets</option>
+                        <option value="HO1376">HO1376 — Housing units: affordable</option>
+                        <option value="EN2487">EN2487 — GHG emissions avoided (tCO2e)</option>
+                        <option value="FI0110">FI0110 — Borrowers: financial services</option>
+                        <option value="HE5070">HE5070 — Patients: healthcare access</option>
+                        <option value="ED1372">ED1372 — Students: education quality</option>
+                        <option value="WA6990">WA6990 — People: clean water access</option>
+                        <option value="AG9851">AG9851 — Smallholders: improved yields</option>
+                        <option value="EN7825">EN7825 — Renewable energy capacity (MW)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-label">Capital Tranches</div>
+                <div class="tranche-list" id="trancheList"></div>
+                <button class="add-tranche-btn" onclick="addTranche()">+ Add Tranche</button>
+            </div>
+
+            <div class="section">
+                <div class="section-label">Catalyst / Leverage Assumptions</div>
+                <div class="form-row">
+                    <label>Target Leverage Ratio (commercial : concessional)</label>
+                    <input type="text" id="leverageTarget" placeholder="e.g. 3:1" oninput="render()">
+                </div>
+                <div class="form-row">
+                    <label>Expected Impact per £1M deployed</label>
+                    <input type="text" id="impactPerMillion" placeholder="e.g. 45 jobs, 120 housing units" oninput="render()">
+                </div>
+                <div class="form-row">
+                    <label>Mobilisation Multiplier Target</label>
+                    <input type="number" id="mobilisationTarget" value="4" step="0.5" oninput="render()">
+                </div>
+            </div>
+
+            <button class="print-btn" onclick="window.print()">🖨️ Export / Print Term Sheet</button>
+        </div>
+    </div>
+
+    <!-- CENTRE: Capital Stack Visual -->
+    <div class="panel">
+        <div class="panel-header">🏗️ Capital Stack</div>
+        <div class="panel-body" style="padding: 0;">
+            <div class="stack-visual">
+                <div id="totalRow" class="total-row">
+                    <span class="total-row-label">Total Capital Stack</span>
+                    <span class="total-row-amount" id="totalAmount">£0</span>
+                </div>
+
+                <div class="stack-chart">
+                    <div class="stack-bar" id="stackBar"></div>
+                </div>
+
+                <div class="stack-details" id="stackDetails"></div>
+
+                <div class="metrics-grid" id="metricsGrid"></div>
+
+                <div class="analysis-section">
+                    <div class="analysis-title">📊 Waterfall Returns Analysis</div>
+                    <div class="scenario-tabs">
+                        <div class="scenario-tab active" onclick="setScenario('base', this)">Base Case</div>
+                        <div class="scenario-tab" onclick="setScenario('stress', this)">Stress (−30%)</div>
+                        <div class="scenario-tab" onclick="setScenario('upside', this)">Upside (+20%)</div>
+                    </div>
+                    <div id="waterfallTable"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT: Analysis -->
+    <div class="panel">
+        <div class="panel-header">🔍 Structuring Analysis</div>
+        <div class="panel-body">
+
+            <div class="analysis-section">
+                <div class="analysis-title">🚦 Structure Flags</div>
+                <div id="flagsContainer"></div>
+            </div>
+
+            <div class="analysis-section">
+                <div class="analysis-title">📐 Convergence Benchmarks</div>
+                <table class="benchmark-table" id="benchmarkTable">
+                    <thead>
+                        <tr><th>Parameter</th><th>Your Deal</th><th>Market Range</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="analysis-section">
+                <div class="analysis-title">🤝 Investor Fit Matrix</div>
+                <div id="investorFit"></div>
+            </div>
+
+            <div class="analysis-section">
+                <div class="analysis-title">📋 Structuring Notes</div>
+                <div id="structuringNotes" style="font-size: 12px; color: var(--text-light); line-height: 1.6;"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+const state = {
+    dealName: '',
+    currency: '£',
+    horizon: 7,
+    sector: '',
+    impactMetric: '',
+    leverageTarget: '',
+    impactPerMillion: '',
+    mobilisationTarget: 4,
+    scenario: 'base',
+    tranches: []
+};
+
+const TRANCHE_TYPES = {
+    'first-loss': { label: 'First-Loss Grant/Equity', color: '#e74c3c', risk: 'Highest', priority: 6, icon: '🔴' },
+    'junior-equity': { label: 'Junior Equity', color: '#e67e22', risk: 'High', priority: 5, icon: '🟠' },
+    'mezzanine': { label: 'Mezzanine / Sub-Debt', color: '#f39c12', risk: 'Medium-High', priority: 4, icon: '🟡' },
+    'guarantee': { label: 'Guarantee Facility', color: '#1abc9c', risk: 'Contingent', priority: 3, icon: '🛡️' },
+    'senior-debt': { label: 'Senior Debt', color: '#3498db', risk: 'Low-Medium', priority: 2, icon: '🔵' },
+    'equity': { label: 'Senior Equity', color: '#9b59b6', risk: 'Variable', priority: 1, icon: '🟣' },
+    'ta-grant': { label: 'Technical Assistance Grant', color: '#27ae60', risk: 'None', priority: 7, icon: '🟢' },
+    'revenue-share': { label: 'Revenue Share', color: '#2980b9', risk: 'Medium', priority: 3, icon: '💙' },
+};
+
+const INVESTOR_TYPES = {
+    'first-loss': ['Philanthropies', 'Development Finance Institutions', 'Government grants', 'Impact-first foundations'],
+    'junior-equity': ['Impact investors', 'CDFIs', 'Social investors', 'Programme-related investments'],
+    'mezzanine': ['Subordinated bond investors', 'Social banks', 'Impact funds', 'DFIs'],
+    'guarantee': ['Multilaterals (World Bank, ADB)', 'USAID DCA', 'InfraGuarantee', 'UK Export Finance'],
+    'senior-debt': ['Commercial banks', 'Institutional investors', 'Pension funds', 'Bond markets'],
+    'equity': ['Mainstream PE/VC', 'Impact funds', 'Corporate investors', 'Family offices'],
+    'ta-grant': ['DFID/FCDO', 'USAID', 'EU funds', 'Foundations', 'Bilateral donors'],
+    'revenue-share': ['Revenue-based investors', 'Impact funds', 'Patient capital providers'],
+};
+
+const TEMPLATES = {
+    affordable_housing: {
+        dealName: 'Affordable Homes Impact Fund',
+        sector: 'Social housing, United Kingdom',
+        impactMetric: 'HO1376',
+        leverageTarget: '4:1',
+        impactPerMillion: '8–12 affordable housing units per £1M',
+        mobilisationTarget: 5,
+        horizon: 10,
+        tranches: [
+            { type: 'ta-grant', name: 'Homes England TA Grant', amount: 2, rate: 0, provider: 'Homes England', notes: 'Feasibility & pre-development costs' },
+            { type: 'first-loss', name: 'GLA First-Loss Reserve', amount: 8, rate: 0, provider: 'Greater London Authority', notes: 'Credit enhancement, absorbs first 8% losses' },
+            { type: 'mezzanine', name: 'Big Society Capital Mezz', amount: 20, rate: 5.5, provider: 'Big Society Capital', notes: 'Subordinated, profit-sharing upside' },
+            { type: 'senior-debt', name: 'NatWest Social Housing Loan', amount: 70, rate: 4.2, provider: 'NatWest / Santander', notes: 'Senior secured, 10-year term' },
+        ]
+    },
+    climate_fund: {
+        dealName: 'Climate Finance Facility (CFF)',
+        sector: 'Renewable energy, Sub-Saharan Africa',
+        impactMetric: 'EN7825',
+        leverageTarget: '5:1',
+        impactPerMillion: '2.4 MW clean energy per $1M',
+        mobilisationTarget: 6,
+        horizon: 12,
+        tranches: [
+            { type: 'ta-grant', name: 'GCF Technical Assistance', amount: 5, rate: 0, provider: 'Green Climate Fund', notes: 'Project development & pipeline building' },
+            { type: 'first-loss', name: 'USAID DCA Guarantee', amount: 15, rate: 0, provider: 'USAID / DCA', notes: '50% loan guarantee, contingent' },
+            { type: 'junior-equity', name: 'DFI Junior Equity (BII)', amount: 25, rate: 8, provider: 'British International Investment', notes: 'Patient equity, 12-year horizon' },
+            { type: 'mezzanine', name: 'Nuveen Mezzanine', amount: 30, rate: 7.5, provider: 'Nuveen / TIAA', notes: 'Impact-linked interest rate step-down' },
+            { type: 'senior-debt', name: 'IFC Senior Loan', amount: 100, rate: 5.8, provider: 'IFC / World Bank Group', notes: 'A/B loan structure, 15-year tenor' },
+        ]
+    },
+    social_impact_bond: {
+        dealName: 'Employment & Skills SIB',
+        sector: 'Workforce development, UK',
+        impactMetric: 'PI9470',
+        leverageTarget: '2:1',
+        impactPerMillion: '85 long-term unemployed into sustained employment per £1M',
+        mobilisationTarget: 3,
+        horizon: 5,
+        tranches: [
+            { type: 'ta-grant', name: 'SIB Development Grant', amount: 0.5, rate: 0, provider: 'Access - The Foundation for Social Investment', notes: 'Feasibility & contract design' },
+            { type: 'first-loss', name: 'Charitable Foundation Reserve', amount: 2, rate: 0, provider: 'Esmée Fairbairn / Barrow Cadbury', notes: 'First-loss tranche, no return required' },
+            { type: 'junior-equity', name: 'Social Investment (Bridges)', amount: 5, rate: 6, provider: 'Bridges Fund Management', notes: 'Outcome-contingent repayment from DWP' },
+            { type: 'mezzanine', name: 'Big Society Capital PbR', amount: 7, rate: 4, provider: 'Big Society Capital', notes: 'Payment by results from commissioner' },
+        ]
+    },
+    microfinance: {
+        dealName: 'Inclusive Finance Investment Vehicle',
+        sector: 'Microfinance / SME lending, Southeast Asia',
+        impactMetric: 'FI0110',
+        leverageTarget: '6:1',
+        impactPerMillion: '350 microentrepreneurs served per $1M',
+        mobilisationTarget: 7,
+        horizon: 7,
+        tranches: [
+            { type: 'ta-grant', name: 'CGAP / ADB TA Facility', amount: 3, rate: 0, provider: 'ADB / CGAP', notes: 'MFI capacity building & digital tools' },
+            { type: 'first-loss', name: 'OPIC/DFC First-Loss', amount: 10, rate: 0, provider: 'US DFC', notes: 'Subordinated guarantee facility' },
+            { type: 'junior-equity', name: 'Symbiotics Junior Note', amount: 20, rate: 7, provider: 'Symbiotics / responsAbility', notes: 'Class B notes' },
+            { type: 'senior-debt', name: 'IFC / ADB Senior Note', amount: 80, rate: 5.2, provider: 'IFC / ADB', notes: 'Class A senior notes, 7-year' },
+            { type: 'equity': { label: 'omit' }, type: 'senior-debt', name: 'Pension Fund Note', amount: 40, rate: 5.0, provider: 'APG / PGGM', notes: 'ESG-linked senior tranche' },
+        ]
+    },
+    agri_value_chain: {
+        dealName: 'Smallholder Agricultural Value Chain Fund',
+        sector: 'Agri-finance, East Africa',
+        impactMetric: 'AG9851',
+        leverageTarget: '4:1',
+        impactPerMillion: '600 smallholder farmers with improved yields per $1M',
+        mobilisationTarget: 5,
+        horizon: 8,
+        tranches: [
+            { type: 'ta-grant', name: 'Gates Foundation TA Grant', amount: 4, rate: 0, provider: 'Bill & Melinda Gates Foundation', notes: 'Farmer training & extension services' },
+            { type: 'first-loss', name: 'DFID/FCDO First Loss', amount: 12, rate: 0, provider: 'FCDO / BII', notes: 'Concessional equity, blended layer' },
+            { type: 'mezzanine', name: 'Rabobank Rural Fund Mezz', amount: 25, rate: 8.5, provider: 'Rabobank Foundation', notes: 'Patient capital, weather-indexed' },
+            { type: 'senior-debt', name: 'IFC AgriFinance Senior', amount: 60, rate: 6.5, provider: 'IFC', notes: 'Senior secured, collateral on receivables' },
+        ]
+    },
+    health_outcomes: {
+        dealName: 'Health Outcomes Fund',
+        sector: 'Primary healthcare, Sub-Saharan Africa',
+        impactMetric: 'HE5070',
+        leverageTarget: '3:1',
+        impactPerMillion: '1,200 patients with improved healthcare access per $1M',
+        mobilisationTarget: 4,
+        horizon: 6,
+        tranches: [
+            { type: 'ta-grant', name: 'Wellcome TA Grant', amount: 3, rate: 0, provider: 'Wellcome Trust', notes: 'Health system strengthening & data' },
+            { type: 'first-loss', name: 'USAID/Power of Nutrition', amount: 10, rate: 0, provider: 'USAID / Power of Nutrition', notes: 'Outcome-payer, first loss absorber' },
+            { type: 'junior-equity', name: 'Omidyar Network Junior', amount: 15, rate: 5, provider: 'Omidyar Network', notes: 'Impact-linked return structure' },
+            { type: 'senior-debt', name: 'CDC / IFC Health Senior', amount: 45, rate: 6.8, provider: 'BII / IFC Health', notes: 'Senior debt, 6-year tenor' },
+        ]
+    }
+};
+
+let trancheCounter = 0;
+let currentScenario = 'base';
+
+// ─── Template Loader ─────────────────────────────────────────────────────────
+function loadTemplate() {
+    const key = document.getElementById('templateSelect').value;
+    if (!key || !TEMPLATES[key]) return;
+    const t = TEMPLATES[key];
+    document.getElementById('dealName').value = t.dealName;
+    document.getElementById('sector').value = t.sector;
+    document.getElementById('impactMetric').value = t.impactMetric;
+    document.getElementById('leverageTarget').value = t.leverageTarget;
+    document.getElementById('impactPerMillion').value = t.impactPerMillion;
+    document.getElementById('mobilisationTarget').value = t.mobilisationTarget;
+    document.getElementById('horizon').value = t.horizon;
+    // Clear and reload tranches
+    state.tranches = [];
+    document.getElementById('trancheList').innerHTML = '';
+    trancheCounter = 0;
+    // Filter out any malformed entries
+    const validTranches = t.tranches.filter(tr => TRANCHE_TYPES[tr.type]);
+    validTranches.forEach(tr => {
+        const id = ++trancheCounter;
+        state.tranches.push({
+            id, type: tr.type, name: tr.name,
+            amount: tr.amount, rate: tr.rate,
+            provider: tr.provider, notes: tr.notes || '',
+            expanded: false
+        });
+        renderTrancheItem(state.tranches[state.tranches.length - 1]);
+    });
+    render();
+}
+
+// ─── Tranche Management ───────────────────────────────────────────────────────
+function addTranche() {
+    const id = ++trancheCounter;
+    const tranche = {
+        id, type: 'senior-debt', name: 'New Tranche',
+        amount: 10, rate: 5.0, provider: '', notes: '', expanded: true
+    };
+    state.tranches.push(tranche);
+    renderTrancheItem(tranche);
+    render();
+}
+
+function renderTrancheItem(tranche) {
+    const list = document.getElementById('trancheList');
+    const typeInfo = TRANCHE_TYPES[tranche.type] || TRANCHE_TYPES['senior-debt'];
+    const div = document.createElement('div');
+    div.className = 'tranche-item';
+    div.id = `tranche-${tranche.id}`;
+
+    const typeOptions = Object.entries(TRANCHE_TYPES).map(([k, v]) =>
+        `<option value="${k}" ${k === tranche.type ? 'selected' : ''}>${v.label}</option>`
+    ).join('');
+
+    div.innerHTML = `
+        <div class="tranche-header" onclick="toggleTranche(${tranche.id})">
+            <div class="tranche-color-dot" style="background:${typeInfo.color}"></div>
+            <div class="tranche-name" id="th-name-${tranche.id}">${tranche.name}</div>
+            <span class="tranche-amount" id="th-amount-${tranche.id}">${getCurrency()}${tranche.amount}M</span>
+            <span class="tranche-pct" id="th-pct-${tranche.id}"></span>
+            <button class="tranche-remove" onclick="event.stopPropagation(); removeTranche(${tranche.id})">×</button>
+        </div>
+        <div class="tranche-body ${tranche.expanded ? 'open' : ''}" id="tb-${tranche.id}">
+            <div class="tranche-grid">
+                <div class="form-row">
+                    <label>Tranche Name</label>
+                    <input type="text" value="${tranche.name}" oninput="updateTranche(${tranche.id}, 'name', this.value)">
+                </div>
+                <div class="form-row">
+                    <label>Type</label>
+                    <select onchange="updateTranche(${tranche.id}, 'type', this.value)">${typeOptions}</select>
+                </div>
+                <div class="form-row">
+                    <label>Amount (${getCurrency()}M)</label>
+                    <input type="number" value="${tranche.amount}" step="0.5" min="0" oninput="updateTranche(${tranche.id}, 'amount', parseFloat(this.value)||0)">
+                </div>
+                <div class="form-row">
+                    <label>Return / Rate (%)</label>
+                    <input type="number" value="${tranche.rate}" step="0.25" min="0" max="30" oninput="updateTranche(${tranche.id}, 'rate', parseFloat(this.value)||0)">
+                </div>
+            </div>
+            <div class="form-row">
+                <label>Investor / Provider</label>
+                <input type="text" value="${tranche.provider}" placeholder="e.g. IFC, Bridges Fund Management" oninput="updateTranche(${tranche.id}, 'provider', this.value)">
+            </div>
+            <div class="form-row">
+                <label>Structuring Notes</label>
+                <textarea oninput="updateTranche(${tranche.id}, 'notes', this.value)">${tranche.notes}</textarea>
+            </div>
+        </div>
+    `;
+    list.appendChild(div);
+}
+
+function toggleTranche(id) {
+    const body = document.getElementById(`tb-${id}`);
+    body.classList.toggle('open');
+}
+
+function removeTranche(id) {
+    state.tranches = state.tranches.filter(t => t.id !== id);
+    document.getElementById(`tranche-${id}`).remove();
+    render();
+}
+
+function updateTranche(id, field, value) {
+    const tranche = state.tranches.find(t => t.id === id);
+    if (!tranche) return;
+    tranche[field] = value;
+    // Update header display
+    if (field === 'name') document.getElementById(`th-name-${id}`).textContent = value;
+    if (field === 'amount') document.getElementById(`th-amount-${id}`).textContent = `${getCurrency()}${value}M`;
+    if (field === 'type') {
+        const dot = document.querySelector(`#tranche-${id} .tranche-color-dot`);
+        if (dot) dot.style.background = TRANCHE_TYPES[value]?.color || '#999';
+    }
+    render();
+}
+
+function getCurrency() {
+    return document.getElementById('currency')?.value || '£';
+}
+
+// ─── Scenario ────────────────────────────────────────────────────────────────
+function setScenario(s, el) {
+    currentScenario = s;
+    document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    render();
+}
+
+// ─── Main Render ─────────────────────────────────────────────────────────────
+function render() {
+    const cur = getCurrency();
+    const tranches = state.tranches.filter(t => TRANCHE_TYPES[t.type]);
+    const totalM = tranches.reduce((s, t) => s + (t.amount || 0), 0);
+
+    // Update total
+    document.getElementById('totalAmount').textContent = `${cur}${totalM.toFixed(1)}M`;
+    document.getElementById('totalRow').querySelector('.total-row-label').textContent =
+        (document.getElementById('dealName').value || 'Deal') + ' — Total Capital Stack';
+
+    // Stack bar
+    const bar = document.getElementById('stackBar');
+    bar.innerHTML = '';
+    if (totalM > 0) {
+        tranches.forEach(t => {
+            const pct = ((t.amount / totalM) * 100).toFixed(1);
+            const typeInfo = TRANCHE_TYPES[t.type];
+            const seg = document.createElement('div');
+            seg.className = 'stack-segment';
+            seg.style.cssText = `width:${pct}%; background:${typeInfo.color}; min-width:${pct > 5 ? '0' : '20px'}`;
+            seg.title = `${t.name}: ${cur}${t.amount}M (${pct}%)`;
+            if (parseFloat(pct) > 8) {
+                seg.innerHTML = `<div class="stack-segment-label">${pct}%<br>${typeInfo.icon}</div>`;
+            }
+            bar.appendChild(seg);
+        });
+    }
+
+    // Stack details
+    const details = document.getElementById('stackDetails');
+    details.innerHTML = '';
+    // Sort by loss absorption priority (first-loss last in waterfall = displayed first visually)
+    const sorted = [...tranches].sort((a, b) => {
+        const pa = TRANCHE_TYPES[a.type]?.priority || 0;
+        const pb = TRANCHE_TYPES[b.type]?.priority || 0;
+        return pb - pa;
+    });
+    sorted.forEach(t => {
+        const pct = totalM > 0 ? ((t.amount / totalM) * 100).toFixed(1) : '0.0';
+        const typeInfo = TRANCHE_TYPES[t.type];
+        const row = document.createElement('div');
+        row.className = 'stack-row';
+        row.innerHTML = `
+            <div class="stack-row-dot" style="background:${typeInfo.color}"></div>
+            <div class="stack-row-info">
+                <div class="stack-row-name">${t.name}</div>
+                <div class="stack-row-meta">${typeInfo.label} · ${t.rate > 0 ? t.rate + '% return' : 'Grant/0%'} · ${t.provider || 'Provider TBC'}</div>
+            </div>
+            <div class="stack-row-numbers">
+                <div class="stack-row-amount">${cur}${t.amount.toFixed(1)}M</div>
+                <div class="stack-row-pct">${pct}% of stack</div>
+            </div>
+        `;
+        details.appendChild(row);
+        // Update header pct
+        const pctEl = document.getElementById(`th-pct-${t.id}`);
+        if (pctEl) pctEl.textContent = `(${pct}%)`;
+    });
+
+    // Metrics
+    renderMetrics(tranches, totalM, cur);
+
+    // Waterfall
+    renderWaterfall(tranches, totalM, cur);
+
+    // Flags
+    renderFlags(tranches, totalM);
+
+    // Benchmarks
+    renderBenchmarks(tranches, totalM);
+
+    // Investor fit
+    renderInvestorFit(tranches);
+
+    // Notes
+    renderNotes(tranches, totalM);
+}
+
+function renderMetrics(tranches, totalM, cur) {
+    const concessional = tranches
+        .filter(t => ['first-loss', 'ta-grant', 'junior-equity'].includes(t.type))
+        .reduce((s, t) => s + t.amount, 0);
+    const commercial = tranches
+        .filter(t => ['senior-debt', 'equity', 'mezzanine', 'revenue-share'].includes(t.type))
+        .reduce((s, t) => s + t.amount, 0);
+    const guarantee = tranches.filter(t => t.type === 'guarantee').reduce((s, t) => s + t.amount, 0);
+    const leverageRatio = concessional > 0 ? (commercial / concessional).toFixed(1) : '∞';
+    const blendedRate = totalM > 0
+        ? (tranches.reduce((s, t) => s + (t.amount * t.rate), 0) / totalM).toFixed(2)
+        : 0;
+    const mobilisationTarget = parseFloat(document.getElementById('mobilisationTarget').value) || 4;
+    const mobilisationRatio = concessional > 0 ? (totalM / concessional).toFixed(1) : '∞';
+
+    const grid = document.getElementById('metricsGrid');
+    grid.innerHTML = `
+        <div class="metric-card ${parseFloat(leverageRatio) >= 3 ? '' : 'warning'}">
+            <div class="metric-label">Commercial : Concessional</div>
+            <div class="metric-value">${leverageRatio}:1</div>
+            <div class="metric-sub">Target: 3:1+ for DFI standards</div>
+        </div>
+        <div class="metric-card info">
+            <div class="metric-label">Blended Cost of Capital</div>
+            <div class="metric-value">${blendedRate}%</div>
+            <div class="metric-sub">Weighted avg across stack</div>
+        </div>
+        <div class="metric-card ${parseFloat(mobilisationRatio) >= mobilisationTarget ? '' : 'warning'}">
+            <div class="metric-label">Mobilisation Ratio</div>
+            <div class="metric-value">${mobilisationRatio}×</div>
+            <div class="metric-sub">Target: ${mobilisationTarget}× from config</div>
+        </div>
+        <div class="metric-card ${concessional > 0 ? '' : 'danger'}">
+            <div class="metric-label">Concessional Capital</div>
+            <div class="metric-value">${cur}${concessional.toFixed(1)}M</div>
+            <div class="metric-sub">${totalM > 0 ? ((concessional/totalM)*100).toFixed(0) : 0}% of stack</div>
+        </div>
+    `;
+}
+
+function renderWaterfall(tranches, totalM, cur) {
+    const multipliers = { base: 1.0, stress: 0.7, upside: 1.2 };
+    const mult = multipliers[currentScenario] || 1.0;
+    const returns = totalM * mult;
+
+    let remaining = returns;
+    const rows = [];
+
+    // Sort by seniority: senior first, first-loss last
+    const sorted = [...tranches].sort((a, b) => {
+        const priorities = { 'senior-debt': 1, 'equity': 2, 'mezzanine': 3, 'revenue-share': 3, 'guarantee': 4, 'junior-equity': 5, 'first-loss': 6, 'ta-grant': 7 };
+        return (priorities[a.type] || 5) - (priorities[b.type] || 5);
+    });
+
+    sorted.forEach(t => {
+        const typeInfo = TRANCHE_TYPES[t.type];
+        const principalReturn = Math.min(t.amount, remaining);
+        const horizon = parseInt(document.getElementById('horizon').value) || 7;
+        const interestReturn = t.type !== 'ta-grant' ? Math.min(t.amount * (t.rate / 100) * horizon, Math.max(0, remaining - principalReturn)) : 0;
+        const totalReturn = principalReturn + interestReturn;
+        const loss = t.amount - principalReturn;
+        remaining = Math.max(0, remaining - totalReturn);
+        rows.push({ t, typeInfo, principalReturn, interestReturn, totalReturn, loss });
+    });
+
+    const tableHTML = `
+        <table class="waterfall-table">
+            <thead>
+                <tr>
+                    <th>Tranche</th>
+                    <th>Invested</th>
+                    <th>Principal</th>
+                    <th>Interest</th>
+                    <th>Loss</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td><span style="color:${r.typeInfo.color};font-weight:700;">${r.typeInfo.icon}</span> ${r.t.name}</td>
+                        <td>${cur}${r.t.amount.toFixed(1)}M</td>
+                        <td class="${r.principalReturn >= r.t.amount ? 'pos' : 'neg'}">${cur}${r.principalReturn.toFixed(1)}M</td>
+                        <td class="pos">${cur}${r.interestReturn.toFixed(1)}M</td>
+                        <td class="${r.loss > 0 ? 'neg' : 'pos'}">${r.loss > 0 ? '-' : ''}${cur}${Math.abs(r.loss).toFixed(1)}M</td>
+                    </tr>
+                `).join('')}
+                <tr class="total-row-wf">
+                    <td>TOTAL</td>
+                    <td>${cur}${totalM.toFixed(1)}M</td>
+                    <td>${cur}${(totalM * mult).toFixed(1)}M available</td>
+                    <td colspan="2">${currentScenario === 'stress' ? '⚠️ Stress' : currentScenario === 'upside' ? '✅ Upside' : '📊 Base'}</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+    document.getElementById('waterfallTable').innerHTML = tableHTML;
+}
+
+function renderFlags(tranches, totalM) {
+    const flags = [];
+    const concessional = tranches.filter(t => ['first-loss', 'ta-grant', 'junior-equity'].includes(t.type)).reduce((s, t) => s + t.amount, 0);
+    const commercial = tranches.filter(t => ['senior-debt', 'equity', 'mezzanine', 'revenue-share'].includes(t.type)).reduce((s, t) => s + t.amount, 0);
+    const hasTA = tranches.some(t => t.type === 'ta-grant');
+    const hasFirstLoss = tranches.some(t => t.type === 'first-loss');
+    const hasGuarantee = tranches.some(t => t.type === 'guarantee');
+    const leverageRatio = concessional > 0 ? commercial / concessional : 0;
+
+    if (tranches.length === 0) {
+        flags.push({ color: 'red', text: 'No tranches added — start by selecting a template or adding tranches above.' });
+    }
+    if (hasFirstLoss && leverageRatio >= 3) flags.push({ color: 'green', text: `Good leverage: ${leverageRatio.toFixed(1)}:1 commercial-to-concessional ratio meets DFI standards (min 3:1).` });
+    if (hasFirstLoss && leverageRatio < 3 && leverageRatio > 0) flags.push({ color: 'amber', text: `Leverage ratio ${leverageRatio.toFixed(1)}:1 below 3:1 DFI threshold. Consider reducing concessional tranche or adding more commercial capital.` });
+    if (!hasFirstLoss && commercial > 0) flags.push({ color: 'amber', text: 'No first-loss tranche. Without credit enhancement, commercial capital may be unviable for risk-adjusted returns.' });
+    if (hasTA) flags.push({ color: 'green', text: 'TA grant included — improves project quality and reduces development risk for investors. OECD DAC recommends TA as % of total structure.' });
+    if (hasGuarantee) flags.push({ color: 'green', text: 'Guarantee facility reduces credit risk for senior lenders. Ensure guarantee scope, trigger events, and coverage ratio are clearly defined.' });
+
+    const firstLossAmt = tranches.filter(t => t.type === 'first-loss').reduce((s, t) => s + t.amount, 0);
+    if (totalM > 0 && firstLossAmt / totalM > 0.3) flags.push({ color: 'amber', text: `First-loss tranche is ${((firstLossAmt/totalM)*100).toFixed(0)}% of stack — unusually high. Market norm is 5–20%. Review if concessional layer is oversized.` });
+    if (totalM > 0 && firstLossAmt / totalM < 0.05 && hasFirstLoss) flags.push({ color: 'amber', text: `First-loss tranche is only ${((firstLossAmt/totalM)*100).toFixed(0)}% of stack — may be too thin to catalyse commercial investor confidence.` });
+
+    const rateRange = tranches.filter(t => t.rate > 0).map(t => t.rate);
+    if (rateRange.length > 1) {
+        const spread = Math.max(...rateRange) - Math.min(...rateRange);
+        if (spread > 10) flags.push({ color: 'amber', text: `Wide return spread (${spread.toFixed(1)}pp between tranches). Ensure clear contractual waterfall priority and inter-creditor agreement.` });
+        else flags.push({ color: 'green', text: `Return spread of ${spread.toFixed(1)}pp across tranches — manageable. Document waterfall clearly in term sheet.` });
+    }
+
+    const noProvider = tranches.filter(t => !t.provider);
+    if (noProvider.length > 0) flags.push({ color: 'amber', text: `${noProvider.length} tranche(s) missing investor/provider — fill in before sharing with stakeholders.` });
+
+    if (flags.length === 0) flags.push({ color: 'green', text: 'Structure looks complete. Add tranches to see detailed analysis.' });
+
+    document.getElementById('flagsContainer').innerHTML = flags.map(f => `
+        <div class="flag-item ${f.color}">
+            <div class="flag-dot ${f.color}"></div>
+            <div>${f.text}</div>
+        </div>
+    `).join('');
+}
+
+function renderBenchmarks(tranches, totalM) {
+    const concessional = tranches.filter(t => ['first-loss', 'ta-grant', 'junior-equity'].includes(t.type)).reduce((s, t) => s + t.amount, 0);
+    const commercial = tranches.filter(t => ['senior-debt', 'equity', 'mezzanine', 'revenue-share'].includes(t.type)).reduce((s, t) => s + t.amount, 0);
+    const leverageRatio = concessional > 0 ? (commercial / concessional).toFixed(1) : 'N/A';
+    const numTranches = tranches.length;
+    const hasTA = tranches.some(t => t.type === 'ta-grant');
+    const firstLossPct = totalM > 0 ? ((tranches.filter(t => t.type === 'first-loss').reduce((s,t)=>s+t.amount,0)/totalM)*100).toFixed(0) : '0';
+    const blendedRate = totalM > 0 ? (tranches.reduce((s, t) => s + (t.amount * t.rate), 0) / totalM).toFixed(1) : '0';
+
+    const rows = [
+        { param: 'Leverage ratio', value: `${leverageRatio}:1`, market: '2:1 – 8:1', ok: parseFloat(leverageRatio) >= 2 },
+        { param: 'First-loss size', value: `${firstLossPct}%`, market: '5–20% of stack', ok: parseInt(firstLossPct) >= 5 && parseInt(firstLossPct) <= 20 },
+        { param: 'Blended cost', value: `${blendedRate}%`, market: '3–8% for impact', ok: parseFloat(blendedRate) >= 3 && parseFloat(blendedRate) <= 8 },
+        { param: 'No. of tranches', value: numTranches, market: '3–6 typical', ok: numTranches >= 3 && numTranches <= 6 },
+        { param: 'TA grant included', value: hasTA ? 'Yes' : 'No', market: 'Yes (best practice)', ok: hasTA },
+    ];
+
+    const tbody = document.querySelector('#benchmarkTable tbody');
+    tbody.innerHTML = rows.map(r => `
+        <tr>
+            <td>${r.param}</td>
+            <td class="${r.ok ? 'bm-match' : 'bm-warn'}">${r.value}</td>
+            <td>${r.market}</td>
+        </tr>
+    `).join('');
+}
+
+function renderInvestorFit(tranches) {
+    if (tranches.length === 0) {
+        document.getElementById('investorFit').innerHTML = '<div style="font-size:12px;color:var(--text-light);">Add tranches to see investor fit analysis.</div>';
+        return;
+    }
+    const html = tranches.map(t => {
+        const investors = INVESTOR_TYPES[t.type] || [];
+        const typeInfo = TRANCHE_TYPES[t.type];
+        return `
+            <div style="margin-bottom:8px;">
+                <div style="font-size:11px;font-weight:700;color:${typeInfo.color};margin-bottom:3px;">${typeInfo.icon} ${t.name}</div>
+                <div style="font-size:11px;color:var(--text-light);">${investors.slice(0, 3).join(' · ')}</div>
+            </div>
+        `;
+    }).join('');
+    document.getElementById('investorFit').innerHTML = html;
+}
+
+function renderNotes(tranches, totalM) {
+    const deal = document.getElementById('dealName').value || 'this deal';
+    const sector = document.getElementById('sector').value;
+    const metric = document.getElementById('impactMetric').value;
+    const concessional = tranches.filter(t => ['first-loss', 'ta-grant', 'junior-equity'].includes(t.type)).reduce((s, t) => s + t.amount, 0);
+
+    let notes = '';
+    if (tranches.length === 0) {
+        notes = 'Select a template or add tranches to generate structuring guidance.';
+    } else {
+        notes = `<strong>${deal}</strong> is a ${totalM.toFixed(0)}M blended finance structure`;
+        if (sector) notes += ` targeting ${sector}`;
+        if (metric) notes += `, measuring impact via IRIS+ metric ${metric}`;
+        notes += `. The concessional layer of ${getCurrency()}${concessional.toFixed(1)}M provides credit enhancement to mobilise commercial capital.`;
+        notes += `<br><br>Key structuring priorities: (1) define clear inter-creditor agreement and waterfall priority; (2) establish impact verification protocols tied to investor reporting; (3) agree on clawback or PIK provisions for concessional tranches if impact targets are missed.`;
+        notes += `<br><br>Reference frameworks: Convergence Blended Finance Principles · OECD DAC Blended Finance Guidance · IFC OPIM · GIIN IRIS+.`;
+    }
+    document.getElementById('structuringNotes').innerHTML = notes;
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+document.getElementById('dealName').addEventListener('input', render);
+document.getElementById('currency').addEventListener('change', render);
+document.getElementById('horizon').addEventListener('input', render);
+document.getElementById('sector').addEventListener('input', render);
+document.getElementById('impactMetric').addEventListener('change', render);
+document.getElementById('leverageTarget').addEventListener('input', render);
+document.getElementById('impactPerMillion').addEventListener('input', render);
+document.getElementById('mobilisationTarget').addEventListener('input', render);
+
+// Load a default template on startup
+window.onload = () => {
+    document.getElementById('templateSelect').value = 'affordable_housing';
+    loadTemplate();
+};
+</script>
+</body>
+</html>
