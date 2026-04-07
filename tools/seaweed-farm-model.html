@@ -1,0 +1,1658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seaweed Farm Financial Model</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #0a1628;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* HEADER */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 0;
+            border-bottom: 2px solid #1a3a2a;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #2ecc71;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #a0a0a0;
+        }
+
+        /* NAVIGATION TABS */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #1a3a2a;
+        }
+
+        .tab-button {
+            padding: 12px 30px;
+            background: transparent;
+            border: none;
+            color: #a0a0a0;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            bottom: -2px;
+        }
+
+        .tab-button:hover {
+            color: #2ecc71;
+        }
+
+        .tab-button.active {
+            color: #2ecc71;
+            border-bottom-color: #2ecc71;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* FINANCIAL MODEL TAB */
+        .model-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        /* LEFT PANEL - INPUTS */
+        .input-panel {
+            background: #0f1e30;
+            border: 1px solid #1a3a2a;
+            border-radius: 8px;
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 20px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-section h3 {
+            color: #2ecc71;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #1a3a2a;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .label-text {
+            color: #e0e0e0;
+        }
+
+        .label-value {
+            color: #2ecc71;
+            font-weight: bold;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .tooltip {
+            color: #7a9a7a;
+            font-size: 0.75em;
+            margin-top: 4px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #1a3a2a;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #2ecc71;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #2ecc71;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
+        }
+
+        /* BUTTON GROUPS */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .button-group button {
+            flex: 1;
+            padding: 10px 12px;
+            background: #1a3a2a;
+            border: 2px solid #1a3a2a;
+            color: #a0a0a0;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s;
+            font-size: 0.9em;
+        }
+
+        .button-group button:hover {
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        .button-group button.active {
+            background: #2ecc71;
+            color: #0a1628;
+            border-color: #2ecc71;
+        }
+
+        /* DROPDOWN */
+        select {
+            width: 100%;
+            padding: 10px;
+            background: #1a3a2a;
+            color: #2ecc71;
+            border: 1px solid #1a3a2a;
+            border-radius: 6px;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+
+        select option {
+            background: #0f1e30;
+            color: #2ecc71;
+        }
+
+        /* CHECKBOX */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #2ecc71;
+        }
+
+        /* RIGHT PANEL - RESULTS */
+        .results-panel {
+            background: #0f1e30;
+            border: 1px solid #1a3a2a;
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1e30 100%);
+            border: 1px solid #1a3a2a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+        }
+
+        .kpi-label {
+            color: #a0a0a0;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            color: #2ecc71;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        /* TABLE */
+        .financial-table {
+            width: 100%;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        th {
+            background: #1a3a2a;
+            color: #2ecc71;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 2px solid #2ecc71;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #1a3a2a;
+            color: #e0e0e0;
+        }
+
+        tr:hover {
+            background: rgba(46, 204, 113, 0.05);
+        }
+
+        .breakeven-row {
+            background: rgba(46, 204, 113, 0.15);
+            border: 2px solid #2ecc71;
+        }
+
+        .negative {
+            color: #ff6b6b;
+        }
+
+        .positive {
+            color: #2ecc71;
+        }
+
+        /* METRIC BOXES */
+        .metric-boxes {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-box {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1e30 100%);
+            border: 1px solid #1a3a2a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .metric-box h4 {
+            color: #2ecc71;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .metric-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .metric-label {
+            color: #a0a0a0;
+        }
+
+        .metric-value {
+            color: #2ecc71;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .funded-status {
+            font-size: 1.1em;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #1a3a2a;
+        }
+
+        .gap-warning {
+            color: #ff6b6b;
+        }
+
+        .gap-success {
+            color: #2ecc71;
+        }
+
+        /* INVESTOR MATCH */
+        .investor-box {
+            background: linear-gradient(135deg, #1a4d2e 0%, #0f1e30 100%);
+            border: 1px solid #2ecc71;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .investor-box h4 {
+            color: #2ecc71;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .investor-list {
+            font-size: 0.9em;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+
+        /* SENSITIVITY TABLE */
+        .sensitivity-table {
+            width: 100%;
+            margin-top: 20px;
+            font-size: 0.85em;
+        }
+
+        .sensitivity-table th, .sensitivity-table td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        .sensitivity-table th:first-child {
+            text-align: left;
+        }
+
+        .sensitivity-cell {
+            border-radius: 4px;
+        }
+
+        .sensitivity-green {
+            background: rgba(46, 204, 113, 0.4);
+            color: #2ecc71;
+        }
+
+        .sensitivity-yellow {
+            background: rgba(255, 193, 7, 0.4);
+            color: #ffc107;
+        }
+
+        .sensitivity-red {
+            background: rgba(255, 107, 107, 0.4);
+            color: #ff6b6b;
+        }
+
+        /* IMPACT DASHBOARD */
+        .impact-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .impact-section {
+            background: #0f1e30;
+            border: 1px solid #1a3a2a;
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .impact-section h3 {
+            color: #2ecc71;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .impact-metric {
+            margin-bottom: 20px;
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .impact-big-number {
+            font-size: 2.5em;
+            color: #2ecc71;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .impact-description {
+            color: #a0a0a0;
+            font-size: 0.95em;
+            margin-top: 5px;
+        }
+
+        .zero-input-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .zero-input-card {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1e30 100%);
+            border: 2px solid #2ecc71;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .zero-input-emoji {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .zero-input-label {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .zero-input-value {
+            color: #2ecc71;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .sdg-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sdg-card {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1e30 100%);
+            border: 2px solid #2ecc71;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .sdg-card:hover {
+            transform: scale(1.05);
+        }
+
+        .sdg-emoji {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .sdg-title {
+            color: #2ecc71;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .sdg-number {
+            color: #2ecc71;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .sdg-text {
+            color: #a0a0a0;
+            font-size: 0.85em;
+        }
+
+        .impact-per-investment {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* EXPORT TAB */
+        .export-wrapper {
+            background: #0f1e30;
+            border: 1px solid #1a3a2a;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .export-button {
+            padding: 15px 40px;
+            margin: 10px;
+            background: #2ecc71;
+            color: #0a1628;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .export-button:hover {
+            background: #27ae60;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(46, 204, 113, 0.3);
+        }
+
+        .export-button:active {
+            transform: translateY(-1px);
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .tabs, .tab-button, .export-wrapper {
+                display: none;
+            }
+
+            .tab-content {
+                display: block !important;
+                page-break-inside: avoid;
+            }
+
+            .kpi-card, .metric-box, .impact-section {
+                page-break-inside: avoid;
+                border: 1px solid black;
+                background: white;
+                color: black;
+            }
+
+            table {
+                page-break-inside: avoid;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .model-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .input-panel {
+                position: relative;
+                top: auto;
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-boxes {
+                grid-template-columns: 1fr;
+            }
+
+            .sdg-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .zero-input-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        /* SCROLLBAR STYLING */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f1e30;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1a3a2a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🌊 SEAWEED FARM FINANCIAL MODEL</h1>
+            <p>Build your regenerative ocean farming business case in 60 seconds</p>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="financial">Financial Model</button>
+            <button class="tab-button" data-tab="impact">Impact Dashboard</button>
+            <button class="tab-button" data-tab="export">Export</button>
+        </div>
+
+        <!-- TAB 1: FINANCIAL MODEL -->
+        <div id="financial" class="tab-content active">
+            <div class="model-wrapper">
+                <!-- LEFT PANEL: INPUTS -->
+                <div class="input-panel">
+                    <!-- FARM SETUP -->
+                    <div class="input-section">
+                        <h3>🌱 Farm Setup</h3>
+
+                        <div class="input-group">
+                            <div class="label">
+                                <span class="label-text">Farm Size (hectares)</span>
+                                <span class="label-value" id="sizeLabel">5</span>
+                            </div>
+                            <input type="range" id="farmSize" min="1" max="50" step="1" value="5">
+                            <div class="tooltip">1-5 ha: small, 5-20 ha: medium, 20-50 ha: large</div>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label-text">Species</label>
+                            <select id="species">
+                                <option value="kelp">Kelp - Premium food grade (temperate)</option>
+                                <option value="gracilaria">Gracilaria - Agar/animal feed (tropical)</option>
+                                <option value="dulse">Dulse - Premium niche ($20/kg) (Atlantic)</option>
+                                <option value="nori">Nori - Premium Japanese/Korean (cool)</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label class="label-text">Primary Market</label>
+                            <div class="button-group">
+                                <button class="market-btn active" data-market="premium">Premium Food</button>
+                                <button class="market-btn" data-market="ingredient">Ingredient</button>
+                                <button class="market-btn" data-market="feed">Animal Feed</button>
+                                <button class="market-btn" data-market="mixed">Mixed</button>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="location" class="label-text">Location</label>
+                            <select id="location">
+                                <option value="1.0">North Atlantic (×1.0)</option>
+                                <option value="1.05">Pacific NW (×1.05)</option>
+                                <option value="0.9">Mediterranean (×0.9)</option>
+                                <option value="1.1">Southeast Asia (×1.1)</option>
+                                <option value="0.95">Australasia (×0.95)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- INFRASTRUCTURE -->
+                    <div class="input-section">
+                        <h3>🏗️ Infrastructure</h3>
+
+                        <div class="input-group">
+                            <div class="label">
+                                <span class="label-text">Include Processing Equipment</span>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="processing" />
+                                <span style="color: #a0a0a0;">Adds $50K capex, reduces COGS by 30%</span>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <div class="label">
+                                <span class="label-text">Organic Certification</span>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="organic" />
+                                <span style="color: #a0a0a0;">+$3K/year cost, +20% revenue premium</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FINANCING -->
+                    <div class="input-section">
+                        <h3>💰 Financing</h3>
+
+                        <div class="input-group">
+                            <div class="label">
+                                <span class="label-text">Your Capital</span>
+                                <span class="label-value" id="capitalLabel">$80K</span>
+                            </div>
+                            <input type="range" id="yourCapital" min="20" max="500" step="5" value="80">
+                        </div>
+
+                        <div class="input-group">
+                            <div class="label">
+                                <span class="label-text">Loan Amount</span>
+                                <span class="label-value" id="loanLabel">$50K</span>
+                            </div>
+                            <input type="range" id="loanAmount" min="0" max="300" step="5" value="50">
+                        </div>
+
+                        <div class="input-group">
+                            <div class="label">
+                                <span class="label-text">Loan Interest Rate</span>
+                                <span class="label-value" id="rateLabel">6.5%</span>
+                            </div>
+                            <input type="range" id="loanRate" min="4" max="12" step="0.5" value="6.5">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL: RESULTS -->
+                <div class="results-panel">
+                    <!-- KPI CARDS -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Year 1 Revenue</div>
+                            <div class="kpi-value" id="year1Revenue">$0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Year 3 Net Profit</div>
+                            <div class="kpi-value" id="year3Profit">$0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Break-even Month</div>
+                            <div class="kpi-value" id="breakEvenMonth">—</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">5-Year IRR</div>
+                            <div class="kpi-value" id="irr">—</div>
+                        </div>
+                    </div>
+
+                    <!-- FINANCIAL TABLE -->
+                    <div class="financial-table">
+                        <h3 style="color: #2ecc71; margin-bottom: 15px; font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.5px;">5-YEAR PROJECTION</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Revenue</th>
+                                    <th>COGS</th>
+                                    <th>Operating Costs</th>
+                                    <th>Capex</th>
+                                    <th>Debt Service</th>
+                                    <th>Net Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody id="financialTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- METRIC BOXES -->
+                    <div class="metric-boxes">
+                        <div class="metric-box">
+                            <h4>Funding & Cash</h4>
+                            <div class="metric-item">
+                                <span class="metric-label">Total Capex</span>
+                                <span class="metric-value" id="totalCapex">$0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Your Capital</span>
+                                <span class="metric-value" id="yourCapexDisplay">$0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Loan</span>
+                                <span class="metric-value" id="loanDisplay">$0</span>
+                            </div>
+                            <div class="funded-status" id="fundedStatus"></div>
+                        </div>
+
+                        <div class="metric-box">
+                            <h4>Year 1 Operations</h4>
+                            <div class="metric-item">
+                                <span class="metric-label">Wet Tonnes Harvested</span>
+                                <span class="metric-value" id="harvestedWet">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Dry Tonnes</span>
+                                <span class="metric-value" id="harvestedDry">0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Price/kg Dry</span>
+                                <span class="metric-value" id="pricePerKg">$0</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">COGS/kg</span>
+                                <span class="metric-value" id="cogsPerKg">$0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- INVESTOR MATCH -->
+                    <div class="investor-box">
+                        <h4>Investor & Grant Match</h4>
+                        <div class="investor-list">
+                            <strong>Seaweed-Specific Aquaculture Funders:</strong><br>
+                            Aqua-Spark (aquaculture fund), S2G Ventures (food/ocean), Builders Vision (ocean health)<br><br>
+                            <strong>Government & Policy Grants:</strong><br>
+                            EU Blue Economy Fund, EMFF (European Maritime & Fisheries), USDA Rural Business Grants, UK Blue Economy Challenge, Innovate UK<br><br>
+                            <strong>Regional Grants:</strong><br>
+                            Irish Sea Fisheries Fund, Nordic Blue Bioeconomy, USDA SBIR (food systems)
+                        </div>
+                    </div>
+
+                    <!-- SENSITIVITY ANALYSIS -->
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: #2ecc71; margin-bottom: 15px; font-size: 0.95em; text-transform: uppercase; letter-spacing: 0.5px;">SENSITIVITY ANALYSIS: Year 3 Net Profit</h3>
+                        <div style="font-size: 0.8em; color: #a0a0a0; margin-bottom: 10px;">Yield per hectare (tonnes dry) vs Price per kg</div>
+                        <table class="sensitivity-table">
+                            <thead>
+                                <tr>
+                                    <th style="background: #1a3a2a;">Yield (t/ha)</th>
+                                    <th>$1.50/kg</th>
+                                    <th>$3/kg</th>
+                                    <th>$6/kg</th>
+                                    <th>$10/kg</th>
+                                    <th>$15/kg</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sensitivityTable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: IMPACT DASHBOARD -->
+        <div id="impact" class="tab-content">
+            <div class="impact-wrapper">
+                <!-- CLIMATE IMPACT -->
+                <div class="impact-section">
+                    <h3>🌍 Climate Impact</h3>
+                    <div class="impact-metric">
+                        <div class="impact-big-number" id="co2Removed">0</div>
+                        <div class="impact-description">tonnes CO2 removed from atmosphere per year</div>
+                        <div class="impact-description" style="margin-top: 10px; color: #2ecc71;">Equivalent to <span id="carEquivalent">0</span> cars off the road</div>
+                    </div>
+
+                    <div class="impact-metric" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a3a2a;">
+                        <div class="impact-big-number" id="nitrogenRemoved">0</div>
+                        <div class="impact-description">tonnes nitrogen removed from ocean per year</div>
+                        <div class="impact-description" style="margin-top: 10px; color: #2ecc71;">Equivalent to treating runoff from <span id="farmlandEquivalent">0</span> hectares of farmland</div>
+                    </div>
+
+                    <div class="impact-metric" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a3a2a;">
+                        <div class="impact-big-number" id="phosphorusRemoved">0</div>
+                        <div class="impact-description">tonnes phosphorus removed from ocean per year</div>
+                    </div>
+                </div>
+
+                <!-- ZERO INPUT AGRICULTURE -->
+                <div class="impact-section">
+                    <h3>✅ Zero-Input Agriculture</h3>
+                    <div class="impact-description" style="margin-bottom: 20px;">Unlike land farming, your seaweed farm requires:</div>
+                    <div class="zero-input-grid">
+                        <div class="zero-input-card">
+                            <div class="zero-input-emoji">💧</div>
+                            <div class="zero-input-label">Freshwater</div>
+                            <div class="zero-input-value">0 L</div>
+                        </div>
+                        <div class="zero-input-card">
+                            <div class="zero-input-emoji">🧪</div>
+                            <div class="zero-input-label">Fertilizer</div>
+                            <div class="zero-input-value">0 kg</div>
+                        </div>
+                        <div class="zero-input-card">
+                            <div class="zero-input-emoji">☠️</div>
+                            <div class="zero-input-label">Pesticides</div>
+                            <div class="zero-input-value">0 kg</div>
+                        </div>
+                        <div class="zero-input-card">
+                            <div class="zero-input-emoji">🏞️</div>
+                            <div class="zero-input-label">Land Used</div>
+                            <div class="zero-input-value">0 m²</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FOOD SECURITY -->
+                <div class="impact-section">
+                    <h3>🍚 Food Security</h3>
+                    <div class="impact-metric">
+                        <div class="impact-big-number" id="proteinProduced">0</div>
+                        <div class="impact-description">kg of protein produced annually</div>
+                    </div>
+
+                    <div class="impact-metric" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a3a2a;">
+                        <div class="impact-big-number" id="peopleFed">0</div>
+                        <div class="impact-description">people fed for one year (at 50g seaweed/day)</div>
+                    </div>
+                </div>
+
+                <!-- METHANE REDUCTION (if feed selected) -->
+                <div class="impact-section" id="methaneSection" style="display: none;">
+                    <h3>🐄 Methane Reduction (Animal Feed Market)</h3>
+                    <div class="impact-metric">
+                        <div class="impact-big-number" id="cattleHerds">0</div>
+                        <div class="impact-description">cattle herds with 80% emissions reduction potential</div>
+                        <div class="impact-description" style="margin-top: 10px; color: #a0a0a0;">(Using as 2% diet supplement)</div>
+                    </div>
+
+                    <div class="impact-metric" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #1a3a2a;">
+                        <div class="impact-big-number" id="methanePrevented">0</div>
+                        <div class="impact-description">tonnes CO2-equivalent methane prevented annually</div>
+                    </div>
+                </div>
+
+                <!-- SDG BADGES -->
+                <div class="impact-section">
+                    <h3>🎯 UN Sustainable Development Goals</h3>
+                    <div class="sdg-grid">
+                        <div class="sdg-card">
+                            <div class="sdg-emoji">🍽️</div>
+                            <div class="sdg-number">2</div>
+                            <div class="sdg-title">Zero Hunger</div>
+                            <div class="sdg-text">Nutritious food production</div>
+                        </div>
+                        <div class="sdg-card">
+                            <div class="sdg-emoji">💼</div>
+                            <div class="sdg-number">8</div>
+                            <div class="sdg-title">Decent Work</div>
+                            <div class="sdg-text">Sustainable employment</div>
+                        </div>
+                        <div class="sdg-card">
+                            <div class="sdg-emoji">♻️</div>
+                            <div class="sdg-number">12</div>
+                            <div class="sdg-title">Responsible Consumption</div>
+                            <div class="sdg-text">Sustainable food systems</div>
+                        </div>
+                        <div class="sdg-card">
+                            <div class="sdg-emoji">🌡️</div>
+                            <div class="sdg-number">13</div>
+                            <div class="sdg-title">Climate Action</div>
+                            <div class="sdg-text">Carbon sequestration</div>
+                        </div>
+                        <div class="sdg-card">
+                            <div class="sdg-emoji">🌊</div>
+                            <div class="sdg-number">14</div>
+                            <div class="sdg-title">Life Below Water</div>
+                            <div class="sdg-text">Ocean restoration</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: EXPORT -->
+        <div id="export" class="tab-content">
+            <div class="export-wrapper">
+                <h2 style="color: #2ecc71; margin-bottom: 30px;">Export Your Business Plan</h2>
+                <button class="export-button" onclick="exportToExcel()">📊 Download Excel Workbook</button>
+                <p style="color: #a0a0a0; margin-top: 30px; font-size: 0.95em;">
+                    Includes: Executive Summary, 5-Year P&L, Monthly Cash Flow, Impact Report, and Grant Application Opportunities
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DATA STRUCTURES
+        const speciesData = {
+            kelp: {
+                name: 'Kelp',
+                wetTonnesPerHa: 30,
+                dryRatio: 10,
+                basePricePremium: 5,
+                basePriceIngredient: 3,
+                basePriceFeed: 1.2,
+                basePriceMixed: 2.8,
+                seedCostPerHa: 3000,
+                laborCostPerHa: 20000,
+                location: 1.0
+            },
+            gracilaria: {
+                name: 'Gracilaria',
+                wetTonnesPerHa: 20,
+                dryRatio: 10,
+                basePricePremium: 4,
+                basePriceIngredient: 2.5,
+                basePriceFeed: 1.2,
+                basePriceMixed: 2.3,
+                seedCostPerHa: 2500,
+                laborCostPerHa: 18000,
+                location: 1.0
+            },
+            dulse: {
+                name: 'Dulse',
+                wetTonnesPerHa: 5,
+                dryRatio: 10,
+                basePricePremium: 20,
+                basePriceIngredient: 12,
+                basePriceFeed: 1.2,
+                basePriceMixed: 10,
+                seedCostPerHa: 4000,
+                laborCostPerHa: 25000,
+                location: 1.0
+            },
+            nori: {
+                name: 'Nori',
+                wetTonnesPerHa: 8,
+                dryRatio: 10,
+                basePricePremium: 15,
+                basePriceIngredient: 10,
+                basePriceFeed: 1.2,
+                basePriceMixed: 8,
+                seedCostPerHa: 3500,
+                laborCostPerHa: 22000,
+                location: 1.0
+            }
+        };
+
+        // STARTUP COSTS (all values in thousands USD)
+        const startupCosts = {
+            linesRopesPerHa: 11.5,      // $8-15K average
+            mooringPerHa: 7.5,           // $5-10K average
+            boat: 30,                     // shared, one-time
+            processingBasic: 20,
+            processingFull: 80,
+            permits: 8.5,                 // $5-12K average
+            workingCapital: 35            // $20-50K average
+        };
+
+        // STATE
+        let state = {
+            farmSize: 5,
+            species: 'kelp',
+            market: 'premium',
+            location: 1.0,
+            yourCapital: 80,
+            loanAmount: 50,
+            loanRate: 6.5,
+            processing: false,
+            organic: false
+        };
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            calculate();
+        });
+
+        function setupEventListeners() {
+            // Sliders
+            document.getElementById('farmSize').addEventListener('input', e => {
+                state.farmSize = parseInt(e.target.value);
+                document.getElementById('sizeLabel').textContent = state.farmSize;
+                calculate();
+            });
+
+            document.getElementById('yourCapital').addEventListener('input', e => {
+                state.yourCapital = parseInt(e.target.value);
+                document.getElementById('capitalLabel').textContent = '$' + state.yourCapital + 'K';
+                calculate();
+            });
+
+            document.getElementById('loanAmount').addEventListener('input', e => {
+                state.loanAmount = parseInt(e.target.value);
+                document.getElementById('loanLabel').textContent = '$' + state.loanAmount + 'K';
+                calculate();
+            });
+
+            document.getElementById('loanRate').addEventListener('input', e => {
+                state.loanRate = parseFloat(e.target.value);
+                document.getElementById('rateLabel').textContent = state.loanRate.toFixed(1) + '%';
+                calculate();
+            });
+
+            // Dropdowns
+            document.getElementById('species').addEventListener('change', e => {
+                state.species = e.target.value;
+                calculate();
+            });
+
+            document.getElementById('location').addEventListener('change', e => {
+                state.location = parseFloat(e.target.value);
+                calculate();
+            });
+
+            // Market buttons
+            document.querySelectorAll('.market-btn').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    document.querySelectorAll('.market-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    state.market = e.target.dataset.market;
+                    calculate();
+                });
+            });
+
+            // Checkboxes
+            document.getElementById('processing').addEventListener('change', e => {
+                state.processing = e.target.checked;
+                calculate();
+            });
+
+            document.getElementById('organic').addEventListener('change', e => {
+                state.organic = e.target.checked;
+                calculate();
+            });
+
+            // Tabs
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    const tabName = e.target.dataset.tab;
+                    document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    document.getElementById(tabName).classList.add('active');
+                });
+            });
+        }
+
+        function calculate() {
+            const species = speciesData[state.species];
+            const locationMultiplier = state.location;
+
+            // Year 1 is partial harvest (50%)
+            const year1Multiplier = 0.5;
+
+            // PRODUCTION (in dry tonnes)
+            const dryTonnesPerHa = (species.wetTonnesPerHa * locationMultiplier) / species.dryRatio;
+            const year1DryTonnes = state.farmSize * dryTonnesPerHa * year1Multiplier;
+            const fullDryTonnes = state.farmSize * dryTonnesPerHa;
+
+            // PRICING
+            let pricePerKg;
+            switch(state.market) {
+                case 'premium': pricePerKg = species.basePricePremium; break;
+                case 'ingredient': pricePerKg = species.basePriceIngredient; break;
+                case 'feed': pricePerKg = species.basePriceFeed; break;
+                case 'mixed': pricePerKg = species.basePriceMixed; break;
+            }
+
+            if (state.organic) {
+                pricePerKg *= 1.2;
+            }
+
+            // CAPEX
+            const linesRopesCapex = state.farmSize * startupCosts.linesRopesPerHa;
+            const mooringCapex = state.farmSize * startupCosts.mooringPerHa;
+            const processingCapex = state.processing ? startupCosts.processingFull : 0;
+            const boatCapex = 30; // one-time
+            const permitsCapex = startupCosts.permits;
+            const workingCapital = startupCosts.workingCapital;
+
+            const totalCapex = linesRopesCapex + mooringCapex + processingCapex + boatCapex + permitsCapex + workingCapital;
+
+            // COGS per kg
+            let cogsPerKg = 0.4; // base processing/handling
+            if (state.processing) {
+                cogsPerKg = 0.25; // reduced with own processing
+            }
+
+            // OPERATING COSTS (annual)
+            const seedCost = state.farmSize * species.seedCostPerHa;
+            const laborCost = state.farmSize * species.laborCostPerHa;
+            const boatCost = 12; // annual fuel/maintenance
+            const certificationCost = state.organic ? 3 : 0;
+            let packagingCost = 0;
+
+            if (state.market === 'premium') {
+                packagingCost = year1DryTonnes * 1000 * 0.50; // $0.50/kg for retail
+            } else if (state.market === 'ingredient' || state.market === 'mixed') {
+                packagingCost = year1DryTonnes * 1000 * 0.10; // $0.10/kg for bulk
+            }
+
+            const year1OpexPerTonne = (seedCost + laborCost + boatCost + certificationCost + packagingCost) / (year1DryTonnes + 0.001);
+
+            // 5-YEAR PROJECTION
+            const projection = [];
+            let cumulativeCashFlow = -totalCapex + state.yourCapital + state.loanAmount;
+
+            for (let year = 1; year <= 5; year++) {
+                const harvestMultiplier = year === 1 ? year1Multiplier : 1.0;
+                const yearDryTonnes = state.farmSize * dryTonnesPerHa * harvestMultiplier;
+                const yearDryKg = yearDryTonnes * 1000;
+
+                const revenue = yearDryKg * pricePerKg / 1000; // in thousands
+
+                let cogs = yearDryKg * cogsPerKg / 1000;
+                const seedCostYear = state.farmSize * species.seedCostPerHa;
+                const laborCostYear = state.farmSize * species.laborCostPerHa;
+                const boatCostYear = 12;
+                const certCostYear = state.organic ? 3 : 0;
+
+                let packagingYear = 0;
+                if (state.market === 'premium') {
+                    packagingYear = yearDryKg * 0.50 / 1000;
+                } else if (state.market !== 'feed') {
+                    packagingYear = yearDryKg * 0.10 / 1000;
+                }
+
+                const operatingCosts = seedCostYear + laborCostYear + boatCostYear + certCostYear + packagingYear;
+
+                let capex = 0;
+                if (year === 1) {
+                    capex = totalCapex;
+                }
+
+                let debtService = 0;
+                if (state.loanAmount > 0) {
+                    debtService = (state.loanAmount * state.loanRate / 100);
+                }
+
+                const netProfit = revenue - cogs - operatingCosts - capex - debtService;
+
+                projection.push({
+                    year,
+                    revenue,
+                    cogs,
+                    operatingCosts,
+                    capex,
+                    debtService,
+                    netProfit
+                });
+
+                cumulativeCashFlow += netProfit + capex;
+            }
+
+            // BREAK-EVEN CALCULATION
+            let breakEvenMonth = '—';
+            let breakEvenYear = null;
+            for (let i = 0; i < projection.length; i++) {
+                if (projection[i].netProfit > 0) {
+                    breakEvenYear = projection[i].year;
+                    breakEvenMonth = 'Year ' + projection[i].year;
+                    break;
+                }
+            }
+
+            // IRR CALCULATION (simplified)
+            let irr = '—';
+            if (projection[4].netProfit > 0) {
+                const roi = ((projection[4].netProfit - projection[0].netProfit) / totalCapex) * 100;
+                irr = (roi / 5).toFixed(1) + '%';
+            }
+
+            // SENSITIVITY TABLE
+            const yields = [0.5, 1, 1.5, 2, 2.5, 3];
+            const prices = [1.5, 3, 6, 10, 15];
+
+            // UPDATE UI
+            updateFinancialDisplay(projection, totalCapex, year1DryTonnes, pricePerKg, cogsPerKg, yields, prices);
+            updateImpactDisplay(year1DryTonnes, dryTonnesPerHa);
+        }
+
+        function updateFinancialDisplay(projection, totalCapex, year1DryTonnes, pricePerKg, cogsPerKg, yields, prices) {
+            // KPIs
+            const year1Revenue = projection[0].revenue;
+            const year3Profit = projection[2].netProfit;
+
+            document.getElementById('year1Revenue').textContent = formatCurrency(year1Revenue * 1000);
+            document.getElementById('year3Profit').textContent = formatCurrency(year3Profit * 1000);
+
+            // Find break-even
+            let breakEvenMonth = '—';
+            for (let p of projection) {
+                if (p.netProfit > 0) {
+                    breakEvenMonth = 'Month ' + Math.ceil(p.year * 12 / 2);
+                    break;
+                }
+            }
+            document.getElementById('breakEvenMonth').textContent = breakEvenMonth;
+
+            // IRR
+            if (projection[4].netProfit > 0) {
+                const roi = ((projection[4].netProfit - totalCapex) / totalCapex) * 100;
+                document.getElementById('irr').textContent = (roi / 5).toFixed(1) + '%';
+            } else {
+                document.getElementById('irr').textContent = '—';
+            }
+
+            // Financial Table
+            let tableHTML = '';
+            for (let p of projection) {
+                const rowClass = p.netProfit >= 0 ? 'positive' : 'negative';
+                tableHTML += `<tr>
+                    <td>Year ${p.year}</td>
+                    <td class="positive">${formatCurrency(p.revenue * 1000)}</td>
+                    <td>${formatCurrency(p.cogs * 1000)}</td>
+                    <td>${formatCurrency(p.operatingCosts * 1000)}</td>
+                    <td>${formatCurrency(p.capex * 1000)}</td>
+                    <td>${formatCurrency(p.debtService * 1000)}</td>
+                    <td class="${rowClass}">${formatCurrency(p.netProfit * 1000)}</td>
+                </tr>`;
+            }
+            document.getElementById('financialTableBody').innerHTML = tableHTML;
+
+            // Metric Boxes
+            document.getElementById('totalCapex').textContent = formatCurrency(totalCapex * 1000);
+            document.getElementById('yourCapexDisplay').textContent = formatCurrency(state.yourCapital * 1000);
+            document.getElementById('loanDisplay').textContent = formatCurrency(state.loanAmount * 1000);
+
+            const harvestedWet = (year1DryTonnes * 10).toFixed(1);
+            const harvestedDry = year1DryTonnes.toFixed(1);
+            document.getElementById('harvestedWet').textContent = harvestedWet + ' t';
+            document.getElementById('harvestedDry').textContent = harvestedDry + ' t';
+            document.getElementById('pricePerKg').textContent = '$' + pricePerKg.toFixed(2);
+            document.getElementById('cogsPerKg').textContent = '$' + cogsPerKg.toFixed(2);
+
+            // Funding Status
+            const fundingGap = totalCapex - state.yourCapital - state.loanAmount;
+            const fundedStatusEl = document.getElementById('fundedStatus');
+            if (fundingGap <= 0) {
+                fundedStatusEl.innerHTML = '<span class="gap-success">✓ Fully funded</span>';
+            } else {
+                fundedStatusEl.innerHTML = `<span class="gap-warning">Gap: $${(fundingGap * 1000).toLocaleString()}</span>`;
+            }
+
+            // Sensitivity Table
+            let sensitivityHTML = '';
+            for (let yield_val of yields) {
+                sensitivityHTML += '<tr>';
+                sensitivityHTML += `<td style="text-align: left;">${yield_val} t/ha</td>`;
+
+                for (let price of prices) {
+                    const yearDryKg = state.farmSize * yield_val * 1000;
+                    const yearRevenue = yearDryKg * price / 1000;
+
+                    const seedCost = state.farmSize * 3;
+                    const laborCost = state.farmSize * 18;
+                    const operatingCosts = seedCost + laborCost + 12 + (state.organic ? 3 : 0) + (yearDryKg * 0.10 / 1000);
+
+                    const cogs = yearDryKg * cogsPerKg / 1000;
+                    const netProfit = yearRevenue - cogs - operatingCosts - 30; // simplified
+
+                    let cellClass = 'sensitivity-green';
+                    if (netProfit < 0) cellClass = 'sensitivity-red';
+                    else if (netProfit < 20) cellClass = 'sensitivity-yellow';
+
+                    sensitivityHTML += `<td class="sensitivity-cell ${cellClass}">${formatCurrency(netProfit * 1000)}</td>`;
+                }
+                sensitivityHTML += '</tr>';
+            }
+            document.getElementById('sensitivityTable').innerHTML = sensitivityHTML;
+        }
+
+        function updateImpactDisplay(year1DryTonnes, dryTonnesPerHa) {
+            const fullYearTonnes = state.farmSize * dryTonnesPerHa;
+
+            // CO2 Removal: 1 tonne dry seaweed absorbs ~1.5 tonnes CO2
+            const co2Removed = fullYearTonnes * 1.5;
+            const carEquivalent = Math.round(co2Removed / 4.6); // avg car emits 4.6 tonnes CO2/year
+
+            document.getElementById('co2Removed').textContent = co2Removed.toFixed(1);
+            document.getElementById('carEquivalent').textContent = carEquivalent.toLocaleString();
+
+            // Nitrogen Removal: 20-50 kg N per tonne dry (use 30 kg average)
+            const nitrogenRemoved = fullYearTonnes * 30 / 1000;
+            const farmlandEquivalent = Math.round(nitrogenRemoved * 5); // 1 tonne N ~ 5 hectares farmland
+
+            document.getElementById('nitrogenRemoved').textContent = nitrogenRemoved.toFixed(1);
+            document.getElementById('farmlandEquivalent').textContent = farmlandEquivalent.toLocaleString();
+
+            // Phosphorus Removal: 2-5 kg P per tonne dry (use 3.5 kg average)
+            const phosphorusRemoved = fullYearTonnes * 3.5 / 1000;
+            document.getElementById('phosphorusRemoved').textContent = phosphorusRemoved.toFixed(1);
+
+            // Protein: seaweed is ~6% protein dry weight
+            const proteinProduced = fullYearTonnes * 1000 * 0.06;
+            document.getElementById('proteinProduced').textContent = Math.round(proteinProduced).toLocaleString();
+
+            // People Fed: 50g seaweed per person per day = 18.25 kg/year
+            const peopleFed = Math.round((fullYearTonnes * 1000) / 18.25);
+            document.getElementById('peopleFed').textContent = peopleFed.toLocaleString();
+
+            // Methane section
+            const methaneSection = document.getElementById('methaneSection');
+            if (state.market === 'feed' || state.market === 'mixed') {
+                methaneSection.style.display = 'block';
+
+                // Assume 2% of cattle feed, each cow needs ~10 kg seaweed/year
+                const cattleHerds = Math.round((fullYearTonnes * 1000) / 10);
+                const methanePrevented = cattleHerds * 5; // ~5 tonnes CO2e per cow
+
+                document.getElementById('cattleHerds').textContent = cattleHerds.toLocaleString();
+                document.getElementById('methanePrevented').textContent = methanePrevented.toLocaleString();
+            } else {
+                methaneSection.style.display = 'none';
+            }
+        }
+
+        function formatCurrency(value) {
+            if (value >= 1000000) {
+                return '$' + (value / 1000000).toFixed(1) + 'M';
+            } else if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(0) + 'K';
+            }
+            return '$' + Math.round(value);
+        }
+
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+
+            // EXECUTIVE SUMMARY SHEET
+            const execSummary = [
+                ['SEAWEED FARM FINANCIAL MODEL'],
+                [''],
+                ['Farm Profile'],
+                ['Species', speciesData[state.species].name],
+                ['Farm Size (hectares)', state.farmSize],
+                ['Market', state.market.charAt(0).toUpperCase() + state.market.slice(1)],
+                [''],
+                ['Financial Summary (5-Year)'],
+                ['Your Capital', '$' + state.yourCapital + 'K'],
+                ['Loan', '$' + state.loanAmount + 'K'],
+                ['Loan Rate', state.loanRate + '%'],
+                [''],
+                ['Key Assumptions'],
+                ['Seaweed grows in Season 1 - harvest begins Year 1 (50% first year)'],
+                ['No multi-year grow-out period (unlike oysters)'],
+                ['Organic certification adds 20% revenue premium if selected'],
+                ['Own processing equipment reduces COGS by 30%'],
+                ['']
+            ];
+
+            XLSX.utils.sheet_add_aoa(wb, execSummary, {sheet: 'Executive Summary'});
+
+            // 5-YEAR P&L SHEET
+            const plData = [
+                ['5-YEAR PROFIT & LOSS STATEMENT'],
+                ['Year', 'Revenue', 'COGS', 'Operating Costs', 'Capex', 'Debt Service', 'Net Profit'],
+            ];
+
+            // Recalculate for export
+            const species = speciesData[state.species];
+            const dryTonnesPerHa = (species.wetTonnesPerHa * state.location) / species.dryRatio;
+            let pricePerKg;
+            switch(state.market) {
+                case 'premium': pricePerKg = species.basePricePremium; break;
+                case 'ingredient': pricePerKg = species.basePriceIngredient; break;
+                case 'feed': pricePerKg = species.basePriceFeed; break;
+                case 'mixed': pricePerKg = species.basePriceMixed; break;
+            }
+            if (state.organic) pricePerKg *= 1.2;
+
+            const linesRopesCapex = state.farmSize * startupCosts.linesRopesPerHa;
+            const mooringCapex = state.farmSize * startupCosts.mooringPerHa;
+            const processingCapex = state.processing ? startupCosts.processingFull : 0;
+            const totalCapex = linesRopesCapex + mooringCapex + processingCapex + 30 + startupCosts.permits + startupCosts.workingCapital;
+
+            let cogsPerKg = state.processing ? 0.25 : 0.4;
+
+            for (let year = 1; year <= 5; year++) {
+                const harvestMultiplier = year === 1 ? 0.5 : 1.0;
+                const yearDryTonnes = state.farmSize * dryTonnesPerHa * harvestMultiplier;
+                const yearDryKg = yearDryTonnes * 1000;
+
+                const revenue = yearDryKg * pricePerKg;
+                const cogs = yearDryKg * cogsPerKg;
+                const seedCost = state.farmSize * species.seedCostPerHa;
+                const laborCost = state.farmSize * species.laborCostPerHa;
+                const operatingCosts = seedCost + laborCost + 12000 + (state.organic ? 3000 : 0);
+                const capex = year === 1 ? totalCapex : 0;
+                const debtService = state.loanAmount > 0 ? state.loanAmount * 1000 * state.loanRate / 100 : 0;
+                const netProfit = revenue - cogs - operatingCosts - capex - debtService;
+
+                plData.push([year, revenue.toFixed(0), cogs.toFixed(0), operatingCosts.toFixed(0), capex.toFixed(0), debtService.toFixed(0), netProfit.toFixed(0)]);
+            }
+
+            XLSX.utils.sheet_add_aoa(wb, plData, {sheet: '5-Year P&L'});
+
+            // IMPACT REPORT SHEET
+            const fullYearTonnes = state.farmSize * dryTonnesPerHa;
+            const co2 = fullYearTonnes * 1.5;
+            const nitrogen = fullYearTonnes * 30;
+            const phosphorus = fullYearTonnes * 3.5;
+            const protein = fullYearTonnes * 1000 * 0.06;
+            const peopleFed = (fullYearTonnes * 1000) / 18.25;
+
+            const impactData = [
+                ['IMPACT REPORT'],
+                ['Metric', 'Annual Value'],
+                ['CO2 Removed (tonnes)', co2.toFixed(1)],
+                ['Cars Off Road Equivalent', (co2 / 4.6).toFixed(0)],
+                ['Nitrogen Removed (tonnes)', nitrogen.toFixed(1)],
+                ['Phosphorus Removed (tonnes)', phosphorus.toFixed(1)],
+                ['Protein Produced (kg)', protein.toFixed(0)],
+                ['People Fed (1 year)', peopleFed.toFixed(0)],
+                [''],
+                ['Zero Input Agriculture'],
+                ['Freshwater Used', '0 litres'],
+                ['Fertilizer Used', '0 kg'],
+                ['Pesticides Used', '0 kg'],
+                ['Land Used', '0 m2'],
+                [''],
+                ['SDG Alignment'],
+                ['SDG 2 - Zero Hunger', 'Food production'],
+                ['SDG 8 - Decent Work', 'Employment creation'],
+                ['SDG 12 - Responsible Consumption', 'Sustainable food systems'],
+                ['SDG 13 - Climate Action', 'Carbon sequestration'],
+                ['SDG 14 - Life Below Water', 'Ocean health & restoration']
+            ];
+
+            XLSX.utils.sheet_add_aoa(wb, impactData, {sheet: 'Impact Report'});
+
+            // GRANT OPPORTUNITIES SHEET
+            const grantsData = [
+                ['GRANT & FUNDING OPPORTUNITIES'],
+                [''],
+                ['AQUACULTURE-SPECIFIC FUNDERS'],
+                ['Funder', 'Focus', 'Typical Size'],
+                ['Aqua-Spark', 'Early-stage aquaculture', '$250K-$2M'],
+                ['S2G Ventures', 'Food & ocean sustainability', '$500K-$5M'],
+                ['Builders Vision', 'Ocean health innovation', '$100K-$1M'],
+                [''],
+                ['GOVERNMENT & POLICY GRANTS'],
+                ['Program', 'Region', 'Typical Size'],
+                ['EU Blue Economy Fund', 'Europe', '€500K-€2M'],
+                ['EMFF (Maritime & Fisheries)', 'Europe', '€100K-€1M'],
+                ['USDA Rural Business Development', 'USA', '$50K-$250K'],
+                ['USDA SBIR (Food Systems)', 'USA', '$150K-$1M'],
+                ['UK Blue Economy Challenge', 'UK', '£50K-£500K'],
+                ['Innovate UK (Sustainable Food)', 'UK', '£100K-£500K'],
+                ['Irish Sea Fisheries Fund', 'Ireland', '€50K-€500K'],
+                ['Nordic Blue Bioeconomy', 'Nordic', 'EUR 50K-500K'],
+                [''],
+                ['APPLICATION TIPS'],
+                ['- Emphasize regenerative/restorative benefits (carbon, nutrient cycling)'],
+                ['- Highlight food security and protein production'],
+                ['- Show SDG alignment (especially SDG 2, 13, 14)'],
+                ['- Demonstrate job creation & rural development'],
+                ['- Include peer review of environmental claims']
+            ];
+
+            XLSX.utils.sheet_add_aoa(wb, grantsData, {sheet: 'Grant Applications'});
+
+            // Save workbook
+            XLSX.writeFile(wb, 'Seaweed_Farm_Model_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+        }
+    </script>
+</body>
+</html>
