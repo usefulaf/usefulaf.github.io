@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Impact Bond & Outcome Contract Builder — Useful AF</title>
+<style>
+  :root {
+    --navy: #1a2744;
+    --teal: #0d9488;
+    --teal-light: #ccfbf1;
+    --amber: #d97706;
+    --amber-light: #fef3c7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --blue: #2563eb;
+    --blue-light: #dbeafe;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-500: #6b7280;
+    --gray-700: #374151;
+    --gray-900: #111827;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-50); color: var(--gray-900); font-size: 14px; }
+
+  /* Header */
+  .header { background: var(--navy); color: white; padding: 20px 32px; display: flex; align-items: center; gap: 16px; }
+  .header-badge { background: var(--teal); color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+  .header h1 { font-size: 20px; font-weight: 700; }
+  .header p { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+  /* Layout */
+  .app { display: grid; grid-template-columns: 340px 1fr; min-height: calc(100vh - 70px); }
+  .sidebar { background: white; border-right: 1px solid var(--gray-200); overflow-y: auto; padding: 20px; }
+  .main { overflow-y: auto; padding: 24px; }
+
+  /* Tabs */
+  .tab-nav { display: flex; gap: 4px; margin-bottom: 20px; background: var(--gray-100); padding: 4px; border-radius: 8px; }
+  .tab-btn { flex: 1; padding: 8px 4px; border: none; background: none; cursor: pointer; border-radius: 6px; font-size: 12px; font-weight: 600; color: var(--gray-500); transition: all 0.2s; }
+  .tab-btn.active { background: white; color: var(--navy); box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+  /* Form sections */
+  .section { margin-bottom: 20px; }
+  .section-title { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--gray-200); display: flex; align-items: center; gap: 6px; }
+  .section-title .tooltip-icon { cursor: help; color: var(--teal); font-size: 12px; }
+
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; margin-top: 10px; }
+  label:first-child { margin-top: 0; }
+
+  input[type=text], input[type=number], select, textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--gray-300); border-radius: 6px; font-size: 13px;
+    transition: border-color 0.2s; background: white; color: var(--gray-900);
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); }
+  textarea { resize: vertical; min-height: 60px; }
+
+  .hint { font-size: 11px; color: var(--gray-500); margin-top: 3px; font-style: italic; }
+
+  /* Outcome rows */
+  .outcomes-list { display: flex; flex-direction: column; gap: 8px; }
+  .outcome-row { background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 8px; padding: 10px; }
+  .outcome-row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .outcome-label { font-size: 12px; font-weight: 700; color: var(--navy); }
+  .remove-btn { background: none; border: none; color: var(--red); cursor: pointer; font-size: 16px; line-height: 1; }
+  .outcome-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .outcome-grid label { font-size: 11px; }
+  .add-outcome-btn { width: 100%; padding: 8px; border: 2px dashed var(--gray-300); background: none; color: var(--teal); cursor: pointer; border-radius: 6px; font-size: 12px; font-weight: 600; margin-top: 8px; transition: all 0.2s; }
+  .add-outcome-btn:hover { border-color: var(--teal); background: var(--teal-light); }
+
+  /* Risk allocation table */
+  .risk-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .risk-table th { background: var(--gray-100); padding: 6px 8px; text-align: left; font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; }
+  .risk-table td { padding: 6px 8px; border-bottom: 1px solid var(--gray-200); }
+  .risk-table select { padding: 4px 6px; font-size: 11px; }
+
+  /* Results panel */
+  .results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .results-title { font-size: 18px; font-weight: 700; color: var(--navy); }
+  .export-btns { display: flex; gap: 8px; }
+  .btn { padding: 8px 16px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-primary { background: var(--teal); color: white; }
+  .btn-primary:hover { background: #0f766e; }
+  .btn-secondary { background: var(--navy); color: white; }
+  .btn-secondary:hover { background: #0f172a; }
+  .btn-outline { background: white; color: var(--navy); border: 2px solid var(--navy); }
+  .btn-outline:hover { background: var(--gray-50); }
+
+  /* KPI cards */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .kpi-card { background: white; border-radius: 10px; padding: 16px; border: 1px solid var(--gray-200); }
+  .kpi-label { font-size: 11px; color: var(--gray-500); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .kpi-value { font-size: 22px; font-weight: 800; color: var(--navy); margin: 6px 0 2px; }
+  .kpi-sub { font-size: 11px; color: var(--gray-500); }
+  .kpi-card.highlight { background: var(--navy); }
+  .kpi-card.highlight .kpi-label { color: rgba(255,255,255,0.7); }
+  .kpi-card.highlight .kpi-value { color: white; }
+  .kpi-card.highlight .kpi-sub { color: rgba(255,255,255,0.6); }
+
+  /* Panels */
+  .panel { background: white; border-radius: 10px; border: 1px solid var(--gray-200); margin-bottom: 20px; overflow: hidden; }
+  .panel-header { padding: 14px 20px; border-bottom: 1px solid var(--gray-200); display: flex; justify-content: space-between; align-items: center; }
+  .panel-title { font-size: 14px; font-weight: 700; color: var(--navy); }
+  .panel-badge { font-size: 11px; padding: 3px 10px; border-radius: 12px; font-weight: 700; }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-blue { background: var(--blue-light); color: var(--blue); }
+  .panel-body { padding: 20px; }
+
+  /* Tables */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { background: var(--gray-50); padding: 10px 12px; text-align: left; font-size: 12px; font-weight: 700; color: var(--gray-700); border-bottom: 2px solid var(--gray-200); }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); font-size: 13px; vertical-align: top; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--gray-50); }
+  .data-table .total-row td { font-weight: 700; background: var(--gray-50); border-top: 2px solid var(--gray-300); }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .positive { color: var(--green); font-weight: 700; }
+  .negative { color: var(--red); font-weight: 700; }
+  .neutral { color: var(--amber); font-weight: 700; }
+
+  /* Scenario bars */
+  .scenario-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .scenario-card { border-radius: 10px; padding: 16px; border: 2px solid var(--gray-200); }
+  .scenario-card.optimistic { border-color: var(--green); background: var(--green-light); }
+  .scenario-card.base { border-color: var(--blue); background: var(--blue-light); }
+  .scenario-card.pessimistic { border-color: var(--amber); background: var(--amber-light); }
+  .scenario-name { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .scenario-name.optimistic { color: var(--green); }
+  .scenario-name.base { color: var(--blue); }
+  .scenario-name.pessimistic { color: var(--amber); }
+  .scenario-metric { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 12px; }
+  .scenario-metric:last-child { border-bottom: none; }
+  .scenario-metric .val { font-weight: 700; }
+
+  /* IRR chart */
+  .irr-bar-container { margin: 12px 0; }
+  .irr-bar-label { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+  .irr-bar { height: 24px; background: var(--gray-200); border-radius: 4px; overflow: hidden; }
+  .irr-bar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; padding: 0 8px; font-size: 11px; font-weight: 700; color: white; transition: width 0.5s; }
+
+  /* Risk matrix */
+  .risk-matrix { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .risk-item { padding: 10px 12px; border-radius: 8px; font-size: 12px; }
+  .risk-item .risk-name { font-weight: 700; margin-bottom: 3px; }
+  .risk-item .risk-bearer { font-size: 11px; opacity: 0.8; }
+  .risk-high { background: var(--red-light); border-left: 4px solid var(--red); }
+  .risk-medium { background: var(--amber-light); border-left: 4px solid var(--amber); }
+  .risk-low { background: var(--green-light); border-left: 4px solid var(--green); }
+
+  /* Payment schedule */
+  .payment-timeline { position: relative; }
+  .payment-year { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+  .year-marker { width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .year-content { flex: 1; }
+  .year-title { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .year-details { font-size: 12px; color: var(--gray-700); }
+  .payment-bar { height: 12px; background: var(--teal); border-radius: 3px; margin-top: 6px; }
+
+  /* Clause library */
+  .clause-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .clause-card { padding: 12px; border-radius: 8px; border: 1px solid var(--gray-200); cursor: pointer; transition: all 0.2s; }
+  .clause-card:hover { border-color: var(--teal); }
+  .clause-card.selected { border-color: var(--teal); background: var(--teal-light); }
+  .clause-name { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .clause-desc { font-size: 11px; color: var(--gray-500); }
+
+  /* Claude prompt */
+  .claude-prompt { background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd; border-radius: 10px; padding: 20px; }
+  .claude-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .claude-logo-icon { width: 28px; height: 28px; background: #e77c3e; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 14px; }
+  .claude-logo-text { font-size: 13px; font-weight: 700; color: var(--navy); }
+  .prompt-box { background: white; border: 1px solid #bae6fd; border-radius: 8px; padding: 14px; font-size: 12px; line-height: 1.7; color: var(--gray-700); position: relative; white-space: pre-wrap; font-family: 'Segoe UI', sans-serif; }
+  .copy-btn { position: absolute; top: 8px; right: 8px; background: var(--navy); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 11px; cursor: pointer; font-weight: 600; }
+
+  /* Tooltips */
+  .tooltip { position: relative; display: inline-block; }
+  .tooltip .tooltip-text { visibility: hidden; background: var(--gray-900); color: white; text-align: left; border-radius: 6px; padding: 8px 12px; position: absolute; z-index: 1000; bottom: 125%; left: 50%; transform: translateX(-50%); width: 260px; font-size: 11px; line-height: 1.5; opacity: 0; transition: opacity 0.2s; }
+  .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+  /* Source citations */
+  .source-tag { display: inline-block; font-size: 10px; padding: 2px 6px; background: var(--gray-100); border-radius: 4px; color: var(--gray-500); margin-left: 4px; cursor: help; }
+
+  /* Info box */
+  .info-box { background: var(--blue-light); border: 1px solid #93c5fd; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #1e40af; margin-bottom: 16px; line-height: 1.6; }
+  .warn-box { background: var(--amber-light); border: 1px solid #fcd34d; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: #92400e; margin-bottom: 16px; line-height: 1.6; }
+
+  /* Print styles */
+  @media print {
+    .sidebar, .tab-nav, .export-btns, .add-outcome-btn { display: none !important; }
+    .app { grid-template-columns: 1fr; }
+    .panel { break-inside: avoid; }
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .app { grid-template-columns: 1fr; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    .scenario-grid { grid-template-columns: 1fr; }
+    .clause-grid { grid-template-columns: 1fr; }
+    .risk-matrix { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
+      <span class="header-badge">TOOL 11</span>
+      <span style="font-size:11px;color:rgba(255,255,255,0.5);">Social Impact Bond Builder</span>
+    </div>
+    <h1>Social Impact Bond & Outcome Contract Builder</h1>
+    <p>Structure SIBs, DIBs & outcome-based contracts — IRR scenarios, payment triggers, risk allocation &amp; term sheet</p>
+  </div>
+</div>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('structure')">Structure</button>
+      <button class="tab-btn" onclick="switchTab('outcomes')">Outcomes</button>
+      <button class="tab-btn" onclick="switchTab('finance')">Finance</button>
+    </div>
+
+    <!-- Structure Tab -->
+    <div id="tab-structure">
+      <div class="section">
+        <div class="section-title">
+          Contract Basics
+          <span class="tooltip tooltip-icon">ℹ
+            <span class="tooltip-text">SIB: private investors fund services, government repays if outcomes achieved. DIB: donors fund, repay based on development outcomes. Outcome Contract: direct commissioner-provider agreement with payment on results.</span>
+          </span>
+        </div>
+        <label>Contract Type</label>
+        <select id="contract-type" onchange="updateAll()">
+          <option value="SIB">Social Impact Bond (SIB)</option>
+          <option value="DIB">Development Impact Bond (DIB)</option>
+          <option value="OBC">Outcome-Based Contract (Pay for Success)</option>
+          <option value="RBF">Results-Based Financing (Tranche Payment)</option>
+        </select>
+        <div class="hint">SIBs: private capital at risk. DIBs: donor/government repayment. OBCs: no external investors.</div>
+
+        <label>Programme Name</label>
+        <input type="text" id="prog-name" value="Early Childhood Education SIB" oninput="updateAll()">
+
+        <label>Geography / Jurisdiction</label>
+        <select id="jurisdiction" onchange="updateAll()">
+          <option value="UK">United Kingdom</option>
+          <option value="US">United States</option>
+          <option value="AU">Australia</option>
+          <option value="EU">Europe (EU)</option>
+          <option value="DEV">Developing Economy</option>
+          <option value="OTHER">Other</option>
+        </select>
+
+        <label>Contract Duration (years)</label>
+        <input type="number" id="duration" value="5" min="1" max="15" oninput="updateAll()">
+
+        <label>Service Provider Type</label>
+        <select id="provider-type" onchange="updateAll()">
+          <option value="NGO">NGO / Charity</option>
+          <option value="SE">Social Enterprise</option>
+          <option value="Hybrid">Hybrid (NGO + commercial)</option>
+          <option value="Consortium">Consortium</option>
+        </select>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Commissioner</div>
+        <label>Commissioner Type</label>
+        <select id="commissioner-type" onchange="updateAll()">
+          <option value="central-gov">Central Government</option>
+          <option value="local-gov">Local Government / Council</option>
+          <option value="DFI">Development Finance Institution</option>
+          <option value="foundation">Foundation / Donor</option>
+          <option value="health">Health Authority / NHS</option>
+        </select>
+
+        <label>Government Cost Savings to Be Unlocked (£/$/yr)</label>
+        <input type="number" id="gov-savings" value="2500000" oninput="updateAll()">
+        <div class="hint">E.g. reduced custody, healthcare, benefits costs. Source: government actuarial data.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Risk Allocation
+          <span class="tooltip tooltip-icon">ℹ
+            <span class="tooltip-text">In a SIB, investors bear performance risk (non-payment if outcomes not met). Commissioners bear basis risk (outcome metrics don't capture true impact). Service providers bear delivery risk.</span>
+          </span>
+        </div>
+        <table class="risk-table">
+          <thead>
+            <tr><th>Risk Type</th><th>Bearer</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Performance / Outcome</td><td>
+              <select id="risk-perf" onchange="updateAll()">
+                <option value="Investor">Investor</option>
+                <option value="Provider">Provider</option>
+                <option value="Shared">Shared</option>
+                <option value="Commissioner">Commissioner</option>
+              </select>
+            </td></tr>
+            <tr><td>Attribution / Basis</td><td>
+              <select id="risk-attrib" onchange="updateAll()">
+                <option value="Commissioner">Commissioner</option>
+                <option value="Investor">Investor</option>
+                <option value="Shared">Shared</option>
+              </select>
+            </td></tr>
+            <tr><td>Delivery / Operational</td><td>
+              <select id="risk-ops" onchange="updateAll()">
+                <option value="Provider">Provider</option>
+                <option value="Shared">Shared</option>
+                <option value="Commissioner">Commissioner</option>
+              </select>
+            </td></tr>
+            <tr><td>Political / Policy Change</td><td>
+              <select id="risk-political" onchange="updateAll()">
+                <option value="Commissioner">Commissioner</option>
+                <option value="Shared">Shared</option>
+                <option value="Investor">Investor</option>
+              </select>
+            </td></tr>
+            <tr><td>Data / Measurement</td><td>
+              <select id="risk-data" onchange="updateAll()">
+                <option value="Shared">Shared</option>
+                <option value="Commissioner">Commissioner</option>
+                <option value="Evaluator">Independent Evaluator</option>
+              </select>
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Outcomes Tab -->
+    <div id="tab-outcomes" style="display:none;">
+      <div class="section">
+        <div class="section-title">Outcome Metrics & Payment Triggers
+          <span class="tooltip tooltip-icon">ℹ
+            <span class="tooltip-text">Define measurable outcomes that trigger payment. Best practice (based on GO Lab, Brookings): use 2-4 metrics, combine process + impact outcomes, ensure data routinely available via administrative data.</span>
+          </span>
+        </div>
+        <div class="info-box">
+          📊 <strong>GO Lab benchmark:</strong> UK SIBs average 3.2 outcome metrics. Most use a tiered payment structure (floor, base, stretch). Administrative data (e.g. DWP, NHS records) is preferred over primary evaluation.
+        </div>
+        <div class="outcomes-list" id="outcomes-list"></div>
+        <button class="add-outcome-btn" onclick="addOutcome()">+ Add Outcome Metric</button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Payment Structure</div>
+        <label>Payment Timing</label>
+        <select id="payment-timing" onchange="updateAll()">
+          <option value="annual">Annual (outcomes verified yearly)</option>
+          <option value="milestone">Milestone-based</option>
+          <option value="final">End-of-contract only</option>
+          <option value="hybrid">Hybrid (partial annual + final)</option>
+        </select>
+
+        <label>Floor (% of max payment — guaranteed minimum)</label>
+        <input type="number" id="payment-floor" value="0" min="0" max="80" oninput="updateAll()">
+        <div class="hint">0% = fully at risk. Some SIBs guarantee 20-30% to reduce early cash flow pressure.</div>
+
+        <label>Cap (% above target — upside cap)</label>
+        <input type="number" id="payment-cap" value="130" min="100" max="200" oninput="updateAll()">
+        <div class="hint">Typical SIB cap: 110-150% of target. Prevents perverse incentives.</div>
+
+        <label>Counterfactual Discount (%)</label>
+        <input type="number" id="counterfactual" value="20" min="0" max="60" oninput="updateAll()">
+        <div class="hint">Deadweight — outcomes that would have happened without the intervention. Typical: 15-30% (HM Treasury Green Book, 2022).</div>
+      </div>
+    </div>
+
+    <!-- Finance Tab -->
+    <div id="tab-finance" style="display:none;">
+      <div class="section">
+        <div class="section-title">Investment Structure</div>
+        <label>Total Investment Required (£/$)</label>
+        <input type="number" id="total-investment" value="3000000" oninput="updateAll()">
+
+        <label>Working Capital Tranche (%)</label>
+        <input type="number" id="wc-pct" value="60" min="10" max="100" oninput="updateAll()">
+        <div class="hint">Proportion of investment deployed as upfront working capital. Rest may be contingent/milestone-based.</div>
+
+        <label>Target IRR for Investors (%)</label>
+        <input type="number" id="target-irr" value="6" min="0" max="30" oninput="updateAll()">
+        <div class="hint">UK SIBs typically 3-7% IRR. Development impact bonds: 4-10%. Higher = harder for commissioner.</div>
+
+        <label>Management/Intermediary Fee (% of investment)</label>
+        <input type="number" id="mgmt-fee" value="5" min="0" max="20" oninput="updateAll()">
+        <div class="hint">Intermediary cost (e.g. Social Finance, Bridges). Typical: 3-8% of total investment.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Investor Profile</div>
+        <label>Primary Investor Type</label>
+        <select id="investor-type" onchange="updateAll()">
+          <option value="impact-fund">Impact Investment Fund</option>
+          <option value="foundation">Foundation (PRI)</option>
+          <option value="bank">Commercial Bank (ESG desk)</option>
+          <option value="DFI">DFI / MDB</option>
+          <option value="HNW">HNWI / Family Office</option>
+          <option value="gov">Government Development Fund</option>
+        </select>
+
+        <label>Number of Investors</label>
+        <input type="number" id="num-investors" value="3" min="1" max="20" oninput="updateAll()">
+
+        <label>Minimum Investment per Investor (£/$)</label>
+        <input type="number" id="min-investment" value="500000" oninput="updateAll()">
+      </div>
+
+      <div class="section">
+        <div class="section-title">Performance Scenarios</div>
+        <label>Optimistic Outcome Achievement (%)</label>
+        <input type="number" id="opt-achievement" value="120" min="80" max="150" oninput="updateAll()">
+        <label>Base Case Outcome Achievement (%)</label>
+        <input type="number" id="base-achievement" value="90" min="50" max="120" oninput="updateAll()">
+        <label>Pessimistic Outcome Achievement (%)</label>
+        <input type="number" id="pess-achievement" value="60" min="10" max="90" oninput="updateAll()">
+        <div class="hint">% of target outcomes actually achieved. Drives investor repayment calculation.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN RESULTS -->
+  <div class="main" id="results">
+    <!-- Rendered by JS -->
+  </div>
+</div>
+
+<script>
+// =====================================
+// DATA & CONFIG
+// =====================================
+const REAL_BENCHMARKS = {
+  // Source: GO Lab (Government Outcomes Lab) SIB Database 2024, 130+ UK contracts
+  ukSibCount: 137,
+  ukSibAvgInvestment: 2800000,
+  ukSibAvgDuration: 5.2,
+  ukSibAvgIRR: 5.1,
+  ukSibSuccessRate: 0.72,
+  // Source: Brookings Global Impact Bond Database 2023
+  globalDibCount: 225,
+  globalSibCount: 250,
+  // Source: Social Finance UK benchmarks
+  managementFeeLow: 0.03,
+  managementFeeHigh: 0.08,
+  irrLow: 0.03,
+  irrHigh: 0.10,
+  // HM Treasury Green Book 2022 discount rates
+  ukDiscountRate: 0.035,
+  usDiscountRate: 0.07, // OMB Circular A-94
+  // Counterfactual benchmarks (HM Treasury, 3ie)
+  deadweightLow: 0.10,
+  deadweightHigh: 0.35,
+};
+
+const SECTOR_OUTCOMES = {
+  employment: { label: "Employment", desc: "Sustained employment 6+ months", unit: "people employed", unitValue: 14000, source: "DWP/WSIPP" },
+  housing: { label: "Stable Housing", desc: "Nights in stable accommodation", unit: "person-years housed", unitValue: 12000, source: "MHCLG/Homelessness Monitor" },
+  education: { label: "Educational Achievement", desc: "Qualifications achieved or grade improvement", unit: "qualifications achieved", unitValue: 4500, source: "EEF/IFS" },
+  reoffending: { label: "Reduced Reoffending", desc: "Avoided custodial sentences", unit: "avoided prison years", unitValue: 45000, source: "MoJ/RAND" },
+  health: { label: "Health Improvement", desc: "Avoided A&E/hospital admissions", unit: "avoided admissions", unitValue: 2800, source: "NHS England" },
+  children: { label: "Children in Care", desc: "Children avoiding care placement", unit: "avoided care years", unitValue: 55000, source: "DfE/LGA" },
+  mental_health: { label: "Mental Health Recovery", desc: "Clinical improvement (IAPT/PHQ-9)", unit: "people recovered", unitValue: 8000, source: "NHS Talking Therapies" },
+  substance: { label: "Substance Misuse Recovery", desc: "Sustained recovery 12+ months", unit: "people in recovery", unitValue: 21000, source: "OHID/DrugScope" },
+};
+
+const CONTRACT_STRUCTURE_NOTES = {
+  SIB: { intermediary: true, investors: true, note: "Private investors bear performance risk. Commissioner repays principal + return only on outcome achievement. Requires independent evaluator (typical cost: £50-150k/yr)." },
+  DIB: { intermediary: true, investors: true, note: "Donor or development agency funds repayment (not government). Common in LMICs. World Bank / DFAT fund several active DIBs." },
+  OBC: { intermediary: false, investors: false, note: "Direct commissioner-provider contract. No external investors. Provider bears delivery risk; commissioner bears performance risk. Simplest structure, lowest transaction cost." },
+  RBF: { intermediary: false, investors: false, note: "Tranched payments conditional on pre-agreed milestones. Often used in development/aid. Reduces fiduciary risk without full SIB complexity." },
+};
+
+// =====================================
+// STATE
+// =====================================
+let outcomes = [
+  { metric: "employment", target: 150, value: 14000, weight: 50 },
+  { metric: "mental_health", target: 200, value: 8000, weight: 50 },
+];
+let activeTab = 'structure';
+
+// =====================================
+// OUTCOME MANAGEMENT
+// =====================================
+function renderOutcomesList() {
+  const list = document.getElementById('outcomes-list');
+  list.innerHTML = outcomes.map((o, i) => `
+    <div class="outcome-row">
+      <div class="outcome-row-header">
+        <span class="outcome-label">Metric ${i+1}</span>
+        <button class="remove-btn" onclick="removeOutcome(${i})">×</button>
+      </div>
+      <div class="outcome-grid">
+        <div>
+          <label>Outcome Type</label>
+          <select onchange="updateOutcome(${i},'metric',this.value)">
+            ${Object.entries(SECTOR_OUTCOMES).map(([k,v]) => `<option value="${k}" ${o.metric===k?'selected':''}>${v.label}</option>`).join('')}
+          </select>
+        </div>
+        <div>
+          <label>Target (units/yr)</label>
+          <input type="number" value="${o.target}" onchange="updateOutcome(${i},'target',this.value)">
+        </div>
+        <div>
+          <label>Value per Unit (£/$)</label>
+          <input type="number" value="${o.value}" onchange="updateOutcome(${i},'value',this.value)">
+        </div>
+        <div>
+          <label>Payment Weight (%)</label>
+          <input type="number" value="${o.weight}" min="5" max="95" onchange="updateOutcome(${i},'weight',this.value)">
+        </div>
+      </div>
+      <div class="hint" style="margin-top:6px;">📊 ${SECTOR_OUTCOMES[o.metric]?.source || ''} benchmark: £${(SECTOR_OUTCOMES[o.metric]?.unitValue||0).toLocaleString()} / ${SECTOR_OUTCOMES[o.metric]?.unit||'unit'}</div>
+    </div>
+  `).join('');
+}
+
+function addOutcome() {
+  outcomes.push({ metric: "housing", target: 100, value: 12000, weight: 0 });
+  normaliseWeights();
+  renderOutcomesList();
+  updateAll();
+}
+
+function removeOutcome(i) {
+  if (outcomes.length <= 1) return alert("Need at least one outcome metric.");
+  outcomes.splice(i, 1);
+  normaliseWeights();
+  renderOutcomesList();
+  updateAll();
+}
+
+function updateOutcome(i, field, val) {
+  if (field === 'metric') {
+    outcomes[i].metric = val;
+    outcomes[i].value = SECTOR_OUTCOMES[val]?.unitValue || 5000;
+  } else if (field === 'target') {
+    outcomes[i].target = parseFloat(val) || 0;
+  } else if (field === 'value') {
+    outcomes[i].value = parseFloat(val) || 0;
+  } else if (field === 'weight') {
+    outcomes[i].weight = parseFloat(val) || 0;
+  }
+  updateAll();
+}
+
+function normaliseWeights() {
+  const eq = Math.round(100 / outcomes.length);
+  outcomes.forEach((o, i) => o.weight = i < outcomes.length - 1 ? eq : 100 - eq * (outcomes.length - 1));
+}
+
+// =====================================
+// CALCULATIONS
+// =====================================
+function getInputs() {
+  return {
+    contractType: document.getElementById('contract-type').value,
+    progName: document.getElementById('prog-name').value || 'Impact Programme',
+    jurisdiction: document.getElementById('jurisdiction').value,
+    duration: parseFloat(document.getElementById('duration').value) || 5,
+    providerType: document.getElementById('provider-type').value,
+    commissionerType: document.getElementById('commissioner-type').value,
+    govSavings: parseFloat(document.getElementById('gov-savings').value) || 0,
+    totalInvestment: parseFloat(document.getElementById('total-investment').value) || 1000000,
+    wcPct: parseFloat(document.getElementById('wc-pct').value) / 100 || 0.6,
+    targetIRR: parseFloat(document.getElementById('target-irr').value) / 100 || 0.06,
+    mgmtFee: parseFloat(document.getElementById('mgmt-fee').value) / 100 || 0.05,
+    investorType: document.getElementById('investor-type').value,
+    numInvestors: parseFloat(document.getElementById('num-investors').value) || 1,
+    minInvestment: parseFloat(document.getElementById('min-investment').value) || 500000,
+    paymentTiming: document.getElementById('payment-timing').value,
+    paymentFloor: parseFloat(document.getElementById('payment-floor').value) / 100 || 0,
+    paymentCap: parseFloat(document.getElementById('payment-cap').value) / 100 || 1.3,
+    counterfactual: parseFloat(document.getElementById('counterfactual').value) / 100 || 0.2,
+    optAchievement: parseFloat(document.getElementById('opt-achievement').value) / 100 || 1.2,
+    baseAchievement: parseFloat(document.getElementById('base-achievement').value) / 100 || 0.9,
+    pessAchievement: parseFloat(document.getElementById('pess-achievement').value) / 100 || 0.6,
+    risks: {
+      performance: document.getElementById('risk-perf').value,
+      attribution: document.getElementById('risk-attrib').value,
+      operational: document.getElementById('risk-ops').value,
+      political: document.getElementById('risk-political').value,
+      data: document.getElementById('risk-data').value,
+    }
+  };
+}
+
+function calcAnnualOutcomeValue() {
+  return outcomes.reduce((sum, o) => {
+    const val = o.target * o.value;
+    return sum + val;
+  }, 0);
+}
+
+function calcMaxPayment(inp) {
+  const raw = calcAnnualOutcomeValue() * inp.duration;
+  const counterfactualAdjusted = raw * (1 - inp.counterfactual);
+  return counterfactualAdjusted;
+}
+
+function calcScenario(inp, achievementPct) {
+  const maxPay = calcMaxPayment(inp);
+  const raw = maxPay * achievementPct;
+  const capped = Math.min(raw, maxPay * inp.paymentCap);
+  const floored = Math.max(capped, maxPay * inp.paymentFloor);
+  const payment = floored;
+
+  const mgmtCost = inp.totalInvestment * inp.mgmtFee;
+  const totalCost = inp.totalInvestment + mgmtCost;
+  const repayment = payment;
+  const netToInvestor = repayment - totalCost;
+
+  // Simple IRR approximation using Newton's method
+  const cashflows = [-totalCost];
+  const annual = repayment / inp.duration;
+  for (let y = 0; y < inp.duration; y++) cashflows.push(annual);
+  const irr = calcIRR(cashflows);
+
+  const savings = inp.govSavings * inp.duration;
+  const sib_ratio = savings > 0 ? payment / savings : 0;
+
+  return {
+    payment,
+    netToInvestor,
+    irr: irr * 100,
+    totalCost,
+    mgmtCost,
+    achievementPct,
+    sipRatio: sib_ratio,
+    repaymentRatio: repayment / inp.totalInvestment,
+  };
+}
+
+function calcIRR(cashflows) {
+  let r = 0.05;
+  for (let i = 0; i < 100; i++) {
+    let npv = 0, dnpv = 0;
+    cashflows.forEach((cf, t) => {
+      npv += cf / Math.pow(1 + r, t);
+      dnpv -= t * cf / Math.pow(1 + r, t + 1);
+    });
+    if (Math.abs(dnpv) < 1e-10) break;
+    const rNew = r - npv / dnpv;
+    if (Math.abs(rNew - r) < 0.0001) { r = rNew; break; }
+    r = rNew;
+  }
+  return isFinite(r) ? r : 0;
+}
+
+function calcNPV(cashflows, rate) {
+  return cashflows.reduce((sum, cf, t) => sum + cf / Math.pow(1 + rate, t), 0);
+}
+
+function fmt(n, dp = 0) {
+  if (n === undefined || n === null || isNaN(n)) return '—';
+  const abs = Math.abs(n);
+  let str;
+  if (abs >= 1000000) str = (n / 1000000).toFixed(1) + 'M';
+  else if (abs >= 1000) str = (n / 1000).toFixed(0) + 'k';
+  else str = n.toFixed(dp);
+  return str;
+}
+
+function fmtCurr(n, sym = '£') {
+  return sym + fmt(n);
+}
+
+function pct(n) {
+  if (isNaN(n) || !isFinite(n)) return '—';
+  return n.toFixed(1) + '%';
+}
+
+// =====================================
+// RENDER
+// =====================================
+function updateAll() {
+  renderOutcomesList();
+  const inp = getInputs();
+  const base = calcScenario(inp, inp.baseAchievement);
+  const opt = calcScenario(inp, inp.optAchievement);
+  const pess = calcScenario(inp, inp.pessAchievement);
+  const maxPay = calcMaxPayment(inp);
+  const annualOutcomeVal = calcAnnualOutcomeValue();
+  const structNote = CONTRACT_STRUCTURE_NOTES[inp.contractType];
+  const discountRate = inp.jurisdiction === 'US' ? REAL_BENCHMARKS.usDiscountRate : REAL_BENCHMARKS.ukDiscountRate;
+
+  // Build year-by-year payment schedule
+  const yearlyPayments = [];
+  for (let y = 1; y <= inp.duration; y++) {
+    const yearFrac = y / inp.duration;
+    let payment = 0;
+    if (inp.paymentTiming === 'annual') payment = base.payment / inp.duration;
+    else if (inp.paymentTiming === 'final') payment = y === inp.duration ? base.payment : 0;
+    else if (inp.paymentTiming === 'hybrid') payment = y === inp.duration ? base.payment * 0.4 : base.payment * 0.6 / (inp.duration - 1);
+    else payment = y % Math.ceil(inp.duration / 3) === 0 ? base.payment / 3 : 0;
+    yearlyPayments.push({ year: y, payment });
+  }
+
+  const sym = inp.jurisdiction === 'US' || inp.jurisdiction === 'AU' ? '$' : '£';
+
+  document.getElementById('results').innerHTML = `
+    <div class="results-header">
+      <div>
+        <div class="results-title">${inp.progName}</div>
+        <div style="font-size:13px;color:var(--gray-500);margin-top:3px;">${inp.contractType} · ${inp.duration}-year contract · ${inp.jurisdiction}</div>
+      </div>
+      <div class="export-btns">
+        <button class="btn btn-outline" onclick="window.print()">🖨 Print</button>
+        <button class="btn btn-primary" onclick="exportCSV()">⬇ Export CSV</button>
+      </div>
+    </div>
+
+    <!-- KPI row -->
+    <div class="kpi-grid">
+      <div class="kpi-card highlight">
+        <div class="kpi-label">Max Outcome Payment</div>
+        <div class="kpi-value">${fmtCurr(maxPay, sym)}</div>
+        <div class="kpi-sub">If 100% of outcomes achieved</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Base Case IRR</div>
+        <div class="kpi-value" style="color:${base.irr > 5 ? 'var(--green)' : base.irr > 2 ? 'var(--amber)' : 'var(--red)'}">${pct(base.irr)}</div>
+        <div class="kpi-sub">At ${pct(inp.baseAchievement * 100)} outcome achievement</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Commissioner Savings Ratio</div>
+        <div class="kpi-value" style="color:${base.sipRatio > 1 ? 'var(--green)' : 'var(--amber)'}">${base.sipRatio.toFixed(2)}x</div>
+        <div class="kpi-sub">Payment vs gov't savings unlocked</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Annual Outcome Value</div>
+        <div class="kpi-value">${fmtCurr(annualOutcomeVal, sym)}</div>
+        <div class="kpi-sub">Pre-counterfactual adjustment</div>
+      </div>
+    </div>
+
+    <!-- Structure info -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Contract Structure: ${inp.contractType}</span>
+        <span class="panel-badge badge-blue">${inp.contractType}</span>
+      </div>
+      <div class="panel-body">
+        <div class="info-box" style="margin-bottom:12px;">
+          ${structNote.note}
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+          <div style="background:var(--gray-50);padding:12px;border-radius:8px;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;margin-bottom:6px;">Working Capital</div>
+            <div style="font-size:18px;font-weight:800;color:var(--navy);">${fmtCurr(inp.totalInvestment * inp.wcPct, sym)}</div>
+            <div style="font-size:11px;color:var(--gray-500);">${pct(inp.wcPct * 100)} deployed upfront</div>
+          </div>
+          <div style="background:var(--gray-50);padding:12px;border-radius:8px;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;margin-bottom:6px;">Intermediary Cost</div>
+            <div style="font-size:18px;font-weight:800;color:var(--navy);">${fmtCurr(base.mgmtCost, sym)}</div>
+            <div style="font-size:11px;color:var(--gray-500);">${pct(inp.mgmtFee * 100)} of total investment</div>
+          </div>
+          <div style="background:var(--gray-50);padding:12px;border-radius:8px;">
+            <div style="font-size:11px;font-weight:700;color:var(--gray-500);text-transform:uppercase;margin-bottom:6px;">Investors Required</div>
+            <div style="font-size:18px;font-weight:800;color:var(--navy);">${inp.numInvestors}</div>
+            <div style="font-size:11px;color:var(--gray-500);">min ${fmtCurr(inp.minInvestment, sym)} each</div>
+          </div>
+        </div>
+
+        ${inp.contractType === 'SIB' || inp.contractType === 'DIB' ? `
+        <div style="margin-top:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;">GO Lab Benchmark Comparison <span class="source-tag" title="Government Outcomes Lab SIB Database 2024, n=137 UK contracts">GO Lab 2024</span></div>
+          <table class="data-table">
+            <thead><tr><th>Metric</th><th>This Contract</th><th>UK SIB Average</th><th>Assessment</th></tr></thead>
+            <tbody>
+              <tr><td>Investment Size</td><td class="num">${fmtCurr(inp.totalInvestment, sym)}</td><td class="num">£2.8M</td><td><span class="panel-badge ${inp.totalInvestment >= 1000000 ? 'badge-green' : 'badge-amber'}">${inp.totalInvestment >= 1000000 ? 'In range' : 'Below avg'}</span></td></tr>
+              <tr><td>Duration</td><td class="num">${inp.duration} yrs</td><td class="num">5.2 yrs</td><td><span class="panel-badge ${Math.abs(inp.duration - 5.2) <= 1.5 ? 'badge-green' : 'badge-amber'}">${Math.abs(inp.duration - 5.2) <= 1.5 ? 'Typical' : 'Atypical'}</span></td></tr>
+              <tr><td>Target IRR</td><td class="num">${pct(inp.targetIRR * 100)}</td><td class="num">5.1%</td><td><span class="panel-badge ${inp.targetIRR <= 0.08 && inp.targetIRR >= 0.03 ? 'badge-green' : 'badge-amber'}">${inp.targetIRR <= 0.08 && inp.targetIRR >= 0.03 ? 'Competitive' : inp.targetIRR > 0.08 ? 'Above market' : 'Below market'}</span></td></tr>
+              <tr><td>Mgmt Fee</td><td class="num">${pct(inp.mgmtFee * 100)}</td><td class="num">3–8%</td><td><span class="panel-badge ${inp.mgmtFee >= 0.03 && inp.mgmtFee <= 0.08 ? 'badge-green' : 'badge-amber'}">${inp.mgmtFee >= 0.03 && inp.mgmtFee <= 0.08 ? 'In range' : 'Outside range'}</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        ` : ''}
+      </div>
+    </div>
+
+    <!-- Outcome metrics -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Outcome Metrics & Payment Schedule</span>
+        <span class="panel-badge badge-green">${outcomes.length} metrics</span>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Outcome</th>
+              <th class="num">Annual Target</th>
+              <th class="num">Unit Value</th>
+              <th class="num">Annual Value</th>
+              <th class="num">Weight</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${outcomes.map(o => `
+            <tr>
+              <td><strong>${SECTOR_OUTCOMES[o.metric]?.label}</strong><br><span style="font-size:11px;color:var(--gray-500);">${SECTOR_OUTCOMES[o.metric]?.desc}</span></td>
+              <td class="num">${o.target.toLocaleString()} ${SECTOR_OUTCOMES[o.metric]?.unit?.split(' ')[0]}</td>
+              <td class="num">${fmtCurr(o.value, sym)}</td>
+              <td class="num"><strong>${fmtCurr(o.target * o.value, sym)}</strong></td>
+              <td class="num">${o.weight}%</td>
+              <td><span class="source-tag">${SECTOR_OUTCOMES[o.metric]?.source}</span></td>
+            </tr>
+            `).join('')}
+            <tr class="total-row">
+              <td><strong>TOTAL</strong></td>
+              <td></td>
+              <td></td>
+              <td class="num"><strong>${fmtCurr(annualOutcomeVal, sym)}/yr</strong></td>
+              <td class="num">100%</td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="margin-top:16px;">
+          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:8px;">Payment Timeline (Base Case)</div>
+          <div class="payment-timeline">
+            ${yearlyPayments.map(yp => `
+            <div class="payment-year">
+              <div class="year-marker">Y${yp.year}</div>
+              <div class="year-content">
+                <div class="year-title">Year ${yp.year} ${inp.paymentTiming === 'final' && yp.year === inp.duration ? '— Final Payment' : inp.paymentTiming === 'annual' ? '— Annual Outcome Payment' : yp.payment > 0 ? '— Milestone Payment' : '— Delivery Phase'}</div>
+                <div class="year-details">${yp.payment > 0 ? `<span class="positive">${fmtCurr(yp.payment, sym)} outcome payment</span>` : '<span style="color:var(--gray-500)">No payment this year — delivery continues</span>'}</div>
+                ${yp.payment > 0 ? `<div class="payment-bar" style="width:${Math.min(100, (yp.payment / (base.payment || 1)) * 100)}%"></div>` : ''}
+              </div>
+            </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div style="margin-top:16px;" class="warn-box">
+          ⚠️ <strong>Counterfactual adjustment applied:</strong> ${pct(inp.counterfactual * 100)} deadweight deducted from raw outcome value.
+          Adjusted max payment: <strong>${fmtCurr(maxPay, sym)}</strong> vs unadjusted ${fmtCurr(annualOutcomeVal * inp.duration, sym)}.
+          <span class="source-tag" title="HM Treasury Green Book 2022, 3ie Counterfactual Guidance">HM Treasury 2022</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- IRR Scenarios -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Investor Return Scenarios</span>
+        <span class="panel-badge badge-blue">IRR Analysis</span>
+      </div>
+      <div class="panel-body">
+        <div class="scenario-grid">
+          <div class="scenario-card optimistic">
+            <div class="scenario-name optimistic">🟢 Optimistic</div>
+            <div class="scenario-metric"><span>Achievement</span><span class="val">${pct(inp.optAchievement * 100)}</span></div>
+            <div class="scenario-metric"><span>Outcome Payment</span><span class="val">${fmtCurr(opt.payment, sym)}</span></div>
+            <div class="scenario-metric"><span>Investor IRR</span><span class="val">${pct(opt.irr)}</span></div>
+            <div class="scenario-metric"><span>Repayment Ratio</span><span class="val">${opt.repaymentRatio.toFixed(2)}x</span></div>
+            <div class="scenario-metric"><span>Net to Investor</span><span class="val ${opt.netToInvestor >= 0 ? 'positive' : 'negative'}">${fmtCurr(opt.netToInvestor, sym)}</span></div>
+          </div>
+          <div class="scenario-card base">
+            <div class="scenario-name base">🔵 Base Case</div>
+            <div class="scenario-metric"><span>Achievement</span><span class="val">${pct(inp.baseAchievement * 100)}</span></div>
+            <div class="scenario-metric"><span>Outcome Payment</span><span class="val">${fmtCurr(base.payment, sym)}</span></div>
+            <div class="scenario-metric"><span>Investor IRR</span><span class="val">${pct(base.irr)}</span></div>
+            <div class="scenario-metric"><span>Repayment Ratio</span><span class="val">${base.repaymentRatio.toFixed(2)}x</span></div>
+            <div class="scenario-metric"><span>Net to Investor</span><span class="val ${base.netToInvestor >= 0 ? 'positive' : 'negative'}">${fmtCurr(base.netToInvestor, sym)}</span></div>
+          </div>
+          <div class="scenario-card pessimistic">
+            <div class="scenario-name pessimistic">🟡 Pessimistic</div>
+            <div class="scenario-metric"><span>Achievement</span><span class="val">${pct(inp.pessAchievement * 100)}</span></div>
+            <div class="scenario-metric"><span>Outcome Payment</span><span class="val">${fmtCurr(pess.payment, sym)}</span></div>
+            <div class="scenario-metric"><span>Investor IRR</span><span class="val">${pct(pess.irr)}</span></div>
+            <div class="scenario-metric"><span>Repayment Ratio</span><span class="val">${pess.repaymentRatio.toFixed(2)}x</span></div>
+            <div class="scenario-metric"><span>Net to Investor</span><span class="val ${pess.netToInvestor >= 0 ? 'positive' : 'negative'}">${fmtCurr(pess.netToInvestor, sym)}</span></div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;">IRR Sensitivity by Outcome Achievement Level <span class="source-tag" title="Social Finance UK IRR benchmarks; GO Lab 2024">Social Finance / GO Lab</span></div>
+          ${[100, 90, 80, 70, 60, 50, 40].map(achPct => {
+            const s = calcScenario(inp, achPct / 100);
+            const irrVal = s.irr;
+            const barW = Math.max(0, Math.min(100, (irrVal + 5) * 5)); // scale -5% to 20%
+            const barColor = irrVal > 6 ? 'var(--green)' : irrVal > 3 ? 'var(--teal)' : irrVal > 0 ? 'var(--amber)' : 'var(--red)';
+            return `
+            <div class="irr-bar-container">
+              <div class="irr-bar-label">
+                <span>${achPct}% achievement</span>
+                <span style="font-weight:700;color:${barColor}">${pct(irrVal)}</span>
+              </div>
+              <div class="irr-bar">
+                <div class="irr-bar-fill" style="width:${barW}%;background:${barColor};">
+                  ${irrVal > 0 ? pct(irrVal) : 'Capital loss'}
+                </div>
+              </div>
+            </div>
+            `;
+          }).join('')}
+          <div class="hint" style="margin-top:8px;">💡 Breakeven achievement: ~${(() => {
+            for (let a = 5; a <= 100; a += 1) {
+              const s = calcScenario(inp, a / 100);
+              if (s.netToInvestor >= 0) return a + '%';
+            }
+            return '> 100%';
+          })()} (investor gets capital back)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk Allocation -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Risk Allocation Matrix</span>
+        <span class="panel-badge badge-amber">5 Risk Types</span>
+      </div>
+      <div class="panel-body">
+        <div class="risk-matrix">
+          ${[
+            { key: 'performance', label: 'Performance / Outcome Risk', desc: 'Outcomes not achieved', bearer: inp.risks.performance, level: 'high' },
+            { key: 'attribution', label: 'Attribution / Basis Risk', desc: 'Outcomes don\'t measure true impact', bearer: inp.risks.attribution, level: 'medium' },
+            { key: 'operational', label: 'Delivery / Operational Risk', desc: 'Service delivery failure', bearer: inp.risks.operational, level: 'high' },
+            { key: 'political', label: 'Political / Policy Change Risk', desc: 'Commissioner priorities shift', bearer: inp.risks.political, level: 'medium' },
+            { key: 'data', label: 'Data & Measurement Risk', desc: 'Outcome data unavailable/disputed', bearer: inp.risks.data, level: 'low' },
+          ].map(r => `
+          <div class="risk-item risk-${r.level}">
+            <div class="risk-name">${r.label}</div>
+            <div class="risk-bearer">Bearer: <strong>${r.bearer}</strong></div>
+            <div style="font-size:11px;margin-top:3px;opacity:0.8;">${r.desc}</div>
+          </div>
+          `).join('')}
+        </div>
+        <div class="info-box" style="margin-top:16px;">
+          📋 <strong>Best practice (GO Lab):</strong> Performance risk should sit with investors in a SIB structure. Attribution risk typically retained by commissioner. Consider a joint data governance committee to manage measurement risk.
+        </div>
+      </div>
+    </div>
+
+    <!-- Financial Summary Table -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Full Financial Summary</span>
+        <span class="panel-badge badge-blue">All figures over contract period</span>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr><th>Line Item</th><th class="num">Pessimistic</th><th class="num">Base Case</th><th class="num">Optimistic</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Outcome Achievement</td><td class="num">${pct(inp.pessAchievement * 100)}</td><td class="num">${pct(inp.baseAchievement * 100)}</td><td class="num">${pct(inp.optAchievement * 100)}</td></tr>
+            <tr><td>Gross Outcome Value</td><td class="num">${fmtCurr(annualOutcomeVal * inp.duration * inp.pessAchievement, sym)}</td><td class="num">${fmtCurr(annualOutcomeVal * inp.duration * inp.baseAchievement, sym)}</td><td class="num">${fmtCurr(annualOutcomeVal * inp.duration * inp.optAchievement, sym)}</td></tr>
+            <tr><td>Counterfactual Deduction (${pct(inp.counterfactual * 100)})</td><td class="num negative">-${fmtCurr(annualOutcomeVal * inp.duration * inp.pessAchievement * inp.counterfactual, sym)}</td><td class="num negative">-${fmtCurr(annualOutcomeVal * inp.duration * inp.baseAchievement * inp.counterfactual, sym)}</td><td class="num negative">-${fmtCurr(annualOutcomeVal * inp.duration * inp.optAchievement * inp.counterfactual, sym)}</td></tr>
+            <tr><td><strong>Net Outcome Payment to Investors</strong></td><td class="num"><strong>${fmtCurr(pess.payment, sym)}</strong></td><td class="num"><strong>${fmtCurr(base.payment, sym)}</strong></td><td class="num"><strong>${fmtCurr(opt.payment, sym)}</strong></td></tr>
+            <tr><td>Total Investment (incl. mgmt fee)</td><td class="num negative">-${fmtCurr(pess.totalCost, sym)}</td><td class="num negative">-${fmtCurr(base.totalCost, sym)}</td><td class="num negative">-${fmtCurr(opt.totalCost, sym)}</td></tr>
+            <tr><td>Government Savings Unlocked</td><td class="num positive">+${fmtCurr(inp.govSavings * inp.duration, sym)}</td><td class="num positive">+${fmtCurr(inp.govSavings * inp.duration, sym)}</td><td class="num positive">+${fmtCurr(inp.govSavings * inp.duration, sym)}</td></tr>
+            <tr class="total-row"><td>Net to Investor (P&L)</td><td class="num ${pess.netToInvestor >= 0 ? 'positive' : 'negative'}">${fmtCurr(pess.netToInvestor, sym)}</td><td class="num ${base.netToInvestor >= 0 ? 'positive' : 'negative'}">${fmtCurr(base.netToInvestor, sym)}</td><td class="num ${opt.netToInvestor >= 0 ? 'positive' : 'negative'}">${fmtCurr(opt.netToInvestor, sym)}</td></tr>
+            <tr class="total-row"><td>Investor IRR</td><td class="num">${pct(pess.irr)}</td><td class="num">${pct(base.irr)}</td><td class="num">${pct(opt.irr)}</td></tr>
+            <tr class="total-row"><td>Commissioner Net Saving</td><td class="num positive">${fmtCurr(inp.govSavings * inp.duration - pess.payment, sym)}</td><td class="num positive">${fmtCurr(inp.govSavings * inp.duration - base.payment, sym)}</td><td class="num positive">${fmtCurr(inp.govSavings * inp.duration - opt.payment, sym)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Key Contract Terms -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Key Contract Terms to Negotiate</span>
+        <span class="panel-badge badge-amber">Negotiation Guidance</span>
+      </div>
+      <div class="panel-body">
+        <table class="data-table">
+          <thead>
+            <tr><th>Term</th><th>Your Setting</th><th>Market Standard</th><th>Negotiation Note</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Payment Floor</strong></td>
+              <td>${pct(inp.paymentFloor * 100)}</td>
+              <td>0–30%</td>
+              <td>${inp.paymentFloor === 0 ? '⚠️ No floor — fully at risk. Providers may need bridge financing.' : inp.paymentFloor <= 0.3 ? '✅ Within normal range.' : '⚠️ High floor reduces investor risk but limits value for money.'}</td>
+            </tr>
+            <tr>
+              <td><strong>Payment Cap</strong></td>
+              <td>${pct(inp.paymentCap * 100)}</td>
+              <td>110–150%</td>
+              <td>${inp.paymentCap <= 1.5 && inp.paymentCap >= 1.1 ? '✅ Standard range.' : inp.paymentCap > 1.5 ? '⚠️ High cap — risk of perverse incentives (cherry-picking).' : '⚠️ Low cap limits upside — may deter high-performing providers.'}</td>
+            </tr>
+            <tr>
+              <td><strong>Counterfactual Rate</strong></td>
+              <td>${pct(inp.counterfactual * 100)}</td>
+              <td>15–30% (HM Treasury)</td>
+              <td>${inp.counterfactual >= 0.15 && inp.counterfactual <= 0.30 ? '✅ Within HM Treasury Green Book range.' : inp.counterfactual < 0.15 ? '⚠️ Low counterfactual — likely to be challenged by evaluators.' : '⚠️ High counterfactual reduces value — may make SIB unviable.'}</td>
+            </tr>
+            <tr>
+              <td><strong>Intermediary Fee</strong></td>
+              <td>${pct(inp.mgmtFee * 100)}</td>
+              <td>3–8% (Social Finance benchmark)</td>
+              <td>${inp.mgmtFee >= 0.03 && inp.mgmtFee <= 0.08 ? '✅ Market rate.' : inp.mgmtFee > 0.08 ? '⚠️ High — negotiate scope reduction or cap in absolute terms.' : '⚠️ Below cost — may indicate scope gaps or low-quality intermediary.'}</td>
+            </tr>
+            <tr>
+              <td><strong>Target IRR</strong></td>
+              <td>${pct(inp.targetIRR * 100)}</td>
+              <td>3–7% (UK SIBs)</td>
+              <td>${inp.targetIRR >= 0.03 && inp.targetIRR <= 0.07 ? '✅ Competitive. Likely to attract impact investors.' : inp.targetIRR > 0.07 ? '⚠️ High IRR required. Consider whether commissioners can afford this.' : '⚠️ Below market — may limit investor appetite.'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Claude Prompt -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Go Deeper with Claude</span>
+      </div>
+      <div class="panel-body">
+        <div class="claude-prompt">
+          <div class="claude-logo">
+            <div class="claude-logo-icon">C</div>
+            <span class="claude-logo-text">Copy this prompt → paste into Claude for expert analysis</span>
+          </div>
+          <div class="prompt-box" id="claude-prompt-text">I am structuring a ${inp.contractType} for ${inp.progName} with the following parameters:
+
+Contract type: ${inp.contractType} | Duration: ${inp.duration} years | Jurisdiction: ${inp.jurisdiction}
+Total investment: ${fmtCurr(inp.totalInvestment, sym)} | Target IRR: ${pct(inp.targetIRR * 100)}
+Outcome metrics: ${outcomes.map(o => `${SECTOR_OUTCOMES[o.metric]?.label} (${o.target} units/yr × ${fmtCurr(o.value, sym)} = ${fmtCurr(o.target * o.value, sym)}/yr)`).join(', ')}
+Base case payment: ${fmtCurr(base.payment, sym)} at ${pct(inp.baseAchievement * 100)} achievement
+IRR scenarios: pessimistic ${pct(pess.irr)}, base ${pct(base.irr)}, optimistic ${pct(opt.irr)}
+Counterfactual rate: ${pct(inp.counterfactual * 100)} | Payment floor: ${pct(inp.paymentFloor * 100)} | Cap: ${pct(inp.paymentCap * 100)}
+
+Please provide:
+1. Assessment of whether this contract structure is viable and likely to attract investors
+2. Any red flags in the financial terms vs. GO Lab/Social Finance benchmarks
+3. Suggested changes to improve value for money for the commissioner
+4. What independent evaluation design would be most appropriate for these outcome metrics?
+5. What additional due diligence would a sophisticated impact investor require before committing capital?
+6. Draft 3 key contractual protections the service provider should negotiate for.
+          <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;padding:16px;font-size:11px;color:var(--gray-500);">
+      Built with data from GO Lab (Government Outcomes Lab) SIB Database 2024 · Brookings Global Impact Bond Database · HM Treasury Green Book 2022 · Social Finance UK benchmarks · 3ie Counterfactual Guidance
+      <br>For professional structuring, consult Social Finance, Bridges Fund Management, or a specialist impact finance lawyer.
+    </div>
+  `;
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', ['structure','outcomes','finance'][i] === tab));
+  document.getElementById('tab-structure').style.display = tab === 'structure' ? 'block' : 'none';
+  document.getElementById('tab-outcomes').style.display = tab === 'outcomes' ? 'block' : 'none';
+  document.getElementById('tab-finance').style.display = tab === 'finance' ? 'block' : 'none';
+}
+
+function copyPrompt() {
+  const text = document.getElementById('claude-prompt-text').innerText.replace('Copy', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 2000);
+  });
+}
+
+function exportCSV() {
+  const inp = getInputs();
+  const base = calcScenario(inp, inp.baseAchievement);
+  const opt = calcScenario(inp, inp.optAchievement);
+  const pess = calcScenario(inp, inp.pessAchievement);
+  const sym = inp.jurisdiction === 'US' || inp.jurisdiction === 'AU' ? '$' : '£';
+  const annualOutcomeVal = calcAnnualOutcomeValue();
+  const maxPay = calcMaxPayment(inp);
+
+  let csv = `Social Impact Bond / Outcome Contract Builder — Export\n`;
+  csv += `Programme: ${inp.progName}\n`;
+  csv += `Contract Type: ${inp.contractType}\n`;
+  csv += `Generated: ${new Date().toISOString().split('T')[0]}\n\n`;
+
+  csv += `CONTRACT PARAMETERS\n`;
+  csv += `Duration (years),${inp.duration}\n`;
+  csv += `Total Investment (${sym}),${inp.totalInvestment}\n`;
+  csv += `Target IRR (%),${(inp.targetIRR * 100).toFixed(1)}\n`;
+  csv += `Counterfactual Rate (%),${(inp.counterfactual * 100).toFixed(1)}\n`;
+  csv += `Payment Floor (%),${(inp.paymentFloor * 100).toFixed(1)}\n`;
+  csv += `Payment Cap (%),${(inp.paymentCap * 100).toFixed(1)}\n`;
+  csv += `Intermediary Fee (%),${(inp.mgmtFee * 100).toFixed(1)}\n\n`;
+
+  csv += `OUTCOME METRICS\n`;
+  csv += `Metric,Annual Target,Unit Value (${sym}),Annual Value (${sym}),Weight (%),Source\n`;
+  outcomes.forEach(o => {
+    csv += `${SECTOR_OUTCOMES[o.metric]?.label},${o.target},${o.value},${o.target * o.value},${o.weight},${SECTOR_OUTCOMES[o.metric]?.source}\n`;
+  });
+  csv += `TOTAL,,, ${annualOutcomeVal},100,\n\n`;
+
+  csv += `FINANCIAL SCENARIOS\n`;
+  csv += `Metric,Pessimistic,Base Case,Optimistic\n`;
+  csv += `Achievement (%),${(inp.pessAchievement * 100).toFixed(0)},${(inp.baseAchievement * 100).toFixed(0)},${(inp.optAchievement * 100).toFixed(0)}\n`;
+  csv += `Outcome Payment (${sym}),${pess.payment.toFixed(0)},${base.payment.toFixed(0)},${opt.payment.toFixed(0)}\n`;
+  csv += `Investor IRR (%),${pess.irr.toFixed(1)},${base.irr.toFixed(1)},${opt.irr.toFixed(1)}\n`;
+  csv += `Net to Investor (${sym}),${pess.netToInvestor.toFixed(0)},${base.netToInvestor.toFixed(0)},${opt.netToInvestor.toFixed(0)}\n`;
+  csv += `Commissioner Net Saving (${sym}),${(inp.govSavings * inp.duration - pess.payment).toFixed(0)},${(inp.govSavings * inp.duration - base.payment).toFixed(0)},${(inp.govSavings * inp.duration - opt.payment).toFixed(0)}\n\n`;
+
+  csv += `DATA SOURCES\nGO Lab SIB Database 2024 (n=137 UK contracts)\nBrookings Global Impact Bond Database 2023\nHM Treasury Green Book 2022 (discount rate and counterfactual)\nSocial Finance UK benchmarks\n3ie Counterfactual Guidance\n`;
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `SIB-model-${inp.progName.replace(/\s+/g, '-')}.csv`;
+  a.click();
+}
+
+// Init
+renderOutcomesList();
+updateAll();
+</script>
+</body>
+</html>
