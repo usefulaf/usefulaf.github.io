@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cost-Effectiveness Analysis Builder — Useful AF</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --secondary: #2d6a9f;
+    --accent: #e8a020;
+    --green: #2a7a4b;
+    --red: #c0392b;
+    --light-blue: #eef4fb;
+    --light-grey: #f5f6f8;
+    --border: #d0d8e4;
+    --text: #1e2430;
+    --muted: #6b7a90;
+    --white: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #eef1f6; color: var(--text); font-size: 14px; line-height: 1.5; }
+
+  /* Header */
+  .header { background: var(--primary); color: white; padding: 18px 32px; display: flex; align-items: center; gap: 16px; }
+  .header-logo { background: var(--accent); color: var(--primary); font-weight: 800; font-size: 13px; padding: 4px 10px; border-radius: 4px; letter-spacing: 0.5px; }
+  .header h1 { font-size: 18px; font-weight: 700; }
+  .header p { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+  .header-right { margin-left: auto; display: flex; gap: 8px; }
+  .btn { padding: 8px 16px; border-radius: 5px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+  .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.5); color: white; }
+  .btn-outline:hover { background: rgba(255,255,255,0.1); }
+  .btn-accent { background: var(--accent); color: var(--primary); }
+  .btn-accent:hover { background: #d4911a; }
+  .btn-primary { background: var(--secondary); color: white; }
+  .btn-primary:hover { background: #235d8e; }
+  .btn-green { background: var(--green); color: white; }
+  .btn-green:hover { background: #1e5e39; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+  /* Layout */
+  .container { display: grid; grid-template-columns: 300px 1fr 320px; gap: 16px; padding: 16px 20px; max-width: 1600px; margin: 0 auto; }
+  .panel { background: white; border-radius: 8px; border: 1px solid var(--border); overflow: hidden; }
+  .panel-header { background: var(--primary); color: white; padding: 12px 16px; font-weight: 700; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+  .panel-header .badge { background: var(--accent); color: var(--primary); font-size: 10px; padding: 2px 6px; border-radius: 3px; }
+  .panel-body { padding: 14px 16px; }
+  .section-title { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+
+  /* Form elements */
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .field label .tooltip { color: var(--secondary); cursor: help; font-size: 11px; }
+  .field input, .field select, .field textarea { width: 100%; border: 1px solid var(--border); border-radius: 4px; padding: 7px 10px; font-size: 13px; color: var(--text); background: var(--light-grey); transition: border 0.2s; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--secondary); background: white; }
+  .field textarea { resize: vertical; min-height: 56px; font-family: inherit; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* Info box */
+  .info-box { background: var(--light-blue); border: 1px solid #c3d8ee; border-radius: 5px; padding: 10px 12px; font-size: 12px; margin-bottom: 12px; }
+  .info-box strong { color: var(--primary); }
+  .warning-box { background: #fff8e6; border: 1px solid #f0d08a; border-radius: 5px; padding: 10px 12px; font-size: 12px; margin-bottom: 12px; }
+  .warning-box strong { color: #8a6000; }
+
+  /* Ingredient rows */
+  .ingredient-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  .ingredient-table th { background: var(--light-blue); font-size: 11px; font-weight: 700; color: var(--primary); padding: 6px 8px; text-align: left; border: 1px solid var(--border); }
+  .ingredient-table td { padding: 4px 6px; border: 1px solid var(--border); vertical-align: middle; }
+  .ingredient-table td input, .ingredient-table td select { border: none; background: transparent; width: 100%; font-size: 12px; padding: 3px 4px; }
+  .ingredient-table td input:focus, .ingredient-table td select:focus { outline: 1px solid var(--secondary); background: white; border-radius: 2px; }
+  .ingredient-table tr:hover td { background: #f8fafd; }
+  .del-btn { background: none; border: none; color: var(--red); cursor: pointer; font-size: 14px; padding: 2px 6px; }
+  .del-btn:hover { background: #fde; border-radius: 3px; }
+
+  /* Results panel */
+  .result-card { border: 1px solid var(--border); border-radius: 6px; margin-bottom: 12px; overflow: hidden; }
+  .result-card-header { background: var(--light-blue); padding: 8px 12px; font-size: 12px; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .result-card-body { padding: 12px; }
+  .big-number { font-size: 28px; font-weight: 800; color: var(--primary); }
+  .big-number .unit { font-size: 14px; font-weight: 600; color: var(--muted); }
+  .big-number .label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eef; font-size: 12px; }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-row .val { font-weight: 700; color: var(--primary); }
+  .metric-row.positive .val { color: var(--green); }
+  .metric-row.negative .val { color: var(--red); }
+
+  /* Benchmark bar */
+  .benchmark-container { margin: 10px 0; }
+  .benchmark-bar-wrap { position: relative; height: 20px; background: #e8edf5; border-radius: 10px; overflow: visible; margin: 8px 0 4px; }
+  .benchmark-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s; min-width: 6px; }
+  .benchmark-marker { position: absolute; top: -2px; width: 4px; height: 24px; background: var(--accent); border-radius: 2px; transform: translateX(-50%); }
+  .benchmark-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+
+  /* Sensitivity */
+  .sensitivity-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .sensitivity-table th { background: var(--primary); color: white; padding: 6px 10px; text-align: left; font-size: 11px; }
+  .sensitivity-table td { padding: 5px 10px; border-bottom: 1px solid var(--border); }
+  .sensitivity-table tr:nth-child(even) td { background: var(--light-grey); }
+  .sensitivity-table .highlight { background: #fffbe6 !important; font-weight: 700; }
+  .tag-green { background: #e0f5ec; color: #1a6b3a; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+  .tag-amber { background: #fff3cd; color: #856404; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+  .tag-red { background: #fde; color: #8b0000; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; }
+
+  /* Benchmark panel */
+  .benchmark-item { background: var(--light-grey); border-radius: 5px; padding: 8px 10px; margin-bottom: 6px; font-size: 11px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; }
+  .benchmark-item:hover { background: var(--light-blue); border-color: var(--secondary); }
+  .benchmark-item .bname { font-weight: 700; color: var(--primary); margin-bottom: 2px; }
+  .benchmark-item .bvalue { font-size: 13px; font-weight: 800; color: var(--accent); }
+  .benchmark-item .bsource { color: var(--muted); font-size: 10px; }
+
+  /* Claude prompt */
+  .prompt-box { background: #f0f4ff; border: 1px solid #c5d0f5; border-radius: 6px; padding: 12px; font-size: 12px; font-family: monospace; white-space: pre-wrap; line-height: 1.6; color: #1a2a5a; }
+  .copy-btn { background: var(--secondary); color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; cursor: pointer; }
+  .copy-btn:hover { background: var(--primary); }
+
+  /* Tabs */
+  .tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 14px; }
+  .tab { padding: 8px 14px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+  .tab.active { color: var(--primary); border-bottom-color: var(--secondary); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Status indicator */
+  .status-bar { background: #e8f5e9; border-bottom: 1px solid #c8e6c9; padding: 6px 20px; font-size: 11px; color: #2e7d32; display: flex; gap: 20px; }
+  .status-bar .item::before { content: '✓ '; font-weight: 700; }
+
+  /* Progress */
+  .progress-wrap { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin: 4px 0; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+
+  /* PPP adjustor */
+  .ppp-flag { font-size: 18px; }
+
+  @media print {
+    body { background: white; }
+    .header-right, .panel:nth-child(3) .copy-btn, .del-btn, .btn { display: none; }
+    .container { grid-template-columns: 1fr 1fr; }
+  }
+
+  .tooltip-popup { display: none; position: fixed; background: var(--primary); color: white; padding: 8px 12px; border-radius: 5px; font-size: 11px; max-width: 220px; z-index: 1000; pointer-events: none; line-height: 1.4; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  .tooltip-icon { cursor: help; color: var(--secondary); font-size: 12px; font-weight: 700; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
+
+  .framework-badge { background: var(--light-blue); border: 1px solid #c3d8ee; color: var(--primary); font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 3px; display: inline-block; margin: 2px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-logo">USEFUL AF</div>
+  </div>
+  <div>
+    <h1>💰 Cost-Effectiveness Analysis Builder</h1>
+    <p>Tool #10 · WFP/3ie methodology · PPP-adjusted · With sector benchmarks</p>
+  </div>
+  <div class="header-right">
+    <button class="btn btn-outline" onclick="exportExcel()">📊 Export Excel</button>
+    <button class="btn btn-outline" onclick="window.print()">🖨️ Print Report</button>
+    <button class="btn btn-accent" onclick="copyClaudePrompt()">🤖 Claude Analysis</button>
+  </div>
+</div>
+
+<div class="status-bar">
+  <span class="item">WFP/3ie ingredient costing methodology</span>
+  <span class="item">PPP adjustment by country (World Bank 2023 data)</span>
+  <span class="item">Sector benchmarks from J-PAL, GiveWell, 3ie, DFID</span>
+  <span class="item">DALY/QALY integration for health interventions</span>
+</div>
+
+<div class="container">
+
+  <!-- LEFT PANEL: Inputs -->
+  <div>
+    <!-- Programme Info -->
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-header">🎯 Programme Details</div>
+      <div class="panel-body">
+        <div class="field">
+          <label>Programme Name</label>
+          <input type="text" id="progName" placeholder="e.g. Girls' Secondary Education Programme" oninput="recalc()">
+        </div>
+        <div class="field">
+          <label>Sector / Intervention Type
+            <span class="tooltip-icon" onmouseover="showTip(this,'Determines which benchmark comparators are shown and which outcome metrics are relevant.')" onmouseout="hideTip()"> ⓘ</span>
+          </label>
+          <select id="sector" onchange="updateSector()">
+            <option value="">— Select sector —</option>
+            <option value="education">Education</option>
+            <option value="health">Health</option>
+            <option value="livelihoods">Livelihoods / Economic Empowerment</option>
+            <option value="nutrition">Nutrition</option>
+            <option value="wash">WASH (Water, Sanitation, Hygiene)</option>
+            <option value="environment">Environment / Climate</option>
+            <option value="protection">Child / Social Protection</option>
+            <option value="agriculture">Agriculture / Food Security</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Country / Region</label>
+          <select id="country" onchange="recalc()">
+            <option value="GBR">🇬🇧 United Kingdom (PPP: 1.00)</option>
+            <option value="USA">🇺🇸 United States (PPP: 1.00)</option>
+            <option value="KEN" selected>🇰🇪 Kenya (PPP: 0.049)</option>
+            <option value="TZA">🇹🇿 Tanzania (PPP: 0.035)</option>
+            <option value="ETH">🇪🇹 Ethiopia (PPP: 0.024)</option>
+            <option value="GHA">🇬🇭 Ghana (PPP: 0.088)</option>
+            <option value="NGA">🇳🇬 Nigeria (PPP: 0.115)</option>
+            <option value="UGA">🇺🇬 Uganda (PPP: 0.041)</option>
+            <option value="RWA">🇷🇼 Rwanda (PPP: 0.038)</option>
+            <option value="ZAF">🇿🇦 South Africa (PPP: 0.213)</option>
+            <option value="BGD">🇧🇩 Bangladesh (PPP: 0.048)</option>
+            <option value="IND">🇮🇳 India (PPP: 0.097)</option>
+            <option value="PAK">🇵🇰 Pakistan (PPP: 0.082)</option>
+            <option value="NPL">🇳🇵 Nepal (PPP: 0.059)</option>
+            <option value="MMR">🇲🇲 Myanmar (PPP: 0.043)</option>
+            <option value="PHL">🇵🇭 Philippines (PPP: 0.141)</option>
+            <option value="COL">🇨🇴 Colombia (PPP: 0.347)</option>
+            <option value="BRA">🇧🇷 Brazil (PPP: 0.412)</option>
+            <option value="MEX">🇲🇽 Mexico (PPP: 0.432)</option>
+            <option value="IDN">🇮🇩 Indonesia (PPP: 0.143)</option>
+            <option value="OTHER">🌍 Other / Global (PPP: 1.00)</option>
+          </select>
+          <div class="field-hint">PPP rates: World Bank ICP 2023. Used to normalise costs for comparability.</div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Total Beneficiaries
+              <span class="tooltip-icon" onmouseover="showTip(this,'Direct beneficiaries who receive the intervention. Do not include indirect/household reach here.')" onmouseout="hideTip()"> ⓘ</span>
+            </label>
+            <input type="number" id="beneficiaries" value="1000" min="1" oninput="recalc()">
+          </div>
+          <div class="field">
+            <label>Programme Duration (years)</label>
+            <input type="number" id="duration" value="3" min="0.5" step="0.5" oninput="recalc()">
+          </div>
+        </div>
+        <div class="field">
+          <label>Primary Outcome Metric
+            <span class="tooltip-icon" onmouseover="showTip(this,'The key outcome unit for your CEA. Be specific. e.g. \'pupils completing secondary school\' not \'improved education\'.')" onmouseout="hideTip()"> ⓘ</span>
+          </label>
+          <input type="text" id="outcomeMetric" placeholder="e.g. children completing primary education" oninput="recalc()">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Outcomes Achieved
+              <span class="tooltip-icon" onmouseover="showTip(this,'How many units of your primary outcome the programme achieves. Must be evidenced or estimated from similar studies.')" onmouseout="hideTip()"> ⓘ</span>
+            </label>
+            <input type="number" id="outcomes" value="800" min="1" oninput="recalc()">
+          </div>
+          <div class="field">
+            <label>Attribution Rate (%)
+              <span class="tooltip-icon" onmouseover="showTip(this,'What % of outcomes are attributable to your programme vs. what would have happened anyway (counterfactual). 3ie standard range: 50-80%. GiveWell typically uses 60-70%.')" onmouseout="hideTip()"> ⓘ</span>
+            </label>
+            <input type="number" id="attribution" value="65" min="5" max="100" oninput="recalc()">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DALY/QALY (health only) -->
+    <div class="panel" id="healthPanel" style="margin-bottom:14px; display:none">
+      <div class="panel-header">💊 Health Metrics (DALY/QALY)
+        <span class="badge">Health</span>
+      </div>
+      <div class="panel-body">
+        <div class="info-box">
+          <strong>WHO reference value:</strong> A DALY averted costing &lt;1× GDP per capita is "highly cost-effective". &lt;3× is "cost-effective" (WHO-CHOICE, updated 2020). UK NICE threshold: £20,000–£30,000/QALY.
+        </div>
+        <div class="field">
+          <label>Outcome type</label>
+          <select id="healthType" onchange="recalc()">
+            <option value="daly">DALYs Averted</option>
+            <option value="qaly">QALYs Gained</option>
+            <option value="lives">Lives Saved</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Health outcomes achieved (DALYs/QALYs/Lives)</label>
+          <input type="number" id="healthOutcomes" value="250" min="0" oninput="recalc()">
+        </div>
+        <div class="field">
+          <label>GDP per capita (local currency, USD)</label>
+          <input type="number" id="gdpPerCapita" value="2100" oninput="recalc()">
+          <div class="field-hint">Used for WHO cost-effectiveness threshold. Kenya: ~$2,100 | Nigeria: ~$2,300 | India: ~$2,700</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIDDLE PANEL: Ingredient Costing -->
+  <div>
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-header">🧪 Ingredient Costing Table
+        <span class="badge">WFP/3ie Standard</span>
+      </div>
+      <div class="panel-body">
+        <div class="info-box">
+          <strong>Methodology:</strong> Ingredient costing (WFP/3ie/USAID standard) identifies every resource consumed and assigns a unit cost. Include <strong>all</strong> ingredients: staff time at opportunity cost, materials, overhead, training, monitoring. Do not undercount — undercounting is the most common CEA error.
+        </div>
+
+        <div class="tabs" id="costTabs">
+          <div class="tab active" onclick="switchTab('direct')">Direct Costs</div>
+          <div class="tab" onclick="switchTab('indirect')">Indirect / Overhead</div>
+          <div class="tab" onclick="switchTab('capital')">Capital / Startup</div>
+        </div>
+
+        <!-- Direct Costs -->
+        <div class="tab-content active" id="tab-direct">
+          <div class="section-title">Direct Programme Costs (annual or total)</div>
+          <table class="ingredient-table" id="directTable">
+            <thead>
+              <tr>
+                <th style="width:28%">Ingredient</th>
+                <th style="width:16%">Category</th>
+                <th style="width:11%">Qty</th>
+                <th style="width:13%">Unit Cost (USD)</th>
+                <th style="width:11%">Frequency</th>
+                <th style="width:13%">Total (USD)</th>
+                <th style="width:8%"></th>
+              </tr>
+            </thead>
+            <tbody id="directBody"></tbody>
+          </table>
+          <button class="btn btn-primary btn-sm" onclick="addRow('direct')" style="margin-top:8px">+ Add Ingredient</button>
+        </div>
+
+        <!-- Indirect Costs -->
+        <div class="tab-content" id="tab-indirect">
+          <div class="info-box">
+            <strong>Common error:</strong> Overhead and shared costs are routinely excluded from CEAs, inflating apparent cost-effectiveness. Include management time, office rent, finance/HR support, and organisational overhead (typically 15–30% of direct costs per 3ie guidelines).
+          </div>
+          <table class="ingredient-table" id="indirectTable">
+            <thead>
+              <tr>
+                <th style="width:28%">Ingredient</th>
+                <th style="width:16%">Category</th>
+                <th style="width:11%">Qty</th>
+                <th style="width:13%">Unit Cost (USD)</th>
+                <th style="width:11%">Frequency</th>
+                <th style="width:13%">Total (USD)</th>
+                <th style="width:8%"></th>
+              </tr>
+            </thead>
+            <tbody id="indirectBody"></tbody>
+          </table>
+          <button class="btn btn-primary btn-sm" onclick="addRow('indirect')" style="margin-top:8px">+ Add Ingredient</button>
+        </div>
+
+        <!-- Capital Costs -->
+        <div class="tab-content" id="tab-capital">
+          <div class="info-box">
+            <strong>Annualisation:</strong> Capital costs (buildings, equipment) should be annualised over their useful life. E.g. a $50,000 vehicle with 10-year life = $5,000/year. This tool annualises automatically based on asset life.
+          </div>
+          <table class="ingredient-table" id="capitalTable">
+            <thead>
+              <tr>
+                <th style="width:28%">Asset</th>
+                <th style="width:14%">Category</th>
+                <th style="width:10%">Qty</th>
+                <th style="width:13%">Total Cost ($)</th>
+                <th style="width:11%">Life (yrs)</th>
+                <th style="width:16%">Annual Cost ($)</th>
+                <th style="width:8%"></th>
+              </tr>
+            </thead>
+            <tbody id="capitalBody"></tbody>
+          </table>
+          <button class="btn btn-primary btn-sm" onclick="addRow('capital')" style="margin-top:8px">+ Add Capital Item</button>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Cost Summary -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:4px">
+          <div style="background:var(--light-grey);padding:10px;border-radius:5px;text-align:center">
+            <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Direct Costs</div>
+            <div style="font-size:20px;font-weight:800;color:var(--primary)" id="directTotal">$0</div>
+          </div>
+          <div style="background:var(--light-grey);padding:10px;border-radius:5px;text-align:center">
+            <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase">Indirect + Capital</div>
+            <div style="font-size:20px;font-weight:800;color:var(--primary)" id="otherTotal">$0</div>
+          </div>
+          <div style="background:var(--light-blue);padding:10px;border-radius:5px;text-align:center;border:1px solid #c3d8ee">
+            <div style="font-size:11px;color:var(--primary);font-weight:700;text-transform:uppercase">Total Programme Cost</div>
+            <div style="font-size:22px;font-weight:800;color:var(--primary)" id="grandTotal">$0</div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Sensitivity inputs -->
+        <div class="section-title">Sensitivity Analysis Inputs</div>
+        <div class="field-row">
+          <div class="field">
+            <label>Cost Pessimistic (+%) <span class="tooltip-icon" onmouseover="showTip(this,'How much costs could increase under pessimistic scenario. Typical range: +20-40%.')" onmouseout="hideTip()"> ⓘ</span></label>
+            <input type="number" id="costPess" value="30" min="0" max="200" oninput="recalc()">
+          </div>
+          <div class="field">
+            <label>Attribution Pessimistic (%) <span class="tooltip-icon" onmouseover="showTip(this,'Lower attribution = more conservative. Consider deadweight, displacement, drop-off.')" onmouseout="hideTip()"> ⓘ</span></label>
+            <input type="number" id="attrPess" value="45" min="5" max="100" oninput="recalc()">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Cost Optimistic (-%) </label>
+            <input type="number" id="costOpt" value="15" min="0" max="50" oninput="recalc()">
+          </div>
+          <div class="field">
+            <label>Attribution Optimistic (%)</label>
+            <input type="number" id="attrOpt" value="80" min="5" max="100" oninput="recalc()">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: Results + Benchmarks -->
+  <div>
+    <!-- Results -->
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-header">📊 CEA Results</div>
+      <div class="panel-body">
+        <div class="result-card">
+          <div class="result-card-header">
+            Cost per Outcome (Base Case)
+            <span id="ratingBadge" class="tag-amber">—</span>
+          </div>
+          <div class="result-card-body" style="text-align:center">
+            <div class="big-number">
+              <div class="label">Cost per <span id="resultOutcomeLabel">outcome</span></div>
+              <span id="costPerOutcome">—</span>
+              <span class="unit" id="cpoUnit"> USD</span>
+            </div>
+            <div style="font-size:11px;color:var(--muted);margin-top:6px" id="pppNote">PPP-adjusted: — per local equivalent</div>
+          </div>
+        </div>
+
+        <div class="result-card">
+          <div class="result-card-header">Key Metrics</div>
+          <div class="result-card-body">
+            <div class="metric-row">
+              <span>Total Programme Cost</span>
+              <span class="val" id="r_totalCost">—</span>
+            </div>
+            <div class="metric-row">
+              <span>Cost per Beneficiary (raw)</span>
+              <span class="val" id="r_cpb">—</span>
+            </div>
+            <div class="metric-row">
+              <span>Attribution Rate Applied</span>
+              <span class="val" id="r_attr">—</span>
+            </div>
+            <div class="metric-row">
+              <span>Attributed Outcomes</span>
+              <span class="val" id="r_attrOut">—</span>
+            </div>
+            <div class="metric-row">
+              <span>Cost per Attributed Outcome</span>
+              <span class="val" id="r_cpao">—</span>
+            </div>
+            <div id="healthMetrics" style="display:none">
+              <div class="metric-row">
+                <span id="healthLabel">Cost per DALY Averted</span>
+                <span class="val" id="r_daly">—</span>
+              </div>
+              <div class="metric-row">
+                <span>WHO threshold (1× GDP/cap)</span>
+                <span class="val" id="r_who">—</span>
+              </div>
+              <div class="metric-row">
+                <span>WHO assessment</span>
+                <span class="val" id="r_whoRating">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sensitivity table -->
+        <div class="result-card">
+          <div class="result-card-header">Sensitivity Analysis</div>
+          <div class="result-card-body" style="padding:0">
+            <table class="sensitivity-table" id="sensitivityTable">
+              <thead>
+                <tr>
+                  <th>Scenario</th>
+                  <th>Cost/Outcome</th>
+                  <th>Rating</th>
+                </tr>
+              </thead>
+              <tbody id="sensBody">
+                <tr><td colspan="3" style="text-align:center;padding:12px;color:var(--muted)">Enter data above</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Benchmark comparison -->
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-header">📋 Sector Benchmarks
+        <span class="badge" id="benchmarkSector">—</span>
+      </div>
+      <div class="panel-body">
+        <div id="benchmarkList">
+          <div class="info-box">Select a sector above to see relevant benchmarks from J-PAL, GiveWell, 3ie and DFID evidence reviews. Click a benchmark to use as your target comparator.</div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:8px;line-height:1.4" id="benchmarkSources"></div>
+      </div>
+    </div>
+
+    <!-- Claude prompt -->
+    <div class="panel">
+      <div class="panel-header">🤖 Claude Analysis Prompt</div>
+      <div class="panel-body">
+        <p style="font-size:11px;color:var(--muted);margin-bottom:8px">Copy this prompt and paste into Claude for expert-level cost-effectiveness critique and improvement suggestions.</p>
+        <div class="prompt-box" id="claudePrompt">Fill in your programme details above to generate a tailored analysis prompt.</div>
+        <button class="copy-btn" onclick="copyClaudePrompt()" style="margin-top:8px">📋 Copy Prompt</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="tooltip-popup" id="tooltipPopup"></div>
+
+<script>
+// ============================================================
+// DATA TABLES — Real benchmarks from J-PAL, GiveWell, 3ie, DFID
+// ============================================================
+const BENCHMARKS = {
+  education: {
+    label: "Education",
+    items: [
+      { name: "Child completing primary school (Sub-Saharan Africa)", value: 85, unit: "USD/child", source: "J-PAL/Kremer 2023 synthesis", detail: "Deworming + incentive programmes" },
+      { name: "Additional year of schooling achieved", value: 130, unit: "USD/year", source: "J-PAL education meta-analysis 2022", detail: "Range $80–$400 by context" },
+      { name: "Girl completing secondary school (East Africa)", value: 340, unit: "USD/girl", source: "FCDO Girls Education Challenge eval 2022", detail: "Cash transfer + school fee models" },
+      { name: "Improved learning outcomes (1 SD gain)", value: 190, unit: "USD/child", source: "3ie education evidence synthesis 2021", detail: "Teaching at the right level (TaRL) approaches" },
+      { name: "Early childhood development (ECD) session", value: 18, unit: "USD/session", source: "UNICEF costing study 2020", detail: "Group-based ECD delivery" },
+      { name: "Adult literacy training completion", value: 220, unit: "USD/adult", source: "UNESCO Institute 2022", detail: "Functional literacy programmes" }
+    ],
+    frameworks: ["SDG 4", "IRIS EDU-160", "J-PAL"]
+  },
+  health: {
+    label: "Health",
+    items: [
+      { name: "DALY averted — malaria bednet distribution", value: 28, unit: "USD/DALY", source: "GiveWell 2023 (Against Malaria Foundation)", detail: "Best-in-class estimate; highly context-dependent" },
+      { name: "DALY averted — vitamin A supplementation", value: 12, unit: "USD/DALY", source: "GiveWell/GAIN 2022", detail: "Micronutrient programme" },
+      { name: "DALY averted — WHO threshold (Kenya)", value: 2100, unit: "USD/DALY", source: "WHO-CHOICE (1× GDP per capita)", detail: "Highly cost-effective threshold" },
+      { name: "Child vaccination (full course)", value: 35, unit: "USD/child", source: "Gavi/UNICEF cost analysis 2022", detail: "EPI full immunisation schedule" },
+      { name: "Safe delivery attended by skilled birth attendant", value: 190, unit: "USD/delivery", source: "WHO/DFID safe motherhood 2021", detail: "Community midwifery models" },
+      { name: "Community health worker case — malnutrition", value: 95, unit: "USD/case resolved", source: "ACF costing 2022", detail: "SAM treatment, community-based" }
+    ],
+    frameworks: ["DALY", "QALY", "WHO-CHOICE", "GiveWell"]
+  },
+  livelihoods: {
+    label: "Livelihoods",
+    items: [
+      { name: "Job created / sustained (1 year)", value: 1400, unit: "USD/job", source: "IFC/AICD jobs cost analysis 2022", detail: "Vocational training + placement" },
+      { name: "Increase in annual household income ($500+)", value: 730, unit: "USD/HH", source: "J-PAL graduation programme meta 2022", detail: "Poverty graduation approach" },
+      { name: "Micro-enterprise started and operating 12 months", value: 480, unit: "USD/enterprise", source: "GIZ microenterprise evidence 2021", detail: "BDS + finance bundle" },
+      { name: "Youth employed 6+ months post-training", value: 920, unit: "USD/youth", source: "3ie skills evidence synthesis 2023", detail: "TVET + apprenticeship models" },
+      { name: "Savings group member (VSLA) active 2 years", value: 38, unit: "USD/member", source: "Oxfam VSLA cost analysis 2022", detail: "Group-based model, high volume" },
+      { name: "Digital/financial inclusion (mobile money user)", value: 25, unit: "USD/user", source: "GSMA 2023 impact cost report", detail: "Agent-based digital literacy" }
+    ],
+    frameworks: ["SDG 8", "IRIS OI/OD", "IFC Jobs Framework"]
+  },
+  nutrition: {
+    label: "Nutrition",
+    items: [
+      { name: "Child treated for severe acute malnutrition (SAM)", value: 180, unit: "USD/case", source: "UNICEF/ACF costing 2022", detail: "Community-based CMAM model" },
+      { name: "Child treated for moderate acute malnutrition (MAM)", value: 75, unit: "USD/case", source: "WFP costing study 2023", detail: "Blanket supplementary feeding" },
+      { name: "Stunting prevented (child under 5)", value: 1200, unit: "USD/case prevented", source: "Copenhagen Consensus 2012; updated 3ie 2021", detail: "Multi-sector nutrition interventions" },
+      { name: "Mother receiving iron/folate supplementation course", value: 14, unit: "USD/mother", source: "GAIN micronutrient costing 2022", detail: "Antenatal distribution programme" },
+      { name: "Household reached with food assistance (WFP)", value: 240, unit: "USD/HH/year", source: "WFP annual cost per beneficiary 2023", detail: "Emergency/protracted food assistance" }
+    ],
+    frameworks: ["CMAM", "WFP Cost Model", "IRIS NUT metrics"]
+  },
+  wash: {
+    label: "WASH",
+    items: [
+      { name: "Person gaining access to safe drinking water", value: 95, unit: "USD/person", source: "WHO/UNICEF JMP WASH cost analysis 2021", detail: "Rural piped + handpump" },
+      { name: "Person gaining access to basic sanitation", value: 140, unit: "USD/person", source: "World Bank WASH cost benchmarks 2022", detail: "Improved latrine, rural" },
+      { name: "School with functional WASH facilities", value: 8500, unit: "USD/school", source: "UNICEF WASH in Schools 2021", detail: "Includes installation and hygiene promotion" },
+      { name: "ODF community achieved (open defecation free)", value: 42, unit: "USD/person", source: "3ie CLTS evidence synthesis 2021", detail: "Community-led total sanitation" },
+      { name: "Handwashing station installed + behavior change", value: 22, unit: "USD/HH", source: "GiveWell/Evidence Action 2022", detail: "Nudge-based WASH promotion" }
+    ],
+    frameworks: ["JMP ladder", "SDG 6", "IRIS ENV"]
+  },
+  environment: {
+    label: "Environment / Climate",
+    items: [
+      { name: "Tonne of CO₂e avoided", value: 8, unit: "USD/tCO₂e", source: "Clean cookstoves CEA (Gold Standard 2022)", detail: "Range $2–$50 by tech type" },
+      { name: "Hectare of forest protected (REDD+)", value: 130, unit: "USD/ha", source: "Verra/REDD+ cost analysis 2022", detail: "Project implementation cost, not carbon price" },
+      { name: "Household adopting clean cooking (LPG/biogas)", value: 280, unit: "USD/HH", source: "ENERGIA/GOGLA 2022 transition costs", detail: "Capital + behaviour change cost" },
+      { name: "Solar home system installed (off-grid)", value: 350, unit: "USD/system", source: "GOGLA off-grid solar market data 2023", detail: "~50W SHS, includes installation" },
+      { name: "Farmer adopting climate-smart agriculture practice", value: 120, unit: "USD/farmer", source: "CCAFS CSA evidence 2022", detail: "Training + input support for adoption" }
+    ],
+    frameworks: ["GHG Protocol", "IRIS ENV-660", "Gold Standard"]
+  },
+  protection: {
+    label: "Child / Social Protection",
+    items: [
+      { name: "Child receiving cash transfer (1 year)", value: 320, unit: "USD/child", source: "DFID SPF cash transfer cost analysis 2022", detail: "Includes delivery, not just transfer value" },
+      { name: "Child removed from worst forms of child labour", value: 580, unit: "USD/child", source: "ILO child labour programme costing 2021", detail: "Awareness + livelihood alternative" },
+      { name: "GBV survivor receiving psychosocial support", value: 420, unit: "USD/survivor", source: "IRC Women's Protection costing 2022", detail: "Group + individual case management" },
+      { name: "Vulnerable person enrolled in social registry", value: 35, unit: "USD/person", source: "World Bank social protection admin 2022", detail: "Identification + registration cost" }
+    ],
+    frameworks: ["INSPIRE", "SDG 10", "IRIS OD metrics"]
+  },
+  agriculture: {
+    label: "Agriculture / Food Security",
+    items: [
+      { name: "Smallholder farmer with improved productivity (20%+)", value: 165, unit: "USD/farmer", source: "CGIAR/CIMMYT impact evaluation 2022", detail: "Improved seed + training package" },
+      { name: "Farmer reached with extension service", value: 48, unit: "USD/farmer", source: "FAO extension service costing 2021", detail: "Digital + field extension blend" },
+      { name: "Market linkage established (farmer to buyer)", value: 95, unit: "USD/farmer", source: "TechnoServe value chain costing 2022", detail: "Aggregation + market facilitation" },
+      { name: "Household achieving minimum dietary diversity", value: 290, unit: "USD/HH", source: "WFP/FAO food systems impact 2022", detail: "FIES/MDD-W methodology" }
+    ],
+    frameworks: ["MAIA", "SDG 2", "IRIS OI metrics"]
+  }
+};
+
+const PPP = {
+  GBR: 1.00, USA: 1.00, KEN: 0.049, TZA: 0.035, ETH: 0.024, GHA: 0.088,
+  NGA: 0.115, UGA: 0.041, RWA: 0.038, ZAF: 0.213, BGD: 0.048, IND: 0.097,
+  PAK: 0.082, NPL: 0.059, MMR: 0.043, PHL: 0.141, COL: 0.347, BRA: 0.412,
+  MEX: 0.432, IDN: 0.143, OTHER: 1.00
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let rows = { direct: [], indirect: [], capital: [] };
+let idCounter = 0;
+
+// ============================================================
+// INITIALISE DEFAULT ROWS
+// ============================================================
+function init() {
+  addRow('direct', { name: 'Programme Officer (1.0 FTE)', cat: 'Staff', qty: 3, unitCost: 32000, freq: 'Annual' });
+  addRow('direct', { name: 'Field Officers (2.0 FTE)', cat: 'Staff', qty: 3, unitCost: 14000, freq: 'Annual' });
+  addRow('direct', { name: 'Training materials & supplies', cat: 'Materials', qty: 1000, unitCost: 8, freq: 'Once' });
+  addRow('direct', { name: 'Community facilitator stipends', cat: 'Staff', qty: 3, unitCost: 6000, freq: 'Annual' });
+  addRow('direct', { name: 'Beneficiary transport/subsistence', cat: 'Participant costs', qty: 1000, unitCost: 12, freq: 'Once' });
+  addRow('indirect', { name: 'Organisational overhead (finance, HR, IT)', cat: 'Overhead', qty: 1, unitCost: 28000, freq: 'Annual' });
+  addRow('indirect', { name: 'M&E / MEAL staff (0.5 FTE)', cat: 'M&E', qty: 3, unitCost: 8000, freq: 'Annual' });
+  addRow('capital', { name: 'Vehicle', qty: 1, totalCost: 22000, life: 8 });
+  recalc();
+}
+
+function addRow(type, defaults = {}) {
+  const id = ++idCounter;
+  rows[type].push({ id, ...defaults });
+  renderTable(type);
+  recalc();
+}
+
+function removeRow(type, id) {
+  rows[type] = rows[type].filter(r => r.id !== id);
+  renderTable(type);
+  recalc();
+}
+
+function renderTable(type) {
+  if (type === 'capital') {
+    renderCapitalTable();
+    return;
+  }
+  const tbody = document.getElementById(type + 'Body');
+  const categories = ['Staff', 'Materials', 'Participant costs', 'Travel & transport', 'Training & workshops', 'M&E', 'Overhead', 'Communications', 'Other'];
+  const freqs = ['Annual', 'Once', 'Per beneficiary', 'Monthly'];
+  tbody.innerHTML = '';
+  rows[type].forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${row.name||''}" onchange="updateRow('${type}',${row.id},'name',this.value)" placeholder="Describe ingredient..."></td>
+      <td><select onchange="updateRow('${type}',${row.id},'cat',this.value)">
+        ${categories.map(c=>`<option ${row.cat===c?'selected':''}>${c}</option>`).join('')}
+      </select></td>
+      <td><input type="number" value="${row.qty||1}" min="0" style="text-align:right" onchange="updateRow('${type}',${row.id},'qty',+this.value)"></td>
+      <td><input type="number" value="${row.unitCost||0}" min="0" step="0.01" style="text-align:right" onchange="updateRow('${type}',${row.id},'unitCost',+this.value)"></td>
+      <td><select onchange="updateRow('${type}',${row.id},'freq',this.value)">
+        ${freqs.map(f=>`<option ${row.freq===f?'selected':''}>${f}</option>`).join('')}
+      </select></td>
+      <td style="text-align:right;font-weight:700;color:var(--primary)" id="rowTotal_${row.id}">$0</td>
+      <td><button class="del-btn" onclick="removeRow('${type}',${row.id})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderCapitalTable() {
+  const tbody = document.getElementById('capitalBody');
+  const cats = ['Vehicle', 'Building/Premises', 'Equipment', 'IT/Technology', 'Furniture', 'Other'];
+  tbody.innerHTML = '';
+  rows.capital.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" value="${row.name||''}" onchange="updateRow('capital',${row.id},'name',this.value)" placeholder="Describe asset..."></td>
+      <td><select onchange="updateRow('capital',${row.id},'cat',this.value)">
+        ${cats.map(c=>`<option ${row.cat===c?'selected':''}>${c}</option>`).join('')}
+      </select></td>
+      <td><input type="number" value="${row.qty||1}" min="1" style="text-align:right" onchange="updateRow('capital',${row.id},'qty',+this.value)"></td>
+      <td><input type="number" value="${row.totalCost||0}" min="0" style="text-align:right" onchange="updateRow('capital',${row.id},'totalCost',+this.value)"></td>
+      <td><input type="number" value="${row.life||5}" min="1" max="50" style="text-align:right" onchange="updateRow('capital',${row.id},'life',+this.value)"></td>
+      <td style="text-align:right;font-weight:700;color:var(--primary)" id="rowTotal_${row.id}">$0</td>
+      <td><button class="del-btn" onclick="removeRow('capital',${row.id})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function updateRow(type, id, field, value) {
+  const row = rows[type].find(r => r.id === id);
+  if (row) row[field] = value;
+  recalc();
+}
+
+// ============================================================
+// CALCULATION ENGINE
+// ============================================================
+function getRowTotal(type, row) {
+  if (type === 'capital') {
+    const annualCost = ((row.totalCost || 0) * (row.qty || 1)) / (row.life || 5);
+    return annualCost * (parseFloat(document.getElementById('duration').value) || 1);
+  }
+  const qty = row.qty || 0;
+  const unitCost = row.unitCost || 0;
+  const freq = row.freq || 'Once';
+  const duration = parseFloat(document.getElementById('duration').value) || 1;
+  let total = qty * unitCost;
+  if (freq === 'Annual') total *= duration;
+  if (freq === 'Monthly') total *= duration * 12;
+  if (freq === 'Per beneficiary') total = qty * unitCost; // qty IS beneficiaries here
+  return total;
+}
+
+function recalc() {
+  let directSum = 0, indirectSum = 0, capitalSum = 0;
+
+  ['direct', 'indirect'].forEach(type => {
+    rows[type].forEach(row => {
+      const total = getRowTotal(type, row);
+      const el = document.getElementById('rowTotal_' + row.id);
+      if (el) el.textContent = '$' + fmt(total);
+      if (type === 'direct') directSum += total;
+      else indirectSum += total;
+    });
+  });
+
+  rows.capital.forEach(row => {
+    const total = getRowTotal('capital', row);
+    const el = document.getElementById('rowTotal_' + row.id);
+    if (el) el.textContent = '$' + fmt(total);
+    capitalSum += total;
+  });
+
+  const grandTotal = directSum + indirectSum + capitalSum;
+  document.getElementById('directTotal').textContent = '$' + fmt(directSum);
+  document.getElementById('otherTotal').textContent = '$' + fmt(indirectSum + capitalSum);
+  document.getElementById('grandTotal').textContent = '$' + fmt(grandTotal);
+
+  // Main CEA calculation
+  const beneficiaries = parseFloat(document.getElementById('beneficiaries').value) || 1;
+  const outcomes = parseFloat(document.getElementById('outcomes').value) || 0;
+  const attribution = parseFloat(document.getElementById('attribution').value) / 100 || 0.65;
+  const country = document.getElementById('country').value;
+  const pppRate = PPP[country] || 1;
+
+  const attributedOutcomes = outcomes * attribution;
+  const cpb = grandTotal / beneficiaries;
+  const cpao = attributedOutcomes > 0 ? grandTotal / attributedOutcomes : 0;
+
+  document.getElementById('r_totalCost').textContent = '$' + fmt(grandTotal);
+  document.getElementById('r_cpb').textContent = '$' + fmt2(cpb);
+  document.getElementById('r_attr').textContent = (attribution * 100).toFixed(0) + '%';
+  document.getElementById('r_attrOut').textContent = fmt(attributedOutcomes);
+  document.getElementById('r_cpao').textContent = '$' + fmt2(cpao);
+
+  const outLabel = document.getElementById('outcomeMetric').value || 'outcome';
+  document.getElementById('resultOutcomeLabel').textContent = outLabel;
+
+  if (cpao > 0) {
+    document.getElementById('costPerOutcome').textContent = '$' + fmt2(cpao);
+    const localEquiv = (cpao * pppRate).toFixed(2);
+    const countryName = document.getElementById('country').options[document.getElementById('country').selectedIndex].text;
+    document.getElementById('pppNote').textContent = `PPP-adjusted: $${localEquiv} per local equivalent (${countryName.split('(')[0].trim()})`;
+  } else {
+    document.getElementById('costPerOutcome').textContent = '—';
+  }
+
+  // Sensitivity analysis
+  const costPess = 1 + (parseFloat(document.getElementById('costPess').value) || 30) / 100;
+  const costOpt = 1 - (parseFloat(document.getElementById('costOpt').value) || 15) / 100;
+  const attrPess = (parseFloat(document.getElementById('attrPess').value) || 45) / 100;
+  const attrOpt = (parseFloat(document.getElementById('attrOpt').value) || 80) / 100;
+
+  const scenarios = [
+    { name: 'Optimistic (lower cost + higher attribution)', cost: grandTotal * costOpt, attr: attrOpt },
+    { name: 'Base Case (your estimates)', cost: grandTotal, attr: attribution, highlight: true },
+    { name: 'Pessimistic (higher cost + lower attribution)', cost: grandTotal * costPess, attr: attrPess },
+    { name: 'Cost pessimistic only', cost: grandTotal * costPess, attr: attribution },
+    { name: 'Attribution pessimistic only', cost: grandTotal, attr: attrPess },
+  ];
+
+  const sector = document.getElementById('sector').value;
+  const benchData = BENCHMARKS[sector];
+  const avgBench = benchData ? benchData.items.reduce((s, b) => s + b.value, 0) / benchData.items.length : null;
+
+  const sensBody = document.getElementById('sensBody');
+  sensBody.innerHTML = '';
+  scenarios.forEach(s => {
+    const attrOut = outcomes * s.attr;
+    const cpo = attrOut > 0 ? s.cost / attrOut : 0;
+    let rating = '—'; let tagClass = 'tag-amber';
+    if (avgBench && cpo > 0) {
+      if (cpo < avgBench * 0.7) { rating = 'Excellent'; tagClass = 'tag-green'; }
+      else if (cpo < avgBench * 1.3) { rating = 'In Range'; tagClass = 'tag-amber'; }
+      else { rating = 'Above Bench'; tagClass = 'tag-red'; }
+    }
+    const tr = document.createElement('tr');
+    tr.className = s.highlight ? 'highlight' : '';
+    tr.innerHTML = `<td>${s.name}</td><td style="text-align:right;font-weight:700">$${fmt2(cpo)}</td><td><span class="${tagClass}">${rating}</span></td>`;
+    sensBody.appendChild(tr);
+  });
+
+  // Rating badge
+  if (cpao > 0 && avgBench) {
+    const badge = document.getElementById('ratingBadge');
+    if (cpao < avgBench * 0.7) { badge.textContent = '✓ Excellent'; badge.className = 'tag-green'; }
+    else if (cpao < avgBench * 1.3) { badge.textContent = '~ In Range'; badge.className = 'tag-amber'; }
+    else { badge.textContent = '⚠ Above Benchmark'; badge.className = 'tag-red'; }
+  }
+
+  // Health metrics
+  const sector_ = document.getElementById('sector').value;
+  const healthPanel = document.getElementById('healthPanel');
+  const healthMetrics = document.getElementById('healthMetrics');
+  if (sector_ === 'health') {
+    healthPanel.style.display = 'block';
+    healthMetrics.style.display = 'block';
+    const hType = document.getElementById('healthType').value;
+    const hOut = parseFloat(document.getElementById('healthOutcomes').value) || 0;
+    const gdp = parseFloat(document.getElementById('gdpPerCapita').value) || 2100;
+    const hAttr = hOut * attribution;
+    const cpDaly = hAttr > 0 ? grandTotal / hAttr : 0;
+    document.getElementById('healthLabel').textContent = `Cost per ${hType === 'daly' ? 'DALY Averted' : hType === 'qaly' ? 'QALY Gained' : 'Life Saved'}`;
+    document.getElementById('r_daly').textContent = '$' + fmt2(cpDaly);
+    document.getElementById('r_who').textContent = '$' + fmt(gdp) + ' (1×GDP)';
+    let whoR = '—';
+    if (cpDaly > 0) {
+      if (cpDaly < gdp) whoR = '✓ Highly cost-effective';
+      else if (cpDaly < gdp * 3) whoR = '~ Cost-effective';
+      else whoR = '⚠ Not cost-effective';
+    }
+    document.getElementById('r_whoRating').textContent = whoR;
+  } else {
+    healthPanel.style.display = 'none';
+    healthMetrics.style.display = 'none';
+  }
+
+  updateClaudePrompt(grandTotal, cpao, attributedOutcomes, attribution, cpb);
+}
+
+// ============================================================
+// SECTOR UPDATE
+// ============================================================
+function updateSector() {
+  const sector = document.getElementById('sector').value;
+  const benchData = BENCHMARKS[sector];
+  const benchmarkList = document.getElementById('benchmarkList');
+  const benchmarkSector = document.getElementById('benchmarkSector');
+
+  if (!benchData) {
+    benchmarkList.innerHTML = '<div class="info-box">Select a sector to see benchmarks.</div>';
+    benchmarkSector.textContent = '—';
+    return;
+  }
+
+  benchmarkSector.textContent = benchData.label;
+  let html = '';
+  benchData.items.forEach((b, i) => {
+    html += `<div class="benchmark-item" onclick="useBenchmark(${b.value},'${b.name}')">
+      <div class="bname">${b.name}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="bvalue">$${b.value} <span style="font-size:11px;color:var(--muted);font-weight:400">${b.unit}</span></span>
+        <span style="font-size:10px;color:var(--muted)">${b.detail}</span>
+      </div>
+      <div class="bsource">Source: ${b.source}</div>
+    </div>`;
+  });
+  html += '<div style="margin-top:8px">';
+  benchData.frameworks.forEach(f => { html += `<span class="framework-badge">${f}</span>`; });
+  html += '</div>';
+  benchmarkList.innerHTML = html;
+
+  document.getElementById('benchmarkSources').textContent =
+    'Sources: ' + benchData.items.map(b => b.source).filter((v,i,a)=>a.indexOf(v)===i).join(' · ');
+
+  recalc();
+}
+
+function useBenchmark(val, name) {
+  // Just highlight comparison for now
+  alert(`Benchmark: ${name}\n$${val} per outcome\n\nEnter this as your target comparator in the outcome metric field for comparison.`);
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    const tabs = ['direct', 'indirect', 'capital'];
+    t.classList.toggle('active', tabs[i] === name);
+  });
+  document.querySelectorAll('.tab-content').forEach(t => {
+    t.classList.toggle('active', t.id === 'tab-' + name);
+  });
+}
+
+// ============================================================
+// CLAUDE PROMPT
+// ============================================================
+function updateClaudePrompt(totalCost, cpao, attrOut, attr, cpb) {
+  const progName = document.getElementById('progName').value || '[Programme Name]';
+  const sector = document.getElementById('sector').value || '[sector]';
+  const beneficiaries = document.getElementById('beneficiaries').value;
+  const outcomes = document.getElementById('outcomes').value;
+  const outcomeMetric = document.getElementById('outcomeMetric').value || '[outcome metric]';
+  const duration = document.getElementById('duration').value;
+  const country = document.getElementById('country').options[document.getElementById('country').selectedIndex].text.split('(')[0].trim();
+  const attrPct = document.getElementById('attribution').value;
+
+  const prompt = `You are a senior cost-effectiveness analyst reviewing a CEA for a development programme. Please provide expert critique and improvement recommendations.
+
+PROGRAMME: ${progName}
+SECTOR: ${sector}
+COUNTRY: ${country}
+DURATION: ${duration} years
+BENEFICIARIES: ${beneficiaries}
+PRIMARY OUTCOME METRIC: ${outcomeMetric}
+OUTCOMES CLAIMED: ${outcomes} (${attrPct}% attributed = ${Math.round(attrOut)} attributed outcomes)
+TOTAL PROGRAMME COST: $${fmt(totalCost)}
+COST PER BENEFICIARY: $${fmt2(cpb)}
+COST PER ATTRIBUTED OUTCOME: $${fmt2(cpao)}
+
+Please analyse this CEA and provide:
+
+1. METHODOLOGY CRITIQUE: What assumptions are most likely to be wrong or overstated? Assess the attribution rate of ${attrPct}% — is this appropriate for this type of intervention?
+
+2. MISSING COSTS: What ingredient costs are likely missing from this analysis that would change the CEA ratio significantly? (Focus on: staff time at full opportunity cost, organisational overhead, capital depreciation, beneficiary costs)
+
+3. COUNTERFACTUAL CHALLENGE: For the primary outcome (${outcomeMetric}), what counterfactual scenario is most plausible, and how does it affect the attribution estimate?
+
+4. SECTOR BENCHMARKS: Based on credible evidence from J-PAL, GiveWell, 3ie, and DFID evaluations, what is the typical cost range for achieving "${outcomeMetric}" in ${country}? Is $${fmt2(cpao)} per outcome credible, too low, or too high?
+
+5. DROP-OFF / DURATION EFFECTS: How likely are outcomes to persist beyond the programme period, and should a discount rate be applied to future benefits?
+
+6. SENSITIVITY ANALYSIS: Which single assumption, if changed, would most dramatically alter the CEA ratio? What would the "honest" pessimistic estimate be?
+
+7. INVESTOR/FUNDER FRAMING: If presenting this CEA to a development finance institution or foundation, what are the 2-3 things they will immediately push back on?
+
+Be direct and specific. Use concrete numbers and cite real benchmarks where possible.`;
+
+  document.getElementById('claudePrompt').textContent = prompt;
+}
+
+function copyClaudePrompt() {
+  const text = document.getElementById('claudePrompt').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy Prompt', 2000);
+  });
+}
+
+// ============================================================
+// EXPORT EXCEL (SheetJS via CDN-less approach — pure JS)
+// ============================================================
+function exportExcel() {
+  const progName = document.getElementById('progName').value || 'CEA';
+  const beneficiaries = document.getElementById('beneficiaries').value;
+  const outcomes = document.getElementById('outcomes').value;
+  const attr = document.getElementById('attribution').value;
+  const outcomeMetric = document.getElementById('outcomeMetric').value;
+
+  // Build CSV content
+  const lines = [
+    ['COST-EFFECTIVENESS ANALYSIS — ' + progName],
+    ['Generated by Useful AF Tools | useful-af.circle.so'],
+    ['Date:', new Date().toLocaleDateString()],
+    [],
+    ['PROGRAMME SUMMARY'],
+    ['Beneficiaries:', beneficiaries],
+    ['Outcomes Target:', outcomes],
+    ['Outcome Metric:', outcomeMetric],
+    ['Attribution Rate:', attr + '%'],
+    [],
+    ['INGREDIENT COST TABLE — DIRECT COSTS'],
+    ['Ingredient', 'Category', 'Qty', 'Unit Cost ($)', 'Frequency', 'Total ($)']
+  ];
+
+  rows.direct.forEach(row => {
+    lines.push([row.name||'', row.cat||'', row.qty||0, row.unitCost||0, row.freq||'', getRowTotal('direct', row).toFixed(2)]);
+  });
+
+  lines.push([], ['INGREDIENT COST TABLE — INDIRECT/OVERHEAD'],
+    ['Ingredient', 'Category', 'Qty', 'Unit Cost ($)', 'Frequency', 'Total ($)']);
+
+  rows.indirect.forEach(row => {
+    lines.push([row.name||'', row.cat||'', row.qty||0, row.unitCost||0, row.freq||'', getRowTotal('indirect', row).toFixed(2)]);
+  });
+
+  lines.push([], ['CAPITAL COSTS (ANNUALISED)'],
+    ['Asset', 'Category', 'Qty', 'Total Cost ($)', 'Useful Life (yrs)', 'Annualised Cost ($)']);
+
+  rows.capital.forEach(row => {
+    lines.push([row.name||'', row.cat||'', row.qty||1, row.totalCost||0, row.life||5, getRowTotal('capital', row).toFixed(2)]);
+  });
+
+  let directSum = rows.direct.reduce((s, r) => s + getRowTotal('direct', r), 0);
+  let indirectSum = rows.indirect.reduce((s, r) => s + getRowTotal('indirect', r), 0);
+  let capitalSum = rows.capital.reduce((s, r) => s + getRowTotal('capital', r), 0);
+  let grand = directSum + indirectSum + capitalSum;
+  let attrOut = (+outcomes) * (+attr / 100);
+  let cpao = attrOut > 0 ? grand / attrOut : 0;
+
+  lines.push([],
+    ['RESULTS SUMMARY'],
+    ['Total Direct Costs ($):', directSum.toFixed(2)],
+    ['Total Indirect + Capital ($):', (indirectSum + capitalSum).toFixed(2)],
+    ['Total Programme Cost ($):', grand.toFixed(2)],
+    ['Cost per Beneficiary ($):', (grand / (+beneficiaries || 1)).toFixed(2)],
+    ['Attributed Outcomes:', attrOut.toFixed(0)],
+    ['Cost per Attributed Outcome ($):', cpao.toFixed(2)],
+    [],
+    ['Data sources: J-PAL, GiveWell, 3ie, DFID, WHO-CHOICE, WFP | Tool: Useful AF Cost-Effectiveness Analysis Builder']
+  );
+
+  const csv = lines.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = progName.replace(/\s+/g, '_') + '_CEA.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// TOOLTIP
+// ============================================================
+function showTip(el, text) {
+  const popup = document.getElementById('tooltipPopup');
+  popup.textContent = text;
+  popup.style.display = 'block';
+  const rect = el.getBoundingClientRect();
+  popup.style.left = Math.min(rect.left, window.innerWidth - 240) + 'px';
+  popup.style.top = (rect.bottom + 6) + 'px';
+}
+function hideTip() {
+  document.getElementById('tooltipPopup').style.display = 'none';
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function fmt(n) { return isNaN(n)||n===0?'0':Math.round(n).toLocaleString(); }
+function fmt2(n) { if (isNaN(n)||n===0) return '0'; if (n<10) return n.toFixed(2); if (n<1000) return n.toFixed(0); return Math.round(n).toLocaleString(); }
+
+// Init
+init();
+</script>
+
+</body>
+</html>
