@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gender Lens Investing Scorecard | Useful AF</title>
+<style>
+  :root {
+    --primary: #7c3aed;
+    --primary-light: #ede9fe;
+    --primary-dark: #5b21b6;
+    --accent: #ec4899;
+    --accent-light: #fce7f3;
+    --success: #059669;
+    --success-light: #d1fae5;
+    --warning: #d97706;
+    --warning-light: #fef3c7;
+    --danger: #dc2626;
+    --danger-light: #fee2e2;
+    --neutral: #6b7280;
+    --neutral-light: #f9fafb;
+    --text: #111827;
+    --text-muted: #6b7280;
+    --border: #e5e7eb;
+    --white: #ffffff;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f3f4f6; color: var(--text); min-height: 100vh; }
+
+  /* Header */
+  .header { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--accent) 100%); color: white; padding: 32px 24px 24px; }
+  .header-inner { max-width: 1000px; margin: 0 auto; }
+  .header-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+  .header h1 { font-size: clamp(22px, 4vw, 30px); font-weight: 800; margin-bottom: 8px; }
+  .header p { font-size: 15px; opacity: 0.9; max-width: 680px; line-height: 1.5; }
+  .framework-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .pill { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 500; }
+
+  /* Layout */
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Steps nav */
+  .steps-nav { display: flex; gap: 0; background: white; border-radius: 12px; padding: 8px; box-shadow: var(--shadow); margin-bottom: 24px; overflow-x: auto; }
+  .step-btn { flex: 1; min-width: 100px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 8px; border: none; background: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+  .step-btn:hover { background: var(--primary-light); }
+  .step-btn.active { background: var(--primary); color: white; }
+  .step-btn.complete { background: var(--success-light); color: var(--success); }
+  .step-num { font-size: 18px; font-weight: 800; line-height: 1; }
+  .step-label { font-size: 11px; font-weight: 600; text-align: center; line-height: 1.2; }
+
+  /* Section */
+  .section { background: white; border-radius: 12px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; display: none; }
+  .section.active { display: block; }
+  .section-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 2px solid var(--border); }
+  .section-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .section-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .section-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+  /* Criterion */
+  .criterion { border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; transition: border-color 0.2s; }
+  .criterion:hover { border-color: var(--primary); }
+  .criterion.met { border-color: var(--success); background: var(--success-light); }
+  .criterion.partial { border-color: var(--warning); background: var(--warning-light); }
+  .criterion.not-met { border-color: var(--danger); background: var(--danger-light); }
+  .criterion-top { display: flex; align-items: flex-start; gap: 12px; }
+  .criterion-info { flex: 1; }
+  .criterion-label { font-size: 14px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .criterion-source { font-size: 11px; color: var(--text-muted); }
+  .criterion-desc { font-size: 13px; color: var(--text-muted); margin: 4px 0 10px; line-height: 1.4; }
+  .select-wrapper { position: relative; }
+  select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: white; cursor: pointer; appearance: none; }
+  .input-field { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; }
+  .input-field:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+
+  /* Threshold badge */
+  .threshold { display: inline-flex; align-items: center; gap: 4px; background: var(--primary-light); color: var(--primary-dark); border-radius: 6px; padding: 2px 8px; font-size: 11px; font-weight: 600; margin-bottom: 8px; }
+  .tooltip { position: relative; display: inline-flex; cursor: help; }
+  .tooltip-icon { width: 16px; height: 16px; border-radius: 50%; background: var(--neutral-light); border: 1px solid var(--border); font-size: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); }
+  .tooltip-text { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1f2937; color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; white-space: nowrap; max-width: 280px; white-space: normal; line-height: 1.4; z-index: 100; display: none; margin-bottom: 4px; pointer-events: none; }
+  .tooltip:hover .tooltip-text { display: block; }
+
+  /* Subsection */
+  .subsection-title { font-size: 14px; font-weight: 700; color: var(--primary-dark); margin: 20px 0 12px; padding-bottom: 6px; border-bottom: 1px dashed var(--border); display: flex; align-items: center; gap: 8px; }
+
+  /* Results */
+  .results-panel { display: none; }
+  .results-panel.visible { display: block; }
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .score-card { background: white; border-radius: 12px; padding: 20px; box-shadow: var(--shadow); text-align: center; border-top: 4px solid; }
+  .score-card.primary { border-top-color: var(--primary); }
+  .score-card.success { border-top-color: var(--success); }
+  .score-card.warning { border-top-color: var(--warning); }
+  .score-card.accent { border-top-color: var(--accent); }
+  .score-value { font-size: 36px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+  .score-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .score-sub { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  /* Gauge */
+  .gauge-section { background: white; border-radius: 12px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .gauge-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
+  .dimension-bar { margin-bottom: 14px; }
+  .dim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .dim-name { font-size: 13px; font-weight: 600; }
+  .dim-score-label { font-size: 13px; font-weight: 700; }
+  .bar-track { background: var(--neutral-light); border-radius: 8px; height: 12px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 8px; transition: width 0.6s ease; }
+
+  /* Verdict */
+  .verdict-box { border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+  .verdict-box.excellent { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border: 1px solid var(--success); }
+  .verdict-box.good { background: linear-gradient(135deg, #dbeafe, #bfdbfe); border: 1px solid #3b82f6; }
+  .verdict-box.developing { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid var(--warning); }
+  .verdict-box.early { background: linear-gradient(135deg, #fee2e2, #fecaca); border: 1px solid var(--danger); }
+  .verdict-title { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+  .verdict-desc { font-size: 14px; line-height: 1.5; }
+
+  /* 2X eligibility */
+  .two-x-box { background: var(--primary-light); border: 2px solid var(--primary); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+  .two-x-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .two-x-logo { font-size: 28px; font-weight: 900; color: var(--primary-dark); }
+  .two-x-title { font-size: 16px; font-weight: 700; }
+  .two-x-subtitle { font-size: 12px; color: var(--text-muted); }
+  .two-x-criteria-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 8px; }
+  .two-x-item { background: white; border-radius: 8px; padding: 10px; text-align: center; border: 2px solid; }
+  .two-x-item.pass { border-color: var(--success); }
+  .two-x-item.fail { border-color: var(--border); }
+  .two-x-icon { font-size: 18px; margin-bottom: 4px; }
+  .two-x-label { font-size: 11px; font-weight: 600; }
+  .two-x-threshold { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Gap analysis */
+  .gap-section { background: white; border-radius: 12px; padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+  .gap-item { display: flex; gap: 12px; padding: 14px; border-radius: 8px; margin-bottom: 10px; }
+  .gap-item.critical { background: var(--danger-light); border-left: 4px solid var(--danger); }
+  .gap-item.important { background: var(--warning-light); border-left: 4px solid var(--warning); }
+  .gap-item.enhancement { background: var(--primary-light); border-left: 4px solid var(--primary); }
+  .gap-priority { font-size: 12px; font-weight: 700; min-width: 80px; }
+  .gap-text { font-size: 13px; line-height: 1.4; }
+  .gap-action { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* IRIS+ metrics */
+  .metrics-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .metrics-table th { background: var(--neutral-light); padding: 8px 12px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+  .metrics-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .metrics-table tr:last-child td { border-bottom: none; }
+  .metric-id { font-family: monospace; font-size: 11px; background: var(--neutral-light); padding: 2px 6px; border-radius: 4px; }
+
+  /* Claude prompt */
+  .claude-box { background: linear-gradient(135deg, #1e1b4b, #312e81); border-radius: 12px; padding: 24px; margin-bottom: 20px; color: white; }
+  .claude-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .claude-icon { font-size: 22px; }
+  .claude-title { font-size: 16px; font-weight: 700; }
+  .prompt-box { background: rgba(255,255,255,0.1); border-radius: 8px; padding: 16px; font-size: 13px; line-height: 1.6; white-space: pre-wrap; font-family: monospace; border: 1px solid rgba(255,255,255,0.2); }
+  .copy-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; margin-top: 10px; transition: background 0.2s; }
+  .copy-btn:hover { background: rgba(255,255,255,0.3); }
+
+  /* Buttons */
+  .btn { padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-secondary { background: white; color: var(--primary); border: 2px solid var(--primary); }
+  .btn-secondary:hover { background: var(--primary-light); }
+  .btn-success { background: var(--success); color: white; }
+  .btn-success:hover { background: #047857; }
+  .action-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
+
+  /* Org info */
+  .org-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-label { font-size: 13px; font-weight: 600; }
+  .form-hint { font-size: 11px; color: var(--text-muted); }
+
+  /* Print */
+  @media print {
+    .steps-nav, .action-bar, .claude-box, .btn { display: none !important; }
+    .section { display: block !important; box-shadow: none; border: 1px solid #ddd; }
+    body { background: white; }
+    .results-panel { display: block !important; }
+  }
+
+  /* Info box */
+  .info-box { background: var(--primary-light); border: 1px solid #c4b5fd; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: var(--primary-dark); margin-bottom: 16px; line-height: 1.5; }
+  .framework-ref { font-size: 11px; color: var(--text-muted); margin-top: 6px; font-style: italic; }
+
+  .progress-bar-outer { background: var(--neutral-light); border-radius: 8px; height: 6px; margin-top: 8px; overflow: hidden; }
+  .progress-bar-inner { background: linear-gradient(90deg, var(--primary), var(--accent)); height: 100%; border-radius: 8px; transition: width 0.3s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-badge">♀ Gender Lens Investing</div>
+    <h1>Gender Lens Investing Scorecard</h1>
+    <p>Assess gender equity across five 2X Challenge dimensions. Score your portfolio company or investment target against IFC, GIIN, and 2X global standards — with a full gap analysis and improvement roadmap.</p>
+    <div class="framework-pills">
+      <span class="pill">2X Challenge 2.0 Criteria</span>
+      <span class="pill">GIIN IRIS+ Gender Metrics</span>
+      <span class="pill">IFC PS2 Labour Standards</span>
+      <span class="pill">UN Women Empowerment Principles</span>
+      <span class="pill">World Bank WBL Index</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="steps-nav" id="stepsNav">
+    <button class="step-btn active" onclick="showSection(0)" id="stepBtn0">
+      <span class="step-num">🏢</span>
+      <span class="step-label">Organisation</span>
+    </button>
+    <button class="step-btn" onclick="showSection(1)" id="stepBtn1">
+      <span class="step-num">👩</span>
+      <span class="step-label">Ownership</span>
+    </button>
+    <button class="step-btn" onclick="showSection(2)" id="stepBtn2">
+      <span class="step-num">🏆</span>
+      <span class="step-label">Leadership</span>
+    </button>
+    <button class="step-btn" onclick="showSection(3)" id="stepBtn3">
+      <span class="step-num">💼</span>
+      <span class="step-label">Employment</span>
+    </button>
+    <button class="step-btn" onclick="showSection(4)" id="stepBtn4">
+      <span class="step-num">🔗</span>
+      <span class="step-label">Supply Chain</span>
+    </button>
+    <button class="step-btn" onclick="showSection(5)" id="stepBtn5">
+      <span class="step-num">🎯</span>
+      <span class="step-label">Products</span>
+    </button>
+    <button class="step-btn" onclick="showSection(6)" id="stepBtn6">
+      <span class="step-num">📊</span>
+      <span class="step-label">Results</span>
+    </button>
+  </div>
+
+  <!-- SECTION 0: Organisation Info -->
+  <div class="section active" id="section0">
+    <div class="section-header">
+      <div class="section-icon" style="background:#ede9fe;">🏢</div>
+      <div>
+        <div class="section-title">Organisation Profile</div>
+        <div class="section-desc">Basic information about the company or investment target being assessed. This contextualises your scores against relevant benchmarks.</div>
+      </div>
+    </div>
+    <div class="org-form">
+      <div class="form-group">
+        <label class="form-label">Organisation Name</label>
+        <input type="text" class="input-field" id="orgName" placeholder="e.g. Acme Impact Ltd">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Sector</label>
+        <select class="input-field" id="orgSector">
+          <option value="">Select sector...</option>
+          <option value="agriculture">Agriculture / Food Systems</option>
+          <option value="financial">Financial Services / Fintech</option>
+          <option value="health">Health / WASH</option>
+          <option value="education">Education / Skills</option>
+          <option value="energy">Clean Energy / Environment</option>
+          <option value="manufacturing">Manufacturing / Apparel</option>
+          <option value="tech">Technology / Digital</option>
+          <option value="housing">Housing / Urban</option>
+          <option value="other">Other</option>
+        </select>
+        <span class="form-hint">Used to identify sector-specific benchmarks</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Geography</label>
+        <select class="input-field" id="orgGeo">
+          <option value="">Select region...</option>
+          <option value="ssa">Sub-Saharan Africa</option>
+          <option value="sea">South / Southeast Asia</option>
+          <option value="lac">Latin America & Caribbean</option>
+          <option value="mena">MENA</option>
+          <option value="eeu">Eastern Europe & Central Asia</option>
+          <option value="oecd">OECD / High-Income</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stage</label>
+        <select class="input-field" id="orgStage">
+          <option value="">Select stage...</option>
+          <option value="seed">Seed / Early Stage</option>
+          <option value="series-a">Series A / Growth</option>
+          <option value="mature">Mature / Scale</option>
+          <option value="sme">Established SME</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Total Employees (approx.)</label>
+        <input type="number" class="input-field" id="orgEmployees" placeholder="e.g. 120" min="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assessment Date</label>
+        <input type="date" class="input-field" id="assessDate">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Assessor</label>
+        <input type="text" class="input-field" id="assessorName" placeholder="Your name or team">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Investor / Fund (optional)</label>
+        <input type="text" class="input-field" id="investorName" placeholder="e.g. ABC Impact Fund">
+      </div>
+    </div>
+    <div class="info-box" style="margin-top:20px;">
+      <strong>About the 2X Challenge:</strong> The 2X Challenge is the world's largest gender-lens investment initiative, mobilising capital from DFIs to businesses that advance gender equity across five dimensions: ownership, leadership, employment quality, supply chain, and products/services. To qualify for 2X recognition, a company must meet <strong>at least one</strong> of the five criteria thresholds.
+      <div class="framework-ref">Source: 2X Challenge 2.0 Criteria (2023), IFC/DFI Development Finance Institutions</div>
+    </div>
+    <div class="action-bar">
+      <button class="btn btn-primary" onclick="showSection(1)">Next: Ownership →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 1: Ownership -->
+  <div class="section" id="section1">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fce7f3;">👩</div>
+      <div>
+        <div class="section-title">Dimension 1: Ownership</div>
+        <div class="section-desc">Women's ownership and equity stake. 2X Threshold: ≥51% women-owned <em>or</em> a women-led fund/vehicle.</div>
+      </div>
+    </div>
+    <div class="threshold">2X Threshold: ≥51% women-owned OR women-led investment vehicle</div>
+
+    <div class="criterion" id="own1">
+      <div class="criterion-label">
+        % of equity owned by women
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Includes direct equity stakes, shares, ownership certificates. Count beneficial owners. For family businesses, count women with genuine decision-making power over their stake. Source: 2X Challenge 2.0 Criteria (2023)</div></div>
+      </div>
+      <div class="criterion-desc">Include all direct and indirect women shareholders. For complex structures, use the beneficial ownership percentage.</div>
+      <div class="criterion-source">📋 Source: 2X Challenge 2.0 Criteria; IFC Gender in Private Equity Toolkit (2019)</div>
+      <input type="number" class="input-field" id="women_equity" placeholder="e.g. 55" min="0" max="100" oninput="autoScore()" style="max-width:200px; margin-top:8px;">
+      <span style="font-size:13px; color:var(--text-muted); margin-left:8px;">% women-owned equity</span>
+    </div>
+
+    <div class="criterion" id="own2">
+      <div class="criterion-label">
+        Is this a women-led fund, co-investment vehicle, or financial instrument?
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Applies to fund-of-fund structures. A fund qualifies if ≥51% of fund management team are women or the fund has a specific women-led mandate. Source: 2X Challenge 2.0</div></div>
+      </div>
+      <div class="criterion-desc">For investment vehicles only — a fund where women hold majority of the GP/management team roles.</div>
+      <select class="input-field" id="women_fund" onchange="autoScore()" style="max-width:300px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="yes">Yes — women-led fund/vehicle (≥51% women in GP team)</option>
+        <option value="partial">Partial — women represented but not majority</option>
+        <option value="no">No — not applicable or no</option>
+        <option value="na">N/A — not a fund structure</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="own3">
+      <div class="criterion-label">Founding story: was the company founded by women?</div>
+      <div class="criterion-desc">Founding by women signals intent and early power, even if equity has since been diluted. This informs but doesn't count for 2X threshold.</div>
+      <select class="input-field" id="women_founder" onchange="autoScore()" style="max-width:300px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="all">Yes — founded entirely by women</option>
+        <option value="majority">Yes — majority women-founded (women co-founders held control)</option>
+        <option value="mixed">Mixed founding team</option>
+        <option value="no">No — founded by men</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-secondary" onclick="showSection(0)">← Back</button>
+      <button class="btn btn-primary" onclick="showSection(2)">Next: Leadership →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Leadership -->
+  <div class="section" id="section2">
+    <div class="section-header">
+      <div class="section-icon" style="background:#ede9fe;">🏆</div>
+      <div>
+        <div class="section-title">Dimension 2: Leadership</div>
+        <div class="section-desc">Women in senior decision-making roles. 2X Thresholds: ≥30% women on Board <em>or</em> ≥30% women in C-suite/Senior Management.</div>
+      </div>
+    </div>
+    <div class="threshold">2X Threshold: ≥30% women on Board OR ≥30% women in Senior Management</div>
+
+    <div class="criterion" id="lead1">
+      <div class="criterion-label">
+        % women on Board of Directors
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Count all board seats including independent directors. Exclude advisory boards — count only voting board members. 30% is the "critical mass" threshold at which women meaningfully influence decisions. Source: 2X Challenge; McKinsey Women in the Workplace 2023</div></div>
+      </div>
+      <div class="criterion-desc">Include independent, executive, and non-executive directors with voting rights. Exclude advisors.</div>
+      <div class="criterion-source">📋 2X Challenge 2.0; IFC Corporate Governance Methodology (2019)</div>
+      <div style="display:flex; gap:16px; margin-top:8px; flex-wrap:wrap;">
+        <div>
+          <label style="font-size:12px; color:var(--text-muted);">Total board seats</label>
+          <input type="number" class="input-field" id="board_total" placeholder="e.g. 7" min="0" max="50" oninput="autoScore()" style="max-width:120px; display:block; margin-top:4px;">
+        </div>
+        <div>
+          <label style="font-size:12px; color:var(--text-muted);">Women board seats</label>
+          <input type="number" class="input-field" id="board_women" placeholder="e.g. 3" min="0" max="50" oninput="autoScore()" style="max-width:120px; display:block; margin-top:4px;">
+        </div>
+        <div id="board_pct_display" style="display:flex; align-items:flex-end; padding-bottom:4px; font-size:20px; font-weight:700; color:var(--primary);"></div>
+      </div>
+    </div>
+
+    <div class="criterion" id="lead2">
+      <div class="criterion-label">
+        % women in C-suite / Senior Management
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Senior management = CEO, CFO, COO, CMO, CTO, VP/Director level with P&L responsibility or 5+ direct reports. Do not count middle management. Source: 2X Challenge 2.0 Criteria; ILO World Employment and Social Outlook 2023</div></div>
+      </div>
+      <div class="criterion-desc">C-suite and VP/Director level roles with budget authority or 5+ direct reports.</div>
+      <div class="criterion-source">📋 2X Challenge 2.0; ILO WESR 2023; McKinsey WitW 2023</div>
+      <div style="display:flex; gap:16px; margin-top:8px; flex-wrap:wrap;">
+        <div>
+          <label style="font-size:12px; color:var(--text-muted);">Total senior roles</label>
+          <input type="number" class="input-field" id="senior_total" placeholder="e.g. 10" min="0" max="500" oninput="autoScore()" style="max-width:120px; display:block; margin-top:4px;">
+        </div>
+        <div>
+          <label style="font-size:12px; color:var(--text-muted);">Women in senior roles</label>
+          <input type="number" class="input-field" id="senior_women" placeholder="e.g. 4" min="0" max="500" oninput="autoScore()" style="max-width:120px; display:block; margin-top:4px;">
+        </div>
+        <div id="senior_pct_display" style="display:flex; align-items:flex-end; padding-bottom:4px; font-size:20px; font-weight:700; color:var(--primary);"></div>
+      </div>
+    </div>
+
+    <div class="criterion" id="lead3">
+      <div class="criterion-label">
+        Is the CEO a woman?
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">CEO gender has an outsized effect on gender equity outcomes throughout the organisation. Companies with women CEOs have measurably higher women representation at all levels. Source: McKinsey Women in the Workplace 2023; IFC (2020)</div></div>
+      </div>
+      <select class="input-field" id="ceo_woman" onchange="autoScore()" style="max-width:300px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="yes">Yes — CEO identifies as a woman</option>
+        <option value="no">No — CEO does not identify as a woman</option>
+        <option value="cofounders">Co-CEOs or Co-Founders — at least one woman</option>
+        <option value="unknown">Unknown / Not applicable</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="lead4">
+      <div class="criterion-label">% women in middle management</div>
+      <div class="criterion-desc">Managers with ≥1 direct report but below senior management level. The "broken rung" — this is where women's advancement most commonly stalls. Source: McKinsey WitW 2023.</div>
+      <input type="number" class="input-field" id="middle_mgmt_pct" placeholder="e.g. 42" min="0" max="100" oninput="autoScore()" style="max-width:200px; margin-top:8px;">
+      <span style="font-size:13px; color:var(--text-muted); margin-left:8px;">% women in middle management</span>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-secondary" onclick="showSection(1)">← Back</button>
+      <button class="btn btn-primary" onclick="showSection(3)">Next: Employment →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Employment Quality -->
+  <div class="section" id="section3">
+    <div class="section-header">
+      <div class="section-icon" style="background:#d1fae5;">💼</div>
+      <div>
+        <div class="section-title">Dimension 3: Employment Quality</div>
+        <div class="section-desc">Quality of employment for women workers. 2X Threshold: ≥40% women in workforce AND at least 2 qualifying employment quality indicators met.</div>
+      </div>
+    </div>
+    <div class="threshold">2X Threshold: ≥40% women workforce AND ≥2 quality indicators</div>
+    <div class="info-box">Quality indicators count only if the company also meets the ≥40% women workforce threshold. Employment quality is assessed against IFC Performance Standard 2 (Labour & Working Conditions) and ILO Decent Work principles.</div>
+
+    <div class="subsection-title">👥 Workforce Composition</div>
+
+    <div class="criterion" id="emp1">
+      <div class="criterion-label">% women in total workforce</div>
+      <div class="criterion-desc">All employees, full-time and part-time. For agriculture/seasonal: use peak season employment. Source: 2X Challenge 2.0; ILO Labour Force Statistics 2023.</div>
+      <input type="number" class="input-field" id="workforce_women_pct" placeholder="e.g. 52" min="0" max="100" oninput="autoScore()" style="max-width:200px; margin-top:8px;">
+      <span style="font-size:13px; color:var(--text-muted); margin-left:8px;">% women in workforce</span>
+    </div>
+
+    <div class="subsection-title">⭐ Employment Quality Indicators (need ≥2 to qualify)</div>
+
+    <div class="criterion" id="emp2">
+      <div class="criterion-label">
+        Equal pay / pay equity policy
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">A formal written policy committing to equal pay for equal work. Best practice: conduct regular pay equity audits and publish the gender pay gap. Global gender pay gap = ~18% (ILO 2023). A formal policy without audit is "partial". Source: ILO Equal Remuneration Convention (C100); World Economic Forum Global Gender Gap Report 2024</div></div>
+      </div>
+      <div class="criterion-source">📋 ILO Convention C100; WEF Global Gender Gap Report 2024 (18% global gap)</div>
+      <select class="input-field" id="equal_pay" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="policy_audit">Full: written policy + regular pay equity audit</option>
+        <option value="policy_only">Partial: written policy, no formal audit</option>
+        <option value="informal">Informal commitment only, no policy</option>
+        <option value="none">No policy or commitment</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="emp3">
+      <div class="criterion-label">
+        Parental leave policy (beyond legal minimum)
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Legal minimums vary: 14 weeks maternity (ILO C183), 10 days paternity (EU minimum). Qualifying = at least 16 weeks fully paid maternity AND ≥2 weeks paid paternity. Global benchmark: Scandinavian standard = 12+ months combined. Source: ILO Maternity Protection Convention C183 (2000); World Policy Analysis Center 2023</div></div>
+      </div>
+      <div class="criterion-source">📋 ILO Maternity Protection C183; World Policy Analysis Center (2023)</div>
+      <select class="input-field" id="parental_leave" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="full">Full: ≥16 weeks paid maternity + ≥2 weeks paid paternity</option>
+        <option value="maternity_only">Partial: ≥16 weeks paid maternity, limited/no paternity</option>
+        <option value="legal_min">Legal minimum only</option>
+        <option value="below_min">Below legal minimum or unclear</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="emp4">
+      <div class="criterion-label">
+        Safe & harassment-free workplace
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">ILO C190 Violence and Harassment Convention (2019) requires policies covering all workers. Qualifying standard: written PSHEA policy + confidential reporting mechanism + regular training + zero-tolerance stance. Source: ILO C190 (2019); IFC PS2</div></div>
+      </div>
+      <div class="criterion-source">📋 ILO C190 (2019); IFC Performance Standard 2; UN Women Safe Cities</div>
+      <select class="input-field" id="safe_workplace" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="full">Full: PSHEA policy + reporting channel + annual training + tracking</option>
+        <option value="policy_training">Partial: Policy + training but no formal reporting channel</option>
+        <option value="policy_only">Policy only, no training or reporting</option>
+        <option value="none">No policy</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="emp5">
+      <div class="criterion-label">
+        Childcare support
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Childcare is the single greatest barrier to women's workforce participation globally. IFC recommends employers in sectors with >30% women workers to provide childcare support. Qualifying = on-site childcare OR childcare subsidy ≥15% of local average childcare cost. Source: IFC (2019); World Bank WBL Index 2024</div></div>
+      </div>
+      <div class="criterion-source">📋 IFC Childcare in the Workplace (2019); World Bank WBL 2024</div>
+      <select class="input-field" id="childcare" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="onsite">On-site childcare facility available</option>
+        <option value="subsidy">Childcare subsidy programme (≥15% of local cost)</option>
+        <option value="partner">Partnership with local childcare provider</option>
+        <option value="none">No childcare support</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="emp6">
+      <div class="criterion-label">Flexible work / remote work options</div>
+      <div class="criterion-desc">Formal flexible working policies (flex hours, remote/hybrid, part-time pathways to promotion). Source: ILO Telework Guidance 2020; McKinsey WitW 2023 (flexibility valued by 87% of women workers).</div>
+      <select class="input-field" id="flex_work" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="full">Formal policy with flexible hours + remote + part-time senior track</option>
+        <option value="partial">Some flexibility but no formal policy</option>
+        <option value="limited">Limited flexibility (role-dependent only)</option>
+        <option value="none">No flexible work options</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="emp7">
+      <div class="criterion-label">Training & skills development for women</div>
+      <div class="criterion-desc">Targeted training programmes, mentorship, or sponsorship for women's career advancement. Source: ILO Skills for the Future of Work (2021); UN Women WEPs.</div>
+      <select class="input-field" id="training" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="full">Dedicated women's leadership/skills programme with budget</option>
+        <option value="mentorship">Mentorship or sponsorship programme</option>
+        <option value="general">General training only (no gender-targeted component)</option>
+        <option value="none">No training programme</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-secondary" onclick="showSection(2)">← Back</button>
+      <button class="btn btn-primary" onclick="showSection(4)">Next: Supply Chain →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Supply Chain -->
+  <div class="section" id="section4">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fef3c7;">🔗</div>
+      <div>
+        <div class="section-title">Dimension 4: Supply Chain</div>
+        <div class="section-desc">Women's inclusion in the supply chain as producers, suppliers, distributors, or agents. 2X Threshold: ≥25% of supply chain spend with women-owned businesses OR ≥50% women in farmer/producer network.</div>
+      </div>
+    </div>
+    <div class="threshold">2X Threshold: ≥25% women-owned suppliers OR ≥50% women farmers/producers/agents</div>
+
+    <div class="criterion" id="sc1">
+      <div class="criterion-label">
+        % of procurement/supply chain spend with women-owned businesses
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Women-owned = ≥51% women-owned and managed. Qualifying spend includes goods, services, and raw material suppliers. Exclude utilities and government procurement. Source: 2X Challenge 2.0; IFC Women-Owned SMEs Toolkit (2020); WEConnect International standards</div></div>
+      </div>
+      <div class="criterion-source">📋 2X Challenge 2.0; WEConnect International; IFC Women-Owned SMEs (2020)</div>
+      <input type="number" class="input-field" id="supply_women_pct" placeholder="e.g. 30" min="0" max="100" oninput="autoScore()" style="max-width:200px; margin-top:8px;">
+      <span style="font-size:13px; color:var(--text-muted); margin-left:8px;">% spend with women-owned suppliers</span>
+    </div>
+
+    <div class="criterion" id="sc2">
+      <div class="criterion-label">
+        % women in farmer / producer / distributor / agent network
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Applies to agriculture, financial services (agents), FMCG (distributors), and similar models. 50% threshold reflects population parity. Source: 2X Challenge; CGAP (women's financial inclusion in agent networks reaches 40-60% in leading programmes)</div></div>
+      </div>
+      <div class="criterion-source">📋 2X Challenge 2.0; CGAP Financial Inclusion Data 2023; FAO State of Food & Agriculture 2023</div>
+      <input type="number" class="input-field" id="producer_women_pct" placeholder="e.g. 55" min="0" max="100" oninput="autoScore()" style="max-width:200px; margin-top:8px;">
+      <span style="font-size:13px; color:var(--text-muted); margin-left:8px;">% women in producer/agent network (enter 0 if N/A)</span>
+    </div>
+
+    <div class="criterion" id="sc3">
+      <div class="criterion-label">Active supplier diversity programme</div>
+      <div class="criterion-desc">Formal programme to identify, develop and prefer women-owned suppliers. Includes capacity building for women suppliers. Source: WEConnect International; IFC (2020).</div>
+      <select class="input-field" id="supplier_diversity" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="full">Full programme: tracking + preference policy + supplier development</option>
+        <option value="tracking">Tracking women-owned suppliers but no preference policy</option>
+        <option value="intent">Stated intent, no formal programme</option>
+        <option value="none">No supplier diversity programme</option>
+        <option value="na">N/A — no significant supply chain</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="sc4">
+      <div class="criterion-label">Supply chain due diligence on gender risks</div>
+      <div class="criterion-desc">Does the company assess gender-based risks (PSHEA, child labour, forced labour, wage gaps) in its supply chain? IFC PS2 and ILO MNE Declaration require this for Tier 1 suppliers at minimum. Source: IFC PS2; UN Guiding Principles on Business & Human Rights (UNGPs).</div>
+      <select class="input-field" id="sc_due_diligence" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="full">Full: PSHEA + labour standards audit of Tier 1 suppliers</option>
+        <option value="partial">Partial: some supplier questionnaires, no field audits</option>
+        <option value="limited">Limited: only for flagged suppliers</option>
+        <option value="none">No supply chain gender due diligence</option>
+        <option value="unknown">Unknown</option>
+      </select>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-secondary" onclick="showSection(3)">← Back</button>
+      <button class="btn btn-primary" onclick="showSection(5)">Next: Products →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Products & Services -->
+  <div class="section" id="section5">
+    <div class="section-header">
+      <div class="section-icon" style="background:#fce7f3;">🎯</div>
+      <div>
+        <div class="section-title">Dimension 5: Products & Services</div>
+        <div class="section-desc">Whether the company's core products/services intentionally address women's needs or advance gender equity. 2X Threshold: ≥50% of revenues from products/services designed for or with women, AND they demonstrably improve wellbeing.</div>
+      </div>
+    </div>
+    <div class="threshold">2X Threshold: ≥50% revenue from products designed for women AND demonstrated wellbeing benefit</div>
+
+    <div class="criterion" id="prod1">
+      <div class="criterion-label">
+        % of revenue from products/services primarily designed for women
+        <div class="tooltip"><div class="tooltip-icon">?</div><div class="tooltip-text">Products must be intentionally designed to address women's specific needs, not just purchased by women. E.g.: maternal health services, women's financial products (credit, insurance), women's agricultural inputs, femtech, gender-based violence support services. Source: 2X Challenge 2.0; USAID WomenConnect Challenge</div></div>
+      </div>
+      <div class="criterion-source">📋 2X Challenge 2.0; USAID WomenConnect; CGAP Women's Financial Inclusion Report 2023</div>
+      <input type="number" class="input-field" id="women_revenue_pct" placeholder="e.g. 70" min="0" max="100" oninput="autoScore()" style="max-width:200px; margin-top:8px;">
+      <span style="font-size:13px; color:var(--text-muted); margin-left:8px;">% revenue from women-targeted products</span>
+    </div>
+
+    <div class="criterion" id="prod2">
+      <div class="criterion-label">Evidence of wellbeing improvement for women users/customers</div>
+      <div class="criterion-desc">Has the company collected data showing its products improve women's financial, physical, social, or economic outcomes? IMP framework: evidence level (anecdotal → survey → RCT). Source: 2X Challenge 2.0; GIIN IRIS+ PD 7375.</div>
+      <div class="criterion-source">📋 2X Challenge 2.0; GIIN IRIS+ PD 7375; IMP Evidence Requirements</div>
+      <select class="input-field" id="wellbeing_evidence" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="rct">Strong: RCT, quasi-experimental, or longitudinal study</option>
+        <option value="survey">Moderate: Customer survey data showing measurable improvement</option>
+        <option value="anecdotal">Weak: Anecdotal evidence / case studies only</option>
+        <option value="none">No evidence collected</option>
+        <option value="na">N/A — products not targeted at women</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="prod3">
+      <div class="criterion-label">Women co-designed or consulted in product development</div>
+      <div class="criterion-desc">Human-centred design with women beneficiaries. Source: IDEO.org HCD principles; CGAP human-centred design for financial inclusion (2015).</div>
+      <select class="input-field" id="hcd" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="full">Full HCD process: women consulted + iterated throughout development</option>
+        <option value="consultation">Women consulted but not ongoing co-design</option>
+        <option value="user_research">User research with women (surveys/focus groups)</option>
+        <option value="none">No specific women's input in product design</option>
+        <option value="na">N/A</option>
+      </select>
+    </div>
+
+    <div class="criterion" id="prod4">
+      <div class="criterion-label">Affordability and accessibility for low-income women</div>
+      <div class="criterion-desc">Is the product accessible to women in the bottom 40% of the income distribution? Price, distribution channel, language/literacy, digital access. Source: CGAP Financial Inclusion (2023); World Bank Global Findex 2022.</div>
+      <div class="criterion-source">📋 World Bank Global Findex 2022; CGAP 2023; ITU Digital Gender Gap 2023</div>
+      <select class="input-field" id="affordability" onchange="autoScore()" style="max-width:400px; margin-top:8px;">
+        <option value="">Select...</option>
+        <option value="full">Fully designed for BoP: subsidised/tiered pricing + accessible channels</option>
+        <option value="accessible">Accessible but not subsidised — reaches low-income women</option>
+        <option value="middle">Middle-income focus — some reach but not BoP-targeted</option>
+        <option value="premium">Premium product, low-income women not primary market</option>
+        <option value="na">N/A</option>
+      </select>
+    </div>
+
+    <div class="subsection-title">📏 GIIN IRIS+ Gender Metrics (optional)</div>
+    <div class="info-box">The following IRIS+ metrics are the standard reporting set for gender-lens investors. Completing these enables comparison across portfolios. Source: GIIN IRIS+ 2023 (iris.thegiin.org)</div>
+
+    <div class="criterion">
+      <div class="criterion-label">PI3725 — % women employees (total workforce)</div>
+      <input type="number" class="input-field" id="iris_pi3725" placeholder="e.g. 48" min="0" max="100" style="max-width:200px; margin-top:8px;">
+      <span style="font-size:13px; color:var(--text-muted); margin-left:8px;">%</span>
+      <span class="metric-id" style="margin-left:8px;">IRIS+ PI3725</span>
+    </div>
+    <div class="criterion">
+      <div class="criterion-label">PI5597 — % women in senior management</div>
+      <input type="number" class="input-field" id="iris_pi5597" placeholder="e.g. 35" min="0" max="100" style="max-width:200px; margin-top:8px;">
+      <span style="font-size:13px; color:var(--text-muted); margin-left:8px;">%</span>
+      <span class="metric-id" style="margin-left:8px;">IRIS+ PI5597</span>
+    </div>
+    <div class="criterion">
+      <div class="criterion-label">OI7767 — # women clients / customers served</div>
+      <input type="number" class="input-field" id="iris_oi7767" placeholder="e.g. 12500" min="0" style="max-width:200px; margin-top:8px;">
+      <span class="metric-id" style="margin-left:8px;">IRIS+ OI7767</span>
+    </div>
+    <div class="criterion">
+      <div class="criterion-label">PD7375 — Women's access to products/services (wellbeing outcome)</div>
+      <select class="input-field" id="iris_pd7375" style="max-width:400px; margin-top:8px;">
+        <option value="">Select evidence level...</option>
+        <option value="strong">Strong evidence of positive wellbeing outcomes</option>
+        <option value="moderate">Moderate evidence (survey data)</option>
+        <option value="early">Early stage / anecdotal</option>
+        <option value="none">No evidence</option>
+      </select>
+      <span class="metric-id" style="margin-left:8px; display:inline-block; margin-top:4px;">IRIS+ PD7375</span>
+    </div>
+
+    <div class="action-bar">
+      <button class="btn btn-secondary" onclick="showSection(4)">← Back</button>
+      <button class="btn btn-success" onclick="calculateAndShow()">📊 Generate Scorecard →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Results -->
+  <div class="section" id="section6">
+    <div class="section-header">
+      <div class="section-icon" style="background:linear-gradient(135deg,#ede9fe,#fce7f3);">📊</div>
+      <div>
+        <div class="section-title" id="results-org-name">Gender Lens Investing Scorecard Results</div>
+        <div class="section-desc" id="results-date">Assessment results across 5 dimensions against 2X Challenge, GIIN, and IFC standards.</div>
+      </div>
+    </div>
+
+    <div id="resultsContent"></div>
+
+    <div class="action-bar" id="resultsActions">
+      <button class="btn btn-secondary" onclick="showSection(5)">← Edit Inputs</button>
+      <button class="btn btn-primary" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨 Print PDF</button>
+      <button class="btn btn-success" onclick="copyClaudePrompt()">🤖 Copy Claude Prompt</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ========================
+// State
+// ========================
+let currentSection = 0;
+const TOTAL_SECTIONS = 7;
+
+function showSection(n) {
+  document.querySelectorAll('.section').forEach((s,i) => {
+    s.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.step-btn').forEach((b,i) => {
+    b.classList.remove('active','complete');
+    if (i < n) b.classList.add('complete');
+    if (i === n) b.classList.add('active');
+  });
+  currentSection = n;
+  window.scrollTo(0, 0);
+}
+
+function v(id) {
+  const el = document.getElementById(id);
+  if (!el) return '';
+  return el.value || '';
+}
+
+function numV(id) {
+  const val = parseFloat(v(id));
+  return isNaN(val) ? null : val;
+}
+
+// ========================
+// Live percentage displays
+// ========================
+function autoScore() {
+  // Board %
+  const bt = numV('board_total'), bw = numV('board_women');
+  const bdp = document.getElementById('board_pct_display');
+  if (bt && bw !== null && bt > 0) {
+    const pct = Math.round((bw/bt)*100);
+    bdp.textContent = pct + '%';
+    bdp.style.color = pct >= 30 ? 'var(--success)' : 'var(--danger)';
+  } else {
+    bdp.textContent = '';
+  }
+  // Senior %
+  const st = numV('senior_total'), sw = numV('senior_women');
+  const sdp = document.getElementById('senior_pct_display');
+  if (st && sw !== null && st > 0) {
+    const pct = Math.round((sw/st)*100);
+    sdp.textContent = pct + '%';
+    sdp.style.color = pct >= 30 ? 'var(--success)' : 'var(--danger)';
+  } else {
+    sdp.textContent = '';
+  }
+}
+
+// ========================
+// Scoring Engine
+// ========================
+function calculateScores() {
+  const scores = {};
+
+  // --- DIMENSION 1: OWNERSHIP ---
+  let ownScore = 0, ownMax = 100;
+  const womenEquity = numV('women_equity');
+  const womenFund = v('women_fund');
+  const womenFounder = v('women_founder');
+  let own2xMet = false;
+
+  if (womenEquity !== null) {
+    if (womenEquity >= 51) { ownScore += 60; own2xMet = true; }
+    else if (womenEquity >= 30) ownScore += 35;
+    else if (womenEquity >= 10) ownScore += 15;
+    else ownScore += 0;
+  }
+  if (womenFund === 'yes') { ownScore += 40; own2xMet = true; }
+  else if (womenFund === 'partial') ownScore += 20;
+
+  // founder bonus (up to 10 on top, for context)
+  if (womenFounder === 'all') ownScore = Math.min(100, ownScore + 10);
+  else if (womenFounder === 'majority') ownScore = Math.min(100, ownScore + 5);
+
+  scores.ownership = { score: Math.min(100, ownScore), max: 100, twox: own2xMet };
+
+  // --- DIMENSION 2: LEADERSHIP ---
+  const boardTotal = numV('board_total'), boardWomen = numV('board_women');
+  const seniorTotal = numV('senior_total'), seniorWomen = numV('senior_women');
+  const ceoWoman = v('ceo_woman');
+  const middlePct = numV('middle_mgmt_pct');
+
+  let leadScore = 0;
+  let lead2xMet = false;
+  let boardPct = null, seniorPct = null;
+
+  if (boardTotal && boardTotal > 0 && boardWomen !== null) {
+    boardPct = (boardWomen / boardTotal) * 100;
+    if (boardPct >= 50) { leadScore += 35; lead2xMet = true; }
+    else if (boardPct >= 30) { leadScore += 28; lead2xMet = true; }
+    else if (boardPct >= 20) leadScore += 18;
+    else if (boardPct >= 10) leadScore += 8;
+  }
+  if (seniorTotal && seniorTotal > 0 && seniorWomen !== null) {
+    seniorPct = (seniorWomen / seniorTotal) * 100;
+    if (seniorPct >= 50) { leadScore += 35; lead2xMet = true; }
+    else if (seniorPct >= 30) { leadScore += 28; lead2xMet = true; }
+    else if (seniorPct >= 20) leadScore += 18;
+    else if (seniorPct >= 10) leadScore += 8;
+  }
+  if (ceoWoman === 'yes') leadScore += 20;
+  else if (ceoWoman === 'cofounders') leadScore += 10;
+  if (middlePct !== null) {
+    if (middlePct >= 50) leadScore += 10;
+    else if (middlePct >= 30) leadScore += 6;
+    else if (middlePct >= 20) leadScore += 3;
+  }
+
+  scores.leadership = { score: Math.min(100, leadScore), max: 100, twox: lead2xMet, boardPct, seniorPct };
+
+  // --- DIMENSION 3: EMPLOYMENT ---
+  const workforcePct = numV('workforce_women_pct');
+  const equalPay = v('equal_pay');
+  const parentalLeave = v('parental_leave');
+  const safeWorkplace = v('safe_workplace');
+  const childcare = v('childcare');
+  const flexWork = v('flex_work');
+  const training = v('training');
+
+  let empScore = 0;
+  let emp2xMet = false;
+  let qualityIndicators = 0;
+
+  if (workforcePct !== null) {
+    if (workforcePct >= 40) { empScore += 25; }
+    else if (workforcePct >= 30) { empScore += 15; }
+    else if (workforcePct >= 20) { empScore += 8; }
+  }
+  // Quality indicators
+  const qualityMap = {
+    equal_pay: { full: 'policy_audit', partial: 'policy_only', pts: 12 },
+    parental_leave: { full: 'full', partial: 'maternity_only', pts: 12 },
+    safe_workplace: { full: 'full', partial: 'policy_training', pts: 15 },
+    childcare: { full: ['onsite','subsidy'], partial: 'partner', pts: 10 },
+    flex_work: { full: 'full', partial: 'partial', pts: 8 },
+    training: { full: 'full', partial: 'mentorship', pts: 8 }
+  };
+  function scoreQI(field, full, partial, pts) {
+    const val = v(field);
+    if (Array.isArray(full) ? full.includes(val) : val === full) { qualityIndicators++; return pts; }
+    if (val === partial) return Math.round(pts * 0.5);
+    return 0;
+  }
+  empScore += scoreQI('equal_pay', 'policy_audit', 'policy_only', 12);
+  empScore += scoreQI('parental_leave', 'full', 'maternity_only', 12);
+  empScore += scoreQI('safe_workplace', 'full', 'policy_training', 15);
+  empScore += scoreQI('childcare', ['onsite','subsidy'], 'partner', 10);
+  empScore += scoreQI('flex_work', 'full', 'partial', 8);
+  empScore += scoreQI('training', 'full', 'mentorship', 8);
+
+  if (workforcePct !== null && workforcePct >= 40 && qualityIndicators >= 2) emp2xMet = true;
+
+  scores.employment = { score: Math.min(100, empScore), max: 100, twox: emp2xMet, qualityIndicators, workforcePct };
+
+  // --- DIMENSION 4: SUPPLY CHAIN ---
+  const supplyWomenPct = numV('supply_women_pct');
+  const producerWomenPct = numV('producer_women_pct');
+  const supplierDiversity = v('supplier_diversity');
+  const scDD = v('sc_due_diligence');
+
+  let scScore = 0;
+  let sc2xMet = false;
+
+  if (supplyWomenPct !== null) {
+    if (supplyWomenPct >= 25) { scScore += 40; sc2xMet = true; }
+    else if (supplyWomenPct >= 15) scScore += 25;
+    else if (supplyWomenPct >= 5) scScore += 10;
+  }
+  if (producerWomenPct !== null && producerWomenPct > 0) {
+    if (producerWomenPct >= 50) { scScore += 30; sc2xMet = true; }
+    else if (producerWomenPct >= 35) scScore += 18;
+    else if (producerWomenPct >= 20) scScore += 8;
+  }
+  if (supplierDiversity === 'full') scScore += 20;
+  else if (supplierDiversity === 'tracking') scScore += 10;
+  else if (supplierDiversity === 'intent') scScore += 5;
+  else if (supplierDiversity === 'na') scScore += 15; // no penalty for N/A
+
+  if (scDD === 'full') scScore += 10;
+  else if (scDD === 'partial') scScore += 5;
+
+  scores.supplyChain = { score: Math.min(100, scScore), max: 100, twox: sc2xMet };
+
+  // --- DIMENSION 5: PRODUCTS ---
+  const womenRevPct = numV('women_revenue_pct');
+  const wellbeingEvidence = v('wellbeing_evidence');
+  const hcd = v('hcd');
+  const affordability = v('affordability');
+
+  let prodScore = 0;
+  let prod2xMet = false;
+
+  if (womenRevPct !== null) {
+    if (womenRevPct >= 50) { prodScore += 40; }
+    else if (womenRevPct >= 30) prodScore += 25;
+    else if (womenRevPct >= 10) prodScore += 12;
+  }
+  if (wellbeingEvidence === 'rct') { prodScore += 30; if (womenRevPct !== null && womenRevPct >= 50) prod2xMet = true; }
+  else if (wellbeingEvidence === 'survey') { prodScore += 18; if (womenRevPct !== null && womenRevPct >= 50) prod2xMet = true; }
+  else if (wellbeingEvidence === 'anecdotal') prodScore += 8;
+  else if (wellbeingEvidence === 'na') prodScore += 20; // products not gender-targeted is ok
+
+  if (hcd === 'full') prodScore += 15;
+  else if (hcd === 'consultation') prodScore += 10;
+  else if (hcd === 'user_research') prodScore += 5;
+  else if (hcd === 'na') prodScore += 10;
+
+  if (affordability === 'full') prodScore += 15;
+  else if (affordability === 'accessible') prodScore += 10;
+  else if (affordability === 'middle') prodScore += 5;
+  else if (affordability === 'na') prodScore += 10;
+
+  scores.products = { score: Math.min(100, prodScore), max: 100, twox: prod2xMet };
+
+  // --- OVERALL ---
+  const dimScores = [scores.ownership.score, scores.leadership.score, scores.employment.score, scores.supplyChain.score, scores.products.score];
+  const overall = Math.round(dimScores.reduce((a,b) => a+b, 0) / 5);
+  const twoxDims = [scores.ownership.twox, scores.leadership.twox, scores.employment.twox, scores.supplyChain.twox, scores.products.twox].filter(Boolean).length;
+  const twoxQualified = twoxDims >= 1;
+
+  return { ...scores, overall, twoxDims, twoxQualified };
+}
+
+function getVerdict(score) {
+  if (score >= 75) return { cls: 'excellent', emoji: '🌟', label: 'Gender Equity Leader', desc: 'This organisation demonstrates best-in-class gender equity practices across multiple dimensions. It meets or exceeds 2X Challenge thresholds and implements comprehensive policies that go beyond compliance.' };
+  if (score >= 55) return { cls: 'good', emoji: '✅', label: 'Strong Gender Integration', desc: 'Good gender equity practices in place with meaningful women\'s representation and policies. Likely to meet 2X Challenge thresholds. Focus should be on deepening impact and improving evidence quality.' };
+  if (score >= 35) return { cls: 'developing', emoji: '🔄', label: 'Developing Gender Practices', desc: 'Some gender equity elements in place but significant gaps exist. May not meet 2X Challenge thresholds. A structured gender action plan with 12–24 month targets would substantially improve qualification prospects.' };
+  return { cls: 'early', emoji: '⚠️', label: 'Early Stage / Significant Gaps', desc: 'Limited gender equity practices currently in place. Recommend a focused capacity-building programme before seeking gender-lens investment. Start with leadership representation and workplace policies as quick wins.' };
+}
+
+function getBarColor(score) {
+  if (score >= 70) return 'var(--success)';
+  if (score >= 45) return '#f59e0b';
+  return 'var(--danger)';
+}
+
+function calculateAndShow() {
+  const s = calculateScores();
+  const orgName = v('orgName') || 'Organisation';
+  const assessDate = v('assessDate') || new Date().toISOString().split('T')[0];
+  const verdict = getVerdict(s.overall);
+
+  // Update header
+  document.getElementById('results-org-name').textContent = orgName + ' — Gender Lens Scorecard';
+  document.getElementById('results-date').textContent = 'Assessment date: ' + assessDate + ' | Assessor: ' + (v('assessorName') || 'n/a') + ' | ' + (v('investorName') ? 'Investor: ' + v('investorName') : '');
+
+  let html = '';
+
+  // Score cards
+  html += `<div class="score-grid">
+    <div class="score-card primary">
+      <div class="score-value" style="color:var(--primary)">${s.overall}<span style="font-size:20px">/100</span></div>
+      <div class="score-label">Overall Gender Score</div>
+      <div class="score-sub">${verdict.emoji} ${verdict.label}</div>
+    </div>
+    <div class="score-card ${s.twoxQualified ? 'success' : 'warning'}">
+      <div class="score-value" style="color:${s.twoxQualified ? 'var(--success)' : 'var(--warning)'}">${s.twoxDims}<span style="font-size:20px">/5</span></div>
+      <div class="score-label">2X Dimensions Met</div>
+      <div class="score-sub">${s.twoxQualified ? '✅ 2X Eligible' : '⚠️ Needs 1 threshold'}</div>
+    </div>
+    <div class="score-card accent">
+      <div class="score-value" style="color:var(--accent)">${Math.round((s.ownership.score + s.leadership.score)/2)}<span style="font-size:20px">/100</span></div>
+      <div class="score-label">Women in Power</div>
+      <div class="score-sub">Ownership + Leadership avg</div>
+    </div>
+    <div class="score-card success">
+      <div class="score-value" style="color:var(--success)">${Math.round((s.employment.score + s.products.score)/2)}<span style="font-size:20px">/100</span></div>
+      <div class="score-label">Impact on Women</div>
+      <div class="score-sub">Employment + Products avg</div>
+    </div>
+  </div>`;
+
+  // Verdict
+  html += `<div class="verdict-box ${verdict.cls}">
+    <div class="verdict-title">${verdict.emoji} ${verdict.label}</div>
+    <div class="verdict-desc">${verdict.desc}</div>
+  </div>`;
+
+  // 2X eligibility
+  html += `<div class="two-x-box">
+    <div class="two-x-header">
+      <div class="two-x-logo">2X</div>
+      <div>
+        <div class="two-x-title">2X Challenge Eligibility Assessment</div>
+        <div class="two-x-subtitle">2X Challenge 2.0 Criteria (2023) — DFI Gender-Lens Investment Standard. Requires meeting ≥1 of 5 dimensions.</div>
+      </div>
+    </div>
+    <div class="two-x-criteria-grid">
+      <div class="two-x-item ${s.ownership.twox ? 'pass' : 'fail'}">
+        <div class="two-x-icon">${s.ownership.twox ? '✅' : '❌'}</div>
+        <div class="two-x-label">Ownership</div>
+        <div class="two-x-threshold">≥51% women-owned</div>
+      </div>
+      <div class="two-x-item ${s.leadership.twox ? 'pass' : 'fail'}">
+        <div class="two-x-icon">${s.leadership.twox ? '✅' : '❌'}</div>
+        <div class="two-x-label">Leadership</div>
+        <div class="two-x-threshold">≥30% board or senior mgmt</div>
+      </div>
+      <div class="two-x-item ${s.employment.twox ? 'pass' : 'fail'}">
+        <div class="two-x-icon">${s.employment.twox ? '✅' : '❌'}</div>
+        <div class="two-x-label">Employment</div>
+        <div class="two-x-threshold">≥40% women + ≥2 quality indicators</div>
+      </div>
+      <div class="two-x-item ${s.supplyChain.twox ? 'pass' : 'fail'}">
+        <div class="two-x-icon">${s.supplyChain.twox ? '✅' : '❌'}</div>
+        <div class="two-x-label">Supply Chain</div>
+        <div class="two-x-threshold">≥25% women suppliers or ≥50% women producers</div>
+      </div>
+      <div class="two-x-item ${s.products.twox ? 'pass' : 'fail'}">
+        <div class="two-x-icon">${s.products.twox ? '✅' : '❌'}</div>
+        <div class="two-x-label">Products</div>
+        <div class="two-x-threshold">≥50% revenue from women-targeted products + evidence</div>
+      </div>
+    </div>
+    ${s.twoxQualified
+      ? `<p style="margin-top:14px; font-size:13px; color:var(--success); font-weight:600;">✅ This organisation meets 2X Challenge eligibility criteria (${s.twoxDims} of 5 dimensions). Formal verification by a 2X-certified assessor is required for official recognition.</p>`
+      : `<p style="margin-top:14px; font-size:13px; color:var(--warning); font-weight:600;">⚠️ This organisation does not yet meet 2X Challenge thresholds. See gap analysis below for the highest-impact improvements.</p>`
+    }
+  </div>`;
+
+  // Dimension bars
+  html += `<div class="gauge-section">
+    <div class="gauge-title">📊 Dimension-by-Dimension Breakdown</div>`;
+  const dims = [
+    { label: 'Ownership', score: s.ownership.score, note: s.ownership.twox ? '✅ 2X met' : '' },
+    { label: 'Leadership', score: s.leadership.score, note: s.leadership.twox ? '✅ 2X met' : '' },
+    { label: 'Employment Quality', score: s.employment.score, note: `${s.employment.qualityIndicators || 0} quality indicators${s.employment.twox ? ' — ✅ 2X met' : ''}` },
+    { label: 'Supply Chain', score: s.supplyChain.score, note: s.supplyChain.twox ? '✅ 2X met' : '' },
+    { label: 'Products & Services', score: s.products.score, note: s.products.twox ? '✅ 2X met' : '' },
+  ];
+  dims.forEach(d => {
+    html += `<div class="dimension-bar">
+      <div class="dim-header">
+        <span class="dim-name">${d.label} ${d.note ? '<span style="font-size:11px; color:var(--text-muted);">— ' + d.note + '</span>' : ''}</span>
+        <span class="dim-score-label" style="color:${getBarColor(d.score)}">${d.score}/100</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill" style="width:${d.score}%; background:${getBarColor(d.score)};"></div></div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Gap analysis
+  html += `<div class="gap-section">
+    <div style="font-size:16px; font-weight:700; margin-bottom:4px;">🎯 Gap Analysis & Priority Actions</div>
+    <div style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Ranked by impact on 2X Challenge qualification and overall gender score</div>`;
+
+  const gaps = generateGaps(s);
+  if (gaps.length === 0) {
+    html += `<div style="color:var(--success); font-weight:600; padding:16px;">🌟 Excellent! No critical gaps identified. Focus on maintaining standards and improving evidence quality.</div>`;
+  } else {
+    gaps.forEach(g => {
+      html += `<div class="gap-item ${g.priority}">
+        <div class="gap-priority">${g.priority === 'critical' ? '🔴 Critical' : g.priority === 'important' ? '🟡 Important' : '🔵 Enhance'}</div>
+        <div>
+          <div class="gap-text"><strong>${g.dimension}:</strong> ${g.issue}</div>
+          <div class="gap-action">→ ${g.action}</div>
+        </div>
+      </div>`;
+    });
+  }
+  html += `</div>`;
+
+  // IRIS+ metrics table
+  const iris3725 = v('iris_pi3725'), iris5597 = v('iris_pi5597'), iris7767 = v('iris_oi7767'), irisPD = v('iris_pd7375');
+  if (iris3725 || iris5597 || iris7767 || irisPD) {
+    html += `<div class="gap-section">
+      <div style="font-size:16px; font-weight:700; margin-bottom:12px;">📋 GIIN IRIS+ Gender Metrics</div>
+      <table class="metrics-table">
+        <thead><tr><th>IRIS+ Code</th><th>Metric</th><th>Value</th><th>Benchmark</th></tr></thead>
+        <tbody>
+          ${iris3725 ? `<tr><td><span class="metric-id">PI3725</span></td><td>% Women Employees (total)</td><td>${iris3725}%</td><td>Global avg: 39% (ILO 2023)</td></tr>` : ''}
+          ${iris5597 ? `<tr><td><span class="metric-id">PI5597</span></td><td>% Women in Senior Management</td><td>${iris5597}%</td><td>Global avg: 32% (ILO 2023)</td></tr>` : ''}
+          ${iris7767 ? `<tr><td><span class="metric-id">OI7767</span></td><td># Women Clients Served</td><td>${parseInt(iris7767).toLocaleString()}</td><td>—</td></tr>` : ''}
+          ${irisPD ? `<tr><td><span class="metric-id">PD7375</span></td><td>Wellbeing Evidence (women)</td><td>${irisPD}</td><td>Best practice: survey/RCT</td></tr>` : ''}
+        </tbody>
+      </table>
+    </div>`;
+  }
+
+  // Claude prompt
+  const claudePrompt = generateClaudePrompt(s, orgName, assessDate);
+  html += `<div class="claude-box">
+    <div class="claude-header">
+      <span class="claude-icon">🤖</span>
+      <span class="claude-title">Claude Analysis Prompt</span>
+    </div>
+    <div style="font-size:13px; opacity:0.8; margin-bottom:12px;">Copy this prompt into Claude for a deeper gender strategy analysis, improvement roadmap, and investor narrative.</div>
+    <div class="prompt-box" id="claudePromptText">${claudePrompt}</div>
+    <button class="copy-btn" onclick="copyClaudePrompt()">📋 Copy Prompt</button>
+  </div>`;
+
+  document.getElementById('resultsContent').innerHTML = html;
+  showSection(6);
+}
+
+function generateGaps(s) {
+  const gaps = [];
+  const womenEquity = numV('women_equity');
+  const boardPct = s.leadership.boardPct;
+  const seniorPct = s.leadership.seniorPct;
+  const workforcePct = s.employment.workforcePct;
+  const qualityInd = s.employment.qualityIndicators || 0;
+  const supplyPct = numV('supply_women_pct');
+  const producerPct = numV('producer_women_pct');
+  const revPct = numV('women_revenue_pct');
+
+  // Ownership
+  if (womenEquity !== null && womenEquity < 51 && !s.ownership.twox) {
+    gaps.push({ dimension: 'Ownership', priority: 'important', issue: `Women hold ${womenEquity}% equity — below 51% 2X threshold`, action: 'Consider equity restructuring, ESOPs for women employees, or founding team equity correction if recently raised' });
+  }
+
+  // Leadership
+  if (!s.leadership.twox) {
+    if (boardPct !== null && boardPct < 30) gaps.push({ dimension: 'Leadership — Board', priority: 'critical', issue: `Board is ${Math.round(boardPct)}% women — below 30% 2X threshold`, action: 'Add ≥1 women director at next board renewal. Engage BoardEx, IOD, or Women on Boards database. Target 40% within 18 months.' });
+    if (seniorPct !== null && seniorPct < 30) gaps.push({ dimension: 'Leadership — Senior Mgmt', priority: 'critical', issue: `Senior management is ${Math.round(seniorPct)}% women — below 30% 2X threshold`, action: 'Implement "Rooney Rule": require ≥1 woman shortlisted for every senior hire. Set 30% target within 24 months.' });
+  }
+
+  // Employment
+  if (workforcePct !== null && workforcePct < 40) {
+    gaps.push({ dimension: 'Employment', priority: 'important', issue: `Workforce is ${workforcePct}% women — below 40% 2X threshold`, action: 'Set gender-diverse hiring targets. Review job descriptions for gendered language. Partner with women\'s vocational organisations.' });
+  } else if (workforcePct !== null && workforcePct >= 40 && qualityInd < 2) {
+    gaps.push({ dimension: 'Employment Quality', priority: 'critical', issue: `Only ${qualityInd} quality indicators met — need ≥2 to qualify for 2X`, action: 'Quickest wins: implement PSHEA policy + confidential reporting (1 month), and formalise pay equity commitment (2 months).' });
+  }
+  if (v('safe_workplace') === 'none' || v('safe_workplace') === '') {
+    gaps.push({ dimension: 'Workplace Safety', priority: 'critical', issue: 'No PSHEA (harassment) policy in place', action: 'Adopt ILO C190-aligned PSHEA policy. Establish anonymous reporting channel. Conduct all-staff training. Cost: low. Impact: high.' });
+  }
+  if (v('equal_pay') === 'none' || v('equal_pay') === '') {
+    gaps.push({ dimension: 'Pay Equity', priority: 'important', issue: 'No equal pay policy or audit', action: 'Commission a pay equity audit (HR consultant, 1–2 days). Adopt formal equal pay policy. Publish gender pay gap annually.' });
+  }
+
+  // Supply Chain
+  if (!s.supplyChain.twox && (supplyPct === null || supplyPct < 25) && (producerPct === null || producerPct === 0 || producerPct < 50)) {
+    gaps.push({ dimension: 'Supply Chain', priority: 'enhancement', issue: 'Supply chain does not yet meet 2X threshold', action: 'Map current women-owned suppliers. Set 25% procurement target. Engage WEConnect International or similar to source certified WBEs.' });
+  }
+
+  // Products
+  if (!s.products.twox && revPct !== null && revPct >= 50 && v('wellbeing_evidence') === 'none') {
+    gaps.push({ dimension: 'Products — Evidence', priority: 'important', issue: 'Revenue from women-targeted products is strong but no wellbeing evidence', action: 'Conduct a customer survey measuring 3–5 wellbeing outcomes. Use 60Net or J-PAL\'s survey protocols. Even baseline data unlocks 2X qualification.' });
+  }
+  if (!s.products.twox && (revPct === null || revPct < 50) && v('orgSector') === 'financial') {
+    gaps.push({ dimension: 'Products — FinServ', priority: 'enhancement', issue: 'Financial services company with <50% women-focused revenue', action: 'Consider developing a specific women\'s savings, credit, or insurance product. CGAP data shows women customers are less price-sensitive and more loyal.' });
+  }
+
+  return gaps.slice(0, 8); // Cap at 8 for readability
+}
+
+function generateClaudePrompt(s, orgName, assessDate) {
+  return `I have completed a Gender Lens Investing Scorecard assessment for ${orgName} (assessed: ${assessDate}).
+
+SCORES:
+- Overall: ${s.overall}/100 (${s.overall >= 75 ? 'Leader' : s.overall >= 55 ? 'Strong' : s.overall >= 35 ? 'Developing' : 'Early Stage'})
+- Ownership: ${s.ownership.score}/100 (2X: ${s.ownership.twox ? 'MET' : 'NOT MET'})
+- Leadership: ${s.leadership.score}/100 (2X: ${s.leadership.twox ? 'MET' : 'NOT MET'})
+- Employment: ${s.employment.score}/100 (2X: ${s.employment.twox ? 'MET' : 'NOT MET'}, ${s.employment.qualityIndicators} quality indicators)
+- Supply Chain: ${s.supplyChain.score}/100 (2X: ${s.supplyChain.twox ? 'MET' : 'NOT MET'})
+- Products: ${s.products.score}/100 (2X: ${s.products.twox ? 'MET' : 'NOT MET'})
+- 2X Challenge eligible: ${s.twoxQualified ? 'YES (' + s.twoxDims + ' dimensions met)' : 'NO — ' + s.twoxDims + ' dimension(s) met, need 1'}
+
+Sector: ${v('orgSector') || 'not specified'} | Geography: ${v('orgGeo') || 'not specified'} | Stage: ${v('orgStage') || 'not specified'} | Employees: ${v('orgEmployees') || 'not specified'}
+
+Please provide:
+1. STRATEGIC DIAGNOSIS: What does this profile suggest about the organisation's gender culture — is this a "numbers game" or genuine commitment? What are 2–3 root causes of the lowest-scoring dimensions?
+2. PRIORITY ACTION PLAN: A 90-day and 12-month roadmap to reach 2X Challenge qualification. Which dimension offers the fastest path? Quantify the expected score improvement for each action.
+3. INVESTOR NARRATIVE: Draft a 200-word paragraph this company could use in an investor pitch to describe its gender equity approach, incorporating the actual data above.
+4. BENCHMARKS: How does this profile compare to sector peers? What does "best in class" look like in ${v('orgSector') || 'this sector'}?
+5. RED FLAGS: Are there any combination of scores that suggest potential greenwashing or incomplete disclosure?`;
+}
+
+function copyClaudePrompt() {
+  const prompt = document.getElementById('claudePromptText');
+  if (!prompt) return;
+  const text = prompt.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    if (btn) { btn.textContent = '✅ Copied!'; setTimeout(() => btn.textContent = '📋 Copy Prompt', 2000); }
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+function exportCSV() {
+  const s = calculateScores();
+  const orgName = v('orgName') || 'Organisation';
+  const assessDate = v('assessDate') || new Date().toISOString().split('T')[0];
+
+  const rows = [
+    ['Gender Lens Investing Scorecard Export'],
+    ['Organisation', orgName],
+    ['Assessment Date', assessDate],
+    ['Assessor', v('assessorName') || ''],
+    ['Investor', v('investorName') || ''],
+    ['Sector', v('orgSector') || ''],
+    ['Geography', v('orgGeo') || ''],
+    ['Stage', v('orgStage') || ''],
+    ['Employees', v('orgEmployees') || ''],
+    [],
+    ['DIMENSION SCORES'],
+    ['Dimension', 'Score (/100)', '2X Threshold Met'],
+    ['Ownership', s.ownership.score, s.ownership.twox ? 'YES' : 'NO'],
+    ['Leadership', s.leadership.score, s.leadership.twox ? 'YES' : 'NO'],
+    ['Employment Quality', s.employment.score, s.employment.twox ? 'YES' : 'NO'],
+    ['Supply Chain', s.supplyChain.score, s.supplyChain.twox ? 'YES' : 'NO'],
+    ['Products & Services', s.products.score, s.products.twox ? 'YES' : 'NO'],
+    [],
+    ['SUMMARY'],
+    ['Overall Score', s.overall],
+    ['2X Dimensions Met', s.twoxDims],
+    ['2X Eligible', s.twoxQualified ? 'YES' : 'NO'],
+    [],
+    ['RAW INPUTS'],
+    ['Women Equity %', v('women_equity')],
+    ['Women Fund', v('women_fund')],
+    ['Board Women %', numV('board_women') && numV('board_total') ? Math.round((numV('board_women')/numV('board_total'))*100)+'%' : ''],
+    ['Senior Mgmt Women %', numV('senior_women') && numV('senior_total') ? Math.round((numV('senior_women')/numV('senior_total'))*100)+'%' : ''],
+    ['CEO Woman', v('ceo_woman')],
+    ['Workforce Women %', v('workforce_women_pct')],
+    ['Employment Quality Indicators', s.employment.qualityIndicators],
+    ['Equal Pay', v('equal_pay')],
+    ['Parental Leave', v('parental_leave')],
+    ['Safe Workplace (PSHEA)', v('safe_workplace')],
+    ['Childcare', v('childcare')],
+    ['Flexible Work', v('flex_work')],
+    ['Training for Women', v('training')],
+    ['Supply Chain Women % Spend', v('supply_women_pct')],
+    ['Producer Network Women %', v('producer_women_pct')],
+    ['Women Revenue %', v('women_revenue_pct')],
+    ['Wellbeing Evidence', v('wellbeing_evidence')],
+    [],
+    ['IRIS+ METRICS'],
+    ['PI3725 % Women Employees', v('iris_pi3725')],
+    ['PI5597 % Women Senior Mgmt', v('iris_pi5597')],
+    ['OI7767 # Women Clients', v('iris_oi7767')],
+    ['PD7375 Wellbeing Evidence', v('iris_pd7375')],
+    [],
+    ['FRAMEWORKS USED'],
+    ['', '2X Challenge 2.0 Criteria (2023)'],
+    ['', 'GIIN IRIS+ Gender Metrics (2023)'],
+    ['', 'IFC Performance Standard 2 (Labour & Working Conditions)'],
+    ['', 'ILO Convention C183 (Maternity Protection) + C190 (Violence & Harassment)'],
+    ['', 'McKinsey Women in the Workplace 2023'],
+    ['', 'World Bank Global Findex 2022'],
+    ['', 'WEF Global Gender Gap Report 2024'],
+  ];
+
+  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const fname = orgName.replace(/[^a-z0-9]/gi,'_').toLowerCase();
+  a.href = url;
+  a.download = `gender-lens-scorecard-${fname}-${assessDate}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// Set default date
+document.addEventListener('DOMContentLoaded', () => {
+  const d = document.getElementById('assessDate');
+  if (d) d.value = new Date().toISOString().split('T')[0];
+});
+</script>
+</body>
+</html>
