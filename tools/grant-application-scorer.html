@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grant Application Strength Scorer | Useful AF</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f0f4f8;
+    color: #1a202c;
+    line-height: 1.6;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #1a365d 0%, #2d5282 60%, #2b6cb0 100%);
+    color: white;
+    padding: 36px 40px 28px;
+  }
+
+  .header-inner { max-width: 1100px; margin: 0 auto; }
+
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #bee3f8;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+
+  .header h1 { font-size: 28px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .header p { font-size: 15px; opacity: 0.85; max-width: 680px; }
+
+  .framework-bar {
+    background: rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin-top: 20px;
+    padding-top: 16px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .framework-bar span { font-size: 12px; color: rgba(255,255,255,0.65); }
+  .fw-chip {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #bee3f8;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 12px;
+  }
+
+  .main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 60px; }
+
+  .layout { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+
+  @media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  .card-header {
+    padding: 18px 24px 14px;
+    border-bottom: 1px solid #f0f4f8;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-header h2 { font-size: 16px; font-weight: 700; color: #1a202c; }
+  .card-header .icon { font-size: 20px; }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: auto;
+  }
+
+  .section-tag.blue { background: #ebf8ff; color: #2b6cb0; }
+  .section-tag.green { background: #f0fff4; color: #276749; }
+  .section-tag.orange { background: #fffaf0; color: #c05621; }
+
+  .card-body { padding: 20px 24px; }
+
+  /* Funder Selector */
+  .funder-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 600px) { .funder-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .funder-btn {
+    padding: 10px 8px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+  }
+
+  .funder-btn:hover { border-color: #90cdf4; background: #ebf8ff; }
+  .funder-btn.active { border-color: #3182ce; background: #ebf8ff; }
+  .funder-btn .funder-name { font-size: 12px; font-weight: 700; color: #2d3748; display: block; }
+  .funder-btn .funder-type { font-size: 10px; color: #718096; display: block; margin-top: 2px; }
+
+  /* Dimension blocks */
+  .dimension-block {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .dimension-header {
+    padding: 12px 16px;
+    background: #f7fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .dimension-header h3 { font-size: 14px; font-weight: 700; color: #2d3748; flex: 1; }
+  .dim-weight { font-size: 12px; color: #718096; font-weight: 600; }
+  .dim-score-badge {
+    font-size: 13px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .score-low { background: #fff5f5; color: #c53030; }
+  .score-mid { background: #fffaf0; color: #c05621; }
+  .score-good { background: #f0fff4; color: #276749; }
+  .score-strong { background: #ebf8ff; color: #2b6cb0; }
+
+  .dimension-body { padding: 16px; }
+
+  .criteria-item { margin-bottom: 14px; }
+  .criteria-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .criteria-help {
+    font-size: 11px;
+    color: #718096;
+    margin-bottom: 6px;
+    font-style: italic;
+  }
+
+  .tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: #e2e8f0;
+    border-radius: 50%;
+    font-size: 10px;
+    color: #4a5568;
+    cursor: help;
+    position: relative;
+  }
+
+  .tooltip-icon:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a202c;
+    color: white;
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    width: 220px;
+    text-align: left;
+    z-index: 100;
+    line-height: 1.4;
+    font-style: normal;
+    font-weight: 400;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #3182ce;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: background 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover { background: #2b6cb0; }
+
+  .slider-val {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2d3748;
+    min-width: 28px;
+    text-align: right;
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+
+  .slider-labels span { font-size: 10px; color: #a0aec0; }
+
+  /* Notes textarea */
+  .notes-field {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #4a5568;
+    resize: vertical;
+    min-height: 48px;
+    font-family: inherit;
+    transition: border-color 0.15s;
+  }
+  .notes-field:focus { outline: none; border-color: #90cdf4; }
+
+  /* Sidebar */
+  .score-card {
+    background: linear-gradient(135deg, #1a365d 0%, #2d5282 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .score-total { font-size: 64px; font-weight: 900; line-height: 1; }
+  .score-total.low { color: #fc8181; }
+  .score-total.mid { color: #f6ad55; }
+  .score-total.good { color: #68d391; }
+  .score-total.strong { color: #63b3ed; }
+
+  .score-label { font-size: 13px; opacity: 0.75; margin-bottom: 4px; }
+  .score-verdict { font-size: 16px; font-weight: 800; margin-top: 6px; }
+  .score-sub { font-size: 12px; opacity: 0.7; margin-top: 4px; max-width: 200px; margin-left: auto; margin-right: auto; }
+
+  .score-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .score-bar-label { font-size: 11px; color: #4a5568; width: 120px; flex-shrink: 0; }
+  .score-bar-track { flex: 1; height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  .score-bar-val { font-size: 11px; font-weight: 700; color: #2d3748; width: 30px; text-align: right; }
+
+  .funder-match-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .funder-match-header {
+    background: #f7fafc;
+    padding: 10px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4a5568;
+    border-bottom: 1px solid #e2e8f0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .funder-match-body { padding: 12px 14px; }
+
+  .match-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+  }
+
+  .match-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .match-dot.red { background: #fc8181; }
+  .match-dot.yellow { background: #f6ad55; }
+  .match-dot.green { background: #68d391; }
+
+  .priority-item {
+    background: #fff5f5;
+    border-left: 3px solid #fc8181;
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #2d3748;
+  }
+
+  .priority-item strong { display: block; font-size: 11px; color: #c53030; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
+
+  .action-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .btn-primary { background: #3182ce; color: white; }
+  .btn-primary:hover { background: #2b6cb0; }
+  .btn-secondary { background: #e2e8f0; color: #2d3748; }
+  .btn-secondary:hover { background: #cbd5e0; }
+  .btn-green { background: #38a169; color: white; }
+  .btn-green:hover { background: #276749; }
+
+  /* Claude prompt box */
+  .prompt-box {
+    background: linear-gradient(135deg, #1a365d, #2d5282);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-top: 4px;
+  }
+
+  .prompt-box h3 { color: #bee3f8; font-size: 13px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .prompt-text {
+    background: rgba(0,0,0,0.25);
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 11.5px;
+    color: #e2e8f0;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: 'SF Mono', 'Consolas', monospace;
+  }
+
+  .copy-btn {
+    margin-top: 8px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .copy-btn:hover { background: rgba(255,255,255,0.25); }
+
+  .info-box {
+    background: #ebf8ff;
+    border: 1px solid #bee3f8;
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #2b6cb0;
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+
+  .info-box strong { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+  .gap-analysis-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .gap-analysis-table th { background: #f7fafc; padding: 8px 10px; text-align: left; font-weight: 700; color: #4a5568; border-bottom: 1px solid #e2e8f0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .gap-analysis-table td { padding: 8px 10px; border-bottom: 1px solid #f0f4f8; vertical-align: top; color: #2d3748; }
+  .gap-analysis-table tr:last-child td { border-bottom: none; }
+  .gap-pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 700; }
+
+  .tab-nav { display: flex; gap: 2px; border-bottom: 2px solid #e2e8f0; margin-bottom: 20px; }
+  .tab-btn { padding: 8px 16px; font-size: 13px; font-weight: 600; color: #718096; background: none; border: none; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+  .tab-btn.active { color: #3182ce; border-bottom-color: #3182ce; }
+  .tab-btn:hover { color: #2d3748; }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Print */
+  @media print {
+    body { background: white; }
+    .header { background: #1a365d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .no-print { display: none !important; }
+    .layout { display: block; }
+    .score-card { background: #1a365d !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  .section-intro { font-size: 13px; color: #4a5568; margin-bottom: 16px; line-height: 1.6; padding: 10px 14px; background: #f7fafc; border-radius: 8px; border-left: 3px solid #3182ce; }
+
+  select, input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #2d3748;
+    background: white;
+    transition: border-color 0.15s;
+  }
+  select:focus, input[type="text"]:focus, input[type="number"]:focus {
+    outline: none;
+    border-color: #90cdf4;
+    box-shadow: 0 0 0 3px rgba(144,205,244,0.2);
+  }
+
+  .form-row { margin-bottom: 14px; }
+  .form-label { font-size: 12px; font-weight: 600; color: #4a5568; margin-bottom: 4px; display: block; }
+
+  .highlight-row { background: #fffaf0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="badge">Tool #13 · Useful AF</div>
+    <h1>📋 Grant Application Strength Scorer</h1>
+    <p>Assess your grant application against the criteria frameworks used by USAID, Bill &amp; Melinda Gates Foundation, UK FCDO, EU Horizon, and MacArthur Foundation — and get a prioritised action plan before you submit.</p>
+    <div class="framework-bar">
+      <span>Embedded frameworks:</span>
+      <span class="fw-chip">USAID ADS</span>
+      <span class="fw-chip">Gates Foundation</span>
+      <span class="fw-chip">UK FCDO Smart Rules</span>
+      <span class="fw-chip">EU Horizon 2020/Europe</span>
+      <span class="fw-chip">MacArthur 100&Change</span>
+      <span class="fw-chip">DCED Standards</span>
+      <span class="fw-chip">OECD DAC Criteria</span>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="layout">
+    <!-- LEFT COLUMN -->
+    <div>
+      <!-- Setup -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <span class="icon">⚙️</span>
+          <h2>Application Setup</h2>
+          <span class="section-tag blue">Step 1</span>
+        </div>
+        <div class="card-body">
+          <div class="section-intro">
+            Select the funder type to load their specific weighting criteria. Each major funder weights dimensions differently — USAID prioritises local ownership and value for money; Gates weights innovation and evidence of effectiveness; FCDO uses the Smart Rules framework.
+          </div>
+          <div class="form-row">
+            <label class="form-label">Funder / Framework</label>
+            <div class="funder-grid">
+              <button class="funder-btn active" onclick="setFunder('usaid',this)">
+                <span class="funder-name">USAID</span>
+                <span class="funder-type">US bilateral</span>
+              </button>
+              <button class="funder-btn" onclick="setFunder('gates',this)">
+                <span class="funder-name">Gates Foundation</span>
+                <span class="funder-type">Private philanthropy</span>
+              </button>
+              <button class="funder-btn" onclick="setFunder('fcdo',this)">
+                <span class="funder-name">UK FCDO</span>
+                <span class="funder-type">UK bilateral</span>
+              </button>
+              <button class="funder-btn" onclick="setFunder('eu',this)">
+                <span class="funder-name">EU Horizon</span>
+                <span class="funder-type">Research &amp; innovation</span>
+              </button>
+              <button class="funder-btn" onclick="setFunder('macarthur',this)">
+                <span class="funder-name">MacArthur</span>
+                <span class="funder-type">US foundation</span>
+              </button>
+              <button class="funder-btn" onclick="setFunder('generic',this)">
+                <span class="funder-name">Generic / Other</span>
+                <span class="funder-type">Balanced criteria</span>
+              </button>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-row">
+              <label class="form-label">Application / Project Title</label>
+              <input type="text" id="projTitle" placeholder="e.g. WASH Programme — Kenya" oninput="updatePrompt()">
+            </div>
+            <div class="form-row">
+              <label class="form-label">Requested Amount (USD)</label>
+              <input type="number" id="grantAmt" placeholder="500000" oninput="updatePrompt()">
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-row">
+              <label class="form-label">Sector / Thematic Area</label>
+              <select id="sector" onchange="updatePrompt()">
+                <option>Health</option>
+                <option>Education</option>
+                <option>WASH</option>
+                <option>Livelihoods / Economic Inclusion</option>
+                <option>Agriculture &amp; Food Security</option>
+                <option>Climate &amp; Environment</option>
+                <option>Gender &amp; Social Inclusion</option>
+                <option>Governance &amp; Rule of Law</option>
+                <option>Humanitarian Response</option>
+                <option>Research &amp; Innovation</option>
+                <option>Financial Inclusion</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label class="form-label">Organisation Type</label>
+              <select id="orgType" onchange="updatePrompt()">
+                <option>International NGO</option>
+                <option>Local NGO</option>
+                <option>Social Enterprise</option>
+                <option>Research Institution</option>
+                <option>Government Agency</option>
+                <option>UN Agency / Multilateral</option>
+                <option>Private Sector</option>
+                <option>Consortium / Partnership</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scoring Tabs -->
+      <div class="card">
+        <div class="card-header">
+          <span class="icon">📊</span>
+          <h2>Scoring Assessment</h2>
+          <span class="section-tag green">Step 2</span>
+        </div>
+        <div class="card-body">
+          <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('t-strategy',this)">Strategy &amp; Design</button>
+            <button class="tab-btn" onclick="switchTab('t-evidence',this)">Evidence &amp; Learning</button>
+            <button class="tab-btn" onclick="switchTab('t-delivery',this)">Delivery &amp; Org</button>
+            <button class="tab-btn" onclick="switchTab('t-value',this)">Value &amp; Viability</button>
+          </div>
+
+          <!-- Tab: Strategy & Design -->
+          <div id="t-strategy" class="tab-panel active">
+
+            <div class="dimension-block">
+              <div class="dimension-header" onclick="toggleDim('dim-problem')">
+                <h3>🎯 Problem Definition &amp; Strategic Fit</h3>
+                <span class="dim-weight" id="wt-problem"></span>
+                <span class="dim-score-badge score-mid" id="badge-problem">—</span>
+              </div>
+              <div class="dimension-body" id="dim-problem">
+                <div class="info-box">
+                  <strong>Why funders care</strong>
+                  USAID's CDCS framework requires clear linkage to their Country Development Cooperation Strategy. FCDO's Smart Rules mandate "a clear problem statement with evidence the problem is real and significant." Gates requires alignment with their Strategy &amp; Learning priorities. Vague problem statements are the #1 rejection reason across all major funders (USAID OIG, 2023 review).
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Problem evidence &amp; magnitude
+                    <span class="tooltip-icon" data-tip="Does your application quantify the problem with recent (≤3 years), credible data? Best practice: cite national statistics, peer-reviewed studies, or recognised survey data (DHS, WHO, World Bank). Avoid anecdotes.">?</span>
+                  </div>
+                  <div class="criteria-help">Severity: cited statistics, affected population size, trend data, geographic specificity</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'problem-evidence')" id="s-problem-evidence">
+                    <span class="slider-val" id="v-problem-evidence">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No evidence</span><span>Some data</span><span>Robust evidence</span></div>
+                  <textarea class="notes-field" id="n-problem-evidence" placeholder="Notes: gaps in your current problem statement..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Root cause analysis
+                    <span class="tooltip-icon" data-tip="Have you identified the structural/systemic causes, not just symptoms? Gates and FCDO specifically look for 'understanding of underlying drivers.' Use standard frameworks: PESTLE, Systems Thinking, ORID.">?</span>
+                  </div>
+                  <div class="criteria-help">Depth of causal analysis — systemic factors, not just symptoms</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'problem-roots')" id="s-problem-roots">
+                    <span class="slider-val" id="v-problem-roots">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Symptomatic only</span><span>Partial</span><span>Deep causal analysis</span></div>
+                  <textarea class="notes-field" id="n-problem-roots" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Strategic alignment with funder priorities
+                    <span class="tooltip-icon" data-tip="Have you explicitly mapped your intervention to the funder's current strategic plan? USAID requires CDCS alignment. EU Horizon needs Work Programme alignment. Generic reference to 'funder goals' scores low — specific page/priority citations score high.">?</span>
+                  </div>
+                  <div class="criteria-help">Explicit linkage to funder's current strategy, priorities, or work programme</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'problem-alignment')" id="s-problem-alignment">
+                    <span class="slider-val" id="v-problem-alignment">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Generic</span><span>Mentioned</span><span>Explicitly mapped</span></div>
+                  <textarea class="notes-field" id="n-problem-alignment" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="dimension-block">
+              <div class="dimension-header" onclick="toggleDim('dim-toc')">
+                <h3>🔗 Theory of Change &amp; Intervention Logic</h3>
+                <span class="dim-weight" id="wt-toc"></span>
+                <span class="dim-score-badge score-mid" id="badge-toc">—</span>
+              </div>
+              <div class="dimension-body" id="dim-toc">
+                <div class="info-box">
+                  <strong>Why funders care</strong>
+                  The OECD DAC criteria (Relevance, Effectiveness, Efficiency, Impact, Sustainability, Coherence) map directly onto ToC quality. EU Horizon Evaluators are trained to score "excellence" partly on the intervention logic chain. Gates Foundation explicitly states they will not fund proposals without a clear, testable theory of change. FCDO Smart Rules: "the business case must demonstrate a logical chain from inputs to impact."
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Logical chain (inputs → activities → outputs → outcomes → impact)
+                    <span class="tooltip-icon" data-tip="Every link in the chain should be explicit, not assumed. Evaluators look for: (1) clear distinction between outputs [what you produce] and outcomes [what changes], (2) stated assumptions at each link, (3) acknowledgment of the counterfactual — what would happen without your intervention.">?</span>
+                  </div>
+                  <div class="criteria-help">Completeness and coherence of the causal chain</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'toc-chain')" id="s-toc-chain">
+                    <span class="slider-val" id="v-toc-chain">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No ToC</span><span>Partial chain</span><span>Full articulated ToC</span></div>
+                  <textarea class="notes-field" id="n-toc-chain" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Assumptions &amp; risks surfaced
+                    <span class="tooltip-icon" data-tip="Top-scoring applications explicitly state their key assumptions AND show they've stress-tested them. Typical USAID score reduction: applications that acknowledge risks score ~20% higher than those that don't, as it demonstrates evaluative thinking.">?</span>
+                  </div>
+                  <div class="criteria-help">Explicit assumptions at each causal link; risk register with mitigation</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'toc-assumptions')" id="s-toc-assumptions">
+                    <span class="slider-val" id="v-toc-assumptions">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Not addressed</span><span>Some risk mention</span><span>Full risk register</span></div>
+                  <textarea class="notes-field" id="n-toc-assumptions" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Innovation / additionality
+                    <span class="tooltip-icon" data-tip="'Additionality' is what your programme adds beyond what would happen anyway. USAID (ADS 201), Gates, and MacArthur all value interventions that are 'catalytic' or 'test new approaches.' The key question: why this approach vs alternatives? If you can't answer it, evaluators will mark it down.">?</span>
+                  </div>
+                  <div class="criteria-help">What is new, tested, or catalytic about your approach vs alternatives</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'toc-innovation')" id="s-toc-innovation">
+                    <span class="slider-val" id="v-toc-innovation">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Replicates others</span><span>Some innovation</span><span>Clearly catalytic/new</span></div>
+                  <textarea class="notes-field" id="n-toc-innovation" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Tab: Evidence & Learning -->
+          <div id="t-evidence" class="tab-panel">
+
+            <div class="dimension-block">
+              <div class="dimension-header" onclick="toggleDim('dim-impact')">
+                <h3>📈 Impact Measurement &amp; MEL Framework</h3>
+                <span class="dim-weight" id="wt-impact"></span>
+                <span class="dim-score-badge score-mid" id="badge-impact">—</span>
+              </div>
+              <div class="dimension-body" id="dim-impact">
+                <div class="info-box">
+                  <strong>Why funders care</strong>
+                  USAID requires a Performance Monitoring Plan (PMP) referencing their standardised indicators (F-indicators). FCDO requires a monitoring &amp; evaluation framework aligned to the Theory of Change. Gates prioritises "high-quality evidence of effectiveness." The DCED Standard for Results Measurement is the international benchmark used by most bilateral donors; compliance with it is increasingly expected.
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    SMART indicators with baselines
+                    <span class="tooltip-icon" data-tip="SMART = Specific, Measurable, Achievable, Relevant, Time-bound. A key scoring differentiator: applications with quantified baselines and targets score significantly higher. Vague indicators like 'improved livelihoods' score near zero with experienced evaluators. Use IRIS+ or funder standardised indicators where available.">?</span>
+                  </div>
+                  <div class="criteria-help">Quantified targets, baseline data, and measurement methodology specified</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'impact-indicators')" id="s-impact-indicators">
+                    <span class="slider-val" id="v-impact-indicators">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Vague goals</span><span>Some indicators</span><span>SMART with baselines</span></div>
+                  <textarea class="notes-field" id="n-impact-indicators" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Evaluation design (attribution / contribution)
+                    <span class="tooltip-icon" data-tip="Experimental (RCT) or quasi-experimental designs score highest with USAID PEPFAR and Gates. However, contribution analysis (non-experimental, proving your programme 'contributed to' an outcome) is acceptable for FCDO and most foundations. The key is: can you credibly claim your programme caused the change?">?</span>
+                  </div>
+                  <div class="criteria-help">Rigour of evaluation methodology; ability to demonstrate causation or contribution</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'impact-eval')" id="s-impact-eval">
+                    <span class="slider-val" id="v-impact-eval">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Activity reporting only</span><span>Output tracking</span><span>Outcome evaluation designed</span></div>
+                  <textarea class="notes-field" id="n-impact-eval" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Learning &amp; adaptive management
+                    <span class="tooltip-icon" data-tip="'CLA' (Collaborating, Learning, Adapting) is a core USAID requirement since 2016. FCDO's Smart Rules require demonstrating how you'll use evidence to adapt the programme. Applications that describe feedback loops from data to decisions score significantly higher than those that treat M&E as a reporting exercise.">?</span>
+                  </div>
+                  <div class="criteria-help">How evidence will feed back into programme adaptation (USAID CLA framework)</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'impact-learning')" id="s-impact-learning">
+                    <span class="slider-val" id="v-impact-learning">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Static reporting</span><span>Review cycles planned</span><span>Adaptive mgmt designed</span></div>
+                  <textarea class="notes-field" id="n-impact-learning" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="dimension-block">
+              <div class="dimension-header" onclick="toggleDim('dim-evidence-base')">
+                <h3>🔬 Evidence Base &amp; Prior Research</h3>
+                <span class="dim-weight" id="wt-evidence-base"></span>
+                <span class="dim-score-badge score-mid" id="badge-evidence-base">—</span>
+              </div>
+              <div class="dimension-body" id="dim-evidence-base">
+                <div class="info-box">
+                  <strong>Why funders care</strong>
+                  Gates Foundation requires a "conceptual model" supported by evidence from the literature. EU Horizon scores "excellence" based partly on the state-of-the-art review. MacArthur's 100&amp;Change competition explicitly rates applications on whether the proposed solution has proven efficacy. The 3ie evidence map and Campbell Collaboration systematic reviews are reference points for major donors.
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Existing evidence for approach
+                    <span class="tooltip-icon" data-tip="Does your application cite systematic reviews, RCTs, or programme evaluations showing similar approaches work? 3ie's Development Evidence Portal (3ieimpact.org) and the Abdul Latif Jameel Poverty Action Lab (JPAL) evidence repository are benchmarks. For health, Cochrane Reviews; for education, the Education Endowment Foundation Teaching & Learning Toolkit.">?</span>
+                  </div>
+                  <div class="criteria-help">Strength and recency of citations showing this type of intervention works</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'evbase-citations')" id="s-evbase-citations">
+                    <span class="slider-val" id="v-evbase-citations">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No citations</span><span>Grey literature</span><span>Peer-reviewed / systematic reviews</span></div>
+                  <textarea class="notes-field" id="n-evbase-citations" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Pilot / proof of concept
+                    <span class="tooltip-icon" data-tip="Demonstrated prior results — even small-scale — dramatically increase funder confidence. Provide: sample size, duration, outcome data with statistical significance if available. For scale-up applications, funders require a 'feasibility assessment' showing the model is replicable.">?</span>
+                  </div>
+                  <div class="criteria-help">Prior implementation results, pilot data, or feasibility assessment</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'evbase-pilot')" id="s-evbase-pilot">
+                    <span class="slider-val" id="v-evbase-pilot">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No prior work</span><span>Pilot planned</span><span>Pilot data available</span></div>
+                  <textarea class="notes-field" id="n-evbase-pilot" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Tab: Delivery & Org -->
+          <div id="t-delivery" class="tab-panel">
+
+            <div class="dimension-block">
+              <div class="dimension-header" onclick="toggleDim('dim-org')">
+                <h3>🏢 Organisational Capacity &amp; Track Record</h3>
+                <span class="dim-weight" id="wt-org"></span>
+                <span class="dim-score-badge score-mid" id="badge-org">—</span>
+              </div>
+              <div class="dimension-body" id="dim-org">
+                <div class="info-box">
+                  <strong>Why funders care</strong>
+                  USAID pre-award surveys assess financial management capacity; weak controls disqualify applications. FCDO's due diligence framework examines fraud risk, audit quality, and safeguarding policy. Gates Foundation prioritises teams with "domain expertise and implementation experience." Nearly all funders apply a minimum track record threshold — typically 3+ years and at least one comparable grant successfully managed.
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Technical expertise of key personnel
+                    <span class="tooltip-icon" data-tip="CVs of key personnel are evaluated by content experts. USAID typically requires a minimum of 5 years' relevant experience for principal investigators / programme directors. EU Horizon evaluates 'excellence of the research team' as a standalone criterion. Key: match CVs to specific ToC requirements, not generic bios.">?</span>
+                  </div>
+                  <div class="criteria-help">Team's qualifications matched to specific technical requirements of the programme</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'org-expertise')" id="s-org-expertise">
+                    <span class="slider-val" id="v-org-expertise">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Weak match</span><span>Some relevant experience</span><span>Strong direct expertise</span></div>
+                  <textarea class="notes-field" id="n-org-expertise" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Track record of comparable grants
+                    <span class="tooltip-icon" data-tip="The gold standard: previously managed a grant of similar size and scope, with documented results. Provide grant names, funder names, and outcome achievements — not just amounts. New organisations with no track record should form a consortium with an established lead.">?</span>
+                  </div>
+                  <div class="criteria-help">Demonstrated delivery of comparable grants, citing specific past results</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'org-track')" id="s-org-track">
+                    <span class="slider-val" id="v-org-track">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No track record</span><span>Some projects</span><span>Strong comparable history</span></div>
+                  <textarea class="notes-field" id="n-org-track" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Financial management &amp; safeguarding
+                    <span class="tooltip-icon" data-tip="USAID requires: audited financial statements (last 3 years), documented internal controls, anti-corruption policy. FCDO requires a safeguarding policy meeting the UK SEAP (Safeguarding at Events and Programmes) standard. EU requires IPSAS-aligned accounting. Absence of any of these is a hard disqualifier.">?</span>
+                  </div>
+                  <div class="criteria-help">Audit quality, financial controls, safeguarding, anti-corruption policies</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'org-finance')" id="s-org-finance">
+                    <span class="slider-val" id="v-org-finance">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Missing / weak</span><span>Basic systems</span><span>Fully compliant</span></div>
+                  <textarea class="notes-field" id="n-org-finance" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="dimension-block">
+              <div class="dimension-header" onclick="toggleDim('dim-equity')">
+                <h3>⚖️ Equity, Inclusion &amp; Local Partnership</h3>
+                <span class="dim-weight" id="wt-equity"></span>
+                <span class="dim-score-badge score-mid" id="badge-equity">—</span>
+              </div>
+              <div class="dimension-body" id="dim-equity">
+                <div class="info-box">
+                  <strong>Why funders care</strong>
+                  USAID's new "Localisation Agenda" (2022) requires that at least 25% of funds go directly to local organisations. FCDO's "locally owned" criterion is now weighted at 20% in most solicitations. Gates Foundation's "gender equality and inclusion" is mandatory across all health and development grants. EU Horizon requires demonstration of how gender equality has been addressed in the project design (mandatory since 2022, per Annex 5 of the Application Guide).
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Local partner involvement &amp; ownership
+                    <span class="tooltip-icon" data-tip="USAID 2022 Localisation Agenda: aim for direct local org partners. Best practice: describe the role, decision-making authority, and budget share of local partners. 'Consulting with local communities' scores much lower than 'local partner leads delivery with majority budget allocation.'">?</span>
+                  </div>
+                  <div class="criteria-help">Depth of local ownership, partnership structure, and budget allocation to local orgs</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'equity-local')" id="s-equity-local">
+                    <span class="slider-val" id="v-equity-local">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No local partners</span><span>Consultation only</span><span>Local-led delivery</span></div>
+                  <textarea class="notes-field" id="n-equity-local" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Gender &amp; social inclusion (GESI) mainstreaming
+                    <span class="tooltip-icon" data-tip="Per EU Horizon 2020 guidance, gender dimension must be integrated in: research design, methodology, dissemination. For USAID and FCDO: provide a gender analysis (not just a statement) showing how gender dynamics affect the problem and solution. Minimum expected: sex-disaggregated targets and analysis of differential impacts.">?</span>
+                  </div>
+                  <div class="criteria-help">Gender analysis integrated in design; sex-disaggregated targets; inclusion of marginalised groups</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'equity-gender')" id="s-equity-gender">
+                    <span class="slider-val" id="v-equity-gender">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Not addressed</span><span>Mentioned</span><span>Integrated throughout</span></div>
+                  <textarea class="notes-field" id="n-equity-gender" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Tab: Value & Viability -->
+          <div id="t-value" class="tab-panel">
+
+            <div class="dimension-block">
+              <div class="dimension-header" onclick="toggleDim('dim-vfm')">
+                <h3>💰 Value for Money &amp; Budget Quality</h3>
+                <span class="dim-weight" id="wt-vfm"></span>
+                <span class="dim-score-badge score-mid" id="badge-vfm">—</span>
+              </div>
+              <div class="dimension-body" id="dim-vfm">
+                <div class="info-box">
+                  <strong>Why funders care</strong>
+                  FCDO's Smart Rules mandate a formal VfM (Value for Money) assessment using the 3Es framework: Economy (low input costs), Efficiency (outputs per pound), Effectiveness (outcomes per output). USAID uses a "Cost Analysis" section in most solicitations. The World Bank uses cost-benefit analysis. A compelling VfM case can offset weaknesses in other areas — evaluators are trained that a cheap, well-evidenced intervention beats an expensive, uncertain one.
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Cost per beneficiary / outcome
+                    <span class="tooltip-icon" data-tip="Calculate cost per direct beneficiary AND cost per unit outcome (e.g. cost per child learning a grade level; cost per WASH access point; cost per job). Compare to: GiveWell cost-effectiveness benchmarks, DCP3 (Disease Control Priorities 3rd edition) for health. FCDO's 2023 VfM framework requires this to be explicit.">?</span>
+                  </div>
+                  <div class="criteria-help">Explicit cost per beneficiary and per outcome unit; comparison to benchmarks</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'vfm-cost')" id="s-vfm-cost">
+                    <span class="slider-val" id="v-vfm-cost">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No cost analysis</span><span>Total budget only</span><span>Cost/beneficiary benchmarked</span></div>
+                  <textarea class="notes-field" id="n-vfm-cost" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Budget justification quality
+                    <span class="tooltip-icon" data-tip="Every line item should be linked to an activity and a deliverable. USAID requires a budget narrative justifying each cost element. EU Horizon requires a per-WP breakdown. Red flags that reduce scores: unexplained management costs >25%, overhead rates not justified, vague 'miscellaneous' line items.">?</span>
+                  </div>
+                  <div class="criteria-help">Clarity and justification of cost elements; overhead rates explained; no unexplained line items</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'vfm-budget')" id="s-vfm-budget">
+                    <span class="slider-val" id="v-vfm-budget">5</span>
+                  </div>
+                  <div class="slider-labels"><span>Bare totals</span><span>Line items only</span><span>Fully justified narrative</span></div>
+                  <textarea class="notes-field" id="n-vfm-budget" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="dimension-block">
+              <div class="dimension-header" onclick="toggleDim('dim-sustain')">
+                <h3>♻️ Sustainability &amp; Scale Potential</h3>
+                <span class="dim-weight" id="wt-sustain"></span>
+                <span class="dim-score-badge score-mid" id="badge-sustain">—</span>
+              </div>
+              <div class="dimension-body" id="dim-sustain">
+                <div class="info-box">
+                  <strong>Why funders care</strong>
+                  All major donors are under pressure to demonstrate that grants "exit" successfully. USAID's CDCS framework requires a "transition plan." FCDO Smart Rules: "describe how benefits will continue after funding ends." Gates Foundation scales up only if "the approach can be taken to national or global scale." MacArthur 100&amp;Change specifically requires a "path to durability." Strong sustainability cases involve: government co-investment, policy change, or revenue-generation — not just "we'll seek more grants."
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Post-grant sustainability plan
+                    <span class="tooltip-icon" data-tip="Funder hierarchy for sustainability (highest to lowest): (1) Government budget integration / policy adoption, (2) Revenue-generating model, (3) Community ownership with cost recovery, (4) Diversified funding pipeline, (5) 'We will seek additional grants.' Many applications score near zero on this — a real differentiator.">?</span>
+                  </div>
+                  <div class="criteria-help">Concrete plan for continued impact after grant ends; not just 'seek further funding'</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'sustain-plan')" id="s-sustain-plan">
+                    <span class="slider-val" id="v-sustain-plan">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No plan</span><span>Vague / seeks more grants</span><span>Concrete pathway to durability</span></div>
+                  <textarea class="notes-field" id="n-sustain-plan" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+                <div class="criteria-item">
+                  <div class="criteria-label">
+                    Scale pathway &amp; policy influence
+                    <span class="tooltip-icon" data-tip="Gates, MacArthur, and Omidyar Network prioritise proposals with a 'systems change' pathway: government adoption, behaviour change at scale, or market shift. Demonstrating a route to scale — even if the current grant is a pilot — significantly increases scores with strategic philanthropies.">?</span>
+                  </div>
+                  <div class="criteria-help">Evidence of how the model could reach national or population scale; systems change potential</div>
+                  <div class="slider-row">
+                    <input type="range" min="0" max="10" value="5" oninput="updateScore(this,'sustain-scale')" id="s-sustain-scale">
+                    <span class="slider-val" id="v-sustain-scale">5</span>
+                  </div>
+                  <div class="slider-labels"><span>No scale plan</span><span>Mentioned</span><span>Clear scale strategy</span></div>
+                  <textarea class="notes-field" id="n-sustain-scale" placeholder="Notes..." rows="2" oninput="updatePrompt()"></textarea>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT COLUMN / SIDEBAR -->
+    <div>
+
+      <!-- Score Card -->
+      <div class="score-card">
+        <div class="score-label">Overall Application Score</div>
+        <div class="score-total" id="total-score">—</div>
+        <div class="score-verdict" id="score-verdict">Enter scores to assess</div>
+        <div class="score-sub" id="score-sub">Rate each dimension to see your overall strength</div>
+      </div>
+
+      <!-- Dimension Breakdown -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <h2>Dimension Breakdown</h2>
+        </div>
+        <div class="card-body" id="breakdown-bars" style="padding:16px 20px;">
+          <p style="font-size:12px;color:#a0aec0;text-align:center;padding:10px 0;">Enter scores to see breakdown</p>
+        </div>
+      </div>
+
+      <!-- Funder Criteria Alignment -->
+      <div class="funder-match-box" style="margin-bottom:16px;">
+        <div class="funder-match-header">Funder Criteria Alignment</div>
+        <div class="funder-match-body" id="funder-match-body">
+          <p style="font-size:12px;color:#a0aec0;">Select a funder and score to see alignment</p>
+        </div>
+      </div>
+
+      <!-- Top Gaps -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header">
+          <h2>Priority Gaps to Address</h2>
+        </div>
+        <div class="card-body" id="priority-gaps">
+          <p style="font-size:12px;color:#a0aec0;text-align:center;padding:8px 0;">Score dimensions to identify gaps</p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-row no-print" style="margin-bottom:16px;">
+        <button class="btn btn-green" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn btn-secondary" onclick="window.print()">🖨 Print</button>
+      </div>
+
+      <!-- Claude Prompt -->
+      <div class="prompt-box">
+        <h3>🤖 Claude Analysis Prompt</h3>
+        <div class="prompt-text" id="claude-prompt">Fill in the form to generate a context-aware prompt...</div>
+        <button class="copy-btn" onclick="copyPrompt()">📋 Copy Prompt</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Full Gap Analysis table (below main layout) -->
+  <div class="card" style="margin-top:24px;">
+    <div class="card-header">
+      <span class="icon">🔍</span>
+      <h2>Full Gap Analysis</h2>
+      <span class="section-tag orange">Step 3</span>
+    </div>
+    <div class="card-body">
+      <table class="gap-analysis-table" id="gap-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Your Score</th>
+            <th>Gap vs Target</th>
+            <th>Priority Action</th>
+            <th>Funder Reference</th>
+          </tr>
+        </thead>
+        <tbody id="gap-tbody">
+          <tr><td colspan="5" style="text-align:center;color:#a0aec0;padding:16px;">Score dimensions to generate gap analysis</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ===================== DATA =====================
+
+const FUNDERS = {
+  usaid: {
+    name: 'USAID',
+    weights: {
+      'problem': 15,
+      'toc': 20,
+      'impact': 15,
+      'evidence-base': 10,
+      'org': 15,
+      'equity': 15,
+      'vfm': 5,
+      'sustain': 5
+    },
+    criteria: [
+      { id: 'toc', label: 'Theory of Change', priority: 'Critical' },
+      { id: 'equity', label: 'Localisation & GESI', priority: 'Critical' },
+      { id: 'impact', label: 'CLA / MEL Framework', priority: 'High' },
+      { id: 'org', label: 'Org Capacity', priority: 'High' },
+      { id: 'vfm', label: 'Value for Money', priority: 'Standard' }
+    ],
+    dealbreakers: [
+      'No gender analysis (GESI mandatory)',
+      'Missing local partner (Localisation Agenda 2022)',
+      'No CLA plan',
+      'Weak financial controls (pre-award survey)'
+    ]
+  },
+  gates: {
+    name: 'Bill & Melinda Gates Foundation',
+    weights: {
+      'problem': 20,
+      'toc': 20,
+      'impact': 15,
+      'evidence-base': 20,
+      'org': 15,
+      'equity': 5,
+      'vfm': 3,
+      'sustain': 2
+    },
+    criteria: [
+      { id: 'evidence-base', label: 'Evidence of Effectiveness', priority: 'Critical' },
+      { id: 'toc', label: 'Theory of Change', priority: 'Critical' },
+      { id: 'problem', label: 'Strategic Alignment', priority: 'High' },
+      { id: 'impact', label: 'Measurement Plan', priority: 'High' },
+      { id: 'org', label: 'Team Expertise', priority: 'Standard' }
+    ],
+    dealbreakers: [
+      'No peer-reviewed evidence for approach',
+      'No explicit ToC with testable hypotheses',
+      'Alignment with Gates strategy priorities not demonstrated'
+    ]
+  },
+  fcdo: {
+    name: 'UK FCDO',
+    weights: {
+      'problem': 15,
+      'toc': 20,
+      'impact': 15,
+      'evidence-base': 10,
+      'org': 10,
+      'equity': 15,
+      'vfm': 10,
+      'sustain': 5
+    },
+    criteria: [
+      { id: 'toc', label: 'Business Case Logic (Smart Rules)', priority: 'Critical' },
+      { id: 'vfm', label: 'Value for Money (3Es)', priority: 'Critical' },
+      { id: 'equity', label: 'Locally Led / GESI', priority: 'High' },
+      { id: 'impact', label: 'Adaptive MEL', priority: 'High' },
+      { id: 'sustain', label: 'Sustainability & Exit', priority: 'High' }
+    ],
+    dealbreakers: [
+      'No VfM analysis (FCDO Smart Rules mandatory)',
+      'No safeguarding policy (SEAP compliance required)',
+      'Logical chain not demonstrated in business case'
+    ]
+  },
+  eu: {
+    name: 'EU Horizon Europe',
+    weights: {
+      'problem': 15,
+      'toc': 20,
+      'impact': 20,
+      'evidence-base': 20,
+      'org': 10,
+      'equity': 10,
+      'vfm': 3,
+      'sustain': 2
+    },
+    criteria: [
+      { id: 'evidence-base', label: 'State-of-the-Art / Excellence', priority: 'Critical' },
+      { id: 'toc', label: 'Methodology & Innovation', priority: 'Critical' },
+      { id: 'impact', label: 'Impact Pathways', priority: 'Critical' },
+      { id: 'equity', label: 'Gender Dimension (Annex 5)', priority: 'High' },
+      { id: 'org', label: 'Team / Consortium Quality', priority: 'High' }
+    ],
+    dealbreakers: [
+      'No gender equality dimension integrated (mandatory since 2022)',
+      'No Open Science / data management plan',
+      'Work package structure not aligned to objectives'
+    ]
+  },
+  macarthur: {
+    name: 'MacArthur Foundation (100&Change)',
+    weights: {
+      'problem': 20,
+      'toc': 20,
+      'evidence-base': 15,
+      'impact': 10,
+      'org': 15,
+      'equity': 5,
+      'vfm': 5,
+      'sustain': 10
+    },
+    criteria: [
+      { id: 'problem', label: 'Problem Significance', priority: 'Critical' },
+      { id: 'toc', label: 'Transformative Solution', priority: 'Critical' },
+      { id: 'sustain', label: 'Durability & Scale', priority: 'Critical' },
+      { id: 'evidence-base', label: 'Likelihood of Success', priority: 'High' },
+      { id: 'org', label: 'Team Excellence', priority: 'High' }
+    ],
+    dealbreakers: [
+      'Problem is not "significant" (must affect millions)',
+      'No credible path to scale or systems change',
+      'Solution not transformative — incremental only'
+    ]
+  },
+  generic: {
+    name: 'Generic / Balanced',
+    weights: {
+      'problem': 12,
+      'toc': 17,
+      'impact': 12,
+      'evidence-base': 12,
+      'org': 15,
+      'equity': 12,
+      'vfm': 10,
+      'sustain': 10
+    },
+    criteria: [
+      { id: 'toc', label: 'Theory of Change', priority: 'High' },
+      { id: 'org', label: 'Organisational Capacity', priority: 'High' },
+      { id: 'evidence-base', label: 'Evidence Base', priority: 'High' },
+      { id: 'impact', label: 'MEL Framework', priority: 'Standard' },
+      { id: 'vfm', label: 'Value for Money', priority: 'Standard' }
+    ],
+    dealbreakers: []
+  }
+};
+
+// Dimension metadata
+const DIMS = [
+  { id: 'problem',        label: 'Problem Definition & Strategic Fit',   sliders: ['problem-evidence','problem-roots','problem-alignment'] },
+  { id: 'toc',            label: 'Theory of Change & Intervention Logic', sliders: ['toc-chain','toc-assumptions','toc-innovation'] },
+  { id: 'impact',         label: 'Impact Measurement & MEL',              sliders: ['impact-indicators','impact-eval','impact-learning'] },
+  { id: 'evidence-base',  label: 'Evidence Base & Prior Research',        sliders: ['evbase-citations','evbase-pilot'] },
+  { id: 'org',            label: 'Organisational Capacity',               sliders: ['org-expertise','org-track','org-finance'] },
+  { id: 'equity',         label: 'Equity, Inclusion & Local Partnership', sliders: ['equity-local','equity-gender'] },
+  { id: 'vfm',            label: 'Value for Money & Budget',              sliders: ['vfm-cost','vfm-budget'] },
+  { id: 'sustain',        label: 'Sustainability & Scale',                sliders: ['sustain-plan','sustain-scale'] }
+];
+
+const GAP_ACTIONS = {
+  'problem-evidence':   'Cite specific statistics: DHS/WHO/World Bank data, peer-reviewed surveys, national census',
+  'problem-roots':      'Add a causal analysis using PESTLE or systems mapping — show structural drivers, not just symptoms',
+  'problem-alignment':  'Map your work explicitly to the funder\'s current strategy: cite specific priority areas by name and page number',
+  'toc-chain':          'Draw the full logic chain: Inputs → Activities → Outputs → Outcomes → Impact, with each link stated explicitly',
+  'toc-assumptions':    'State 3-5 key assumptions per ToC link; add a risk register with likelihood, severity, and mitigation action',
+  'toc-innovation':     'Articulate what is unique: comparison table showing your approach vs alternatives and why yours is better',
+  'impact-indicators':  'Replace output counts with SMART outcome indicators; add baselines and time-bound targets from IRIS+/funder indicators',
+  'impact-eval':        'Describe your evaluation design: comparison group, data collection method, analysis plan, attribution approach',
+  'impact-learning':    'Add a CLA/adaptive management cycle: quarterly data review, decision points, formal adaptation protocol',
+  'evbase-citations':   'Add 5-10 peer-reviewed citations; search 3ie Development Evidence Portal and J-PAL for sector-specific evidence',
+  'evbase-pilot':       'Present pilot data with sample size, duration, and outcome metrics; if no pilot, describe feasibility assessment',
+  'org-expertise':      'Rewrite CVs to match ToC requirements specifically; quantify results from prior roles',
+  'org-track':          'Add a "Track Record" section: grant names, funder names, budget sizes, outcomes achieved',
+  'org-finance':        'Include audited accounts for last 3 years, IPSAS-compliant accounting, safeguarding policy, anti-corruption statement',
+  'equity-local':       'Name local partners, their roles, decision-making authority, and their share of total budget',
+  'equity-gender':      'Conduct a gender analysis: how gender dynamics affect the problem; provide sex-disaggregated targets',
+  'vfm-cost':           'Calculate cost per direct beneficiary AND cost per outcome unit; compare to GiveWell or DCP3 benchmarks',
+  'vfm-budget':         'Add a budget narrative justifying every line item; break down overhead and explain the rate',
+  'sustain-plan':       'Replace "we will seek further funding" with: government integration plan, or earned revenue model, or community ownership',
+  'sustain-scale':      'Add a scale pathway: conditions for government replication, market expansion, or policy adoption'
+};
+
+const FUNDER_REFS = {
+  'problem':       'USAID ADS 201 / FCDO Smart Rules p.14',
+  'toc':           'OECD DAC Criteria / Gates ToC Requirements',
+  'impact':        'USAID CLA Framework / DCED Standard',
+  'evidence-base': 'EU Horizon Excellence / 3ie Evidence Standards',
+  'org':           'USAID Pre-Award Survey / FCDO Due Diligence',
+  'equity':        'USAID Localisation Agenda / EU Horizon Annex 5',
+  'vfm':           'FCDO Smart Rules VfM / World Bank CBA',
+  'sustain':       'USAID CDCS / MacArthur 100&Change'
+};
+
+// ===================== STATE =====================
+let currentFunder = 'usaid';
+let scores = {};
+
+// ===================== INIT =====================
+function init() {
+  updateWeightLabels();
+  updateScore(null, null);
+}
+
+function setFunder(key, btn) {
+  document.querySelectorAll('.funder-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFunder = key;
+  updateWeightLabels();
+  updateScore(null, null);
+  updatePrompt();
+}
+
+function updateWeightLabels() {
+  const w = FUNDERS[currentFunder].weights;
+  DIMS.forEach(d => {
+    const el = document.getElementById('wt-' + d.id);
+    if (el) el.textContent = (w[d.id] || 0) + '% weight';
+  });
+}
+
+function toggleDim(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ===================== SCORING =====================
+function updateScore(el, key) {
+  if (el && key) {
+    document.getElementById('v-' + key).textContent = el.value;
+    scores[key] = parseInt(el.value);
+  }
+
+  // Collect all slider values
+  DIMS.forEach(d => {
+    let total = 0, count = 0;
+    d.sliders.forEach(s => {
+      const slEl = document.getElementById('s-' + s);
+      if (slEl) {
+        total += parseInt(slEl.value);
+        count++;
+        scores[s] = parseInt(slEl.value);
+      }
+    });
+    const dimAvg = count > 0 ? (total / count) : 5;
+    const badge = document.getElementById('badge-' + d.id);
+    if (badge) {
+      const pct = Math.round(dimAvg * 10);
+      badge.textContent = pct + '%';
+      badge.className = 'dim-score-badge ' + getScoreClass(pct);
+    }
+  });
+
+  // Weighted overall
+  const w = FUNDERS[currentFunder].weights;
+  let weightedSum = 0, totalWeight = 0;
+  DIMS.forEach(d => {
+    let total = 0, count = 0;
+    d.sliders.forEach(s => {
+      const v = scores[s] !== undefined ? scores[s] : 5;
+      total += v;
+      count++;
+    });
+    const dimAvg = count > 0 ? (total / count) * 10 : 50;
+    const wt = w[d.id] || 0;
+    weightedSum += dimAvg * wt / 100;
+    totalWeight += wt;
+  });
+  const overall = Math.round(weightedSum);
+
+  // Update display
+  const scoreEl = document.getElementById('total-score');
+  scoreEl.textContent = overall;
+  scoreEl.className = 'score-total ' + getColorClass(overall);
+  document.getElementById('score-verdict').textContent = getVerdict(overall);
+  document.getElementById('score-sub').textContent = getVerdictSub(overall);
+
+  // Breakdown bars
+  renderBreakdown(w);
+  renderFunderMatch();
+  renderGaps(w);
+  renderGapTable(w);
+  updatePrompt();
+}
+
+function getDimScore(dimId) {
+  const d = DIMS.find(x => x.id === dimId);
+  if (!d) return 50;
+  let total = 0, count = 0;
+  d.sliders.forEach(s => {
+    total += scores[s] !== undefined ? scores[s] : 5;
+    count++;
+  });
+  return count > 0 ? Math.round((total / count) * 10) : 50;
+}
+
+function getScoreClass(pct) {
+  if (pct < 40) return 'score-low';
+  if (pct < 60) return 'score-mid';
+  if (pct < 80) return 'score-good';
+  return 'score-strong';
+}
+
+function getColorClass(pct) {
+  if (pct < 40) return 'low';
+  if (pct < 60) return 'mid';
+  if (pct < 80) return 'good';
+  return 'strong';
+}
+
+function getVerdict(pct) {
+  if (pct < 30) return '⚠️ Not Fundable Yet';
+  if (pct < 50) return '⚠️ Significant Gaps';
+  if (pct < 65) return '📋 Approaching Fundable';
+  if (pct < 80) return '✅ Competitive Application';
+  return '🏆 Strong / Fundable';
+}
+
+function getVerdictSub(pct) {
+  if (pct < 30) return 'Requires substantial rewrite before submission';
+  if (pct < 50) return 'Address priority gaps before submitting';
+  if (pct < 65) return 'Close but reviewers will score you below threshold';
+  if (pct < 80) return 'Competitive — address remaining gaps for maximum score';
+  return 'Well above typical funded threshold — ready to submit';
+}
+
+function renderBreakdown(w) {
+  const container = document.getElementById('breakdown-bars');
+  let html = '';
+  DIMS.forEach(d => {
+    const pct = getDimScore(d.id);
+    const wt = w[d.id] || 0;
+    const shortLabel = d.label.length > 28 ? d.label.substring(0,28) + '…' : d.label;
+    const color = pct < 40 ? '#fc8181' : pct < 60 ? '#f6ad55' : pct < 80 ? '#68d391' : '#63b3ed';
+    html += `<div class="score-bar-row">
+      <span class="score-bar-label" title="${d.label}">${shortLabel} (${wt}%)</span>
+      <div class="score-bar-track"><div class="score-bar-fill" style="width:${pct}%;background:${color};"></div></div>
+      <span class="score-bar-val">${pct}</span>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderFunderMatch() {
+  const funder = FUNDERS[currentFunder];
+  let html = `<div style="margin-bottom:10px;font-size:12px;font-weight:700;color:#2d3748;">${funder.name} — Key Criteria</div>`;
+  funder.criteria.forEach(c => {
+    const pct = getDimScore(c.id);
+    const dotClass = pct < 45 ? 'red' : pct < 65 ? 'yellow' : 'green';
+    html += `<div class="match-item"><div class="match-dot ${dotClass}"></div><span>${c.label} <em style="color:#718096;font-size:10px;">(${c.priority})</em></span><span style="margin-left:auto;font-weight:700;font-size:12px;">${pct}%</span></div>`;
+  });
+  if (funder.dealbreakers.length > 0) {
+    html += `<div style="margin-top:10px;padding-top:8px;border-top:1px solid #f0f4f8;"><div style="font-size:11px;font-weight:700;color:#c53030;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">⚠️ Hard Disqualifiers to Check</div>`;
+    funder.dealbreakers.forEach(db => {
+      html += `<div style="font-size:11px;color:#c53030;margin-bottom:4px;">• ${db}</div>`;
+    });
+    html += '</div>';
+  }
+  document.getElementById('funder-match-body').innerHTML = html;
+}
+
+function renderGaps(w) {
+  const container = document.getElementById('priority-gaps');
+  // Find lowest scoring dimensions weighted by importance
+  const dimScores = DIMS.map(d => ({
+    id: d.id,
+    label: d.label,
+    score: getDimScore(d.id),
+    weight: w[d.id] || 0,
+    impact: (100 - getDimScore(d.id)) * (w[d.id] || 0) / 100
+  })).filter(d => d.score < 70)
+    .sort((a, b) => b.impact - a.impact)
+    .slice(0, 3);
+
+  if (dimScores.length === 0) {
+    container.innerHTML = '<p style="font-size:12px;color:#38a169;text-align:center;padding:8px 0;">✅ All dimensions scoring well</p>';
+    return;
+  }
+
+  let html = '';
+  dimScores.forEach((d, i) => {
+    const label = ['🔴 Critical Priority', '🟠 High Priority', '🟡 Medium Priority'][i] || '🟡';
+    // Get lowest sub-score for this dim
+    const dim = DIMS.find(x => x.id === d.id);
+    let worstSlider = null, worstScore = 11;
+    dim.sliders.forEach(s => {
+      const v = scores[s] !== undefined ? scores[s] : 5;
+      if (v < worstScore) { worstScore = v; worstSlider = s; }
+    });
+    const action = worstSlider ? GAP_ACTIONS[worstSlider] : 'Improve this dimension';
+    html += `<div class="priority-item"><strong>${label}</strong>${d.label}<div style="margin-top:4px;font-size:11px;color:#718096;">${action}</div></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderGapTable(w) {
+  const tbody = document.getElementById('gap-tbody');
+  let rows = '';
+  DIMS.forEach(d => {
+    const pct = getDimScore(d.id);
+    const gap = Math.max(0, 75 - pct);
+    const gapClass = gap === 0 ? 'score-good' : gap < 20 ? 'score-mid' : 'score-low';
+    const gapLabel = gap === 0 ? '✅ On target' : `+${gap}pts needed`;
+
+    // Action from worst slider
+    const dim = DIMS.find(x => x.id === d.id);
+    let worstSlider = null, worstScore = 11;
+    dim.sliders.forEach(s => {
+      const v = scores[s] !== undefined ? scores[s] : 5;
+      if (v < worstScore) { worstScore = v; worstSlider = s; }
+    });
+    const action = worstSlider ? GAP_ACTIONS[worstSlider] : '—';
+    const ref = FUNDER_REFS[d.id] || '—';
+
+    const rowClass = gap > 25 ? 'highlight-row' : '';
+    rows += `<tr class="${rowClass}">
+      <td><strong>${d.label}</strong><br><span style="font-size:10px;color:#718096;">${w[d.id] || 0}% weight</span></td>
+      <td style="text-align:center;"><span class="dim-score-badge ${getScoreClass(pct)}">${pct}%</span></td>
+      <td style="text-align:center;"><span class="gap-pill ${getScoreClass(100-gap)}">${gapLabel}</span></td>
+      <td style="font-size:11px;color:#4a5568;">${gap > 0 ? action : 'Maintain quality'}</td>
+      <td style="font-size:10px;color:#718096;">${ref}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = rows;
+}
+
+// ===================== CLAUDE PROMPT =====================
+function updatePrompt() {
+  const title = document.getElementById('projTitle').value || '[Application title]';
+  const amt = document.getElementById('grantAmt').value ? '$' + parseInt(document.getElementById('grantAmt').value).toLocaleString() : '[grant amount]';
+  const sector = document.getElementById('sector').value;
+  const orgType = document.getElementById('orgType').value;
+  const funder = FUNDERS[currentFunder].name;
+
+  const w = FUNDERS[currentFunder].weights;
+  const dimLines = DIMS.map(d => `  - ${d.label}: ${getDimScore(d.id)}/100 (${w[d.id] || 0}% weight)`).join('\n');
+
+  // Weakest dims
+  const weakDims = DIMS.filter(d => getDimScore(d.id) < 60)
+    .sort((a, b) => getDimScore(a.id) - getDimScore(b.id))
+    .slice(0, 3)
+    .map(d => d.label);
+
+  const prompt = `I'm applying for a grant from ${funder} for a ${sector.toLowerCase()} project (${orgType}).
+
+Project: ${title}
+Grant Amount: ${amt}
+Funder: ${funder}
+
+My Grant Application Strength Scorer results:
+
+${dimLines}
+
+My three weakest dimensions are: ${weakDims.join(', ') || 'none yet identified'}.
+
+Please provide:
+
+1. **Rewrite Suggestions** — for each weak dimension, give me 2-3 specific sentences I should add or rewrite in my application, using the language and criteria framework ${funder} evaluators use.
+
+2. **Red Flag Check** — based on what I've told you about my scores, identify any potential hard disqualifiers specific to ${funder}'s review process that I should urgently address.
+
+3. **Evaluator Perspective** — from the perspective of an experienced ${funder} evaluator, which part of this application would most likely cause them to score it below the funding threshold? What's the single highest-priority fix?
+
+4. **Competitor Benchmarking** — what do top-scoring (90th percentile) applications for ${funder} ${sector.toLowerCase()} grants typically include that average applications don't?
+
+Be specific and actionable — I want concrete language I can put directly into my application, not general advice.`;
+
+  document.getElementById('claude-prompt').textContent = prompt;
+}
+
+function copyPrompt() {
+  const txt = document.getElementById('claude-prompt').textContent;
+  navigator.clipboard.writeText(txt).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
+}
+
+// ===================== EXPORT =====================
+function exportCSV() {
+  const title = document.getElementById('projTitle').value || 'Application';
+  const funder = FUNDERS[currentFunder].name;
+  const w = FUNDERS[currentFunder].weights;
+
+  let rows = [['Grant Application Strength Scorer — ' + title]];
+  rows.push(['Funder', funder]);
+  rows.push(['Date', new Date().toLocaleDateString()]);
+  rows.push([]);
+  rows.push(['Dimension', 'Score (%)', 'Funder Weight (%)', 'Weighted Score', 'Gap to 75%', 'Reference']);
+
+  let totalWeighted = 0;
+  DIMS.forEach(d => {
+    const pct = getDimScore(d.id);
+    const wt = w[d.id] || 0;
+    const weighted = Math.round(pct * wt / 100);
+    const gap = Math.max(0, 75 - pct);
+    totalWeighted += weighted;
+    rows.push([d.label, pct, wt, weighted, gap === 0 ? 'On target' : '+' + gap + ' pts', FUNDER_REFS[d.id] || '']);
+  });
+
+  rows.push([]);
+  rows.push(['OVERALL SCORE', totalWeighted, '', '', '', '']);
+  rows.push(['Verdict', getVerdict(totalWeighted).replace(/[⚠️✅🏆📋]/g,'').trim()]);
+
+  rows.push([]);
+  rows.push(['SUB-CRITERIA DETAIL']);
+  rows.push(['Criterion', 'Score (0-10)', 'Action if <7']);
+  Object.keys(GAP_ACTIONS).forEach(k => {
+    const v = scores[k] !== undefined ? scores[k] : 5;
+    rows.push([k, v, v < 7 ? GAP_ACTIONS[k] : 'Maintain']);
+  });
+
+  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'grant-application-scorer.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ===================== START =====================
+init();
+</script>
+</body>
+</html>
