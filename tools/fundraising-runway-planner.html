@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fundraising Runway & Burn Rate Planner — Useful AF</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --accent: #2e7d32;
+    --accent2: #f57c00;
+    --warn: #c62828;
+    --light: #f5f7fa;
+    --border: #dce3ec;
+    --text: #1c2b3a;
+    --muted: #607080;
+    --card: #ffffff;
+    --green-bg: #e8f5e9;
+    --amber-bg: #fff8e1;
+    --red-bg: #ffebee;
+    --blue-bg: #e3f2fd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--light); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+  /* Header */
+  .site-header { background: var(--primary); color: white; padding: 18px 32px; display: flex; align-items: center; gap: 16px; }
+  .site-header .logo { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+  .site-header .tagline { font-size: 12px; opacity: 0.75; margin-top: 2px; }
+  .tool-title { margin-left: auto; text-align: right; }
+  .tool-title h1 { font-size: 16px; font-weight: 600; }
+  .tool-title p { font-size: 11px; opacity: 0.7; }
+
+  /* Layout */
+  .container { max-width: 1280px; margin: 0 auto; padding: 24px 24px 48px; }
+  .intro-banner { background: var(--blue-bg); border-left: 4px solid var(--primary); border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; color: var(--primary); }
+  .intro-banner strong { font-size: 14px; display: block; margin-bottom: 4px; }
+  .grid { display: grid; grid-template-columns: 380px 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 960px) { .grid { grid-template-columns: 1fr; } }
+
+  /* Cards */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+  .card h2 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .card h2 .icon { font-size: 16px; }
+
+  /* Form elements */
+  .field { margin-bottom: 14px; }
+  .field label { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--primary); margin-bottom: 5px; }
+  .field input, .field select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; color: var(--text); background: white; }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 2px rgba(26,58,92,0.12); }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  /* Tooltip */
+  .tip { position: relative; display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: var(--primary); color: white; border-radius: 50%; font-size: 10px; font-weight: 700; cursor: help; flex-shrink: 0; }
+  .tip:hover .tip-content { display: block; }
+  .tip-content { display: none; position: absolute; left: 22px; top: -4px; background: #1a3a5c; color: white; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: 400; width: 240px; z-index: 10; line-height: 1.5; white-space: normal; pointer-events: none; }
+  .tip-content::before { content: ''; position: absolute; left: -5px; top: 8px; border: 5px solid transparent; border-right-color: #1a3a5c; border-left: none; }
+
+  /* Section labels */
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); margin: 16px 0 10px; }
+
+  /* Income rows */
+  .income-row { background: #f9fbfd; border: 1px solid var(--border); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
+  .income-row .row-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .income-row .row-title { font-size: 12px; font-weight: 600; color: var(--primary); }
+  .remove-btn { background: none; border: none; color: var(--warn); cursor: pointer; font-size: 16px; line-height: 1; padding: 0 4px; }
+  .add-btn { background: var(--primary); color: white; border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+  .add-btn:hover { background: #0f2840; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; border-bottom: 2px solid var(--border); margin-bottom: 20px; }
+  .tab { padding: 9px 18px; font-size: 13px; font-weight: 600; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+  .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* Results */
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  .stat-grid.four { grid-template-columns: repeat(4, 1fr); }
+  .stat-box { padding: 14px 16px; border-radius: 8px; border: 1px solid var(--border); }
+  .stat-box.green { background: var(--green-bg); border-color: #a5d6a7; }
+  .stat-box.amber { background: var(--amber-bg); border-color: #ffe082; }
+  .stat-box.red { background: var(--red-bg); border-color: #ef9a9a; }
+  .stat-box.blue { background: var(--blue-bg); border-color: #90caf9; }
+  .stat-box.neutral { background: #f5f7fa; border-color: var(--border); }
+  .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted); margin-bottom: 4px; }
+  .stat-value { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.1; }
+  .stat-sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* Status badge */
+  .runway-badge { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 24px; font-size: 14px; font-weight: 700; margin-bottom: 20px; }
+  .runway-badge.critical { background: var(--red-bg); color: var(--warn); border: 2px solid #ef9a9a; }
+  .runway-badge.warning { background: var(--amber-bg); color: #e65100; border: 2px solid #ffe082; }
+  .runway-badge.healthy { background: var(--green-bg); color: #1b5e20; border: 2px solid #a5d6a7; }
+  .runway-badge.strong { background: #e8eaf6; color: #283593; border: 2px solid #9fa8da; }
+
+  /* Timeline chart */
+  .timeline-wrap { overflow-x: auto; }
+  .timeline-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .timeline-table th { background: var(--primary); color: white; padding: 7px 8px; text-align: center; font-size: 10px; font-weight: 600; white-space: nowrap; }
+  .timeline-table th:first-child { text-align: left; padding-left: 10px; }
+  .timeline-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+  .timeline-table td:first-child { text-align: left; font-weight: 600; color: var(--primary); padding-left: 10px; }
+  .timeline-table tr:nth-child(even) td { background: #f9fbfd; }
+  .timeline-table .total-row td { font-weight: 700; background: #edf2f7; border-top: 2px solid var(--border); }
+  .timeline-table .cash-row td { font-weight: 700; border-top: 1px solid #90caf9; }
+  .timeline-table .danger td { color: var(--warn); }
+  .bar-cell { padding: 0 !important; }
+  .bar-wrap { height: 16px; position: relative; }
+  .bar-fill { height: 100%; border-radius: 2px; }
+  .bar-pos { background: #43a047; }
+  .bar-neg { background: #e53935; }
+
+  /* Scenarios */
+  .scenario-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+  .scenario-box { border-radius: 8px; padding: 14px 16px; border: 2px solid transparent; cursor: pointer; }
+  .scenario-box.pessimistic { background: var(--red-bg); border-color: #ef9a9a; }
+  .scenario-box.base { background: var(--blue-bg); border-color: #90caf9; }
+  .scenario-box.optimistic { background: var(--green-bg); border-color: #a5d6a7; }
+  .scenario-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+  .scenario-box.pessimistic .scenario-title { color: var(--warn); }
+  .scenario-box.base .scenario-title { color: #1565c0; }
+  .scenario-box.optimistic .scenario-title { color: #1b5e20; }
+  .scenario-row { font-size: 11px; color: var(--muted); margin-bottom: 3px; }
+  .scenario-row span { font-weight: 600; color: var(--text); float: right; }
+
+  /* Fundraising decision */
+  .decision-panel { background: #fff8e1; border: 1px solid #ffe082; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+  .decision-panel h3 { font-size: 13px; font-weight: 700; color: #e65100; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .decision-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; font-size: 12px; }
+  .decision-item .icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .decision-item strong { display: block; color: var(--text); margin-bottom: 2px; }
+  .decision-item p { color: var(--muted); line-height: 1.4; }
+
+  /* Action plan */
+  .action-list { list-style: none; }
+  .action-list li { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+  .action-list li:last-child { border-bottom: none; }
+  .action-priority { width: 56px; flex-shrink: 0; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; text-align: center; }
+  .priority-critical { background: #ffcdd2; color: var(--warn); }
+  .priority-high { background: #ffe0b2; color: #e65100; }
+  .priority-medium { background: #fff9c4; color: #f9a825; }
+  .priority-low { background: #c8e6c9; color: #2e7d32; }
+  .action-content strong { display: block; margin-bottom: 2px; color: var(--text); }
+  .action-content p { color: var(--muted); line-height: 1.4; }
+
+  /* Claude prompt */
+  .claude-box { background: #1a1a2e; color: #e8e8f0; padding: 16px; border-radius: 8px; font-size: 12px; line-height: 1.7; font-family: 'Courier New', monospace; white-space: pre-wrap; }
+  .claude-box-wrap { position: relative; }
+  .copy-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.15); color: white; border: none; border-radius: 5px; padding: 5px 10px; font-size: 11px; cursor: pointer; }
+  .copy-btn:hover { background: rgba(255,255,255,0.25); }
+
+  /* Export */
+  .export-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+  .export-btn { padding: 9px 18px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; gap: 7px; }
+  .export-btn.primary { background: var(--accent); color: white; }
+  .export-btn.secondary { background: white; color: var(--primary); border: 1.5px solid var(--primary); }
+  .export-btn:hover { opacity: 0.88; }
+
+  /* Methodology note */
+  .method-note { background: #f5f7fa; border: 1px solid var(--border); border-radius: 6px; padding: 12px 14px; font-size: 11px; color: var(--muted); line-height: 1.6; margin-top: 16px; }
+  .method-note strong { color: var(--primary); }
+
+  /* Urgency meter */
+  .urgency-meter { margin-bottom: 16px; }
+  .urgency-track { height: 12px; background: linear-gradient(to right, #c62828, #f57c00, #f9a825, #43a047, #1565c0); border-radius: 6px; position: relative; margin: 8px 0; }
+  .urgency-marker { position: absolute; top: -4px; width: 4px; height: 20px; background: #1a3a5c; border-radius: 2px; transform: translateX(-50%); transition: left 0.5s; }
+  .urgency-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); }
+
+  /* Start fundraising calc */
+  .start-date-box { background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+  .start-date-box h4 { font-size: 12px; font-weight: 700; color: #1b5e20; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .start-date-box p { font-size: 12px; color: #2e7d32; }
+  .start-date-box .date-highlight { font-size: 18px; font-weight: 700; color: #1b5e20; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Print */
+  @media print {
+    .site-header, .export-bar, .add-btn, .remove-btn, .tab { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .grid { grid-template-columns: 1fr; }
+    .card { break-inside: avoid; }
+    .timeline-table { font-size: 9px; }
+  }
+
+  .tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+  .tag.blue { background: var(--blue-bg); color: #1565c0; }
+  .tag.green { background: var(--green-bg); color: #1b5e20; }
+  .tag.amber { background: var(--amber-bg); color: #e65100; }
+
+  select.period-select { width: auto; padding: 4px 8px; font-size: 11px; display: inline-block; margin-left: 6px; }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div>
+    <div class="logo">⚡ Useful AF</div>
+    <div class="tagline">AI tools for impact practitioners</div>
+  </div>
+  <div class="tool-title">
+    <h1>Fundraising Runway & Burn Rate Planner</h1>
+    <p>Tool #14 — For early-stage social enterprises & impact ventures</p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="intro-banner">
+    <strong>How to use this tool</strong>
+    Enter your cash position, monthly costs, and expected income streams below. The planner calculates your runway under three scenarios, tells you <em>exactly when</em> to start fundraising (using the backwards-planning method), and generates a prioritised action plan — all based on sector benchmarks from the Humentum Overhead Cost Study, Bridge Span Group, and NCVO Financial Health research.
+  </div>
+
+  <div class="grid">
+    <!-- LEFT COLUMN: Inputs -->
+    <div>
+      <!-- Cash Position -->
+      <div class="card">
+        <h2><span class="icon">💰</span> Cash Position</h2>
+
+        <div class="field">
+          <label>
+            Current cash balance (£/$)
+            <span class="tip">?<span class="tip-content">Enter total liquid cash you have right now across all accounts. Do not include receivables or committed-but-unpaid grants.</span></span>
+          </label>
+          <input type="number" id="cashBalance" value="120000" step="1000">
+          <div class="hint">Total liquid cash across all accounts today</div>
+        </div>
+
+        <div class="field">
+          <label>
+            Reserve target (months of costs)
+            <span class="tip">?<span class="tip-content">The NCVO recommends 3–6 months operating reserves for social enterprises. DFI-funded organisations often require 3 months minimum. This is the buffer you want to maintain above zero.</span></span>
+          </label>
+          <input type="number" id="reserveTarget" value="3" min="0" max="12" step="0.5">
+          <div class="hint">NCVO benchmark: 3–6 months. DFI requirement: 3 months minimum.</div>
+        </div>
+
+        <div class="field">
+          <label>
+            Currency
+          </label>
+          <select id="currency">
+            <option value="£">£ GBP</option>
+            <option value="$">$ USD</option>
+            <option value="€">€ EUR</option>
+            <option value="KES">KES</option>
+            <option value="ZAR">ZAR</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Costs -->
+      <div class="card">
+        <h2><span class="icon">📊</span> Monthly Cost Structure</h2>
+
+        <div class="section-label">Fixed Costs (monthly)</div>
+        <div class="field">
+          <label>
+            Staff & payroll
+            <span class="tip">?<span class="tip-content">Humentum 2023 Overhead Study: staff costs represent 65–75% of total costs for most social enterprises and NGOs. Include salaries, NI, pension contributions, and any contractor retainers.</span></span>
+          </label>
+          <input type="number" id="costStaff" value="45000" step="500">
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Rent & utilities</label>
+            <input type="number" id="costRent" value="4000" step="100">
+          </div>
+          <div class="field">
+            <label>Technology & subscriptions</label>
+            <input type="number" id="costTech" value="2000" step="100">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Insurance & legal</label>
+            <input type="number" id="costInsurance" value="800" step="100">
+          </div>
+          <div class="field">
+            <label>Other fixed costs</label>
+            <input type="number" id="costOtherFixed" value="1200" step="100">
+          </div>
+        </div>
+
+        <div class="section-label">Variable Costs (monthly average)</div>
+        <div class="field-row">
+          <div class="field">
+            <label>
+              Programme delivery
+              <span class="tip">?<span class="tip-content">Costs that scale with activity: beneficiary travel, materials, venue hire. Use a monthly average based on your activity calendar.</span></span>
+            </label>
+            <input type="number" id="costProgramme" value="8000" step="500">
+          </div>
+          <div class="field">
+            <label>Travel & comms</label>
+            <input type="number" id="costTravel" value="2000" step="100">
+          </div>
+        </div>
+        <div class="field">
+          <label>Other variable costs</label>
+          <input type="number" id="costOtherVar" value="1000" step="100">
+        </div>
+      </div>
+
+      <!-- Income -->
+      <div class="card">
+        <h2><span class="icon">📥</span> Income Streams</h2>
+        <div class="hint" style="margin-bottom:12px;">Enter each income stream separately. Certainty level affects scenario modelling — only "Confirmed" income appears in the pessimistic scenario.</div>
+
+        <div id="incomeList"></div>
+        <button class="add-btn" onclick="addIncome()">＋ Add income stream</button>
+      </div>
+
+      <!-- Fundraising params -->
+      <div class="card">
+        <h2><span class="icon">🎯</span> Fundraising Parameters</h2>
+
+        <div class="field">
+          <label>
+            Fundraising target (next round)
+            <span class="tip">?<span class="tip-content">How much you need to raise to achieve your next milestone (18–24 months of runway is the standard ask for equity rounds; 12 months for grant cycles). Rule of thumb: ask for 20–30% more than you think you need.</span></span>
+          </label>
+          <input type="number" id="fundraisingTarget" value="500000" step="10000">
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>
+              Fundraising lead time (months)
+              <span class="tip">?<span class="tip-content">Bridge Span Group 2023 research: typical fundraising timelines — UK trust/foundation grants: 6–12 months; impact VC: 9–18 months; DFI/government grants: 12–24 months; individual donors: 3–6 months. Use 9 months as a safe default.</span></span>
+            </label>
+            <input type="number" id="fundraisingLeadTime" value="9" min="1" max="36" step="1">
+            <div class="hint">UK grant avg: 6–12 mo. Impact VC: 9–18 mo. DFI: 12–24 mo.</div>
+          </div>
+          <div class="field">
+            <label>
+              Safety buffer (months)
+              <span class="tip">?<span class="tip-content">How many months before cash-out you want to receive the first tranche. 2–3 months buffer is standard — enough to handle delayed completions and unexpected costs.</span></span>
+            </label>
+            <input type="number" id="safetyBuffer" value="2" min="0" max="6" step="0.5">
+            <div class="hint">2–3 months is standard practice.</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>
+            Investor/funder type
+            <span class="tip">?<span class="tip-content">Different funders have very different timelines. Selecting the right type adjusts the benchmark lead time guidance below the result.</span></span>
+          </label>
+          <select id="funderType">
+            <option value="trust">Trust / Foundation grant</option>
+            <option value="vc">Impact VC / Angel</option>
+            <option value="dfi">DFI / Government grant</option>
+            <option value="corporate">Corporate / CSR</option>
+            <option value="individual">Individual donors / crowdfund</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>
+            Bridge financing available?
+            <span class="tip">?<span class="tip-content">Do you have access to a credit line, loan, overdraft, or bridge investor? If yes, enter the amount — this is added to available cash in the model as a last-resort backstop.</span></span>
+          </label>
+          <select id="bridgeAvailable">
+            <option value="0">None</option>
+            <option value="25000">£/$ 25,000</option>
+            <option value="50000">£/$ 50,000</option>
+            <option value="100000">£/$ 100,000</option>
+            <option value="custom">Custom amount</option>
+          </select>
+        </div>
+        <div class="field" id="bridgeCustomField" style="display:none;">
+          <label>Bridge amount</label>
+          <input type="number" id="bridgeCustomAmount" value="75000" step="5000">
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Results -->
+    <div>
+      <div class="tabs">
+        <div class="tab active" onclick="showTab('overview')">Overview</div>
+        <div class="tab" onclick="showTab('timeline')">Monthly Timeline</div>
+        <div class="tab" onclick="showTab('scenarios')">Scenarios</div>
+        <div class="tab" onclick="showTab('action')">Action Plan</div>
+        <div class="tab" onclick="showTab('prompt')">Claude Prompt</div>
+      </div>
+
+      <!-- TAB: Overview -->
+      <div id="tab-overview" class="tab-content active">
+
+        <div id="runwayBadge" class="runway-badge healthy">
+          <span id="runwayBadgeIcon">✅</span>
+          <span id="runwayBadgeText">Runway: Calculating...</span>
+        </div>
+
+        <div class="stat-grid four" id="statGrid">
+          <div class="stat-box neutral">
+            <div class="stat-label">Monthly Burn Rate</div>
+            <div class="stat-value" id="statBurn">—</div>
+            <div class="stat-sub">Total monthly costs</div>
+          </div>
+          <div class="stat-box neutral">
+            <div class="stat-label">Net Monthly Position</div>
+            <div class="stat-value" id="statNet">—</div>
+            <div class="stat-sub">Income minus costs</div>
+          </div>
+          <div class="stat-box neutral">
+            <div class="stat-label">Base Runway</div>
+            <div class="stat-value" id="statRunway">—</div>
+            <div class="stat-sub">Months to depleted cash</div>
+          </div>
+          <div class="stat-box neutral">
+            <div class="stat-label">Cash-Out Date</div>
+            <div class="stat-value" id="statCashOut">—</div>
+            <div class="stat-sub">Base case projection</div>
+          </div>
+        </div>
+
+        <div class="start-date-box" id="startDateBox">
+          <h4>📅 Start Fundraising By</h4>
+          <div class="date-highlight" id="startFundraisingDate">—</div>
+          <p id="startFundraisingExplain" style="margin-top:6px;">—</p>
+        </div>
+
+        <div class="urgency-meter">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+            <div style="font-size:12px; font-weight:700; color: var(--primary);">Fundraising Urgency Meter</div>
+            <div id="urgencyLabel" style="font-size:12px; font-weight:700;"></div>
+          </div>
+          <div class="urgency-track">
+            <div class="urgency-marker" id="urgencyMarker" style="left:50%"></div>
+          </div>
+          <div class="urgency-labels">
+            <span>🔴 Crisis</span><span>⚠️ Urgent</span><span>⏰ Start now</span><span>✅ On track</span><span>💪 Strong</span>
+          </div>
+        </div>
+
+        <div class="decision-panel" id="decisionPanel">
+          <h3>⚡ Fundraising Decision Framework</h3>
+          <div id="decisionContent"></div>
+        </div>
+
+        <div id="costBreakdownSection">
+          <div style="font-size:13px; font-weight:700; color:var(--primary); margin-bottom:10px;">Cost Structure Analysis</div>
+          <canvas id="costChart" width="480" height="180" style="max-width:100%;"></canvas>
+        </div>
+
+        <div class="method-note" style="margin-top:16px;">
+          <strong>Data sources:</strong> Burn rate benchmarks from Humentum 2023 Overhead Cost Study (n=362 organisations). Fundraising lead time benchmarks from Bridge Span Group 2023 Impact Investing Report and NCVO UK Civil Society Almanac 2024. Reserve recommendations from NCVO Financial Resilience Framework. Backward-planning methodology follows Bridgespan Group "When to Fundraise" framework.
+        </div>
+      </div>
+
+      <!-- TAB: Monthly Timeline -->
+      <div id="tab-timeline" class="tab-content">
+        <div class="export-bar">
+          <button class="export-btn primary" onclick="exportExcel()">📥 Export to Excel</button>
+          <button class="export-btn secondary" onclick="window.print()">🖨️ Print</button>
+        </div>
+        <div class="timeline-wrap">
+          <table class="timeline-table" id="timelineTable">
+            <thead id="timelineHead"></thead>
+            <tbody id="timelineBody"></tbody>
+          </table>
+        </div>
+        <div class="method-note" style="margin-top:14px;">
+          <strong>Reading the timeline:</strong> Red cells indicate months where cash drops below your reserve target. The "Start Fundraising" row marks the recommended month to initiate your fundraising process, working backwards from the fundraising target deadline. <strong>Base scenario</strong> uses confirmed + probable income at 70% certainty. <strong>Pessimistic</strong> uses confirmed income only.
+        </div>
+      </div>
+
+      <!-- TAB: Scenarios -->
+      <div id="tab-scenarios" class="tab-content">
+        <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Three scenarios modelled using income certainty levels and cost variance benchmarks from the NCVO Financial Resilience Framework. Pessimistic applies 15% cost overrun (the sector median for unexpected cost increases).</div>
+
+        <div class="scenario-grid" id="scenarioGrid"></div>
+
+        <div style="font-size:13px; font-weight:700; color:var(--primary); margin-bottom:10px;">Runway by Scenario</div>
+        <canvas id="scenarioChart" width="600" height="220" style="max-width:100%; margin-bottom:20px;"></canvas>
+
+        <div id="scenarioDetail"></div>
+      </div>
+
+      <!-- TAB: Action Plan -->
+      <div id="tab-action" class="tab-content">
+        <div style="font-size:12px; color:var(--muted); margin-bottom:16px;">Prioritised action plan based on your runway position and fundraising timeline. Actions are sequenced using the Bridgespan Group backwards-planning framework for social sector fundraising.</div>
+        <ul class="action-list" id="actionList"></ul>
+        <div class="method-note">
+          <strong>Bridge financing guidance:</strong> A short-term bridge loan or credit line of 3–6 months operating costs gives you negotiating power — you won't be fundraising from desperation. UK options include Charity Bank (from 3%), Big Issue Invest, and Social Investment Business. US options include RSF Social Finance and Community Reinvestment Fund.
+        </div>
+      </div>
+
+      <!-- TAB: Claude Prompt -->
+      <div id="tab-prompt" class="tab-content">
+        <div style="font-size:12px; color:var(--muted); margin-bottom:12px;">Copy this prompt into Claude, ChatGPT, or Gemini to get a deeper analysis of your fundraising strategy, specific investor targets, and a 12-month action plan tailored to your position.</div>
+        <div class="claude-box-wrap">
+          <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+          <div class="claude-box" id="claudePrompt">— Generate your inputs to see the prompt —</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ---- STATE ----
+let incomeStreams = [
+  { id: 1, label: 'Core grant (Year 2)', amount: 35000, frequency: 'monthly', certainty: 'confirmed' },
+  { id: 2, label: 'Earned income / trading', amount: 12000, frequency: 'monthly', certainty: 'probable' },
+  { id: 3, label: 'Pending grant application', amount: 150000, frequency: 'lump', certainty: 'possible' },
+];
+let nextIncomeId = 4;
+
+const certLabels = { confirmed: 'Confirmed', probable: 'Probable (70%)', possible: 'Possible (40%)', unlikely: 'Unlikely (15%)' };
+const certWeights = { confirmed: 1.0, probable: 0.70, possible: 0.40, unlikely: 0.15 };
+
+function fmt(n) {
+  const sym = document.getElementById('currency') ? document.getElementById('currency').value : '£';
+  return sym + Math.abs(Math.round(n)).toLocaleString();
+}
+function fmtSigned(n) {
+  const sym = document.getElementById('currency') ? document.getElementById('currency').value : '£';
+  return (n >= 0 ? '+' : '-') + sym + Math.abs(Math.round(n)).toLocaleString();
+}
+function v(id) { return parseFloat(document.getElementById(id).value) || 0; }
+function addMonths(date, n) {
+  const d = new Date(date);
+  d.setMonth(d.getMonth() + n);
+  return d;
+}
+function fmtMonth(d) { return d.toLocaleString('en-GB', { month: 'short', year: '2-digit' }); }
+
+// ---- INCOME MANAGEMENT ----
+function renderIncomeList() {
+  const list = document.getElementById('incomeList');
+  list.innerHTML = '';
+  incomeStreams.forEach(s => {
+    const div = document.createElement('div');
+    div.className = 'income-row';
+    div.innerHTML = `
+      <div class="row-header">
+        <div class="row-title">💼 ${s.label}</div>
+        <button class="remove-btn" onclick="removeIncome(${s.id})">×</button>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Label</label>
+          <input type="text" value="${s.label}" onchange="updateIncome(${s.id},'label',this.value)">
+        </div>
+        <div class="field">
+          <label>Amount (£/$)</label>
+          <input type="number" value="${s.amount}" step="500" onchange="updateIncome(${s.id},'amount',this.value)">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Frequency
+            <span class="tip">?<span class="tip-content">Monthly: recurring each month. Quarterly: divide by 3 for monthly equivalent. Annual: divide by 12. Lump sum: one-off amount, received in month 1.</span></span>
+          </label>
+          <select onchange="updateIncome(${s.id},'frequency',this.value)">
+            <option value="monthly" ${s.frequency==='monthly'?'selected':''}>Monthly</option>
+            <option value="quarterly" ${s.frequency==='quarterly'?'selected':''}>Quarterly</option>
+            <option value="annual" ${s.frequency==='annual'?'selected':''}>Annual</option>
+            <option value="lump" ${s.frequency==='lump'?'selected':''}>Lump sum (one-off)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Certainty
+            <span class="tip">?<span class="tip-content">Confirmed: signed contract or received. Probable: verbal commitment, in pipeline. Possible: application submitted. Unlikely: early stage / speculative.</span></span>
+          </label>
+          <select onchange="updateIncome(${s.id},'certainty',this.value)">
+            ${Object.entries(certLabels).map(([k,v]) => `<option value="${k}" ${s.certainty===k?'selected':''}>${v}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function addIncome() {
+  incomeStreams.push({ id: nextIncomeId++, label: 'New income stream', amount: 5000, frequency: 'monthly', certainty: 'possible' });
+  renderIncomeList();
+  calculate();
+}
+function removeIncome(id) {
+  incomeStreams = incomeStreams.filter(s => s.id !== id);
+  renderIncomeList();
+  calculate();
+}
+function updateIncome(id, field, val) {
+  const s = incomeStreams.find(s => s.id === id);
+  if (!s) return;
+  s[field] = field === 'amount' ? parseFloat(val) || 0 : val;
+  if (field === 'label') renderIncomeList();
+  calculate();
+}
+
+// ---- CALCULATION ENGINE ----
+function getMonthlyIncome(scenario, monthIndex) {
+  let total = 0;
+  incomeStreams.forEach(s => {
+    const w = scenario === 'pessimistic' ? (s.certainty === 'confirmed' ? 1.0 : 0.0) :
+              scenario === 'base' ? certWeights[s.certainty] :
+              Math.min(certWeights[s.certainty] * 1.3, 1.0); // optimistic: boost by 30%
+    let amt = s.amount * w;
+    if (s.frequency === 'quarterly') amt = (monthIndex % 3 === 0) ? s.amount * w * 3 : 0;
+    else if (s.frequency === 'annual') amt = (monthIndex === 0) ? s.amount * w * 12 : 0;
+    else if (s.frequency === 'lump') amt = (monthIndex === 0) ? s.amount * w : 0;
+    total += amt;
+  });
+  return total;
+}
+
+function getMonthlyCosts(scenario) {
+  const base = v('costStaff') + v('costRent') + v('costTech') + v('costInsurance') + v('costOtherFixed') + v('costProgramme') + v('costTravel') + v('costOtherVar');
+  if (scenario === 'pessimistic') return base * 1.15; // +15% cost overrun (NCVO benchmark)
+  if (scenario === 'optimistic') return base * 0.95; // minor efficiency
+  return base;
+}
+
+function projectRunway(scenario, months = 36) {
+  let cash = v('cashBalance');
+  const bridgeSel = document.getElementById('bridgeAvailable').value;
+  const bridge = bridgeSel === 'custom' ? v('bridgeCustomAmount') : parseFloat(bridgeSel) || 0;
+  const totalCash = cash + bridge;
+  const costs = getMonthlyCosts(scenario);
+  const reserve = costs * v('reserveTarget');
+  let cashArr = [totalCash];
+  let runwayMonths = null;
+  for (let i = 0; i < months; i++) {
+    const income = getMonthlyIncome(scenario, i);
+    cash += income - costs;
+    cashArr.push(cash);
+    if (runwayMonths === null && cash < reserve) {
+      runwayMonths = i + 1;
+    }
+  }
+  if (runwayMonths === null) runwayMonths = months + '+';
+  return { cashArr, runwayMonths, costs, reserve };
+}
+
+function calculate() {
+  const sym = document.getElementById('currency').value;
+  const costs = getMonthlyCosts('base');
+  const monthlyIncomeBase = getMonthlyIncome('base', 0); // approximation
+  const net = monthlyIncomeBase - costs;
+
+  // Runway calculations
+  const base = projectRunway('base');
+  const pess = projectRunway('pessimistic');
+  const opt = projectRunway('optimistic');
+
+  // Display stats
+  document.getElementById('statBurn').textContent = sym + Math.round(costs).toLocaleString();
+  document.getElementById('statNet').textContent = fmtSigned(net);
+  document.getElementById('statNet').style.color = net >= 0 ? '#2e7d32' : '#c62828';
+
+  const runwayNum = typeof base.runwayMonths === 'string' ? 37 : base.runwayMonths;
+  document.getElementById('statRunway').textContent = typeof base.runwayMonths === 'string' ? '36+ mo' : base.runwayMonths + ' mo';
+
+  const today = new Date();
+  const cashOutDate = typeof base.runwayMonths === 'string' ? '36+ months' : fmtMonth(addMonths(today, base.runwayMonths));
+  document.getElementById('statCashOut').textContent = cashOutDate;
+
+  // Runway badge
+  const badge = document.getElementById('runwayBadge');
+  const badgeText = document.getElementById('runwayBadgeText');
+  const badgeIcon = document.getElementById('runwayBadgeIcon');
+  badge.className = 'runway-badge ';
+  if (runwayNum <= 3) { badge.className += 'critical'; badgeIcon.textContent = '🚨'; badgeText.textContent = `CRITICAL: Only ${runwayNum} months runway`; }
+  else if (runwayNum <= 6) { badge.className += 'warning'; badgeIcon.textContent = '⚠️'; badgeText.textContent = `Warning: ${runwayNum} months runway — raise urgently`; }
+  else if (runwayNum <= 12) { badge.className += 'warning'; badgeIcon.textContent = '⏰'; badgeText.textContent = `${runwayNum} months runway — start fundraising now`; }
+  else if (runwayNum <= 24) { badge.className += 'healthy'; badgeIcon.textContent = '✅'; badgeText.textContent = `${runwayNum} months runway — on track`; }
+  else { badge.className += 'strong'; badgeIcon.textContent = '💪'; badgeText.textContent = `${runwayNum}+ months runway — strong position`; }
+
+  // Fundraising start date (backwards planning)
+  const leadTime = v('fundraisingLeadTime');
+  const buffer = v('safetyBuffer');
+  const startFundMonths = runwayNum - leadTime - buffer;
+  const startFundDate = addMonths(today, Math.max(0, startFundMonths));
+  const alreadyLate = startFundMonths <= 0;
+
+  const sdBox = document.getElementById('startFundraisingDate');
+  const sdExplain = document.getElementById('startFundraisingExplain');
+  if (alreadyLate) {
+    sdBox.textContent = '⚠️ You should have started already';
+    sdBox.style.color = '#c62828';
+    sdExplain.textContent = `Based on your ${runwayNum}-month runway and a ${leadTime}-month fundraising process, you needed to start ${Math.abs(Math.round(startFundMonths))} months ago. Prioritise immediately.`;
+  } else {
+    sdBox.textContent = fmtMonth(startFundDate) + ` (in ${Math.round(startFundMonths)} months)`;
+    sdBox.style.color = '#1b5e20';
+    sdExplain.textContent = `Working backwards: cash out in ${runwayNum} months minus ${leadTime}-month fundraising lead time minus ${buffer}-month safety buffer = start no later than ${fmtMonth(startFundDate)}.`;
+  }
+
+  // Urgency meter (0–100, where 0=crisis, 100=strong)
+  const urgencyScore = Math.min(100, Math.max(0, (runwayNum / 24) * 100));
+  document.getElementById('urgencyMarker').style.left = urgencyScore + '%';
+  const urgencyLabel = document.getElementById('urgencyLabel');
+  if (urgencyScore < 15) { urgencyLabel.textContent = '🔴 Crisis'; urgencyLabel.style.color = '#c62828'; }
+  else if (urgencyScore < 30) { urgencyLabel.textContent = '⚠️ Urgent'; urgencyLabel.style.color = '#e65100'; }
+  else if (urgencyScore < 50) { urgencyLabel.textContent = '⏰ Act Now'; urgencyLabel.style.color = '#f57c00'; }
+  else if (urgencyScore < 75) { urgencyLabel.textContent = '✅ On Track'; urgencyLabel.style.color = '#2e7d32'; }
+  else { urgencyLabel.textContent = '💪 Strong'; urgencyLabel.style.color = '#1565c0'; }
+
+  // Decision panel
+  renderDecisionPanel(runwayNum, startFundMonths, leadTime);
+
+  // Cost chart
+  renderCostChart(costs, sym);
+
+  // Timeline
+  renderTimeline(base, sym, leadTime, buffer);
+
+  // Scenarios
+  renderScenarios(base, pess, opt, sym);
+
+  // Action plan
+  renderActionPlan(runwayNum, startFundMonths, alreadyLate);
+
+  // Claude prompt
+  renderClaudePrompt(base, pess, opt, sym, costs, net, cashOutDate);
+}
+
+function renderDecisionPanel(runwayNum, startFundMonths, leadTime) {
+  const funderType = document.getElementById('funderType').value;
+  const funderGuide = {
+    trust: { name: 'Trust/Foundation', lead: '6–12 months', tips: 'Build relationships 3 months before applying. Most trusts have 2 decision cycles per year.' },
+    vc: { name: 'Impact VC/Angel', lead: '9–18 months', tips: 'Impact VCs typically take 3–6 months from first meeting to term sheet. Plan for 2–3 months of due diligence.' },
+    dfi: { name: 'DFI/Government', lead: '12–24 months', tips: 'Government and DFI grants require expression of interest, then full application. Full cycle often 18+ months.' },
+    corporate: { name: 'Corporate/CSR', lead: '6–12 months', tips: 'Corporate budget cycles run January–March for UK companies. Submit proposals before Q4.' },
+    individual: { name: 'Individual/Crowdfund', lead: '3–6 months', tips: 'Fastest route to capital. Crowdfunding campaigns need 4–8 weeks of preparation before launch.' },
+  }[funderType];
+
+  const items = [];
+  if (startFundMonths <= 0) {
+    items.push({ icon: '🚨', title: 'Start fundraising immediately', body: 'Your runway does not give you time to complete a full fundraising cycle. Explore bridge financing alongside your main raise.' });
+  } else if (startFundMonths <= 3) {
+    items.push({ icon: '⚡', title: 'Begin fundraising within 3 months', body: `You have a short window before you must start. Use this time to prepare your pitch deck, data room, and initial investor list.` });
+  } else {
+    items.push({ icon: '📅', title: `Start fundraising in ${Math.round(startFundMonths)} months`, body: `You have a reasonable window. Use the time to build relationships, strengthen your impact evidence, and hit your next milestone.` });
+  }
+
+  items.push({ icon: '🏦', title: `${funderGuide.name}: ${funderGuide.lead} lead time`, body: funderGuide.tips });
+  items.push({ icon: '📊', title: 'Benchmarks to hit before your raise', body: `Impact VCs expect 12+ months of trading data. Trusts want evidence of outputs against ToC. DFIs require audited accounts. Government wants procurement compliance.` });
+
+  const html = items.map(i => `
+    <div class="decision-item">
+      <div class="icon">${i.icon}</div>
+      <div><strong>${i.title}</strong><p>${i.body}</p></div>
+    </div>`).join('');
+  document.getElementById('decisionContent').innerHTML = html;
+}
+
+function renderCostChart(totalCosts, sym) {
+  const canvas = document.getElementById('costChart');
+  const ctx = canvas.getContext('2d');
+  const costs = [
+    { label: 'Staff', value: v('costStaff'), color: '#1a3a5c' },
+    { label: 'Programme', value: v('costProgramme'), color: '#2e7d32' },
+    { label: 'Rent', value: v('costRent'), color: '#f57c00' },
+    { label: 'Tech', value: v('costTech'), color: '#7b1fa2' },
+    { label: 'Travel', value: v('costTravel'), color: '#0288d1' },
+    { label: 'Insurance', value: v('costInsurance'), color: '#558b2f' },
+    { label: 'Other', value: v('costOtherFixed') + v('costOtherVar'), color: '#78909c' },
+  ].filter(c => c.value > 0);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const barH = 22;
+  const gap = 6;
+  const labelW = 80;
+  const numW = 80;
+  const barMaxW = canvas.width - labelW - numW - 20;
+  const maxVal = totalCosts;
+
+  costs.forEach((c, i) => {
+    const y = i * (barH + gap) + 10;
+    const barW = (c.value / maxVal) * barMaxW;
+    ctx.fillStyle = '#f5f7fa';
+    ctx.fillRect(labelW, y, barMaxW, barH);
+    ctx.fillStyle = c.color;
+    ctx.fillRect(labelW, y, barW, barH);
+    ctx.fillStyle = '#1c2b3a';
+    ctx.font = '11px Segoe UI, system-ui, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(c.label, labelW - 6, y + 15);
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#607080';
+    ctx.fillText(sym + Math.round(c.value).toLocaleString() + ' (' + Math.round(c.value/maxVal*100) + '%)', labelW + barW + 6, y + 15);
+  });
+  canvas.height = costs.length * (barH + gap) + 20;
+}
+
+function renderTimeline(base, sym, leadTime, buffer) {
+  const months = 24;
+  const today = new Date();
+  const runwayNum = typeof base.runwayMonths === 'string' ? 37 : base.runwayMonths;
+  const startFundMonth = Math.max(0, runwayNum - leadTime - buffer);
+
+  const head = document.getElementById('timelineHead');
+  const body = document.getElementById('timelineBody');
+
+  const headers = ['Month'];
+  for (let i = 0; i < months; i++) headers.push(fmtMonth(addMonths(today, i)));
+  head.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+
+  const rows = [
+    { label: 'Cash (start of month)', data: base.cashArr.slice(0, months), type: 'cash' },
+    { label: 'Monthly burn', data: Array(months).fill(getMonthlyCosts('base')), type: 'costs' },
+    { label: 'Income (base)', data: Array.from({length:months}, (_,i) => getMonthlyIncome('base', i)), type: 'income' },
+    { label: 'Net position', data: Array.from({length:months}, (_,i) => getMonthlyIncome('base', i) - getMonthlyCosts('base')), type: 'net' },
+  ];
+
+  body.innerHTML = rows.map(r => {
+    const reserve = getMonthlyCosts('base') * v('reserveTarget');
+    const cells = r.data.map((val, i) => {
+      const danger = r.type === 'cash' && val < reserve;
+      const fundraiseFlag = i === Math.round(startFundMonth) ? ' 📣' : '';
+      let formatted;
+      if (r.type === 'net') formatted = fmtSigned(val) + fundraiseFlag;
+      else formatted = sym + Math.round(val).toLocaleString() + fundraiseFlag;
+      return `<td style="${danger ? 'color:#c62828; font-weight:700;' : ''} ${r.type==='net' && val>=0 ? 'color:#2e7d32;' : ''} ${r.type==='net' && val<0 ? 'color:#c62828;' : ''}">${formatted}</td>`;
+    });
+    return `<tr class="${r.type === 'cash' ? 'cash-row' : ''}"><td>${r.label}</td>${cells.join('')}</tr>`;
+  }).join('');
+
+  // Add start fundraising row
+  const sfRow = Array(months).fill('');
+  const sfIdx = Math.round(startFundMonth);
+  if (sfIdx >= 0 && sfIdx < months) sfRow[sfIdx] = '📣 START';
+  body.innerHTML += `<tr style="background:#fff8e1"><td style="color:#e65100; font-weight:700;">🎯 Start Fundraising</td>${sfRow.map(v => `<td style="text-align:center; font-size:10px; font-weight:700; color:#e65100;">${v}</td>`).join('')}</tr>`;
+}
+
+function renderScenarios(base, pess, opt, sym) {
+  const pessCosts = getMonthlyCosts('pessimistic');
+  const baseCosts = getMonthlyCosts('base');
+  const optCosts = getMonthlyCosts('optimistic');
+  const pessInc = getMonthlyIncome('pessimistic', 0);
+  const baseInc = getMonthlyIncome('base', 0);
+  const optInc = getMonthlyIncome('optimistic', 0);
+
+  const scens = [
+    { key: 'pessimistic', label: '😰 Pessimistic', cls: 'pessimistic', runway: pess.runwayMonths, costs: pessCosts, income: pessInc, note: 'Confirmed income only + 15% cost overrun (NCVO sector median for unexpected cost increases)' },
+    { key: 'base', label: '📊 Base Case', cls: 'base', runway: base.runwayMonths, costs: baseCosts, income: baseInc, note: 'Weighted income by certainty + actual budgeted costs' },
+    { key: 'optimistic', label: '🚀 Optimistic', cls: 'optimistic', runway: opt.runwayMonths, costs: optCosts, income: optInc, note: '130% of weighted income + 5% cost efficiency' },
+  ];
+
+  document.getElementById('scenarioGrid').innerHTML = scens.map(s => `
+    <div class="scenario-box ${s.cls}">
+      <div class="scenario-title">${s.label}</div>
+      <div class="scenario-row">Monthly costs <span>${sym}${Math.round(s.costs).toLocaleString()}</span></div>
+      <div class="scenario-row">Monthly income <span>${sym}${Math.round(s.income).toLocaleString()}</span></div>
+      <div class="scenario-row">Net <span style="color:${s.income-s.costs>=0?'#1b5e20':'#c62828'}">${fmtSigned(s.income-s.costs)}</span></div>
+      <div class="scenario-row">Runway <span style="font-size:14px; color:var(--text)">${typeof s.runway==='string'?s.runway:s.runway+' months'}</span></div>
+      <div style="font-size:10px; color:var(--muted); margin-top:8px; line-height:1.4;">${s.note}</div>
+    </div>
+  `).join('');
+
+  // Scenario bar chart
+  const canvas = document.getElementById('scenarioChart');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const bars = [
+    { label: 'Pessimistic', val: typeof pess.runwayMonths==='string' ? 37 : pess.runwayMonths, color: '#e53935' },
+    { label: 'Base', val: typeof base.runwayMonths==='string' ? 37 : base.runwayMonths, color: '#1565c0' },
+    { label: 'Optimistic', val: typeof opt.runwayMonths==='string' ? 37 : opt.runwayMonths, color: '#2e7d32' },
+  ];
+  const maxVal = Math.max(...bars.map(b => b.val), 1);
+  const barW = 100;
+  const gap = 60;
+  const baseX = 80;
+  const maxH = 160;
+  const baseY = 190;
+
+  bars.forEach((b, i) => {
+    const x = baseX + i * (barW + gap);
+    const h = (b.val / maxVal) * maxH;
+    ctx.fillStyle = b.color + '33';
+    ctx.fillRect(x, baseY - maxH, barW, maxH);
+    ctx.fillStyle = b.color;
+    ctx.fillRect(x, baseY - h, barW, h);
+    ctx.fillStyle = '#1c2b3a';
+    ctx.font = 'bold 13px Segoe UI, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(b.val >= 37 ? '36+mo' : b.val + 'mo', x + barW/2, baseY - h - 8);
+    ctx.font = '11px Segoe UI, system-ui, sans-serif';
+    ctx.fillStyle = '#607080';
+    ctx.fillText(b.label, x + barW/2, baseY + 16);
+  });
+
+  // Guide lines
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = '#e65100';
+  ctx.lineWidth = 1.5;
+  const guideMos = [6, 12];
+  guideMos.forEach(mo => {
+    const y = baseY - (mo / maxVal) * maxH;
+    ctx.beginPath();
+    ctx.moveTo(20, y);
+    ctx.lineTo(canvas.width - 20, y);
+    ctx.stroke();
+    ctx.fillStyle = '#e65100';
+    ctx.font = '10px Segoe UI';
+    ctx.textAlign = 'left';
+    ctx.fillText(mo + 'mo', 4, y - 2);
+  });
+  ctx.setLineDash([]);
+}
+
+function renderActionPlan(runwayNum, startFundMonths, alreadyLate) {
+  const actions = [];
+
+  if (runwayNum <= 3) {
+    actions.push({ priority: 'critical', title: 'Activate emergency bridge financing TODAY', body: 'Contact Charity Bank, Big Issue Invest, or your bank for emergency overdraft. A 3-month bridge buys you time to raise properly.' });
+    actions.push({ priority: 'critical', title: 'Call your top 3 existing funders immediately', body: 'Existing funders are 10x more likely to provide bridge funding than new funders. Explain the gap and ask for an advance on next grant instalment.' });
+    actions.push({ priority: 'critical', title: 'Identify cuts that don\'t damage core delivery', body: 'Benchmarks: freeze non-staff discretionary spending (typically 15–25% of costs). Defer any capital expenditure.' });
+  }
+
+  if (runwayNum <= 6) {
+    actions.push({ priority: 'critical', title: 'Launch fundraising immediately — you are behind', body: `With ${runwayNum} months runway and ${v('fundraisingLeadTime')} months lead time needed, your window has closed. Start pitching within the next 2 weeks.` });
+  } else if (alreadyLate) {
+    actions.push({ priority: 'high', title: 'Begin investor outreach now', body: 'Your runway does not accommodate a full fundraising cycle. Start with warm contacts and existing funder relationships.' });
+  } else if (startFundMonths <= 3) {
+    actions.push({ priority: 'high', title: `Start fundraising preparation — deadline in ${Math.round(startFundMonths)} months`, body: 'Begin building your data room, updating your pitch, and mapping your investor pipeline. You have a short window.' });
+  } else {
+    actions.push({ priority: 'medium', title: `Plan to start fundraising in ${Math.round(startFundMonths)} months`, body: 'Set a calendar reminder and work backwards from your start date. Use this window to strengthen your impact evidence and milestone delivery.' });
+  }
+
+  actions.push({ priority: 'high', title: 'Stress-test your cost structure', body: 'Identify which costs are truly fixed vs. semi-variable. Aim to have a "lean plan" that extends runway by 20–30% without damaging core delivery. Humentum research: 80% of social enterprises can find 15–20% cost flexibility with planning.' });
+  actions.push({ priority: 'high', title: 'Convert possible income to confirmed', body: `You have ${incomeStreams.filter(s=>s.certainty==='possible'||s.certainty==='unlikely').length} income streams marked possible/unlikely. Follow up actively — each converted stream materially extends your runway.` });
+  actions.push({ priority: 'medium', title: 'Build a 6-month detailed cash flow', body: 'Your model is now built. Transfer to a spreadsheet with actual invoice dates and payment timing. Most cash crunches are caused by timing gaps, not structural shortfalls.' });
+  actions.push({ priority: 'medium', title: 'Prepare your investor data room', body: 'Minimum requirements: 3 years of audited accounts, current management accounts, impact data and ToC, team bios, term sheet from last round (if any), pipeline and traction data.' });
+  actions.push({ priority: 'low', title: 'Consider earned income diversification', body: 'Social enterprises that earn >30% of income from trading are significantly more resilient than grant-dependent models (NCVO 2024). Identify 1–2 earned income opportunities that align with your mission.' });
+
+  const priorityClass = { critical: 'priority-critical', high: 'priority-high', medium: 'priority-medium', low: 'priority-low' };
+  document.getElementById('actionList').innerHTML = actions.map(a => `
+    <li>
+      <div class="action-priority ${priorityClass[a.priority]}">${a.priority.toUpperCase()}</div>
+      <div class="action-content"><strong>${a.title}</strong><p>${a.body}</p></div>
+    </li>
+  `).join('');
+}
+
+function renderClaudePrompt(base, pess, opt, sym, costs, net, cashOutDate) {
+  const funderType = document.getElementById('funderType').value;
+  const funderNames = { trust: 'trust/foundation grants', vc: 'impact VC or angel investment', dfi: 'DFI or government grants', corporate: 'corporate/CSR partnerships', individual: 'individual donors or crowdfunding' };
+
+  const incomeList = incomeStreams.map(s => `- ${s.label}: ${sym}${s.amount.toLocaleString()} (${s.frequency}, ${s.certainty})`).join('\n');
+
+  const prompt = `I'm a social enterprise leader and I need help building a fundraising strategy.
+
+MY FINANCIAL POSITION:
+- Cash balance: ${sym}${v('cashBalance').toLocaleString()}
+- Monthly burn rate: ${sym}${Math.round(costs).toLocaleString()}
+- Net monthly position: ${fmtSigned(net)}
+- Base case runway: ${typeof base.runwayMonths === 'string' ? '36+ months' : base.runwayMonths + ' months'}
+- Pessimistic runway: ${typeof pess.runwayMonths === 'string' ? '36+ months' : pess.runwayMonths + ' months'}
+- Projected cash-out date (base): ${cashOutDate}
+- Reserve target: ${v('reserveTarget')} months
+
+INCOME STREAMS:
+${incomeList}
+
+FUNDRAISING TARGET: ${sym}${v('fundraisingTarget').toLocaleString()}
+PRIMARY FUNDER TYPE: ${funderNames[funderType]}
+FUNDRAISING LEAD TIME ASSUMPTION: ${v('fundraisingLeadTime')} months
+
+Please provide:
+1. A critical assessment of my financial position — am I in a danger zone or comfortable?
+2. A specific fundraising strategy for ${funderNames[funderType]}, including what materials I need to prepare, what milestones to hit before pitching, and a realistic timeline
+3. 5 specific funders or investor funds I should research that are active in my space (I can tell you more about my sector if useful)
+4. A 90-day action plan with concrete weekly milestones
+5. The 3 biggest risks to my runway and how to mitigate each
+
+My sector is: [DESCRIBE YOUR SECTOR AND IMPACT AREA HERE]
+My organisation type is: [NGO / Social Enterprise / Hybrid / Other]
+My target beneficiaries are: [DESCRIBE]
+My current traction / key metrics are: [DESCRIBE]`;
+
+  document.getElementById('claudePrompt').textContent = prompt;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('claudePrompt').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  });
+}
+
+// ---- TABS ----
+function showTab(name) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t => { if (t.textContent.toLowerCase().includes(name.replace('-', ' ').split(' ')[0])) t.classList.add('active'); });
+}
+
+// ---- EXCEL EXPORT ----
+function exportExcel() {
+  const months = 24;
+  const today = new Date();
+  const sym = document.getElementById('currency').value;
+  const costs = getMonthlyCosts('base');
+  const base = projectRunway('base');
+  const pess = projectRunway('pessimistic');
+  const opt = projectRunway('optimistic');
+
+  const headers = ['Metric', ...Array.from({length:months}, (_,i) => fmtMonth(addMonths(today, i)))];
+  const rows = [
+    headers,
+    ['Cash (Base)', ...base.cashArr.slice(0, months).map(v => Math.round(v))],
+    ['Cash (Pessimistic)', ...pess.cashArr.slice(0, months).map(v => Math.round(v))],
+    ['Cash (Optimistic)', ...opt.cashArr.slice(0, months).map(v => Math.round(v))],
+    ['Monthly Burn', ...Array(months).fill(Math.round(costs))],
+    ['Income (Base)', ...Array.from({length:months}, (_,i) => Math.round(getMonthlyIncome('base', i)))],
+    ['Income (Pessimistic)', ...Array.from({length:months}, (_,i) => Math.round(getMonthlyIncome('pessimistic', i)))],
+    ['Income (Optimistic)', ...Array.from({length:months}, (_,i) => Math.round(getMonthlyIncome('optimistic', i)))],
+    ['Net (Base)', ...Array.from({length:months}, (_,i) => Math.round(getMonthlyIncome('base', i) - costs))],
+    ['Reserve Target', ...Array(months).fill(Math.round(base.reserve))],
+  ];
+
+  // Use SheetJS-style CSV since we're dependency-free
+  const csv = rows.map(r => r.map(cell => `"${cell}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'fundraising-runway-planner.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ---- INIT ----
+document.getElementById('bridgeAvailable').addEventListener('change', function() {
+  document.getElementById('bridgeCustomField').style.display = this.value === 'custom' ? 'block' : 'none';
+  calculate();
+});
+
+// Attach all input listeners
+const inputIds = ['cashBalance', 'reserveTarget', 'currency', 'costStaff', 'costRent', 'costTech', 'costInsurance', 'costOtherFixed', 'costProgramme', 'costTravel', 'costOtherVar', 'fundraisingTarget', 'fundraisingLeadTime', 'safetyBuffer', 'funderType', 'bridgeCustomAmount'];
+inputIds.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', calculate);
+  if (el) el.addEventListener('change', calculate);
+});
+
+renderIncomeList();
+calculate();
+</script>
+
+</body>
+</html>
