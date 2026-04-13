@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ESG Due Diligence Questionnaire Generator — Useful AF</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,sans-serif;background:#f5f6f8;color:#1a1a1a;line-height:1.55}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+header{background:linear-gradient(135deg,#0a3d62 0%,#1e5a8e 100%);color:#fff;padding:32px;border-radius:14px;margin-bottom:24px;box-shadow:0 4px 18px rgba(0,0,0,.08)}
+header h1{font-size:28px;margin-bottom:6px;letter-spacing:-.3px}
+header .sub{font-size:14px;opacity:.9}
+header .badge{display:inline-block;background:rgba(255,255,255,.18);padding:4px 10px;border-radius:6px;font-size:11px;margin-top:10px;letter-spacing:.5px}
+.tabs{display:flex;gap:4px;background:#e8ebf0;padding:4px;border-radius:10px;margin-bottom:20px;flex-wrap:wrap}
+.tab{flex:1;min-width:160px;padding:12px 14px;text-align:center;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:#4a5568;border-radius:8px;transition:all .2s}
+.tab.active{background:#fff;color:#0a3d62;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.panel{background:#fff;border-radius:12px;padding:28px;box-shadow:0 2px 10px rgba(0,0,0,.04);display:none}
+.panel.active{display:block}
+h2{font-size:20px;color:#0a3d62;margin-bottom:6px;letter-spacing:-.2px}
+h2 .tag{background:#e3f2fd;color:#1565c0;font-size:11px;padding:3px 8px;border-radius:4px;margin-left:8px;font-weight:600;vertical-align:middle}
+h3{font-size:15px;color:#2d3748;margin:18px 0 10px;font-weight:700}
+p.lead{color:#4a5568;margin-bottom:18px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{margin-bottom:14px}
+label{display:block;font-size:12px;font-weight:600;color:#2d3748;margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+label .hint{color:#718096;font-weight:400;font-size:11px;text-transform:none;letter-spacing:0}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid #d1d7e0;border-radius:6px;font-size:14px;font-family:inherit;background:#fff;transition:border .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#1e5a8e;box-shadow:0 0 0 3px rgba(30,90,142,.12)}
+textarea{resize:vertical;min-height:80px}
+.btn{background:#0a3d62;color:#fff;border:none;padding:11px 22px;border-radius:7px;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s}
+.btn:hover{background:#1e5a8e}
+.btn-secondary{background:#fff;color:#0a3d62;border:1px solid #0a3d62}
+.btn-secondary:hover{background:#f0f4f8}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.info-box{background:#fff8e1;border-left:4px solid #f9a825;padding:12px 16px;border-radius:4px;margin:14px 0;font-size:13px;color:#4a3800}
+.info-box.blue{background:#e3f2fd;border-color:#1976d2;color:#0d3a5f}
+.info-box.red{background:#ffebee;border-color:#c62828;color:#5a1619}
+.info-box.green{background:#e8f5e9;border-color:#2e7d32;color:#1b4220}
+.info-box strong{display:inline-block;margin-bottom:4px}
+.chip{display:inline-block;padding:4px 10px;background:#edf2f7;color:#2d3748;font-size:11px;border-radius:14px;margin:3px 4px 3px 0;font-weight:600;letter-spacing:.3px}
+.chip.cat-a{background:#ffebee;color:#c62828}
+.chip.cat-b{background:#fff3e0;color:#e65100}
+.chip.cat-c{background:#e8f5e9;color:#2e7d32}
+.chip.fi{background:#f3e5f5;color:#6a1b9a}
+.risk-meter{display:flex;gap:4px;margin:8px 0}
+.risk-bar{flex:1;height:10px;background:#e2e8f0;border-radius:3px}
+.risk-bar.on-red{background:#c62828}
+.risk-bar.on-amber{background:#e65100}
+.risk-bar.on-green{background:#2e7d32}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #edf0f5}
+th{background:#f7f9fc;font-weight:700;color:#2d3748;font-size:11px;text-transform:uppercase;letter-spacing:.4px;position:sticky;top:0}
+tr:hover{background:#fafbfd}
+.q-item{border:1px solid #e2e8f0;border-radius:8px;padding:14px 16px;margin-bottom:10px;background:#fff}
+.q-item .q-meta{display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap;font-size:11px;color:#718096}
+.q-item .q-text{font-size:14px;color:#1a1a1a;margin-bottom:6px;font-weight:500}
+.q-item .q-guide{font-size:12px;color:#4a5568;background:#f7f9fc;padding:8px 10px;border-radius:5px;margin-top:6px}
+.q-item .q-ref{font-size:11px;color:#0a3d62;margin-top:6px;font-style:italic}
+.output-box{background:#f7f9fc;border:1px solid #e2e8f0;border-radius:8px;padding:18px;margin-top:16px;max-height:600px;overflow:auto}
+.prompt-box{background:#1a1a2e;color:#e2e8f0;padding:16px;border-radius:8px;font-family:"Monaco","Menlo","Courier New",monospace;font-size:12px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+.category-card{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:12px}
+.category-card.cat-a-border{border-left:4px solid #c62828}
+.category-card.cat-b-border{border-left:4px solid #e65100}
+.category-card.cat-c-border{border-left:4px solid #2e7d32}
+.category-card h4{font-size:14px;color:#1a1a1a;margin-bottom:4px}
+.category-card .cat-desc{font-size:12px;color:#4a5568}
+.score-circle{display:inline-flex;align-items:center;justify-content:center;width:74px;height:74px;border-radius:50%;background:#0a3d62;color:#fff;font-size:22px;font-weight:700;margin-right:16px}
+.score-wrap{display:flex;align-items:center;background:#f7f9fc;padding:14px;border-radius:8px;margin:12px 0}
+.score-label{flex:1}
+.score-label strong{display:block;font-size:14px;color:#1a1a1a;margin-bottom:2px}
+.score-label span{font-size:12px;color:#4a5568}
+.flag-row{display:flex;padding:10px 14px;background:#fff;border-radius:6px;border-left:4px solid #ccc;margin-bottom:8px;gap:12px;align-items:flex-start}
+.flag-row.sev-high{border-color:#c62828;background:#fff5f5}
+.flag-row.sev-med{border-color:#e65100;background:#fff8f0}
+.flag-row.sev-low{border-color:#2e7d32;background:#f6fcf7}
+.flag-row .sev-chip{font-size:10px;padding:3px 7px;border-radius:4px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;flex-shrink:0}
+.flag-row.sev-high .sev-chip{background:#c62828;color:#fff}
+.flag-row.sev-med .sev-chip{background:#e65100;color:#fff}
+.flag-row.sev-low .sev-chip{background:#2e7d32;color:#fff}
+.flag-row .flag-body{flex:1;font-size:13px}
+.flag-row .flag-body strong{display:block;margin-bottom:3px}
+footer{text-align:center;color:#718096;font-size:12px;margin-top:24px;padding:18px}
+footer a{color:#0a3d62;text-decoration:none}
+.summary-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:14px 0}
+.stat-card{background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:12px}
+.stat-card .stat-v{font-size:22px;font-weight:700;color:#0a3d62}
+.stat-card .stat-l{font-size:11px;color:#718096;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+@media print{.tabs,.btn,.btn-row,header .badge{display:none}header{background:#fff;color:#000;border:1px solid #ccc}.panel{display:block!important;page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>ESG Due Diligence Questionnaire Generator</h1>
+<div class="sub">Generate a tailored E&amp;S/ESG due diligence questionnaire and scoring framework aligned with IFC Performance Standards, TCFD, GIIN IRIS+, EU SFDR, and ILO Core Conventions.</div>
+<div class="badge">For impact investors • LPs • DFI staff • fund managers</div>
+</header>
+
+<div class="tabs">
+<button class="tab active" data-tab="scope">1. Deal &amp; Scoping</button>
+<button class="tab" data-tab="categorisation">2. E&amp;S Categorisation</button>
+<button class="tab" data-tab="questionnaire">3. Generated Questionnaire</button>
+<button class="tab" data-tab="redflags">4. Red Flag Screen</button>
+<button class="tab" data-tab="frameworks">5. Framework Reference</button>
+<button class="tab" data-tab="export">6. Export &amp; Claude Prompt</button>
+</div>
+
+<!-- PANEL 1: DEAL SCOPING -->
+<div class="panel active" id="panel-scope">
+<h2>Deal &amp; Scoping Inputs <span class="tag">STEP 1</span></h2>
+<p class="lead">Enter the investment target's profile. These inputs drive the E&amp;S risk categorisation, applicable IFC Performance Standards, and which sector-specific questions are included.</p>
+
+<div class="grid-2">
+  <div>
+    <div class="field">
+      <label>Target Company Name</label>
+      <input id="f_company" type="text" placeholder="e.g. SolarMax Kenya Ltd" value="">
+    </div>
+    <div class="field">
+      <label>Sector <span class="hint">(drives sector-specific risk questions)</span></label>
+      <select id="f_sector">
+        <option value="agri">Agriculture &amp; Agribusiness</option>
+        <option value="energy">Energy (incl. renewable)</option>
+        <option value="manuf">Manufacturing &amp; Industry</option>
+        <option value="extract">Extractives / Mining / Oil &amp; Gas</option>
+        <option value="infra">Infrastructure &amp; Construction</option>
+        <option value="fin">Financial Services / Fintech</option>
+        <option value="health">Healthcare &amp; Life Sciences</option>
+        <option value="edu">Education &amp; EdTech</option>
+        <option value="wash">Water &amp; Sanitation</option>
+        <option value="housing">Affordable Housing / Real Estate</option>
+        <option value="tech" selected>Technology / Digital / SaaS</option>
+        <option value="retail">Retail &amp; Consumer Goods</option>
+        <option value="logistics">Logistics &amp; Transport</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Geography <span class="hint">(jurisdictional risk signals)</span></label>
+      <select id="f_geo">
+        <option value="ssa">Sub-Saharan Africa</option>
+        <option value="mena">Middle East &amp; North Africa</option>
+        <option value="sasia">South Asia</option>
+        <option value="seasia">Southeast Asia</option>
+        <option value="lac">Latin America &amp; Caribbean</option>
+        <option value="eap">East Asia &amp; Pacific</option>
+        <option value="eeca">Eastern Europe &amp; Central Asia</option>
+        <option value="dev" selected>Developed Markets (OECD)</option>
+        <option value="multi">Multi-country / Cross-border</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Fragile/Conflict-Affected Context? <span class="hint">(triggers enhanced human rights DD)</span></label>
+      <select id="f_fcas">
+        <option value="no" selected>No</option>
+        <option value="yes">Yes — operating in FCAS per World Bank list</option>
+      </select>
+    </div>
+  </div>
+
+  <div>
+    <div class="field">
+      <label>Investment Size (USD)</label>
+      <input id="f_size" type="number" placeholder="e.g. 5000000" value="5000000">
+    </div>
+    <div class="field">
+      <label>Instrument Type</label>
+      <select id="f_instrument">
+        <option value="equity" selected>Direct equity</option>
+        <option value="debt">Senior / concessional debt</option>
+        <option value="convertible">Convertible / SAFE</option>
+        <option value="fund">Fund investment (FI category)</option>
+        <option value="grant">Grant / guarantee</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Stake / Control</label>
+      <select id="f_control">
+        <option value="minority">Minority (no board control)</option>
+        <option value="board" selected>Minority with board seat</option>
+        <option value="majority">Majority / control</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Intended SFDR Classification <span class="hint">(EU Sustainable Finance Disclosure Regulation)</span></label>
+      <select id="f_sfdr">
+        <option value="art6">Article 6 (no sustainability focus)</option>
+        <option value="art8" selected>Article 8 (promotes E/S characteristics)</option>
+        <option value="art9">Article 9 (sustainable investment objective)</option>
+        <option value="na">N/A (non-EU investor)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<h3>Operational Profile</h3>
+<div class="grid">
+  <div class="field">
+    <label>Number of Employees <span class="hint">(triggers labour DD)</span></label>
+    <input id="f_employees" type="number" value="75">
+  </div>
+  <div class="field">
+    <label>Uses Contract / Migrant / Seasonal Labour?</label>
+    <select id="f_contractlabour">
+      <option value="no" selected>No</option>
+      <option value="yes">Yes</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Physical Footprint / Land Use?</label>
+    <select id="f_land">
+      <option value="office" selected>Offices / minimal site</option>
+      <option value="ops">Operations with physical site (&lt;5 ha)</option>
+      <option value="large">Large site / land acquisition required</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Near / Affecting Indigenous Peoples?</label>
+    <select id="f_ip">
+      <option value="no" selected>No</option>
+      <option value="possible">Possibly / unclear</option>
+      <option value="yes">Yes</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Cultural Heritage Sensitivity?</label>
+    <select id="f_ch">
+      <option value="no" selected>No</option>
+      <option value="yes">Yes (archaeological, religious, or customary sites)</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Processes Personal Data?</label>
+    <select id="f_data">
+      <option value="no">No</option>
+      <option value="minimal" selected>Minimal (employee data only)</option>
+      <option value="significant">Significant (customer / beneficiary PII at scale)</option>
+    </select>
+  </div>
+</div>
+
+<div class="btn-row">
+  <button class="btn" onclick="runCategorisation()">Run E&amp;S Categorisation →</button>
+</div>
+</div>
+
+<!-- PANEL 2: CATEGORISATION -->
+<div class="panel" id="panel-categorisation">
+<h2>E&amp;S Risk Categorisation <span class="tag">IFC + EBRD METHODOLOGY</span></h2>
+<p class="lead">Based on your inputs, the tool categorises the deal using the IFC Sustainability Framework risk categories (A/B/C/FI). This determines the depth of DD required, disclosure obligations, and which Performance Standards are triggered.</p>
+
+<div id="categorisation-output"></div>
+
+<h3>IFC Performance Standards Triggered</h3>
+<div id="ps-output"></div>
+
+<div class="info-box blue">
+<strong>Methodology reference:</strong> IFC Sustainability Framework (2012, updated 2024 consultation), IFC Performance Standards on Environmental &amp; Social Sustainability, and IFC Interpretation Note on Financial Intermediaries. Applied in parallel with EBRD ESP 2019 and Equator Principles 4 (2020) where relevant.
+</div>
+
+<div class="btn-row">
+  <button class="btn" onclick="switchTab('questionnaire');generateQuestionnaire()">Generate Tailored Questionnaire →</button>
+</div>
+</div>
+
+<!-- PANEL 3: QUESTIONNAIRE -->
+<div class="panel" id="panel-questionnaire">
+<h2>Tailored Due Diligence Questionnaire <span class="tag">AUTO-GENERATED</span></h2>
+<p class="lead">A complete ESG DD questionnaire customised to the deal profile. Each question includes the source framework, guidance on what good looks like, and a suggested evidence type. Export to CSV in the Export tab.</p>
+
+<div class="summary-stats" id="q-stats"></div>
+
+<div id="questionnaire-output"></div>
+
+<div class="btn-row">
+  <button class="btn" onclick="switchTab('redflags');runRedFlags()">Run Red Flag Screen →</button>
+</div>
+</div>
+
+<!-- PANEL 4: RED FLAGS -->
+<div class="panel" id="panel-redflags">
+<h2>Red Flag Screen <span class="tag">KILL-CRITERIA CHECK</span></h2>
+<p class="lead">Answer the screening questions below. The tool will flag any deal-breaking or high-concern issues that would typically require escalation to the Investment Committee or remediation plan before closing.</p>
+
+<div id="redflag-inputs"></div>
+
+<div class="btn-row">
+  <button class="btn" onclick="evaluateRedFlags()">Evaluate Red Flags</button>
+</div>
+
+<div id="redflag-output" style="margin-top:16px"></div>
+</div>
+
+<!-- PANEL 5: FRAMEWORKS -->
+<div class="panel" id="panel-frameworks">
+<h2>Framework Reference Library <span class="tag">READ-ONLY KNOWLEDGE BASE</span></h2>
+<p class="lead">Quick reference to the frameworks embedded in this tool. Use when explaining methodology to stakeholders or investment committees.</p>
+
+<h3>IFC Performance Standards (2012)</h3>
+<table>
+<thead><tr><th>PS</th><th>Title</th><th>Trigger</th><th>Key requirement</th></tr></thead>
+<tbody>
+<tr><td>PS1</td><td>Assessment &amp; Management of E&amp;S Risks</td><td>All investments</td><td>ESMS in place; stakeholder engagement; grievance mechanism</td></tr>
+<tr><td>PS2</td><td>Labour &amp; Working Conditions</td><td>Any employees</td><td>HR policies; OHS; non-discrimination; no forced/child labour; freedom of association</td></tr>
+<tr><td>PS3</td><td>Resource Efficiency &amp; Pollution Prevention</td><td>Resource use / emissions</td><td>GHG accounting &gt;25,000 tCO₂e; water &amp; waste management</td></tr>
+<tr><td>PS4</td><td>Community Health, Safety &amp; Security</td><td>Community proximity</td><td>Emergency preparedness; security personnel conduct (VPSHR)</td></tr>
+<tr><td>PS5</td><td>Land Acquisition &amp; Involuntary Resettlement</td><td>Land acquisition / DUAP</td><td>Avoid; minimise; compensate at full replacement cost; livelihood restoration</td></tr>
+<tr><td>PS6</td><td>Biodiversity Conservation</td><td>Natural/critical habitat</td><td>Mitigation hierarchy; net gain in critical habitat</td></tr>
+<tr><td>PS7</td><td>Indigenous Peoples</td><td>IP affected</td><td>Free, Prior &amp; Informed Consent (FPIC) in defined circumstances</td></tr>
+<tr><td>PS8</td><td>Cultural Heritage</td><td>Cultural sites present</td><td>Chance-find procedures; community consultation on use</td></tr>
+</tbody>
+</table>
+
+<h3>TCFD — Four Pillars (2017, final report 2023)</h3>
+<table>
+<thead><tr><th>Pillar</th><th>What to look for</th></tr></thead>
+<tbody>
+<tr><td>Governance</td><td>Board oversight of climate risks; management's role in assessment</td></tr>
+<tr><td>Strategy</td><td>Physical &amp; transition risk identification over short/medium/long term; climate scenario analysis (1.5°C, 2°C, 4°C)</td></tr>
+<tr><td>Risk Management</td><td>Integration of climate risk into enterprise risk management</td></tr>
+<tr><td>Metrics &amp; Targets</td><td>Scope 1, 2, and (where material) 3 emissions; science-based targets (SBTi); internal carbon price</td></tr>
+</tbody>
+</table>
+
+<h3>GIIN IRIS+ — Core ESG Metrics</h3>
+<table>
+<thead><tr><th>Code</th><th>Metric</th><th>Typical use</th></tr></thead>
+<tbody>
+<tr><td>OI7854</td><td>Environmental Management System</td><td>Governance diligence</td></tr>
+<tr><td>PI3687</td><td>Permanent Full-Time Employees</td><td>Labour &amp; jobs assessment</td></tr>
+<tr><td>PI9327</td><td>Greenhouse Gas Emissions (Scope 1 &amp; 2)</td><td>Carbon footprint</td></tr>
+<tr><td>OI6213</td><td>Water Consumption</td><td>Resource efficiency</td></tr>
+<tr><td>OD4108</td><td>Board Diversity</td><td>Governance</td></tr>
+<tr><td>PD5752</td><td>Training Hours per Employee</td><td>Labour development</td></tr>
+<tr><td>OI9100</td><td>Waste Generated</td><td>Pollution prevention</td></tr>
+<tr><td>OD6247</td><td>Workplace Accidents</td><td>OHS performance</td></tr>
+</tbody>
+</table>
+
+<h3>ILO Core Conventions (Fundamental Principles &amp; Rights at Work)</h3>
+<table>
+<thead><tr><th>Conv.</th><th>Right</th></tr></thead>
+<tbody>
+<tr><td>C87, C98</td><td>Freedom of association &amp; collective bargaining</td></tr>
+<tr><td>C29, C105</td><td>Elimination of forced or compulsory labour</td></tr>
+<tr><td>C138, C182</td><td>Abolition of child labour &amp; worst forms</td></tr>
+<tr><td>C100, C111</td><td>Elimination of discrimination in employment</td></tr>
+<tr><td>C155</td><td>Occupational Safety &amp; Health (added as fundamental 2022)</td></tr>
+</tbody>
+</table>
+
+<h3>EU SFDR Article Classifications (2021, RTS 2023)</h3>
+<table>
+<thead><tr><th>Article</th><th>Scope</th><th>DD implication</th></tr></thead>
+<tbody>
+<tr><td>Art 6</td><td>No sustainability focus</td><td>Only mandatory PAIs disclosure</td></tr>
+<tr><td>Art 8</td><td>"Light green" — promotes E/S characteristics</td><td>Evidence that E/S characteristics are met and monitored</td></tr>
+<tr><td>Art 9</td><td>"Dark green" — sustainable investment objective</td><td>Must meet SFDR Art 2(17); pass DNSH test; good governance; PAIs</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- PANEL 6: EXPORT -->
+<div class="panel" id="panel-export">
+<h2>Export &amp; Claude Prompt <span class="tag">DELIVERABLES</span></h2>
+<p class="lead">Export the generated questionnaire as CSV for your DD workspace, print the full report as a PDF, or copy a pre-built Claude prompt to carry out deeper qualitative analysis.</p>
+
+<h3>Export Options</h3>
+<div class="btn-row">
+<button class="btn" onclick="exportCSV()">Download Questionnaire (CSV)</button>
+<button class="btn btn-secondary" onclick="window.print()">Print / Save as PDF</button>
+<button class="btn btn-secondary" onclick="copyPrompt()">Copy Claude Prompt</button>
+</div>
+
+<h3>Claude Prompt — Tailored Deep-Dive Analysis</h3>
+<p class="lead">Paste this into Claude (or any capable LLM) alongside your management responses to the questionnaire. It directs the model to act as a senior E&amp;S officer and produce a formal DD memo.</p>
+<div class="prompt-box" id="prompt-out"></div>
+
+<h3>Report Summary</h3>
+<div class="output-box" id="summary-out"></div>
+</div>
+
+<footer>
+Built for <a href="https://usefulaf.github.io">Useful AF</a> — AI tools for the impact sector. Frameworks embedded: IFC Sustainability Framework (2012); IFC Performance Standards; EBRD ESP (2019); Equator Principles 4 (2020); TCFD (2017, 2023); GIIN IRIS+ v5; ILO Core Conventions (1998, 2022); UN Guiding Principles on Business &amp; Human Rights (2011); EU SFDR &amp; RTS (2021/2023); OECD Guidelines for Multinational Enterprises (2023); VPSHR (Voluntary Principles on Security &amp; Human Rights).
+</footer>
+</div>
+
+<script>
+// ====== Tab navigation ======
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>switchTab(t.dataset.tab));
+});
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ====== State ======
+let deal={}, categorisation={}, questions=[], redflagResults=[];
+
+// ====== Inputs collector ======
+function collect(){
+  deal={
+    company:document.getElementById('f_company').value||'Target Company',
+    sector:document.getElementById('f_sector').value,
+    geo:document.getElementById('f_geo').value,
+    fcas:document.getElementById('f_fcas').value,
+    size:parseFloat(document.getElementById('f_size').value)||0,
+    instrument:document.getElementById('f_instrument').value,
+    control:document.getElementById('f_control').value,
+    sfdr:document.getElementById('f_sfdr').value,
+    employees:parseInt(document.getElementById('f_employees').value)||0,
+    contractlabour:document.getElementById('f_contractlabour').value,
+    land:document.getElementById('f_land').value,
+    ip:document.getElementById('f_ip').value,
+    ch:document.getElementById('f_ch').value,
+    data:document.getElementById('f_data').value
+  };
+}
+
+// ====== Categorisation ======
+const sectorLabel={
+  agri:'Agriculture & Agribusiness',energy:'Energy',manuf:'Manufacturing',extract:'Extractives / Mining',infra:'Infrastructure',
+  fin:'Financial Services / Fintech',health:'Healthcare',edu:'Education',wash:'Water & Sanitation',housing:'Real Estate / Housing',
+  tech:'Technology / SaaS',retail:'Retail / Consumer',logistics:'Logistics & Transport'
+};
+const sectorRisk={
+  agri:'B',energy:'B',manuf:'B',extract:'A',infra:'B',fin:'FI',health:'B',edu:'C',wash:'B',housing:'B',tech:'C',retail:'C',logistics:'B'
+};
+const geoLabel={ssa:'Sub-Saharan Africa',mena:'Middle East & North Africa',sasia:'South Asia',seasia:'Southeast Asia',lac:'Latin America & Caribbean',eap:'East Asia & Pacific',eeca:'Eastern Europe & Central Asia',dev:'Developed Markets',multi:'Multi-country'};
+const instrumentLabel={equity:'Direct equity',debt:'Debt',convertible:'Convertible / SAFE',fund:'Fund-of-funds (FI)',grant:'Grant / guarantee'};
+
+function runCategorisation(){
+  collect();
+  let baseCat=sectorRisk[deal.sector]||'B';
+  // Escalation rules
+  if(deal.ip==='yes'||deal.land==='large') baseCat='A';
+  if(deal.instrument==='fund') baseCat='FI';
+  if(deal.fcas==='yes' && baseCat==='C') baseCat='B';
+  if(deal.data==='significant' && baseCat==='C') baseCat='B';
+
+  categorisation.cat=baseCat;
+  const catInfo={
+    'A':{label:'Category A — High Risk',desc:'Significant adverse E&S impacts that are diverse, irreversible, or unprecedented. Full ESIA required; enhanced disclosure; strong stakeholder engagement plan.',colour:'cat-a-border'},
+    'B':{label:'Category B — Medium Risk',desc:'Limited adverse impacts that are few, site-specific, largely reversible, and addressable through mitigation. ESMS and targeted assessments required.',colour:'cat-b-border'},
+    'C':{label:'Category C — Low Risk',desc:'Minimal or no adverse E&S impacts. Basic ESMS and corporate-level policies sufficient.',colour:'cat-c-border'},
+    'FI':{label:'Category FI — Financial Intermediary',desc:'Invested capital is on-lent. Requires ESMS at FI level; sub-project categorisation cascades; IFC Interpretation Note on FIs applies.',colour:'cat-b-border'}
+  };
+  const info=catInfo[baseCat];
+  const out=document.getElementById('categorisation-output');
+  out.innerHTML=`
+    <div class="category-card ${info.colour}">
+      <h4>${info.label} <span class="chip cat-${baseCat==='FI'?'fi':baseCat.toLowerCase()}">${baseCat}</span></h4>
+      <div class="cat-desc">${info.desc}</div>
+      <div class="summary-stats" style="margin-top:14px">
+        <div class="stat-card"><div class="stat-v">${deal.company}</div><div class="stat-l">Target</div></div>
+        <div class="stat-card"><div class="stat-v">${sectorLabel[deal.sector]}</div><div class="stat-l">Sector</div></div>
+        <div class="stat-card"><div class="stat-v">${geoLabel[deal.geo]}${deal.fcas==='yes'?' (FCAS)':''}</div><div class="stat-l">Geography</div></div>
+        <div class="stat-card"><div class="stat-v">$${(deal.size/1e6).toFixed(1)}M</div><div class="stat-l">Investment</div></div>
+        <div class="stat-card"><div class="stat-v">${instrumentLabel[deal.instrument]}</div><div class="stat-l">Instrument</div></div>
+        <div class="stat-card"><div class="stat-v">SFDR ${deal.sfdr==='na'?'N/A':deal.sfdr.replace('art','Art ')}</div><div class="stat-l">Classification</div></div>
+      </div>
+    </div>`;
+
+  // PS triggers
+  const ps=[];
+  ps.push({code:'PS1',trigger:'All investments',reason:'Always triggered — ESMS, stakeholder engagement, grievance mechanism'});
+  if(deal.employees>0) ps.push({code:'PS2',trigger:'Any employees ('+deal.employees+')',reason:'Labour & working conditions'});
+  if(deal.sector!=='tech'&&deal.sector!=='fin'&&deal.sector!=='edu'&&deal.sector!=='retail') ps.push({code:'PS3',trigger:'Physical resource use',reason:'Resource efficiency & pollution prevention'});
+  if(deal.land!=='office'||deal.sector==='infra'||deal.sector==='extract'||deal.sector==='energy') ps.push({code:'PS4',trigger:'Community proximity',reason:'Community health, safety & security'});
+  if(deal.land==='large'||deal.sector==='extract'||deal.sector==='infra') ps.push({code:'PS5',trigger:'Land acquisition or physical/economic displacement',reason:'Involuntary resettlement assessment'});
+  if(deal.sector==='agri'||deal.sector==='extract'||deal.sector==='infra'||deal.sector==='energy') ps.push({code:'PS6',trigger:'Potential natural/critical habitat',reason:'Biodiversity mitigation hierarchy'});
+  if(deal.ip==='yes'||deal.ip==='possible') ps.push({code:'PS7',trigger:'Indigenous Peoples affected',reason:'FPIC assessment required'});
+  if(deal.ch==='yes') ps.push({code:'PS8',trigger:'Cultural heritage present',reason:'Chance-find procedure & consultation'});
+
+  categorisation.ps=ps.map(p=>p.code);
+  const psOut=document.getElementById('ps-output');
+  psOut.innerHTML='<table><thead><tr><th>PS</th><th>Trigger</th><th>Action Required</th></tr></thead><tbody>'+
+    ps.map(p=>`<tr><td><strong>${p.code}</strong></td><td>${p.trigger}</td><td>${p.reason}</td></tr>`).join('')+
+    '</tbody></table>';
+
+  switchTab('categorisation');
+}
+
+// ====== Question Bank ======
+const questionBank={
+  governance:[
+    {q:'Does the board formally oversee ESG and climate risk at least quarterly?',ref:'TCFD Governance; IFC PS1',evidence:'Board minutes, ESG committee charter',core:true},
+    {q:'Is there a designated senior executive accountable for ESG performance?',ref:'IFC PS1; IRIS+ OI7854',evidence:'Organisational chart, job description',core:true},
+    {q:'Provide the full board composition and note diversity (gender, nationality, independence).',ref:'IRIS+ OD4108; UK Code 2024',evidence:'Board biographies, diversity disclosure',core:true},
+    {q:'Has the company had any regulatory enforcement, fines, or litigation in the past 5 years?',ref:'OECD Guidelines; IFC PS1',evidence:'Legal counsel opinion, public filings',core:true},
+    {q:'Is there a whistleblower / speak-up policy with independent channels and non-retaliation protection?',ref:'OECD Guidelines 2023; EU Whistleblower Directive',evidence:'Policy document, usage statistics',core:true},
+    {q:'Provide anti-bribery & corruption (ABC) policy and training records for the past 24 months.',ref:'UNCAC; UK Bribery Act 2010; FCPA',evidence:'ABC policy, training logs, risk assessment',core:true},
+    {q:'Beneficial ownership disclosure: list all shareholders with >10% economic or voting interest.',ref:'FATF Recommendation 24',evidence:'Capitalisation table, BO register',core:true}
+  ],
+  esms:[
+    {q:'Is there a documented Environmental & Social Management System (ESMS)?',ref:'IFC PS1; ISO 14001',evidence:'ESMS manual, policies, procedures',core:true},
+    {q:'Provide the most recent E&S risk register with treatment actions and owners.',ref:'IFC PS1',evidence:'Risk register, audit trail',core:true},
+    {q:'Is there a functioning stakeholder grievance mechanism? Provide case log for last 12 months.',ref:'IFC PS1; UNGP Principle 31',evidence:'Grievance log, resolution timelines',core:true},
+    {q:'Has an independent E&S audit been conducted in the last 3 years?',ref:'IFC PS1',evidence:'Audit report, corrective action plan',core:false}
+  ],
+  labour:[
+    {q:'Provide HR policy covering non-discrimination, harassment, working hours, wages, and overtime.',ref:'ILO C100, C111; IFC PS2',evidence:'Written HR policy, employee handbook',core:true},
+    {q:'Confirm no forced, bonded, or child labour anywhere in operations or direct supply chain. Describe due diligence.',ref:'ILO C29, C105, C138, C182',evidence:'Supplier code, audit reports',core:true},
+    {q:'Are workers free to form or join a union or representative body?',ref:'ILO C87, C98',evidence:'Union recognition, collective bargaining agreement',core:true},
+    {q:'Provide wage structure: lowest-paid wage vs. living wage benchmark (e.g. Anker, WageIndicator, GLWC).',ref:'ILO C131; Living Wage Coalition',evidence:'Payroll summary, living wage calc',core:true},
+    {q:'OHS metrics: Total Recordable Incident Rate (TRIR), Lost Time Injury Frequency Rate (LTIFR), fatalities for last 3 years.',ref:'ILO C155; IRIS+ OD6247',evidence:'OHS dashboard, incident register',core:true},
+    {q:'Gender pay gap analysis — disclose mean and median by band.',ref:'UK Equality Act; EU Pay Transparency Directive 2023',evidence:'Pay gap report',core:false},
+    {q:'Proportion of contract/agency/migrant labour; describe safeguards for vulnerable workers.',ref:'ILO C97, C143; IFC PS2',evidence:'Contract labour register, screening',core:false,trigger:d=>d.contractlabour==='yes'}
+  ],
+  environment:[
+    {q:'Provide Scope 1 and Scope 2 GHG emissions for the last 3 years (tCO₂e).',ref:'GHG Protocol; TCFD; IRIS+ PI9327',evidence:'Emissions inventory, verification letter',core:true},
+    {q:'Is Scope 3 emissions screening complete? List material categories.',ref:'GHG Protocol Scope 3',evidence:'Scope 3 screening report',core:false},
+    {q:'Has the company set science-based targets (SBTi validated)?',ref:'SBTi; TCFD Metrics & Targets',evidence:'SBTi validation letter',core:false},
+    {q:'Describe physical and transition climate risks identified (1.5°C, 2°C, 4°C scenarios).',ref:'TCFD; IFRS S2',evidence:'Climate scenario analysis',core:false},
+    {q:'Water withdrawal and consumption (m³) vs. baseline water stress category (WRI Aqueduct).',ref:'IFC PS3; IRIS+ OI6213',evidence:'Water accounts, Aqueduct score',core:false},
+    {q:'Waste streams — total waste, hazardous waste split, recovery/recycling rate.',ref:'IFC PS3; IRIS+ OI9100',evidence:'Waste manifest records',core:false},
+    {q:'Any exposure to EU Taxonomy-aligned economic activities? Quantify.',ref:'EU Taxonomy Regulation 2020/852',evidence:'Taxonomy assessment',core:false,trigger:d=>d.sfdr==='art8'||d.sfdr==='art9'}
+  ],
+  community:[
+    {q:'Map all communities within the area of influence. Describe consultation process.',ref:'IFC PS1, PS4; AA1000SES',evidence:'Stakeholder map, consultation log',core:true},
+    {q:'Emergency preparedness & response plan for community health/safety incidents?',ref:'IFC PS4',evidence:'EPRP document, drill records',core:false},
+    {q:'Are any private security personnel engaged? If yes, confirm VPSHR alignment and vetting.',ref:'Voluntary Principles on Security & Human Rights',evidence:'Security contract, training records',core:false,trigger:d=>d.land!=='office'},
+    {q:'Provide last 12 months of community grievances by category and resolution status.',ref:'IFC PS1; UNGP 31',evidence:'Community grievance log',core:false,trigger:d=>d.land!=='office'}
+  ],
+  land:[
+    {q:'Describe all land currently used, tenure status (title, lease, customary, disputed), and acquisition history.',ref:'IFC PS5; VGGT (FAO 2012)',evidence:'Title deeds, lease agreements, land survey',core:true,trigger:d=>d.land!=='office'},
+    {q:'Any physical or economic displacement in last 5 years? Provide Resettlement Action Plan and livelihood restoration outcomes.',ref:'IFC PS5',evidence:'RAP, monitoring reports',core:true,trigger:d=>d.land==='large'},
+    {q:'Confirm compensation was calculated at full replacement cost and paid before displacement.',ref:'IFC PS5',evidence:'Compensation registers',core:true,trigger:d=>d.land==='large'}
+  ],
+  ip:[
+    {q:'Identify Indigenous Peoples in area of influence — source and evidence of identification.',ref:'IFC PS7; UNDRIP',evidence:'IP identification report, community verification',core:true,trigger:d=>d.ip==='yes'||d.ip==='possible'},
+    {q:'Has Free, Prior and Informed Consent (FPIC) been obtained for activities requiring it?',ref:'IFC PS7; UNDRIP Art 19, 32',evidence:'FPIC process documentation',core:true,trigger:d=>d.ip==='yes'},
+    {q:'Describe benefit-sharing arrangements agreed with IP communities.',ref:'IFC PS7; CBD Nagoya Protocol',evidence:'Benefit-sharing agreement',core:false,trigger:d=>d.ip==='yes'}
+  ],
+  heritage:[
+    {q:'Identify all cultural heritage sites (archaeological, religious, customary) in area of influence.',ref:'IFC PS8; UNESCO',evidence:'Heritage survey, maps',core:true,trigger:d=>d.ch==='yes'},
+    {q:'Describe chance-find procedure and community consultation protocol.',ref:'IFC PS8',evidence:'Written procedure, training records',core:true,trigger:d=>d.ch==='yes'}
+  ],
+  data:[
+    {q:'Describe personal data collected (categories, volumes, retention).',ref:'GDPR; UNGP; ISO 27701',evidence:'Data inventory, ROPA',core:true,trigger:d=>d.data!=='no'},
+    {q:'Provide DPIA for high-risk processing activities.',ref:'GDPR Art 35',evidence:'DPIA documents',core:true,trigger:d=>d.data==='significant'},
+    {q:'Information security controls — SOC 2, ISO 27001, or equivalent. Last audit date.',ref:'ISO 27001; SOC 2',evidence:'Certification, audit letter',core:true,trigger:d=>d.data!=='no'},
+    {q:'Have there been any reportable data breaches in last 3 years?',ref:'GDPR Art 33',evidence:'Breach register, regulatory notifications',core:true,trigger:d=>d.data!=='no'}
+  ],
+  humanrights:[
+    {q:'Human rights policy aligned with UN Guiding Principles on Business & Human Rights (UNGP)?',ref:'UNGP (2011); OECD Due Diligence Guidance',evidence:'Human rights policy statement',core:true},
+    {q:'Has a Human Rights Impact Assessment (HRIA) been conducted in the last 5 years?',ref:'UNGP 17; DIHR guidance',evidence:'HRIA report, action plan',core:false,trigger:d=>d.fcas==='yes'||d.sector==='extract'||d.sector==='infra'||d.ip==='yes'}
+  ],
+  supplychain:[
+    {q:'Number of Tier-1 suppliers; % covered by supplier code of conduct.',ref:'OECD Due Diligence Guidance; CSDDD (EU)',evidence:'Supplier register, COC uptake data',core:true},
+    {q:'Describe supplier ESG audit programme — frequency, coverage, findings closure rate.',ref:'OECD; CSDDD',evidence:'Audit reports, KPI dashboard',core:false},
+    {q:'Conflict mineral / critical minerals due diligence where relevant.',ref:'OECD Due Diligence Minerals; EU Reg 2017/821',evidence:'3TG smelter list, CMRT',core:false,trigger:d=>d.sector==='manuf'||d.sector==='tech'||d.sector==='extract'}
+  ],
+  fi:[
+    {q:'ESMS at FI level — policies and procedures for screening, categorising, monitoring sub-projects?',ref:'IFC Interpretation Note on FIs',evidence:'FI ESMS manual',core:true,trigger:d=>d.instrument==='fund'},
+    {q:'Exclusion list in place (aligned with IFC, EBRD, or own restricted activities list)?',ref:'IFC Exclusion List',evidence:'Exclusion list document',core:true,trigger:d=>d.instrument==='fund'},
+    {q:'Latest sub-project categorisation breakdown (Cat A/B/C) and any Cat A sub-projects requiring enhanced DD.',ref:'IFC Interpretation Note on FIs',evidence:'Portfolio ESG dashboard',core:true,trigger:d=>d.instrument==='fund'}
+  ]
+};
+
+// ====== Questionnaire Generator ======
+function generateQuestionnaire(){
+  questions=[];
+  const cats=Object.keys(questionBank);
+  cats.forEach(cat=>{
+    questionBank[cat].forEach(q=>{
+      if(q.trigger && !q.trigger(deal)) return;
+      questions.push({...q,category:cat});
+    });
+  });
+
+  // Stats
+  const core=questions.filter(q=>q.core).length;
+  const stats=document.getElementById('q-stats');
+  stats.innerHTML=`
+    <div class="stat-card"><div class="stat-v">${questions.length}</div><div class="stat-l">Total Questions</div></div>
+    <div class="stat-card"><div class="stat-v">${core}</div><div class="stat-l">Core / Mandatory</div></div>
+    <div class="stat-card"><div class="stat-v">${questions.length-core}</div><div class="stat-l">Supplementary</div></div>
+    <div class="stat-card"><div class="stat-v">${categorisation.ps.length}</div><div class="stat-l">PSs Triggered</div></div>
+    <div class="stat-card"><div class="stat-v">${categorisation.cat}</div><div class="stat-l">E&S Category</div></div>
+  `;
+
+  const catNames={governance:'Governance & Compliance',esms:'Environmental & Social Management System',labour:'Labour & Working Conditions',environment:'Environment, Climate & Resource Use',community:'Community Impact',land:'Land, Tenure & Resettlement',ip:'Indigenous Peoples',heritage:'Cultural Heritage',data:'Data Protection & Digital Rights',humanrights:'Human Rights',supplychain:'Supply Chain',fi:'Financial Intermediary (FI-specific)'};
+
+  let html='';
+  const grouped={};
+  questions.forEach(q=>{grouped[q.category]=grouped[q.category]||[];grouped[q.category].push(q);});
+  Object.keys(grouped).forEach(cat=>{
+    html+=`<h3>${catNames[cat]} <span class="chip">${grouped[cat].length} questions</span></h3>`;
+    grouped[cat].forEach((q,i)=>{
+      html+=`<div class="q-item">
+        <div class="q-meta">
+          <span class="chip" style="background:#0a3d62;color:#fff">Q${questions.indexOf(q)+1}</span>
+          ${q.core?'<span class="chip cat-a">CORE</span>':'<span class="chip">Supplementary</span>'}
+          <span>${cat.toUpperCase()}</span>
+        </div>
+        <div class="q-text">${q.q}</div>
+        <div class="q-guide"><strong>Evidence expected:</strong> ${q.evidence}</div>
+        <div class="q-ref">Source: ${q.ref}</div>
+      </div>`;
+    });
+  });
+  document.getElementById('questionnaire-output').innerHTML=html;
+  buildRedFlagInputs();
+  buildSummary();
+}
+
+// ====== Red Flags ======
+const redflagQuestions=[
+  {id:'rf_sanctions',q:'Is the target or any beneficial owner on OFAC, UN, EU, or UK sanctions lists?',severity:'high'},
+  {id:'rf_forced',q:'Is there credible evidence of forced labour, child labour, or human trafficking in operations or supply chain?',severity:'high'},
+  {id:'rf_criminal',q:'Has the company, founders, or directors been criminally convicted of fraud, bribery, environmental crimes, or human rights abuses?',severity:'high'},
+  {id:'rf_exclusion',q:'Does the activity fall on the IFC Exclusion List (arms, tobacco production, pornography, unsustainable fishing, etc.)?',severity:'high'},
+  {id:'rf_coal',q:'Does the business derive >10% of revenue from thermal coal or unabated fossil fuel expansion?',severity:'high'},
+  {id:'rf_unresolved_eias',q:'Any outstanding regulatory E&S enforcement actions or unresolved community complaints of significant severity?',severity:'med'},
+  {id:'rf_displacement',q:'Any unaddressed involuntary displacement issues in last 10 years without adequate compensation?',severity:'high'},
+  {id:'rf_fpic',q:'Any IP-affecting activity without documented FPIC?',severity:'high'},
+  {id:'rf_fatalities',q:'Any work-related fatalities in last 3 years without independent investigation or closed corrective actions?',severity:'med'},
+  {id:'rf_data',q:'Any reportable data breach in last 3 years without notification to supervisory authority?',severity:'med'},
+  {id:'rf_litigation',q:'Material pending E&S or human rights litigation (>5% of revenue or reputational risk)?',severity:'med'},
+  {id:'rf_pep',q:'Any Politically Exposed Person (PEP) in ownership chain without enhanced due diligence?',severity:'med'},
+  {id:'rf_governance',q:'Absence of independent directors or audit committee?',severity:'low'},
+  {id:'rf_policies',q:'No written ESG / human rights / ABC policies in place?',severity:'low'},
+  {id:'rf_whistle',q:'No whistleblower mechanism or it is not independent from management?',severity:'low'}
+];
+
+function buildRedFlagInputs(){
+  const out=document.getElementById('redflag-inputs');
+  out.innerHTML='<div class="info-box blue">Mark each statement as present (YES) or not present (NO). HIGH severity YES answers are typically deal-breakers or require IC escalation; MED require remediation plan; LOW require action plan.</div>'+
+    redflagQuestions.map(rf=>`
+    <div class="field" style="display:flex;gap:16px;align-items:center;border-bottom:1px solid #edf0f5;padding:10px 0">
+      <div style="flex:1;font-size:13px">${rf.q}</div>
+      <div style="flex-shrink:0">
+        <label style="display:inline;font-size:12px;margin-right:14px"><input type="radio" name="${rf.id}" value="yes"> Yes</label>
+        <label style="display:inline;font-size:12px"><input type="radio" name="${rf.id}" value="no" checked> No</label>
+      </div>
+    </div>
+  `).join('');
+}
+
+function evaluateRedFlags(){
+  redflagResults=[];
+  redflagQuestions.forEach(rf=>{
+    const val=document.querySelector(`input[name="${rf.id}"]:checked`)?.value;
+    if(val==='yes') redflagResults.push(rf);
+  });
+  const high=redflagResults.filter(r=>r.severity==='high').length;
+  const med=redflagResults.filter(r=>r.severity==='med').length;
+  const low=redflagResults.filter(r=>r.severity==='low').length;
+  let verdict;
+  if(high>0) verdict={class:'red',text:`⛔ IC ESCALATION REQUIRED — ${high} high-severity flag${high>1?'s':''} identified. Deal should not proceed without formal review and mitigation plan signed off by IC.`};
+  else if(med>=2) verdict={class:'',text:`⚠️ REMEDIATION REQUIRED — ${med} medium-severity flags. Close with conditions precedent and monitoring covenant.`};
+  else if(med===1||low>0) verdict={class:'blue',text:`✔ PROCEED WITH ACTION PLAN — ${med} medium + ${low} low flags. Address via standard ESAP.`};
+  else verdict={class:'green',text:`✓ CLEAN SCREEN — No material red flags identified. Proceed to standard DD.`};
+
+  let html=`<div class="info-box ${verdict.class}"><strong>Verdict</strong><br>${verdict.text}</div>`;
+  html+=`<div class="summary-stats">
+    <div class="stat-card"><div class="stat-v" style="color:#c62828">${high}</div><div class="stat-l">High severity</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:#e65100">${med}</div><div class="stat-l">Medium severity</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:#2e7d32">${low}</div><div class="stat-l">Low severity</div></div>
+    <div class="stat-card"><div class="stat-v">${redflagResults.length}</div><div class="stat-l">Total flags</div></div>
+  </div>`;
+  if(redflagResults.length){
+    html+='<h3>Flagged Issues</h3>';
+    redflagResults.forEach(rf=>{
+      html+=`<div class="flag-row sev-${rf.severity}"><span class="sev-chip">${rf.severity==='high'?'HIGH':rf.severity==='med'?'MED':'LOW'}</span><div class="flag-body"><strong>Flagged</strong>${rf.q}</div></div>`;
+    });
+  }
+  document.getElementById('redflag-output').innerHTML=html;
+  buildSummary();
+}
+
+function runRedFlags(){
+  if(!questions.length) generateQuestionnaire();
+  switchTab('redflags');
+}
+
+// ====== Export ======
+function csvEscape(s){return'"'+String(s||'').replace(/"/g,'""')+'"';}
+function exportCSV(){
+  if(!questions.length){alert('Please generate the questionnaire first.');return;}
+  const rows=[['#','Category','Type','Question','Evidence expected','Framework reference','Management response','Gap / action','Owner','Due date']];
+  questions.forEach((q,i)=>rows.push([i+1,q.category.toUpperCase(),q.core?'Core':'Supplementary',q.q,q.evidence,q.ref,'','','','']));
+  const csv=rows.map(r=>r.map(csvEscape).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=(deal.company||'target').replace(/\s+/g,'_')+'_ESG_DDQ.csv';
+  a.click();
+}
+
+// ====== Claude prompt ======
+function buildPrompt(){
+  if(!deal.company) collect();
+  const ps=categorisation.ps?categorisation.ps.join(', '):'PS1';
+  const flagsText=redflagResults.length?redflagResults.map(r=>'- ['+r.severity.toUpperCase()+'] '+r.q).join('\n'):'(no flags evaluated yet — include your own list if relevant)';
+  const p=`You are a senior Environmental, Social and Governance (ESG) officer at a leading development finance institution. I need you to produce a formal E&S Due Diligence memorandum suitable for investment committee review.
+
+DEAL PROFILE
+- Target: ${deal.company}
+- Sector: ${sectorLabel[deal.sector]}
+- Geography: ${geoLabel[deal.geo]}${deal.fcas==='yes'?' (Fragile/Conflict-Affected)':''}
+- Investment: USD ${(deal.size/1e6).toFixed(1)}M, ${instrumentLabel[deal.instrument]}, ${deal.control} stake
+- SFDR classification: ${deal.sfdr==='na'?'Non-EU investor':deal.sfdr}
+- E&S Category: ${categorisation.cat||'B'}
+- IFC Performance Standards triggered: ${ps}
+
+RED FLAGS IDENTIFIED
+${flagsText}
+
+TASK
+Produce an IC-ready DD memo with these sections:
+
+1. EXECUTIVE SUMMARY (½ page)
+   - Recommendation (proceed / proceed with conditions / decline)
+   - Top 3 material E&S risks
+   - Key mitigants
+
+2. E&S CATEGORISATION RATIONALE
+   - Justify Category ${categorisation.cat||'B'} using IFC framework
+   - List PSs triggered and why
+
+3. RISK ASSESSMENT BY DIMENSION
+   For each: Governance, Labour, Environment/Climate, Community, Land/Resettlement, Supply Chain, Human Rights, Data/Digital
+   - Inherent risk (H/M/L)
+   - Current controls
+   - Residual risk
+   - Specific evidence gaps against IFC/TCFD/GIIN expectations
+
+4. ENVIRONMENTAL & SOCIAL ACTION PLAN (ESAP)
+   - Pre-signing conditions
+   - Conditions precedent to disbursement
+   - Post-close covenants (with specific KPIs, owners, due dates)
+   - Reference specific IRIS+ metrics to track
+
+5. IMPACT MANAGEMENT (if SFDR Art 8/9 or Art 2(17) sustainable investment)
+   - DNSH (Do No Significant Harm) analysis
+   - Good governance assessment
+   - Principal Adverse Impacts (PAIs) to monitor
+
+6. MONITORING & REPORTING FRAMEWORK
+   - Quarterly/annual KPIs
+   - External audit cadence
+   - Grievance mechanism review
+
+Be specific, evidence-based, and apply IFC/TCFD/UNGP standards precisely. Challenge any assumption that is not substantiated by documentary evidence. Flag any issue that would fail a DFI's standards review.`;
+  document.getElementById('prompt-out').textContent=p;
+  return p;
+}
+
+function buildSummary(){
+  buildPrompt();
+  const high=redflagResults.filter(r=>r.severity==='high').length;
+  const med=redflagResults.filter(r=>r.severity==='med').length;
+  const low=redflagResults.filter(r=>r.severity==='low').length;
+  const sum=`<h3>Deal: ${deal.company||'—'}</h3>
+<p class="lead"><strong>${sectorLabel[deal.sector]||'—'}</strong> • ${geoLabel[deal.geo]||'—'} • ${instrumentLabel[deal.instrument]||'—'} • USD ${(deal.size/1e6).toFixed(1)}M</p>
+
+<h3>E&amp;S Categorisation</h3>
+<p>Assigned <strong>Category ${categorisation.cat||'—'}</strong> based on sector, land-use, and IP exposure inputs. Performance Standards triggered: <strong>${(categorisation.ps||['—']).join(', ')}</strong>.</p>
+
+<h3>Questionnaire Generated</h3>
+<p>${questions.length} questions (${questions.filter(q=>q.core).length} core, ${questions.length-questions.filter(q=>q.core).length} supplementary) across all applicable ESG dimensions.</p>
+
+<h3>Red Flag Summary</h3>
+<p>High: <strong style="color:#c62828">${high}</strong> • Medium: <strong style="color:#e65100">${med}</strong> • Low: <strong style="color:#2e7d32">${low}</strong></p>
+
+<h3>Applicable Frameworks</h3>
+<p>IFC Performance Standards, TCFD, GIIN IRIS+, ILO Core Conventions, UNGP, ${deal.sfdr==='art8'||deal.sfdr==='art9'?'EU SFDR + EU Taxonomy, ':''}OECD Guidelines for MNEs.</p>`;
+  document.getElementById('summary-out').innerHTML=sum;
+}
+
+function copyPrompt(){
+  const p=buildPrompt();
+  navigator.clipboard.writeText(p).then(()=>{
+    alert('Claude prompt copied to clipboard.');
+  },()=>alert('Copy failed — please select the prompt text manually.'));
+}
+
+// Initialise
+runCategorisation();
+generateQuestionnaire();
+buildRedFlagInputs();
+buildSummary();
+</script>
+</body>
+</html>
