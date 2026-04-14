@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Impact Aggregation Dashboard — Useful AF</title>
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-black: #1A1A18;
+    --coral: #E8613A;
+    --ochre: #C9912A;
+    --mid-grey: #6B6B65;
+    --light-grey: #E8E5DF;
+    --success: #2E7D32;
+    --warning: #E65100;
+    --info: #01579B;
+    --card-bg: #FFFFFF;
+    --border: #D9D5CE;
+    --sdg-blue: #009EDB;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--cream);
+    color: var(--warm-black);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  /* HEADER */
+  .site-header {
+    background: var(--warm-black);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .wordmark { color: #FFFFFF; font-size: 20px; font-weight: bold; letter-spacing: 0.5px; font-family: sans-serif; }
+  .wordmark span { color: var(--coral); }
+  .tool-badge { font-family: sans-serif; font-size: 11px; color: #888; background: #2a2a28; padding: 4px 10px; border-radius: 20px; }
+  /* HERO */
+  .hero {
+    background: var(--warm-black);
+    padding: 40px 32px 48px;
+    color: white;
+  }
+  .hero h1 { font-size: 28px; margin-bottom: 8px; color: var(--cream); }
+  .hero p { color: #aaa; font-size: 15px; max-width: 680px; font-family: sans-serif; }
+  .hero-meta { display: flex; gap: 24px; margin-top: 20px; }
+  .hero-meta span { font-family: sans-serif; font-size: 12px; color: #777; }
+  .hero-meta span b { color: var(--ochre); }
+  /* TABS */
+  .tabs { background: #222; padding: 0 32px; display: flex; gap: 2px; overflow-x: auto; }
+  .tab-btn {
+    font-family: sans-serif; font-size: 13px; padding: 14px 18px;
+    cursor: pointer; border: none; background: none;
+    color: #888; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap;
+  }
+  .tab-btn.active { color: var(--coral); border-bottom-color: var(--coral); }
+  .tab-btn:hover { color: #ccc; }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  /* MAIN LAYOUT */
+  .container { max-width: 1280px; margin: 0 auto; padding: 32px; }
+  /* CARDS */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .card h2 { font-size: 17px; margin-bottom: 16px; color: var(--warm-black); padding-bottom: 10px; border-bottom: 1px solid var(--light-grey); }
+  .card h3 { font-size: 14px; font-family: sans-serif; color: var(--mid-grey); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-box {
+    background: #F0F4FF; border-left: 4px solid var(--info);
+    padding: 12px 16px; border-radius: 0 6px 6px 0;
+    font-family: sans-serif; font-size: 13px; color: #333;
+    margin-bottom: 16px;
+  }
+  .info-box strong { color: var(--info); }
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+  @media(max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+  /* FORM */
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block; font-family: sans-serif; font-size: 12px;
+    color: var(--mid-grey); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .form-group label .tip {
+    font-size: 11px; color: #aaa; text-transform: none; letter-spacing: 0;
+    background: #f5f5f0; padding: 2px 6px; border-radius: 3px; margin-left: 6px; cursor: help;
+  }
+  .form-group input, .form-group select, .form-group textarea {
+    width: 100%; padding: 9px 12px; font-family: sans-serif; font-size: 14px;
+    border: 1px solid var(--border); border-radius: 5px; background: white;
+    color: var(--warm-black); transition: border 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--coral); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  /* BUTTONS */
+  .btn {
+    font-family: sans-serif; font-size: 13px; padding: 10px 20px;
+    border: none; border-radius: 5px; cursor: pointer; transition: all 0.2s; font-weight: 600;
+  }
+  .btn-primary { background: var(--coral); color: white; }
+  .btn-primary:hover { background: #d4522e; }
+  .btn-secondary { background: var(--ochre); color: white; }
+  .btn-secondary:hover { background: #b07f20; }
+  .btn-outline { background: transparent; color: var(--coral); border: 2px solid var(--coral); }
+  .btn-outline:hover { background: var(--coral); color: white; }
+  .btn-danger { background: #c62828; color: white; }
+  .btn-danger:hover { background: #a31515; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 13px; }
+  .data-table th { background: var(--warm-black); color: white; padding: 10px 12px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .data-table td { padding: 10px 12px; border-bottom: 1px solid var(--light-grey); }
+  .data-table tr:hover td { background: #FAF9F7; }
+  .data-table tr:last-child td { border-bottom: none; }
+  /* METRIC CARDS */
+  .metric-card {
+    background: white; border: 1px solid var(--border);
+    border-radius: 8px; padding: 20px; text-align: center;
+  }
+  .metric-card .metric-value { font-size: 28px; font-weight: bold; color: var(--coral); margin-bottom: 4px; font-family: sans-serif; }
+  .metric-card .metric-label { font-size: 12px; color: var(--mid-grey); font-family: sans-serif; text-transform: uppercase; letter-spacing: 0.4px; }
+  .metric-card .metric-sub { font-size: 11px; color: #aaa; margin-top: 4px; font-family: sans-serif; }
+  /* SDG GRID */
+  .sdg-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sdg-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 20px; font-family: sans-serif; font-size: 12px; font-weight: 600;
+    border: 2px solid transparent; cursor: pointer; transition: all 0.2s;
+  }
+  .sdg-pill.selected { color: white; }
+  .sdg-pill:not(.selected) { background: white; border-color: var(--border); color: var(--mid-grey); }
+  /* SCORE BAR */
+  .score-bar { height: 8px; background: var(--light-grey); border-radius: 4px; overflow: hidden; margin: 6px 0; }
+  .score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+  /* COMPANY CARD */
+  .company-card {
+    background: white; border: 1px solid var(--border); border-radius: 8px;
+    padding: 16px 20px; margin-bottom: 12px;
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  }
+  .company-card .co-info { flex: 1; }
+  .company-card .co-name { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+  .company-card .co-meta { font-family: sans-serif; font-size: 12px; color: var(--mid-grey); }
+  .company-card .co-score { text-align: center; min-width: 80px; }
+  .company-card .score-num { font-size: 26px; font-weight: bold; font-family: sans-serif; }
+  .score-A { color: #2E7D32; }
+  .score-B { color: #558B2F; }
+  .score-C { color: var(--ochre); }
+  .score-D { color: var(--coral); }
+  .score-E { color: #c62828; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-family: sans-serif; margin: 2px; }
+  .tag-sector { background: #E8F5E9; color: #2E7D32; }
+  .tag-stage { background: #E3F2FD; color: #1565C0; }
+  .tag-geo { background: #FFF3E0; color: #E65100; }
+  .tag-sdg { background: #F3E5F5; color: #6A1B9A; }
+  /* PROGRESS RING */
+  .progress-ring { display: inline-block; position: relative; text-align: center; }
+  .progress-ring svg { transform: rotate(-90deg); }
+  .progress-ring .ring-text {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    font-family: sans-serif; font-size: 13px; font-weight: bold;
+  }
+  /* CLAUDE PROMPT */
+  .claude-prompt-box {
+    background: #1A1A18; color: #F0F0E8; padding: 20px 24px;
+    border-radius: 8px; font-family: 'Courier New', monospace; font-size: 12px;
+    line-height: 1.7; white-space: pre-wrap; position: relative;
+  }
+  .copy-btn {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--coral); color: white; border: none;
+    padding: 5px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-family: sans-serif;
+  }
+  /* STATUS INDICATORS */
+  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .dot-green { background: #4CAF50; }
+  .dot-amber { background: var(--ochre); }
+  .dot-red { background: var(--coral); }
+  /* BENCHMARK REFS */
+  .benchmark-ref { font-size: 11px; color: #888; font-family: sans-serif; font-style: italic; }
+  /* SECTOR BREAKDOWN */
+  .sector-bar { margin-bottom: 10px; }
+  .sector-bar .bar-label { display: flex; justify-content: space-between; margin-bottom: 3px; font-family: sans-serif; font-size: 12px; }
+  /* EXPORT SECTION */
+  .export-panel { background: var(--warm-black); border-radius: 8px; padding: 24px; color: white; }
+  .export-panel h3 { color: var(--cream); margin-bottom: 16px; font-size: 16px; }
+  .export-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .export-btn {
+    background: #2a2a28; border: 1px solid #444; border-radius: 6px;
+    padding: 16px; text-align: center; cursor: pointer; transition: all 0.2s; color: white;
+    font-family: sans-serif; font-size: 13px;
+  }
+  .export-btn:hover { background: #333; border-color: var(--coral); }
+  .export-btn .icon { font-size: 24px; display: block; margin-bottom: 6px; }
+  /* ALERT */
+  .alert { padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; font-family: sans-serif; font-size: 13px; }
+  .alert-warning { background: #FFF8E1; border-left: 4px solid var(--ochre); color: #5D4037; }
+  .alert-success { background: #E8F5E9; border-left: 4px solid #4CAF50; color: #1B5E20; }
+  .alert-info { background: #E3F2FD; border-left: 4px solid var(--info); color: #0D47A1; }
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--mid-grey); font-family: sans-serif; }
+  .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+  /* SECTION DIVIDER */
+  .divider { border: none; border-top: 1px solid var(--light-grey); margin: 24px 0; }
+  /* FOOTNOTES */
+  .footnote { font-size: 11px; color: #aaa; font-family: sans-serif; margin-top: 12px; font-style: italic; }
+  /* AGGREGATE SCORES */
+  .agg-score-card {
+    border-radius: 8px; padding: 20px; text-align: center; border: 2px solid;
+  }
+  /* RESPONSIVE */
+  @media(max-width: 768px) { .form-row, .form-row-3 { grid-template-columns: 1fr; } .export-grid { grid-template-columns: 1fr; } }
+  .tooltip-icon {
+    display: inline-block; width: 16px; height: 16px; background: var(--mid-grey);
+    border-radius: 50%; color: white; font-size: 10px; text-align: center;
+    line-height: 16px; cursor: help; margin-left: 4px; vertical-align: middle; font-family: sans-serif;
+  }
+  [data-tooltip] { position: relative; }
+  [data-tooltip]:hover::after {
+    content: attr(data-tooltip); position: absolute; bottom: 24px; left: 0;
+    background: var(--warm-black); color: white; padding: 6px 10px; border-radius: 4px;
+    font-size: 11px; font-family: sans-serif; white-space: normal; width: 200px;
+    z-index: 100; pointer-events: none;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wordmark">Useful<span>AF</span></div>
+  <div class="tool-badge">Portfolio Impact Dashboard · Tool #17</div>
+</header>
+
+<div class="hero">
+  <h1>Portfolio Impact Aggregation Dashboard</h1>
+  <p>Aggregate impact metrics across your portfolio, map SDG alignment, compute weighted impact scores, and generate LP-ready investor reports. Built on GIIN IRIS+ v5, IMP 5 Dimensions, and GRI Standards.</p>
+  <div class="hero-meta">
+    <span><b>Framework:</b> GIIN IRIS+ v5 / IMP 5D / GRI</span>
+    <span><b>For:</b> Fund managers · Impact VCs · DFIs · Family offices</span>
+    <span><b>Portfolio:</b> 5–30 investments</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(this, 'tab-portfolio')">📊 Portfolio</button>
+  <button class="tab-btn" onclick="switchTab(this, 'tab-add')">➕ Add Investment</button>
+  <button class="tab-btn" onclick="switchTab(this, 'tab-aggregate')">📈 Aggregate View</button>
+  <button class="tab-btn" onclick="switchTab(this, 'tab-sdg')">🌍 SDG Map</button>
+  <button class="tab-btn" onclick="switchTab(this, 'tab-benchmarks')">📐 Benchmarks</button>
+  <button class="tab-btn" onclick="switchTab(this, 'tab-report')">📄 Investor Report</button>
+  <button class="tab-btn" onclick="switchTab(this, 'tab-claude')">🤖 Claude Prompt</button>
+</div>
+
+<!-- ===================== TAB: PORTFOLIO OVERVIEW ===================== -->
+<div id="tab-portfolio" class="tab-content active">
+<div class="container">
+
+  <div id="portfolio-summary-metrics" class="grid-4" style="margin-bottom: 20px;"></div>
+
+  <div class="card">
+    <h2>Portfolio Companies</h2>
+    <div id="portfolio-empty" class="empty-state">
+      <div class="icon">🏗️</div>
+      <div><b>No investments yet.</b><br>Head to the "Add Investment" tab to add your first portfolio company.</div>
+    </div>
+    <div id="portfolio-list"></div>
+  </div>
+
+  <div class="card">
+    <h2>Sector Breakdown</h2>
+    <div id="sector-breakdown"><div style="color:var(--mid-grey); font-family:sans-serif; font-size:13px;">Add investments to see sector breakdown.</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Geographic Footprint</h2>
+    <div id="geo-breakdown"><div style="color:var(--mid-grey); font-family:sans-serif; font-size:13px;">Add investments to see geographic spread.</div></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===================== TAB: ADD INVESTMENT ===================== -->
+<div id="tab-add" class="tab-content">
+<div class="container">
+
+<div class="card">
+  <h2>Add Portfolio Company</h2>
+  <div class="info-box">
+    <strong>IRIS+ Integration:</strong> Metrics below align to GIIN IRIS+ v5 core metrics. Sector-specific indicators auto-populate based on your sector selection. Source: GIIN (2023) IRIS+ System, available at iris.thegiin.org.
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Company / Investment Name *</label>
+      <input type="text" id="add-name" placeholder="e.g. CleanPower Kenya Ltd">
+    </div>
+    <div class="form-group">
+      <label>Year of Investment</label>
+      <input type="number" id="add-year" placeholder="2022" min="2000" max="2030">
+    </div>
+  </div>
+
+  <div class="form-row-3">
+    <div class="form-group">
+      <label>Sector *</label>
+      <select id="add-sector" onchange="updateSectorMetrics()">
+        <option value="">Select sector...</option>
+        <option value="Clean Energy">Clean Energy</option>
+        <option value="Sustainable Agriculture">Sustainable Agriculture</option>
+        <option value="Healthcare">Healthcare</option>
+        <option value="Education">Education</option>
+        <option value="Financial Services / Fintech">Financial Services / Fintech</option>
+        <option value="Water & Sanitation">Water & Sanitation</option>
+        <option value="Affordable Housing">Affordable Housing</option>
+        <option value="Livelihoods / Employment">Livelihoods / Employment</option>
+        <option value="Conservation / Biodiversity">Conservation / Biodiversity</option>
+        <option value="Waste Management / Circular Economy">Waste Management / Circular Economy</option>
+        <option value="Digital Inclusion">Digital Inclusion</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Stage</label>
+      <select id="add-stage">
+        <option value="Seed">Seed</option>
+        <option value="Series A">Series A</option>
+        <option value="Series B">Series B</option>
+        <option value="Growth">Growth</option>
+        <option value="Mature">Mature</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Primary Geography</label>
+      <select id="add-geo">
+        <option value="Sub-Saharan Africa">Sub-Saharan Africa</option>
+        <option value="South Asia">South Asia</option>
+        <option value="Southeast Asia">Southeast Asia</option>
+        <option value="East Asia / Pacific">East Asia / Pacific</option>
+        <option value="Latin America">Latin America</option>
+        <option value="MENA">MENA</option>
+        <option value="Eastern Europe / Central Asia">Eastern Europe / Central Asia</option>
+        <option value="Developed Market">Developed Market</option>
+        <option value="Global">Global</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Investment Amount (USD) <span class="tooltip-icon" data-tooltip="Your fund's invested capital in this company (not total capitalisation)">?</span></label>
+      <input type="number" id="add-investment" placeholder="500000">
+    </div>
+    <div class="form-group">
+      <label>Investment Instrument</label>
+      <select id="add-instrument">
+        <option value="Equity">Equity</option>
+        <option value="Convertible Note">Convertible Note</option>
+        <option value="SAFE">SAFE</option>
+        <option value="Revenue-Based Finance">Revenue-Based Finance</option>
+        <option value="Debt / Loan">Debt / Loan</option>
+        <option value="Blended Finance">Blended Finance</option>
+        <option value="Grant">Grant</option>
+      </select>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <h3>Core Impact Metrics (IRIS+)</h3>
+  <div id="sector-metric-hint" class="alert alert-info" style="display:none;"></div>
+
+  <div class="form-row-3">
+    <div class="form-group">
+      <label>Primary Beneficiaries Reached <span class="tooltip-icon" data-tooltip="PI9795 / OI1305 — Direct beneficiaries of core products/services. Do not double count intermediaries.">?</span></label>
+      <input type="number" id="add-beneficiaries" placeholder="e.g. 12500">
+    </div>
+    <div class="form-group">
+      <label>% Below Poverty Line <span class="tooltip-icon" data-tooltip="IMP dimension: WHO — depth of reach. World Bank BoP threshold: $2.15/day (2017 PPP) for extreme poverty, $6.85/day for lower-middle-income.">?</span></label>
+      <input type="number" id="add-bop" placeholder="e.g. 45" min="0" max="100">
+    </div>
+    <div class="form-group">
+      <label>% Women / Girls <span class="tooltip-icon" data-tooltip="2X Challenge criterion: ≥50% of employees/beneficiaries are women. Source: 2X Collaborative, 2023 criteria.">?</span></label>
+      <input type="number" id="add-women" placeholder="e.g. 52" min="0" max="100">
+    </div>
+  </div>
+
+  <div class="form-row-3">
+    <div class="form-group">
+      <label>Jobs Created / Supported <span class="tooltip-icon" data-tooltip="IRIS+ OI7041 — include direct employment. For livelihood interventions, count smallholder farmers supported.">?</span></label>
+      <input type="number" id="add-jobs" placeholder="e.g. 230">
+    </div>
+    <div class="form-group">
+      <label>% Women in Jobs <span class="tooltip-icon" data-tooltip="Gender employment metric. GIIN IRIS+ PI5271. Benchmark: 40%+ is strong for Sub-Saharan Africa (ILO, 2023).">?</span></label>
+      <input type="number" id="add-jobs-women" placeholder="e.g. 48" min="0" max="100">
+    </div>
+    <div class="form-group">
+      <label>Sector-Specific Metric</label>
+      <div class="form-row" style="margin-bottom:0;">
+        <input type="text" id="add-sector-metric-name" placeholder="Metric name">
+        <input type="number" id="add-sector-metric-value" placeholder="Value">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Tonnes CO₂e Avoided / Sequestered (annual) <span class="tooltip-icon" data-tooltip="IRIS+ PI2080. Use GHG Protocol methodology. Displacement-adjusted. Include Scope 1+2 avoided emissions.">?</span></label>
+      <input type="number" id="add-co2" placeholder="e.g. 4200">
+    </div>
+    <div class="form-group">
+      <label>Evidence Quality Score (1–4) <span class="tooltip-icon" data-tooltip="IMP evidence tier: 1=Input/activity data only, 2=Output data, 3=Outcome data (pre-post), 4=Impact evidence (RCT/QE). Source: IMP (2020) Evidence Tiers.">?</span></label>
+      <select id="add-evidence">
+        <option value="1">1 — Activity / input data only</option>
+        <option value="2">2 — Output data (reach, units sold)</option>
+        <option value="3" selected>3 — Outcome data (pre-post / comparison group)</option>
+        <option value="4">4 — Impact evidence (RCT / quasi-experimental)</option>
+      </select>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <h3>SDG Alignment</h3>
+  <p style="font-family:sans-serif; font-size:12px; color:var(--mid-grey); margin-bottom: 12px;">Select all applicable SDGs. The dashboard will aggregate SDG coverage across the portfolio.</p>
+  <div id="sdg-selector" class="sdg-grid"></div>
+
+  <hr class="divider">
+  <h3>IMP 5-Dimensions Assessment</h3>
+  <div class="info-box">
+    <strong>IMP Framework:</strong> The Impact Management Project's 5 dimensions are the global standard for classifying impact. Source: IMP (2019) "A guide for impact investors." Available at impactmanagementproject.com.
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>WHAT: Outcome Significance <span class="tooltip-icon" data-tooltip="IMP Dimension 1: Is this a highly significant outcome for beneficiaries? Rate the importance relative to baseline.">?</span></label>
+      <select id="add-imp-what">
+        <option value="1">Low — marginal improvement</option>
+        <option value="2">Medium — meaningful outcome</option>
+        <option value="3" selected>High — significant outcome vs baseline</option>
+        <option value="4">Transformational — systemic / irreversible change</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>HOW MUCH: Scale & Depth <span class="tooltip-icon" data-tooltip="IMP Dimension 3: Number of people × depth of change. Combine beneficiary reach with evidence of meaningful change per person.">?</span></label>
+      <select id="add-imp-howmuch">
+        <option value="1">Small reach, shallow change</option>
+        <option value="2">Moderate reach or depth</option>
+        <option value="3" selected>Significant reach AND meaningful change per person</option>
+        <option value="4">Large-scale, deep change</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>CONTRIBUTION: Additionality <span class="tooltip-icon" data-tooltip="IMP Dimension 5: Would the outcome have occurred without this investment? High = counterfactual is clearly negative.">?</span></label>
+      <select id="add-imp-contribution">
+        <option value="1">Low — market would have delivered similar outcome</option>
+        <option value="2">Medium — some additionality</option>
+        <option value="3" selected>High — clear additionality vs counterfactual</option>
+        <option value="4">Catalytic — systemic market or policy change</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>RISK: Impact Risk Level <span class="tooltip-icon" data-tooltip="IMP Dimension 5 (risk): Probability that stated impact does not materialise. Low risk = strong evidence base, robust monitoring.">?</span></label>
+      <select id="add-imp-risk">
+        <option value="4">Low — strong evidence, robust monitoring</option>
+        <option value="3" selected>Medium — credible theory, some evidence</option>
+        <option value="2">High — limited evidence, execution risk</option>
+        <option value="1">Very High — speculative impact case</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Notes / Investment Thesis (optional)</label>
+    <textarea id="add-notes" rows="3" placeholder="Key impact thesis, primary outcome target, milestones..."></textarea>
+  </div>
+
+  <div style="display: flex; gap: 12px; margin-top: 8px;">
+    <button class="btn btn-primary" onclick="addInvestment()">➕ Add to Portfolio</button>
+    <button class="btn btn-outline" onclick="clearAddForm()">Clear Form</button>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ===================== TAB: AGGREGATE VIEW ===================== -->
+<div id="tab-aggregate" class="tab-content">
+<div class="container">
+
+  <div class="card">
+    <h2>Portfolio-Wide Impact Aggregation</h2>
+    <div class="info-box">
+      <strong>Aggregation methodology:</strong> Impact scores use the GIIN's Navigating Impact methodology, weighted by investment size and evidence quality tier. Sector metrics follow IRIS+ standards for fund-level aggregation (GIIN, 2023 "Aggregate Impact Performance"). Only metrics with consistent definitions across investees should be aggregated.
+    </div>
+    <div id="aggregate-content"><div class="empty-state"><div class="icon">📈</div>Add at least 2 investments to see portfolio-level aggregation.</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Weighted Impact Score Breakdown</h2>
+    <div id="score-breakdown-content"><div class="empty-state"><div class="icon">⚖️</div>Add investments to see score breakdown.</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Impact per $1M Deployed</h2>
+    <div id="efficiency-content"><div class="empty-state"><div class="icon">💡</div>Add investments with capital amounts to see efficiency metrics.</div></div>
+    <p class="footnote">Benchmarks: GIIN "2023 Annual Impact Investor Survey" median impact efficiency data. Treat as directional — do not use for external comparison without investment-specific verification.</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ===================== TAB: SDG MAP ===================== -->
+<div id="tab-sdg" class="tab-content">
+<div class="container">
+
+  <div class="card">
+    <h2>Portfolio SDG Alignment Map</h2>
+    <div class="info-box">
+      <strong>SDG Investor Map methodology:</strong> SDG coverage scored by number of portfolio companies with primary, secondary, or tertiary alignment. Contribution weight follows UNDP SDG Investor Map framework (UNDP, 2023). Do not claim SDG achievement — only alignment.
+    </div>
+    <div id="sdg-map-content"><div class="empty-state"><div class="icon">🌍</div>Add investments with SDG alignment to see the map.</div></div>
+  </div>
+
+  <div class="card">
+    <h2>SDG Coverage vs Fund Mandate</h2>
+    <div id="sdg-mandate-content">
+      <div class="form-group">
+        <label>Fund's Target SDGs (select all that apply)</label>
+        <div id="mandate-sdg-selector" class="sdg-grid"></div>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:12px;" onclick="checkSDGAlignment()">Check Alignment</button>
+      <div id="sdg-alignment-result" style="margin-top:16px;"></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===================== TAB: BENCHMARKS ===================== -->
+<div id="tab-benchmarks" class="tab-content">
+<div class="container">
+
+  <div class="card">
+    <h2>Industry Benchmarks — Fund-Level Impact Performance</h2>
+    <div class="info-box">
+      <strong>Sources:</strong> GIIN (2023) "Annual Impact Investor Survey" (N=305 respondents, $1.1T AUM). IFC (2023) "Investing for Impact." Tideline (2022) "Impact Investing Benchmarks." World Bank (2023) "Blended Finance Data." All benchmarks are medians unless stated.
+    </div>
+
+    <h3>Impact Score Benchmarks by Fund Type</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Fund Type</th>
+          <th>Median Impact Score</th>
+          <th>Top Quartile</th>
+          <th>Evidence Tier</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Development Finance Institution (DFI)</td><td>68–75 / 100</td><td>80+</td><td>Tier 2–3</td><td>IFC 2023</td></tr>
+        <tr><td>Impact VC (emerging markets focus)</td><td>60–72 / 100</td><td>78+</td><td>Tier 2</td><td>GIIN 2023</td></tr>
+        <tr><td>Impact Private Equity</td><td>55–68 / 100</td><td>75+</td><td>Tier 2–3</td><td>GIIN 2023</td></tr>
+        <tr><td>Blended Finance Facility</td><td>70–82 / 100</td><td>85+</td><td>Tier 3</td><td>Convergence 2023</td></tr>
+        <tr><td>Microfinance / Financial Inclusion</td><td>65–78 / 100</td><td>82+</td><td>Tier 2–3</td><td>CGAP 2022</td></tr>
+        <tr><td>Conservation / Climate Fund</td><td>58–70 / 100</td><td>76+</td><td>Tier 2</td><td>NatureFinance 2023</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider">
+    <h3>Sector Impact Efficiency Benchmarks (per $1M deployed)</h3>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Sector</th>
+          <th>Key Metric</th>
+          <th>Median per $1M</th>
+          <th>Top Quartile</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Clean Energy</td><td>tCO₂e avoided / yr</td><td>180–350 tCO₂e</td><td>500+</td><td>GOGLA 2023; IFC</td></tr>
+        <tr><td>Clean Energy</td><td>HH with clean energy access</td><td>800–1,500 HH</td><td>2,000+</td><td>GOGLA 2023</td></tr>
+        <tr><td>Agriculture</td><td>Smallholders reached</td><td>600–1,200 HH</td><td>1,800+</td><td>IFC 2023</td></tr>
+        <tr><td>Healthcare</td><td>Patient consultations / yr</td><td>4,000–8,000</td><td>12,000+</td><td>IFC Health 2023</td></tr>
+        <tr><td>Education</td><td>Students enrolled</td><td>300–700</td><td>1,000+</td><td>EdTech Hub 2023</td></tr>
+        <tr><td>Financial Services</td><td>New borrowers / depositors</td><td>2,000–5,000</td><td>8,000+</td><td>CGAP 2022</td></tr>
+        <tr><td>Water & Sanitation</td><td>People with improved WASH</td><td>1,200–2,500</td><td>4,000+</td><td>IRC WASH 2023</td></tr>
+        <tr><td>Affordable Housing</td><td>Families housed</td><td>40–120 units</td><td>200+</td><td>GBEF 2022</td></tr>
+        <tr><td>Livelihoods</td><td>Jobs created</td><td>15–35 FTE</td><td>50+</td><td>ILO / IFC 2023</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider">
+    <h3>Gender Lens Benchmarks</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Criterion</th><th>2X Challenge Threshold</th><th>Strong Performance</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Women beneficiaries / customers</td><td>≥50%</td><td>≥65%</td><td>2X Collaborative 2023</td></tr>
+        <tr><td>Women employees</td><td>≥30% of workforce</td><td>≥50%</td><td>2X Collaborative 2023</td></tr>
+        <tr><td>Women in senior leadership</td><td>≥30%</td><td>≥40%</td><td>2X / IFC 2023</td></tr>
+        <tr><td>Women founders / owners</td><td>≥51% founding team</td><td>Majority owned</td><td>2X Collaborative 2023</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider">
+    <h3>Evidence Quality Distribution (GIIN 2023, N=305 funds)</h3>
+    <table class="data-table">
+      <thead>
+        <tr><th>Evidence Tier</th><th>% of Investees (median)</th><th>LP Expectation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Tier 4 — RCT / Quasi-experimental</td><td>8–15%</td><td>1+ per portfolio</td></tr>
+        <tr><td>Tier 3 — Pre-post / comparison</td><td>25–40%</td><td>≥30% of portfolio</td></tr>
+        <tr><td>Tier 2 — Output data</td><td>45–60%</td><td>Majority of portfolio</td></tr>
+        <tr><td>Tier 1 — Activity data only</td><td>10–20%</td><td>Should be improving</td></tr>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>
+</div>
+
+<!-- ===================== TAB: INVESTOR REPORT ===================== -->
+<div id="tab-report" class="tab-content">
+<div class="container">
+
+  <div class="card">
+    <h2>Investor Report Generator</h2>
+    <div class="info-box">
+      <strong>Report format:</strong> Follows GIIN IRIS+ reporting standards and IFC Operating Principle 9 (Annual Impact Report disclosure). Suitable for annual LP impact reporting.
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fund Name</label>
+        <input type="text" id="report-fund-name" placeholder="e.g. Horizon Impact Fund II">
+      </div>
+      <div class="form-group">
+        <label>Reporting Period</label>
+        <input type="text" id="report-period" placeholder="e.g. January – December 2024">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Fund Manager</label>
+        <input type="text" id="report-manager" placeholder="e.g. Horizon Capital Partners">
+      </div>
+      <div class="form-group">
+        <label>Fund Vintage / Strategy</label>
+        <input type="text" id="report-strategy" placeholder="e.g. Emerging Markets Impact VC, 2021 vintage">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Fund Impact Thesis (1–2 sentences)</label>
+      <textarea id="report-thesis" rows="2" placeholder="e.g. We invest in technology-enabled solutions delivering measurable impact for underserved populations across Sub-Saharan Africa and South Asia..."></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="generateReport()">📄 Generate Report Preview</button>
+  </div>
+
+  <div id="report-preview" style="display:none;" class="card">
+    <div id="report-content"></div>
+  </div>
+
+  <div class="export-panel" style="margin-top:20px;">
+    <h3>Export Options</h3>
+    <div class="export-grid">
+      <div class="export-btn" onclick="exportCSV()"><span class="icon">📊</span>Export Portfolio CSV<br><small style="color:#888; font-size:11px;">All company data + scores</small></div>
+      <div class="export-btn" onclick="window.print()"><span class="icon">🖨️</span>Print / Save PDF<br><small style="color:#888; font-size:11px;">Full dashboard for LP pack</small></div>
+      <div class="export-btn" onclick="exportMetricsCSV()"><span class="icon">📈</span>Export Metrics CSV<br><small style="color:#888; font-size:11px;">Aggregated metrics table</small></div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===================== TAB: CLAUDE PROMPT ===================== -->
+<div id="tab-claude" class="tab-content">
+<div class="container">
+
+  <div class="card">
+    <h2>🤖 Claude Prompt — Portfolio Impact Analysis</h2>
+    <p style="font-family:sans-serif; font-size:13px; color:var(--mid-grey); margin-bottom:16px;">Generate a context-aware deep-dive analysis prompt based on your portfolio data. Copy this prompt and paste it into Claude to get expert-level portfolio impact analysis.</p>
+
+    <div style="position: relative;">
+      <div class="claude-prompt-box" id="claude-prompt-text">Loading portfolio data...</div>
+      <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>What Claude Can Help With</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Analysis Prompts</h3>
+        <ul style="font-family:sans-serif; font-size:13px; line-height:2; padding-left:20px;">
+          <li>Compare portfolio impact efficiency to GIIN benchmarks</li>
+          <li>Identify which investees need evidence quality upgrades</li>
+          <li>Flag potential impact risks (greenwashing, attribution)</li>
+          <li>Draft narrative for the LP Annual Impact Report</li>
+          <li>Suggest IRIS+ metric improvements per investee</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Strategic Prompts</h3>
+        <ul style="font-family:sans-serif; font-size:13px; line-height:2; padding-left:20px;">
+          <li>Assess SDG coverage gaps vs fund mandate</li>
+          <li>Model portfolio-level impact weighting scenarios</li>
+          <li>Identify gender lens gaps (2X criteria)</li>
+          <li>Recommend monitoring improvements for Tier-1 investees</li>
+          <li>Draft impact covenants for next investment</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+// =========================================================
+// DATA MODEL
+// =========================================================
+let portfolio = [];
+
+const SDG_DATA = [
+  { id: 1,  label: "No Poverty",              color: "#E5243B", emoji: "🏚️" },
+  { id: 2,  label: "Zero Hunger",             color: "#DDA63A", emoji: "🌾" },
+  { id: 3,  label: "Good Health",             color: "#4C9F38", emoji: "❤️" },
+  { id: 4,  label: "Quality Education",       color: "#C5192D", emoji: "📚" },
+  { id: 5,  label: "Gender Equality",         color: "#FF3A21", emoji: "⚧️" },
+  { id: 6,  label: "Clean Water",             color: "#26BDE2", emoji: "💧" },
+  { id: 7,  label: "Clean Energy",            color: "#FCC30B", emoji: "⚡" },
+  { id: 8,  label: "Decent Work",             color: "#A21942", emoji: "💼" },
+  { id: 9,  label: "Industry & Innovation",   color: "#FD6925", emoji: "🏭" },
+  { id: 10, label: "Reduced Inequalities",    color: "#DD1367", emoji: "⚖️" },
+  { id: 11, label: "Sustainable Cities",      color: "#FD9D24", emoji: "🏙️" },
+  { id: 12, label: "Responsible Consumption", color: "#BF8B2E", emoji: "♻️" },
+  { id: 13, label: "Climate Action",          color: "#3F7E44", emoji: "🌡️" },
+  { id: 14, label: "Life Below Water",        color: "#0A97D9", emoji: "🐟" },
+  { id: 15, label: "Life on Land",            color: "#56C02B", emoji: "🌿" },
+  { id: 16, label: "Peace & Justice",         color: "#00689D", emoji: "🕊️" },
+  { id: 17, label: "Partnerships",            color: "#19486A", emoji: "🤝" }
+];
+
+const SECTOR_HINTS = {
+  "Clean Energy": "IRIS+ key metrics: OI2073 (energy capacity installed, kW), PI2080 (tCO₂e avoided), OI3461 (HH with clean energy access). Benchmark: GOGLA 2023 — 0.6–1.2 W/$ invested for off-grid solar.",
+  "Sustainable Agriculture": "IRIS+ key metrics: OI9239 (smallholders reached), OI2642 (ha under improved practices), PI4089 (% increase in income). Benchmark: IFC — $800–$1,200 per smallholder HH, ±20% income uplift.",
+  "Healthcare": "IRIS+ key metrics: OI4208 (patient consultations), OI5765 (clinical staff trained), PI7122 (% reduction in OOP costs). Benchmark: IFC Health 2023 — $125–$250 per patient consultation.",
+  "Education": "IRIS+ key metrics: OI1302 (students enrolled), OI3620 (graduation rate %), PI5481 (learning outcome improvement). Benchmark: EdTech Hub — $1,400–$3,300 per student/year in LMICs.",
+  "Financial Services / Fintech": "IRIS+ key metrics: OI1065 (new borrowers), OI5729 (new depositors/savers), PI2137 (loan repayment rate %). Benchmark: CGAP 2022 — $200–$500 per new borrower (emerging markets).",
+  "Water & Sanitation": "IRIS+ key metrics: OI3713 (people with improved WASH), OI4455 (liters safe water provided/yr), PI6300 (% HH with improved sanitation). Benchmark: IRC WASH — $30–$80 per person for piped water access.",
+  "Affordable Housing": "IRIS+ key metrics: OI2308 (affordable housing units), PI5562 (% tenants below 30% cost burden), OI1904 (housing quality index). Benchmark: GBEF 2022 — $8,000–$25,000 per affordable unit.",
+  "Livelihoods / Employment": "IRIS+ key metrics: OI7041 (FTE jobs created), OI8453 (wage above local minimum %), PI3371 (% 6-month job retention). Benchmark: ILO/IFC 2023 — $28,000–$66,000 cost per job created.",
+  "Conservation / Biodiversity": "IRIS+ key metrics: OI8174 (ha under conservation), OI5321 (species protected count), PI7639 (% reduction in deforestation rate). Benchmark: NatureFinance — $200–$800/ha/yr for effective conservation.",
+  "Waste Management / Circular Economy": "IRIS+ key metrics: OI3009 (tonnes waste diverted/yr), OI4782 (recycling rate %), PI2901 (tCO₂e avoided). Benchmark: Ellen MacArthur Foundation — $50–$200/tonne waste diverted.",
+  "Digital Inclusion": "IRIS+ key metrics: OI1234 (new internet users), OI5612 (digital literacy trained), PI3845 (% cost reduction for digital access). Benchmark: A4AI 2022 — $100–$400 per new connected user.",
+  "Other": ""
+};
+
+// =========================================================
+// INITIALISE SDG SELECTORS
+// =========================================================
+function initSDGSelectors() {
+  const containers = [
+    { id: 'sdg-selector', multi: true, prefix: 'sdg' },
+    { id: 'mandate-sdg-selector', multi: true, prefix: 'mandate-sdg' }
+  ];
+  containers.forEach(c => {
+    const el = document.getElementById(c.id);
+    if (!el) return;
+    el.innerHTML = SDG_DATA.map(s => `
+      <div class="sdg-pill" id="${c.prefix}-${s.id}" onclick="toggleSDG('${c.prefix}', ${s.id})"
+           style="border-color: ${s.color};">
+        ${s.emoji} SDG ${s.id}
+      </div>
+    `).join('');
+  });
+}
+
+let selectedSDGs = [];
+let mandateSDGs = [];
+
+function toggleSDG(prefix, id) {
+  const el = document.getElementById(`${prefix}-${id}`);
+  const sdg = SDG_DATA.find(s => s.id === id);
+  const list = prefix === 'sdg' ? selectedSDGs : mandateSDGs;
+
+  const idx = list.indexOf(id);
+  if (idx === -1) {
+    list.push(id);
+    el.classList.add('selected');
+    el.style.backgroundColor = sdg.color;
+    el.style.borderColor = sdg.color;
+    el.style.color = 'white';
+  } else {
+    list.splice(idx, 1);
+    el.classList.remove('selected');
+    el.style.backgroundColor = '';
+    el.style.borderColor = sdg.color;
+    el.style.color = '';
+  }
+}
+
+// =========================================================
+// SECTOR METRIC HINT
+// =========================================================
+function updateSectorMetrics() {
+  const sector = document.getElementById('add-sector').value;
+  const hint = document.getElementById('sector-metric-hint');
+  if (SECTOR_HINTS[sector]) {
+    hint.style.display = 'block';
+    hint.innerHTML = `<strong>📊 ${sector} metrics guidance:</strong><br>${SECTOR_HINTS[sector]}`;
+  } else {
+    hint.style.display = 'none';
+  }
+}
+
+// =========================================================
+// TAB SWITCHING
+// =========================================================
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+  if (tabId === 'tab-aggregate') renderAggregate();
+  if (tabId === 'tab-sdg') renderSDGMap();
+  if (tabId === 'tab-claude') generateClaudePrompt();
+}
+
+// =========================================================
+// ADD INVESTMENT
+// =========================================================
+function addInvestment() {
+  const name = document.getElementById('add-name').value.trim();
+  const sector = document.getElementById('add-sector').value;
+  if (!name) { alert('Please enter a company name.'); return; }
+  if (!sector) { alert('Please select a sector.'); return; }
+
+  const inv = {
+    id: Date.now(),
+    name,
+    year: parseInt(document.getElementById('add-year').value) || new Date().getFullYear(),
+    sector,
+    stage: document.getElementById('add-stage').value,
+    geo: document.getElementById('add-geo').value,
+    investment: parseFloat(document.getElementById('add-investment').value) || 0,
+    instrument: document.getElementById('add-instrument').value,
+    beneficiaries: parseInt(document.getElementById('add-beneficiaries').value) || 0,
+    bop: parseFloat(document.getElementById('add-bop').value) || 0,
+    women: parseFloat(document.getElementById('add-women').value) || 0,
+    jobs: parseInt(document.getElementById('add-jobs').value) || 0,
+    jobsWomen: parseFloat(document.getElementById('add-jobs-women').value) || 0,
+    sectorMetricName: document.getElementById('add-sector-metric-name').value.trim(),
+    sectorMetricValue: parseFloat(document.getElementById('add-sector-metric-value').value) || 0,
+    co2: parseFloat(document.getElementById('add-co2').value) || 0,
+    evidence: parseInt(document.getElementById('add-evidence').value),
+    sdgs: [...selectedSDGs],
+    impWhat: parseInt(document.getElementById('add-imp-what').value),
+    impHowMuch: parseInt(document.getElementById('add-imp-howmuch').value),
+    impContribution: parseInt(document.getElementById('add-imp-contribution').value),
+    impRisk: parseInt(document.getElementById('add-imp-risk').value),
+    notes: document.getElementById('add-notes').value.trim()
+  };
+
+  inv.impactScore = computeImpactScore(inv);
+
+  portfolio.push(inv);
+  renderPortfolio();
+  clearAddForm();
+
+  // Switch to portfolio tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn')[0].classList.add('active');
+  document.getElementById('tab-portfolio').classList.add('active');
+}
+
+// =========================================================
+// IMPACT SCORE CALCULATION
+// =========================================================
+function computeImpactScore(inv) {
+  // Weighted formula aligned to IMP 5D + GIIN Navigating Impact
+  // Max raw = 20
+  let raw = 0;
+  raw += inv.impWhat * 1.5;           // WHAT: significance (max 6)
+  raw += inv.impHowMuch * 1.5;        // HOW MUCH: scale/depth (max 6)
+  raw += inv.impContribution * 1.0;   // CONTRIBUTION (max 4)
+  raw += inv.impRisk * 1.0;           // RISK (higher risk score = lower risk = better)
+
+  // Evidence quality bonus (max +5)
+  raw += inv.evidence * 1.25;
+
+  // Beneficiary depth bonus (% BoP × 0.1, max +5)
+  raw += Math.min(inv.bop * 0.1, 5);
+
+  // Gender bonus (max +2)
+  if (inv.women >= 50) raw += 2;
+  else if (inv.women >= 30) raw += 1;
+
+  // SDG breadth bonus (max +3)
+  raw += Math.min(inv.sdgs.length * 0.5, 3);
+
+  // Max possible raw = 6+6+4+4+5+5+2+3 = 35, normalise to 100
+  return Math.round((raw / 35) * 100);
+}
+
+function getScoreGrade(score) {
+  if (score >= 80) return 'A';
+  if (score >= 68) return 'B';
+  if (score >= 55) return 'C';
+  if (score >= 40) return 'D';
+  return 'E';
+}
+
+function getScoreColor(score) {
+  if (score >= 80) return '#2E7D32';
+  if (score >= 68) return '#558B2F';
+  if (score >= 55) return '#C9912A';
+  if (score >= 40) return '#E8613A';
+  return '#c62828';
+}
+
+// =========================================================
+// RENDER PORTFOLIO
+// =========================================================
+function renderPortfolio() {
+  const empty = document.getElementById('portfolio-empty');
+  const list = document.getElementById('portfolio-list');
+
+  if (portfolio.length === 0) {
+    empty.style.display = '';
+    list.innerHTML = '';
+    renderSummaryMetrics();
+    renderSectorBreakdown();
+    return;
+  }
+  empty.style.display = 'none';
+
+  list.innerHTML = portfolio.map(inv => {
+    const grade = getScoreGrade(inv.impactScore);
+    const sdgTags = inv.sdgs.slice(0, 5).map(id => {
+      const s = SDG_DATA.find(x => x.id === id);
+      return `<span class="tag tag-sdg">${s.emoji} SDG ${id}</span>`;
+    }).join('') + (inv.sdgs.length > 5 ? `<span class="tag tag-sdg">+${inv.sdgs.length - 5} more</span>` : '');
+
+    return `
+      <div class="company-card">
+        <div class="co-info">
+          <div class="co-name">${inv.name}</div>
+          <div class="co-meta">
+            <span class="tag tag-sector">${inv.sector}</span>
+            <span class="tag tag-stage">${inv.stage}</span>
+            <span class="tag tag-geo">${inv.geo}</span>
+          </div>
+          <div style="margin-top: 8px; font-family:sans-serif; font-size:12px; color:#666;">
+            ${inv.investment ? '💰 $' + formatNumber(inv.investment) + ' · ' : ''}
+            ${inv.beneficiaries ? '👥 ' + formatNumber(inv.beneficiaries) + ' beneficiaries · ' : ''}
+            ${inv.jobs ? '💼 ' + formatNumber(inv.jobs) + ' jobs · ' : ''}
+            ${inv.co2 ? '🌱 ' + formatNumber(inv.co2) + ' tCO₂e/yr · ' : ''}
+            Evidence Tier ${inv.evidence}
+          </div>
+          <div style="margin-top:6px;">${sdgTags}</div>
+        </div>
+        <div class="co-score">
+          <div class="score-num score-${grade}">${inv.impactScore}</div>
+          <div style="font-family:sans-serif; font-size:11px; color:var(--mid-grey);">/ 100</div>
+          <div style="font-family:sans-serif; font-size:18px; font-weight:bold; color:${getScoreColor(inv.impactScore)};">Grade ${grade}</div>
+          <button class="btn btn-danger btn-sm" style="margin-top:8px;" onclick="removeInvestment(${inv.id})">Remove</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  renderSummaryMetrics();
+  renderSectorBreakdown();
+}
+
+function removeInvestment(id) {
+  portfolio = portfolio.filter(i => i.id !== id);
+  renderPortfolio();
+}
+
+function renderSummaryMetrics() {
+  const el = document.getElementById('portfolio-summary-metrics');
+  if (portfolio.length === 0) { el.innerHTML = ''; return; }
+
+  const totalInv = portfolio.reduce((s, i) => s + i.investment, 0);
+  const totalBen = portfolio.reduce((s, i) => s + i.beneficiaries, 0);
+  const totalJobs = portfolio.reduce((s, i) => s + i.jobs, 0);
+  const totalCO2 = portfolio.reduce((s, i) => s + i.co2, 0);
+  const avgScore = Math.round(portfolio.reduce((s, i) => s + i.impactScore, 0) / portfolio.length);
+  const allSDGs = [...new Set(portfolio.flatMap(i => i.sdgs))];
+
+  el.innerHTML = `
+    <div class="metric-card"><div class="metric-value">${portfolio.length}</div><div class="metric-label">Portfolio Companies</div></div>
+    <div class="metric-card"><div class="metric-value">$${formatCompact(totalInv)}</div><div class="metric-label">Total Invested</div></div>
+    <div class="metric-card"><div class="metric-value">${formatCompact(totalBen)}</div><div class="metric-label">Total Beneficiaries</div></div>
+    <div class="metric-card"><div class="metric-value">${avgScore}</div><div class="metric-label">Avg Impact Score</div><div class="metric-sub">Grade ${getScoreGrade(avgScore)}</div></div>
+    <div class="metric-card"><div class="metric-value">${formatCompact(totalJobs)}</div><div class="metric-label">Jobs Created</div></div>
+    <div class="metric-card"><div class="metric-value">${formatCompact(totalCO2)}</div><div class="metric-label">tCO₂e Avoided/yr</div></div>
+    <div class="metric-card"><div class="metric-value">${allSDGs.length}</div><div class="metric-label">SDGs Covered</div></div>
+    <div class="metric-card"><div class="metric-value">${computeEvidence()}</div><div class="metric-label">Avg Evidence Tier</div></div>
+  `;
+}
+
+function computeEvidence() {
+  if (portfolio.length === 0) return '-';
+  const avg = portfolio.reduce((s, i) => s + i.evidence, 0) / portfolio.length;
+  return avg.toFixed(1);
+}
+
+function renderSectorBreakdown() {
+  const sEl = document.getElementById('sector-breakdown');
+  const gEl = document.getElementById('geo-breakdown');
+  if (portfolio.length === 0) {
+    sEl.innerHTML = '<div style="color:var(--mid-grey); font-family:sans-serif; font-size:13px;">Add investments to see sector breakdown.</div>';
+    gEl.innerHTML = '<div style="color:var(--mid-grey); font-family:sans-serif; font-size:13px;">Add investments to see geographic spread.</div>';
+    return;
+  }
+
+  const sectors = {};
+  const geos = {};
+  portfolio.forEach(i => {
+    sectors[i.sector] = (sectors[i.sector] || 0) + 1;
+    geos[i.geo] = (geos[i.geo] || 0) + 1;
+  });
+
+  const colors = ['#E8613A','#C9912A','#2E7D32','#01579B','#6A1B9A','#E65100','#0D47A1','#1B5E20','#880E4F'];
+  let ci = 0;
+
+  sEl.innerHTML = Object.entries(sectors).sort((a,b) => b[1]-a[1]).map(([k, v]) => {
+    const pct = Math.round(v / portfolio.length * 100);
+    const c = colors[ci++ % colors.length];
+    return `<div class="sector-bar">
+      <div class="bar-label"><span>${k}</span><span>${v} company${v>1?'s':''} (${pct}%)</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:${pct}%; background:${c};"></div></div>
+    </div>`;
+  }).join('');
+
+  ci = 0;
+  gEl.innerHTML = Object.entries(geos).sort((a,b) => b[1]-a[1]).map(([k, v]) => {
+    const pct = Math.round(v / portfolio.length * 100);
+    const c = colors[ci++ % colors.length];
+    return `<div class="sector-bar">
+      <div class="bar-label"><span>${k}</span><span>${v} investment${v>1?'s':''} (${pct}%)</span></div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:${pct}%; background:${c};"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// =========================================================
+// AGGREGATE VIEW
+// =========================================================
+function renderAggregate() {
+  const el = document.getElementById('aggregate-content');
+  const scoreEl = document.getElementById('score-breakdown-content');
+  const effEl = document.getElementById('efficiency-content');
+
+  if (portfolio.length < 2) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">📈</div>Add at least 2 investments to see portfolio-level aggregation.</div>';
+    scoreEl.innerHTML = '<div class="empty-state"><div class="icon">⚖️</div>Add investments to see score breakdown.</div>';
+    effEl.innerHTML = '<div class="empty-state"><div class="icon">💡</div>Add investments with capital amounts to see efficiency metrics.</div>';
+    return;
+  }
+
+  const totalInv = portfolio.reduce((s, i) => s + i.investment, 0);
+  const totalBen = portfolio.reduce((s, i) => s + i.beneficiaries, 0);
+  const totalJobs = portfolio.reduce((s, i) => s + i.jobs, 0);
+  const totalCO2 = portfolio.reduce((s, i) => s + i.co2, 0);
+  const avgScore = Math.round(portfolio.reduce((s, i) => s + i.impactScore, 0) / portfolio.length);
+  const avgBOP = (portfolio.reduce((s, i) => s + i.bop, 0) / portfolio.length).toFixed(0);
+  const avgWomen = (portfolio.reduce((s, i) => s + i.women, 0) / portfolio.length).toFixed(0);
+  const allSDGs = [...new Set(portfolio.flatMap(i => i.sdgs))];
+
+  // Investment-weighted avg score
+  const weightedScore = totalInv > 0
+    ? Math.round(portfolio.reduce((s, i) => s + i.impactScore * (i.investment || avgScore), 0) / (totalInv || portfolio.length))
+    : avgScore;
+
+  el.innerHTML = `
+    <div class="grid-4" style="margin-bottom:20px;">
+      <div class="metric-card"><div class="metric-value" style="color:${getScoreColor(weightedScore)}">${weightedScore}</div><div class="metric-label">Wtd. Portfolio Impact Score</div><div class="metric-sub">Investment-weighted · Grade ${getScoreGrade(weightedScore)}</div></div>
+      <div class="metric-card"><div class="metric-value">${formatCompact(totalBen)}</div><div class="metric-label">Total Beneficiaries</div><div class="metric-sub">${avgBOP}% below poverty line</div></div>
+      <div class="metric-card"><div class="metric-value">${avgWomen}%</div><div class="metric-label">Avg Women Reach</div><div class="metric-sub">2X threshold: ≥50%</div></div>
+      <div class="metric-card"><div class="metric-value">${formatCompact(totalCO2)}</div><div class="metric-label">tCO₂e Avoided/yr</div><div class="metric-sub">Portfolio total</div></div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Company</th><th>Impact Score</th><th>Beneficiaries</th><th>Jobs</th><th>CO₂e (t/yr)</th><th>Evidence Tier</th><th>SDGs</th></tr></thead>
+      <tbody>
+        ${portfolio.map(i => `
+          <tr>
+            <td><b>${i.name}</b><br><span style="font-size:11px; color:#888;">${i.sector} · ${i.geo}</span></td>
+            <td><b style="color:${getScoreColor(i.impactScore)}">${i.impactScore}</b> / 100 <span style="color:${getScoreColor(i.impactScore)}; font-weight:bold;">(${getScoreGrade(i.impactScore)})</span></td>
+            <td>${formatNumber(i.beneficiaries)}</td>
+            <td>${formatNumber(i.jobs)}</td>
+            <td>${formatNumber(i.co2)}</td>
+            <td>Tier ${i.evidence}</td>
+            <td>${i.sdgs.map(id => SDG_DATA.find(s=>s.id===id).emoji).join('')}</td>
+          </tr>
+        `).join('')}
+        <tr style="background:#FAF7F2; font-weight:bold;">
+          <td>PORTFOLIO TOTAL / AVG</td>
+          <td style="color:${getScoreColor(weightedScore)}">${weightedScore} wtd avg</td>
+          <td>${formatNumber(totalBen)}</td>
+          <td>${formatNumber(totalJobs)}</td>
+          <td>${formatNumber(totalCO2)}</td>
+          <td>Tier ${computeEvidence()}</td>
+          <td>${allSDGs.length} SDGs</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="footnote">⚖️ Weighted impact score uses investment amount as weight. Where investment = $0, equal weight applied. Methodology: IMP 5 Dimensions scoring matrix + GIIN IRIS+ evidence tier weighting.</p>
+  `;
+
+  // Score breakdown
+  const gradeCount = { A:0, B:0, C:0, D:0, E:0 };
+  portfolio.forEach(i => gradeCount[getScoreGrade(i.impactScore)]++);
+  const gradeColors = { A:'#2E7D32', B:'#558B2F', C:'#C9912A', D:'#E8613A', E:'#c62828' };
+
+  scoreEl.innerHTML = `
+    <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px;">
+      ${Object.entries(gradeCount).filter(([,v])=>v>0).map(([g,v]) => `
+        <div class="agg-score-card" style="border-color:${gradeColors[g]}; min-width:100px; flex:1;">
+          <div style="font-size:36px; font-weight:bold; color:${gradeColors[g]};">${g}</div>
+          <div style="font-family:sans-serif; font-size:20px; font-weight:bold;">${v}</div>
+          <div style="font-family:sans-serif; font-size:11px; color:#888;">investment${v>1?'s':''}</div>
+        </div>
+      `).join('')}
+    </div>
+    <div class="alert alert-info">
+      <strong>Score interpretation:</strong> A (80–100): Top-quartile GIIN benchmark. B (68–79): Strong, above median. C (55–67): Meeting expectations, room to improve. D (40–54): Below benchmark — review evidence quality and depth. E (&lt;40): Significant gaps in impact case.
+    </div>
+  `;
+
+  // Efficiency
+  if (totalInv > 0) {
+    const perM = 1000000;
+    const benPerM = Math.round(totalBen / totalInv * perM);
+    const jobsPerM = Math.round(totalJobs / totalInv * perM);
+    const co2PerM = Math.round(totalCO2 / totalInv * perM);
+
+    effEl.innerHTML = `
+      <div class="grid-3" style="margin-bottom:16px;">
+        <div class="metric-card"><div class="metric-value">${formatCompact(benPerM)}</div><div class="metric-label">Beneficiaries per $1M</div></div>
+        <div class="metric-card"><div class="metric-value">${formatCompact(jobsPerM)}</div><div class="metric-label">Jobs per $1M</div></div>
+        <div class="metric-card"><div class="metric-value">${formatCompact(co2PerM)}</div><div class="metric-label">tCO₂e/yr per $1M</div></div>
+      </div>
+      <div class="alert alert-warning">
+        <strong>⚠️ Aggregation caution:</strong> Cross-sector beneficiary aggregation risks double-counting and metric inconsistency. The GIIN (2023) recommends only aggregating metrics with consistent definitions across investees. These numbers are directional only.
+      </div>
+    `;
+  }
+}
+
+// =========================================================
+// SDG MAP
+// =========================================================
+function renderSDGMap() {
+  const el = document.getElementById('sdg-map-content');
+  if (portfolio.length === 0) {
+    el.innerHTML = '<div class="empty-state"><div class="icon">🌍</div>Add investments with SDG alignment to see the map.</div>';
+    return;
+  }
+
+  const sdgCounts = {};
+  SDG_DATA.forEach(s => { sdgCounts[s.id] = 0; });
+  portfolio.forEach(inv => inv.sdgs.forEach(id => { sdgCounts[id]++; }));
+
+  el.innerHTML = `
+    <div class="sdg-grid" style="margin-bottom:20px;">
+      ${SDG_DATA.map(s => {
+        const count = sdgCounts[s.id];
+        const pct = portfolio.length > 0 ? count / portfolio.length : 0;
+        return `
+          <div style="text-align:center; min-width:80px;">
+            <div style="
+              width:64px; height:64px; border-radius:8px; margin:0 auto 6px;
+              background:${count > 0 ? s.color : '#E8E5DF'};
+              display:flex; align-items:center; justify-content:center;
+              font-size:24px; border: 2px solid ${s.color};
+              opacity:${count > 0 ? 1 : 0.4};
+            ">${s.emoji}</div>
+            <div style="font-family:sans-serif; font-size:10px; color:${count>0?'#333':'#aaa'}; font-weight:${count>0?'bold':'normal'};">SDG ${s.id}</div>
+            <div style="font-family:sans-serif; font-size:10px; color:${count>0?s.color:'#ccc'};">${count > 0 ? count + ' co.' : '—'}</div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+    <table class="data-table">
+      <thead><tr><th>SDG</th><th>Companies</th><th>Portfolio Coverage</th><th>Coverage Bar</th></tr></thead>
+      <tbody>
+        ${SDG_DATA.filter(s => sdgCounts[s.id] > 0).sort((a,b) => sdgCounts[b.id]-sdgCounts[a.id]).map(s => {
+          const count = sdgCounts[s.id];
+          const pct = Math.round(count / portfolio.length * 100);
+          return `<tr>
+            <td>${s.emoji} <b>SDG ${s.id}</b> ${s.label}</td>
+            <td>${count} / ${portfolio.length}</td>
+            <td>${pct}%</td>
+            <td><div class="score-bar" style="width:120px;"><div class="score-bar-fill" style="width:${pct}%; background:${s.color};"></div></div></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function checkSDGAlignment() {
+  const result = document.getElementById('sdg-alignment-result');
+  if (mandateSDGs.length === 0) {
+    result.innerHTML = '<div class="alert alert-warning">Select your fund\'s target SDGs above first.</div>';
+    return;
+  }
+  const portfolioSDGs = [...new Set(portfolio.flatMap(i => i.sdgs))];
+  const covered = mandateSDGs.filter(id => portfolioSDGs.includes(id));
+  const missing = mandateSDGs.filter(id => !portfolioSDGs.includes(id));
+  const extra = portfolioSDGs.filter(id => !mandateSDGs.includes(id));
+  const pct = Math.round(covered.length / mandateSDGs.length * 100);
+
+  result.innerHTML = `
+    <div class="alert ${pct >= 80 ? 'alert-success' : pct >= 60 ? 'alert-warning' : 'alert-warning'}">
+      <strong>SDG Mandate Coverage: ${pct}%</strong><br>
+      ${covered.length} of ${mandateSDGs.length} target SDGs covered by portfolio.
+    </div>
+    ${missing.length > 0 ? `<div class="alert alert-warning"><strong>⚠️ Mandate Gaps (${missing.length} SDGs not covered):</strong> ${missing.map(id => SDG_DATA.find(s=>s.id===id).emoji + ' SDG ' + id).join(', ')}</div>` : ''}
+    ${extra.length > 0 ? `<div class="alert alert-info"><strong>ℹ️ Additional SDGs in portfolio (${extra.length}):</strong> ${extra.map(id => SDG_DATA.find(s=>s.id===id).emoji + ' SDG ' + id).join(', ')}</div>` : ''}
+  `;
+}
+
+// =========================================================
+// REPORT GENERATOR
+// =========================================================
+function generateReport() {
+  const fundName = document.getElementById('report-fund-name').value || '[Fund Name]';
+  const period = document.getElementById('report-period').value || '[Reporting Period]';
+  const manager = document.getElementById('report-manager').value || '[Fund Manager]';
+  const strategy = document.getElementById('report-strategy').value || '';
+  const thesis = document.getElementById('report-thesis').value || '';
+
+  if (portfolio.length === 0) {
+    alert('Add portfolio investments before generating a report.');
+    return;
+  }
+
+  const totalInv = portfolio.reduce((s, i) => s + i.investment, 0);
+  const totalBen = portfolio.reduce((s, i) => s + i.beneficiaries, 0);
+  const totalJobs = portfolio.reduce((s, i) => s + i.jobs, 0);
+  const totalCO2 = portfolio.reduce((s, i) => s + i.co2, 0);
+  const avgScore = Math.round(portfolio.reduce((s, i) => s + i.impactScore, 0) / portfolio.length);
+  const allSDGs = [...new Set(portfolio.flatMap(i => i.sdgs))];
+  const avgEvidence = (portfolio.reduce((s, i) => s + i.evidence, 0) / portfolio.length).toFixed(1);
+  const avgWomen = (portfolio.reduce((s, i) => s + i.women, 0) / portfolio.length).toFixed(0);
+
+  const today = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  const el = document.getElementById('report-content');
+  el.innerHTML = `
+    <div style="font-family: 'Georgia', serif; max-width: 900px; margin: 0 auto; color: #1A1A18;">
+      <div style="background: #1A1A18; color: white; padding: 32px 40px; border-radius: 6px 6px 0 0; margin-bottom: 0;">
+        <div style="font-size:13px; color:#888; font-family:sans-serif; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Annual Impact Report</div>
+        <div style="font-size:28px; font-weight:bold; margin-bottom:4px;">${fundName}</div>
+        <div style="font-size:16px; color:#ccc;">${period}</div>
+        ${strategy ? `<div style="font-size:13px; color:#888; margin-top:8px; font-family:sans-serif;">${strategy}</div>` : ''}
+      </div>
+
+      <div style="background: #F5F3EF; padding: 24px 40px; border-bottom: 1px solid #DDD;">
+        <div style="font-size:13px; font-family:sans-serif; color:#666; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">Prepared by</div>
+        <div style="font-size:15px; font-weight:bold;">${manager}</div>
+        <div style="font-size:12px; color:#888; font-family:sans-serif;">Report generated: ${today} · Methodology: GIIN IRIS+ v5 / IMP 5 Dimensions / GRI</div>
+      </div>
+
+      <div style="padding: 32px 40px;">
+        ${thesis ? `<div style="background:#FEF9F1; border-left:4px solid #C9912A; padding:16px 20px; margin-bottom:24px; border-radius:0 6px 6px 0;"><strong>Impact Thesis:</strong><br><em>${thesis}</em></div>` : ''}
+
+        <h2 style="font-size:18px; border-bottom:2px solid #1A1A18; padding-bottom:8px; margin-bottom:20px;">1. Portfolio Summary</h2>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:16px; margin-bottom:24px;">
+          <div style="background:white; border:1px solid #E8E5DF; border-radius:6px; padding:16px; text-align:center;">
+            <div style="font-size:24px; font-weight:bold; color:#E8613A;">${portfolio.length}</div>
+            <div style="font-size:11px; font-family:sans-serif; color:#888; text-transform:uppercase;">Portfolio Co.</div>
+          </div>
+          <div style="background:white; border:1px solid #E8E5DF; border-radius:6px; padding:16px; text-align:center;">
+            <div style="font-size:24px; font-weight:bold; color:#E8613A;">$${formatCompact(totalInv)}</div>
+            <div style="font-size:11px; font-family:sans-serif; color:#888; text-transform:uppercase;">Deployed</div>
+          </div>
+          <div style="background:white; border:1px solid #E8E5DF; border-radius:6px; padding:16px; text-align:center;">
+            <div style="font-size:24px; font-weight:bold; color:#E8613A;">${formatCompact(totalBen)}</div>
+            <div style="font-size:11px; font-family:sans-serif; color:#888; text-transform:uppercase;">Beneficiaries</div>
+          </div>
+          <div style="background:white; border:1px solid #E8E5DF; border-radius:6px; padding:16px; text-align:center;">
+            <div style="font-size:24px; font-weight:bold; color:${getScoreColor(avgScore)}">${avgScore}</div>
+            <div style="font-size:11px; font-family:sans-serif; color:#888; text-transform:uppercase;">Avg Impact Score</div>
+          </div>
+        </div>
+
+        <h2 style="font-size:18px; border-bottom:2px solid #1A1A18; padding-bottom:8px; margin-bottom:20px;">2. Portfolio Impact Metrics</h2>
+        <table style="width:100%; border-collapse:collapse; font-family:sans-serif; font-size:13px; margin-bottom:24px;">
+          <thead><tr style="background:#1A1A18; color:white;"><th style="padding:10px 12px; text-align:left;">Metric</th><th style="padding:10px 12px; text-align:right;">Value</th><th style="padding:10px 12px; text-align:left;">Standard</th></tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #E8E5DF;"><td style="padding:10px 12px;">Total beneficiaries reached</td><td style="padding:10px 12px; text-align:right; font-weight:bold;">${formatNumber(totalBen)}</td><td style="padding:10px 12px; color:#888;">IRIS+ OI1305</td></tr>
+            <tr style="border-bottom:1px solid #E8E5DF; background:#FAF9F7;"><td style="padding:10px 12px;">Jobs created / supported</td><td style="padding:10px 12px; text-align:right; font-weight:bold;">${formatNumber(totalJobs)}</td><td style="padding:10px 12px; color:#888;">IRIS+ OI7041</td></tr>
+            <tr style="border-bottom:1px solid #E8E5DF;"><td style="padding:10px 12px;">CO₂e avoided / sequestered per year</td><td style="padding:10px 12px; text-align:right; font-weight:bold;">${formatNumber(totalCO2)} tCO₂e</td><td style="padding:10px 12px; color:#888;">IRIS+ PI2080</td></tr>
+            <tr style="border-bottom:1px solid #E8E5DF; background:#FAF9F7;"><td style="padding:10px 12px;">Average % women / girls reached</td><td style="padding:10px 12px; text-align:right; font-weight:bold;">${avgWomen}%</td><td style="padding:10px 12px; color:#888;">2X Collaborative</td></tr>
+            <tr style="border-bottom:1px solid #E8E5DF;"><td style="padding:10px 12px;">Average evidence quality tier</td><td style="padding:10px 12px; text-align:right; font-weight:bold;">Tier ${avgEvidence}</td><td style="padding:10px 12px; color:#888;">IMP Evidence Tiers</td></tr>
+            <tr style="border-bottom:1px solid #E8E5DF; background:#FAF9F7;"><td style="padding:10px 12px;">SDGs addressed</td><td style="padding:10px 12px; text-align:right; font-weight:bold;">${allSDGs.length} SDGs</td><td style="padding:10px 12px; color:#888;">UN SDG Framework</td></tr>
+          </tbody>
+        </table>
+
+        <h2 style="font-size:18px; border-bottom:2px solid #1A1A18; padding-bottom:8px; margin-bottom:20px;">3. Individual Company Performance</h2>
+        <table style="width:100%; border-collapse:collapse; font-family:sans-serif; font-size:12px; margin-bottom:24px;">
+          <thead><tr style="background:#1A1A18; color:white;">
+            <th style="padding:8px 10px; text-align:left;">Company</th>
+            <th style="padding:8px 10px; text-align:left;">Sector</th>
+            <th style="padding:8px 10px; text-align:right;">Impact Score</th>
+            <th style="padding:8px 10px; text-align:right;">Beneficiaries</th>
+            <th style="padding:8px 10px; text-align:right;">Jobs</th>
+            <th style="padding:8px 10px; text-align:left;">Evidence</th>
+          </tr></thead>
+          <tbody>
+            ${portfolio.map((i, idx) => `
+              <tr style="border-bottom:1px solid #E8E5DF; ${idx%2===1?'background:#FAF9F7':''}">
+                <td style="padding:8px 10px; font-weight:bold;">${i.name}</td>
+                <td style="padding:8px 10px; color:#888;">${i.sector}</td>
+                <td style="padding:8px 10px; text-align:right; font-weight:bold; color:${getScoreColor(i.impactScore)}">${i.impactScore} (${getScoreGrade(i.impactScore)})</td>
+                <td style="padding:8px 10px; text-align:right;">${formatNumber(i.beneficiaries)}</td>
+                <td style="padding:8px 10px; text-align:right;">${formatNumber(i.jobs)}</td>
+                <td style="padding:8px 10px; color:#888;">Tier ${i.evidence}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div style="background:#F5F3EF; padding:16px 20px; border-radius:6px; font-family:sans-serif; font-size:11px; color:#888; margin-top:24px;">
+          <strong>Methodology Note:</strong> Impact scores are calculated using the IMP 5 Dimensions scoring matrix, GIIN IRIS+ evidence tier weighting, and beneficiary depth adjustment. Scores are for portfolio management purposes and are not externally verified. Aggregate metrics follow GIIN (2023) "Aggregate Impact Performance" guidance. Sector benchmarks sourced from GIIN Annual Impact Investor Survey 2023 (N=305), IFC Impact Assessment Framework 2023, and sector-specific studies cited in tool methodology documentation.
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('report-preview').style.display = 'block';
+}
+
+// =========================================================
+// CLAUDE PROMPT
+// =========================================================
+function generateClaudePrompt() {
+  const el = document.getElementById('claude-prompt-text');
+  if (portfolio.length === 0) {
+    el.textContent = '// Add portfolio companies to generate a context-aware analysis prompt.';
+    return;
+  }
+
+  const totalInv = portfolio.reduce((s, i) => s + i.investment, 0);
+  const totalBen = portfolio.reduce((s, i) => s + i.beneficiaries, 0);
+  const avgScore = Math.round(portfolio.reduce((s, i) => s + i.impactScore, 0) / portfolio.length);
+  const allSDGs = [...new Set(portfolio.flatMap(i => i.sdgs))].map(id => 'SDG ' + id).join(', ');
+  const sectors = [...new Set(portfolio.map(i => i.sector))].join(', ');
+  const weakest = portfolio.sort((a,b) => a.impactScore - b.impactScore)[0];
+  const strongest = portfolio.sort((a,b) => b.impactScore - a.impactScore)[0];
+  const lowEvidence = portfolio.filter(i => i.evidence <= 2).map(i => i.name).join(', ');
+
+  const prompt = `You are an expert impact investor advisor with deep knowledge of GIIN IRIS+, IMP 5 Dimensions, SROI methodology, and emerging markets impact measurement.
+
+I'm sharing my portfolio impact data below. Please provide:
+1. A critical assessment of portfolio impact quality vs GIIN 2023 benchmark medians
+2. Your top 3 concerns about the current impact measurement approach
+3. Specific improvements recommended for the lowest-scoring investees
+4. An assessment of the SDG alignment and any mandate gaps you observe
+5. A suggested improvement roadmap for the next 12 months
+
+PORTFOLIO SUMMARY
+-----------------
+Portfolio size: ${portfolio.length} companies
+Total capital deployed: $${formatNumber(totalInv)}
+Sectors: ${sectors}
+SDG coverage: ${allSDGs || 'Not specified'}
+
+IMPACT METRICS
+--------------
+Total beneficiaries: ${formatNumber(totalBen)}
+Average portfolio impact score: ${avgScore}/100 (Grade ${getScoreGrade(avgScore)})
+Strongest performer: ${strongest?.name} (Score: ${strongest?.impactScore})
+Weakest performer: ${weakest?.name} (Score: ${weakest?.impactScore})
+Companies with Tier 1-2 evidence only: ${lowEvidence || 'None'}
+
+INVESTEE DETAIL
+---------------
+${portfolio.map(i => `
+${i.name}
+  Sector: ${i.sector} | Stage: ${i.stage} | Geography: ${i.geo}
+  Investment: $${formatNumber(i.investment)} | Instrument: ${i.instrument}
+  Impact score: ${i.impactScore}/100 (Grade ${getScoreGrade(i.impactScore)})
+  Beneficiaries: ${formatNumber(i.beneficiaries)} (${i.bop}% BoP, ${i.women}% women)
+  Jobs: ${formatNumber(i.jobs)} (${i.jobsWomen}% women)
+  CO₂e avoided/yr: ${formatNumber(i.co2)} tonnes
+  Evidence tier: ${i.evidence}/4
+  SDGs: ${i.sdgs.map(id => 'SDG ' + id).join(', ') || 'None specified'}
+  IMP Dimensions: WHAT=${i.impWhat}/4 | HOW MUCH=${i.impHowMuch}/4 | CONTRIBUTION=${i.impContribution}/4 | RISK=${i.impRisk}/4
+  ${i.notes ? 'Notes: ' + i.notes : ''}
+`).join('')}
+
+BENCHMARKS FOR REFERENCE (GIIN 2023)
+-------------------------------------
+- Median impact score for emerging market impact VCs: 60–72/100
+- Top quartile threshold: 78+
+- Target evidence quality: ≥30% of portfolio at Tier 3+
+- Gender benchmark (2X): ≥50% women beneficiaries, ≥30% women employees
+
+Please give frank, specific analysis — not platitudes. Identify real gaps and actionable recommendations.`;
+
+  el.textContent = prompt;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('claude-prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+  });
+}
+
+// =========================================================
+// EXPORT
+// =========================================================
+function exportCSV() {
+  if (portfolio.length === 0) { alert('No portfolio data to export.'); return; }
+
+  const headers = ['Company', 'Year', 'Sector', 'Stage', 'Geography', 'Instrument', 'Investment_USD',
+    'Beneficiaries', 'Pct_BOP', 'Pct_Women', 'Jobs', 'Pct_Jobs_Women', 'CO2e_tpa',
+    'Evidence_Tier', 'Impact_Score', 'Grade', 'SDGs', 'IMP_What', 'IMP_HowMuch', 'IMP_Contribution', 'IMP_Risk', 'Notes'];
+
+  const rows = portfolio.map(i => [
+    `"${i.name}"`, i.year, `"${i.sector}"`, `"${i.stage}"`, `"${i.geo}"`, `"${i.instrument}"`, i.investment,
+    i.beneficiaries, i.bop, i.women, i.jobs, i.jobsWomen, i.co2,
+    i.evidence, i.impactScore, getScoreGrade(i.impactScore),
+    `"${i.sdgs.map(id => 'SDG ' + id).join('; ')}"`,
+    i.impWhat, i.impHowMuch, i.impContribution, i.impRisk, `"${i.notes}"`
+  ]);
+
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = `portfolio-impact-data-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function exportMetricsCSV() {
+  if (portfolio.length === 0) { alert('No data to export.'); return; }
+
+  const totalInv = portfolio.reduce((s, i) => s + i.investment, 0);
+  const totalBen = portfolio.reduce((s, i) => s + i.beneficiaries, 0);
+  const totalJobs = portfolio.reduce((s, i) => s + i.jobs, 0);
+  const totalCO2 = portfolio.reduce((s, i) => s + i.co2, 0);
+  const avgScore = (portfolio.reduce((s, i) => s + i.impactScore, 0) / portfolio.length).toFixed(1);
+  const avgEvidence = (portfolio.reduce((s, i) => s + i.evidence, 0) / portfolio.length).toFixed(2);
+  const avgWomen = (portfolio.reduce((s, i) => s + i.women, 0) / portfolio.length).toFixed(1);
+  const allSDGs = [...new Set(portfolio.flatMap(i => i.sdgs))];
+
+  const headers = ['Metric', 'Value', 'IRIS+ Standard', 'Notes'];
+  const rows = [
+    ['Portfolio companies', portfolio.length, '', ''],
+    ['Total capital deployed (USD)', totalInv, '', ''],
+    ['Total beneficiaries reached', totalBen, 'IRIS+ OI1305', ''],
+    ['Jobs created / supported', totalJobs, 'IRIS+ OI7041', ''],
+    ['CO2e avoided / yr (tonnes)', totalCO2, 'IRIS+ PI2080', ''],
+    ['Average impact score', avgScore, 'IMP 5D / IRIS+', 'Out of 100'],
+    ['Average evidence tier', avgEvidence, 'IMP Evidence Tiers', 'Scale 1-4'],
+    ['Average % women reached', avgWomen + '%', '2X Collaborative', ''],
+    ['SDGs covered', allSDGs.length, 'UN SDG Framework', allSDGs.map(id => 'SDG ' + id).join('; ')],
+  ];
+
+  const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${v}"`).join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url;
+  a.download = `portfolio-aggregate-metrics-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// =========================================================
+// UTILITIES
+// =========================================================
+function formatNumber(n) {
+  if (!n) return '—';
+  return n.toLocaleString();
+}
+
+function formatCompact(n) {
+  if (!n) return '—';
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return n.toLocaleString();
+}
+
+function clearAddForm() {
+  ['add-name','add-year','add-beneficiaries','add-bop','add-women','add-jobs','add-jobs-women',
+   'add-co2','add-investment','add-sector-metric-name','add-sector-metric-value','add-notes'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('add-sector').value = '';
+  document.getElementById('add-evidence').value = '3';
+  document.getElementById('add-imp-what').value = '3';
+  document.getElementById('add-imp-howmuch').value = '3';
+  document.getElementById('add-imp-contribution').value = '3';
+  document.getElementById('add-imp-risk').value = '3';
+  document.getElementById('sector-metric-hint').style.display = 'none';
+  // Reset SDG selection
+  selectedSDGs = [];
+  SDG_DATA.forEach(s => {
+    const el = document.getElementById(`sdg-${s.id}`);
+    if (el) {
+      el.classList.remove('selected');
+      el.style.backgroundColor = '';
+      el.style.borderColor = s.color;
+      el.style.color = '';
+    }
+  });
+}
+
+// =========================================================
+// DEMO DATA (optional pre-fill)
+// =========================================================
+function loadDemoData() {
+  const demos = [
+    { name: "BrightSun Energy Kenya", year: 2022, sector: "Clean Energy", stage: "Series A", geo: "Sub-Saharan Africa", investment: 800000, instrument: "Equity", beneficiaries: 45000, bop: 72, women: 54, jobs: 180, jobsWomen: 42, sectorMetricName: "HH with clean energy", sectorMetricValue: 9000, co2: 12400, evidence: 3, sdgs: [7, 13, 1, 5], impWhat: 3, impHowMuch: 3, impContribution: 4, impRisk: 3, notes: "Off-grid solar PAYG model. GOGLA-verified impact data." },
+    { name: "AgriLink India", year: 2021, sector: "Sustainable Agriculture", stage: "Growth", geo: "South Asia", investment: 1200000, instrument: "Revenue-Based Finance", beneficiaries: 32000, bop: 68, women: 48, jobs: 240, jobsWomen: 55, sectorMetricName: "Smallholders with improved income", sectorMetricValue: 14000, co2: 3200, evidence: 3, sdgs: [2, 1, 8, 10], impWhat: 3, impHowMuch: 4, impContribution: 3, impRisk: 3, notes: "Agri-fintech platform. Pre-post income survey conducted annually." },
+    { name: "HealthFirst Clinics", year: 2023, sector: "Healthcare", stage: "Seed", geo: "Sub-Saharan Africa", investment: 400000, instrument: "Convertible Note", beneficiaries: 18000, bop: 65, women: 61, jobs: 85, jobsWomen: 68, sectorMetricName: "Patient consultations/yr", sectorMetricValue: 22000, co2: 0, evidence: 2, sdgs: [3, 5, 10], impWhat: 3, impHowMuch: 2, impContribution: 3, impRisk: 2, notes: "Rural primary health clinics. Output data only at this stage." }
+  ];
+  demos.forEach(d => {
+    d.id = Date.now() + Math.random();
+    d.impactScore = computeImpactScore(d);
+    portfolio.push(d);
+  });
+  renderPortfolio();
+}
+
+// =========================================================
+// INIT
+// =========================================================
+window.onload = () => {
+  initSDGSelectors();
+};
+</script>
+
+<!-- DEMO DATA BUTTON -->
+<div style="position:fixed; bottom:20px; right:20px; z-index:1000;">
+  <button class="btn btn-secondary" onclick="loadDemoData()" style="box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+    🎮 Load Demo Portfolio
+  </button>
+</div>
+
+</body>
+</html>
