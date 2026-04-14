@@ -226,6 +226,74 @@
     padding: 7px 14px; background:#143040; border:1px solid #1a3a4a; color:#7adfa6;
     cursor:pointer; border-radius: 16px; font-size: 0.78em; font-weight:600; }
   .scenario-row button:hover { border-color:#2ecc71; }
+
+  /* PLAYBOOK */
+  .flow-diagram { display:grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 20px 0 8px;
+                  text-align:center; font-size: 0.85em; }
+  @media(max-width:900px) { .flow-diagram { grid-template-columns: repeat(2, 1fr); } }
+  .flow-step { background:#0a2030; border:1px solid #1f4055; border-radius:10px; padding:14px 10px; position:relative; }
+  .flow-step .icon { font-size:1.6em; display:block; margin-bottom:6px; }
+  .flow-step .lbl { color:#7adfa6; font-weight:700; font-size:0.78em; text-transform:uppercase; letter-spacing:0.5px; }
+  .flow-step .sub { color:#9ab; font-size:0.78em; margin-top:6px; line-height:1.4; }
+  .flow-step::after { content:'→'; position:absolute; right:-12px; top:50%; transform:translateY(-50%);
+                       color:#2ecc71; font-size:1.4em; }
+  .flow-step:last-child::after { display:none; }
+  @media(max-width:900px) { .flow-step::after { display:none; } }
+
+  .step-card { background: #0f1e30; border:1px solid #1a3a4a; border-radius: 12px; padding: 22px 24px;
+               margin-bottom: 16px; position:relative; }
+  .step-card .step-num { display:inline-flex; align-items:center; justify-content:center;
+                          width:38px; height:38px; background:#2ecc71; color:#051a2c;
+                          border-radius:50%; font-weight:800; font-size:1.05em; margin-right:10px;
+                          flex-shrink:0; }
+  .step-card .step-head { display:flex; align-items:center; margin-bottom: 14px; gap:6px; }
+  .step-card .step-title { color:#fff; font-size:1.15em; font-weight:700; }
+  .step-card .step-meta { display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                          gap:8px; margin: 12px 0 14px; padding:12px; background:#0a1828;
+                          border-radius:8px; font-size:0.82em; }
+  .step-card .step-meta .meta-item { color:#9ab; }
+  .step-card .step-meta .meta-item strong { display:block; color:#7adfa6; font-size:0.72em;
+                                             text-transform:uppercase; letter-spacing:0.5px;
+                                             margin-bottom:2px; }
+  .step-card h4 { color:#7adfa6; font-size:0.9em; text-transform:uppercase; letter-spacing:1px;
+                   margin: 14px 0 6px; }
+  .step-card ul { color:#c0d0d0; line-height:1.65; font-size:0.93em; margin-left:20px; }
+  .step-card .pitfall { background: rgba(231,76,60,0.08); border-left:3px solid #e74c3c;
+                         padding: 10px 14px; border-radius: 0 6px 6px 0; margin-top: 12px;
+                         color:#fbb; font-size:0.88em; line-height:1.5; }
+  .step-card .pitfall::before { content:'⚠️ '; }
+
+  .buyer-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:10px;
+                margin: 14px 0; }
+  .buyer-cat { background:#0a2030; border:1px solid #1f4055; border-radius:8px; padding:14px; }
+  .buyer-cat h4 { color:#2ecc71; font-size:0.85em; text-transform:uppercase; letter-spacing:1px;
+                   margin-bottom:8px; }
+  .buyer-cat ul { color:#c0d0d0; line-height:1.7; font-size:0.88em; margin-left:18px; }
+  .buyer-cat ul li { margin-bottom:3px; }
+
+  .channel-table { width:100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9em; }
+  .channel-table th { background:#143040; color:#7adfa6; padding: 10px 12px; text-align:left;
+                      font-size:0.78em; text-transform:uppercase; letter-spacing:1px; border-bottom:2px solid #2ecc71; }
+  .channel-table td { padding: 10px 12px; border-bottom: 1px solid #1a3a4a; color:#c0d0d0; line-height:1.5; }
+  .channel-table td.tag { white-space:nowrap; color:#7adfa6; font-weight:600; }
+
+  .doc-checklist { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                    gap:10px; margin-top:14px; }
+  .doc-item { background:#0a2030; border:1px solid #1f4055; border-radius:8px; padding:12px 14px; }
+  .doc-item .doc-name { color:#7adfa6; font-weight:700; font-size:0.92em; }
+  .doc-item .doc-desc { color:#9ab; font-size:0.82em; margin-top:4px; line-height:1.45; }
+  .doc-item .doc-when { color:#5dade2; font-size:0.74em; margin-top:6px;
+                         text-transform:uppercase; letter-spacing:1px; }
+
+  .week-plan { display:grid; grid-template-columns: 80px 1fr; gap:8px 16px; margin-top:14px;
+                font-size:0.92em; }
+  .week-plan .wk { color:#2ecc71; font-weight:700; padding:6px 0; border-bottom:1px dashed #1a3a4a; }
+  .week-plan .act { color:#c0d0d0; padding:6px 0; line-height:1.55; border-bottom:1px dashed #1a3a4a; }
+
+  .red-flag { background:rgba(231,76,60,0.08); border-left:3px solid #e74c3c;
+               padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 8px 0;
+               color:#fdd; font-size:0.9em; line-height:1.5; }
+  .red-flag strong { color:#e74c3c; }
 </style>
 </head>
 
@@ -242,10 +310,11 @@
   <div class="tabs" id="nav-print-hide">
     <button class="tab-button active" data-tab="intro">1 · Start Here</button>
     <button class="tab-button" data-tab="designer">2 · Project Designer</button>
-    <button class="tab-button" data-tab="financial">3 · Financial Model</button>
-    <button class="tab-button" data-tab="quality">4 · Quality Wheel</button>
-    <button class="tab-button" data-tab="deal-memo">5 · Deal Memo</button>
-    <button class="tab-button" data-tab="knowledge">6 · Knowledge Hub</button>
+    <button class="tab-button" data-tab="playbook">3 · How to Actually Do This</button>
+    <button class="tab-button" data-tab="financial">4 · Financial Model</button>
+    <button class="tab-button" data-tab="quality">5 · Quality Wheel</button>
+    <button class="tab-button" data-tab="deal-memo">6 · Deal Memo</button>
+    <button class="tab-button" data-tab="knowledge">7 · Knowledge Hub</button>
   </div>
 
   <!-- TAB 1: INTRO -->
@@ -567,7 +636,511 @@
     </div>
   </section>
 
-  <!-- TAB 3: FINANCIAL MODEL -->
+  <!-- TAB 3: PRACTICAL PLAYBOOK — HOW TO ACTUALLY DO THIS -->
+  <section id="playbook" class="tab-content">
+
+    <div class="card">
+      <h2>🛠️ How a blue carbon business actually works</h2>
+      <p>Stripped of jargon, here is the entire model in one sentence: <strong>You restore or protect a coastal ecosystem. An accredited body measures the CO₂ it absorbs (or the CO₂ that would have been released if it had been destroyed). They issue you carbon credits — one credit per tonne of CO₂. You sell those credits to a company that needs to neutralise its emissions. The buyer "retires" the credit (so it can never be sold again) and you get paid.</strong></p>
+
+      <div class="flow-diagram">
+        <div class="flow-step"><span class="icon">🌱</span><div class="lbl">Restore / Protect</div><div class="sub">Plant, replumb, or guard mangroves / seagrass / saltmarsh</div></div>
+        <div class="flow-step"><span class="icon">📏</span><div class="lbl">Measure</div><div class="sub">Quantify CO₂ absorbed using an approved methodology</div></div>
+        <div class="flow-step"><span class="icon">🏷️</span><div class="lbl">Issue Credits</div><div class="sub">Independent verifier signs off → registry mints credits</div></div>
+        <div class="flow-step"><span class="icon">💼</span><div class="lbl">Sell</div><div class="sub">To a corporate buyer, marketplace or coalition</div></div>
+        <div class="flow-step"><span class="icon">💰</span><div class="lbl">Get Paid</div><div class="sub">Revenue split: community, MRV, project, reinvestment</div></div>
+      </div>
+
+      <div class="alert-box" style="margin-top:18px;">
+        <div class="label">📌 The honest reality</div>
+        <p>It typically takes <strong>3–7 years from idea to first cheque</strong>. The hardest parts are not technical — they are <strong>community trust, land tenure, and finding a buyer who pays a fair price</strong>. The good news: you don't need a PhD or millions in capital to start. You need patience, a real community partnership, and the right partners. This guide tells you exactly what to do, who to contact, and where to find money at every stage.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>🗺️ The 12-step roadmap (idea → first credit sale)</h2>
+      <p class="muted small">Each step shows the work, who you need, how long it takes, and roughly what it costs. Costs are USD ranges — small community projects sit at the low end.</p>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">1</div><div class="step-title">Pick the site &amp; understand it</div></div>
+        <p>Walk the site. Talk to elders. Pull historical satellite imagery (Google Earth Pro is enough). Confirm the ecosystem <em>was</em> there before degradation — don't plant mangroves where they never grew. Map current condition: how much is intact, how much is degraded, what destroyed it (cutting, aquaculture ponds, dykes, sea-level rise).</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>Local fishers, elders, district forestry officer, a national mangrove/seagrass expert (try a local university)</div>
+          <div class="meta-item"><strong>Time</strong>1–3 months</div>
+          <div class="meta-item"><strong>Cost</strong>$2,000–$10,000 (transport, drone hire, community meetings)</div>
+          <div class="meta-item"><strong>Looks like success</strong>A 5-page site brief: location, area, condition, drivers of loss, who depends on the site</div>
+        </div>
+        <div class="pitfall">Don't pick a site because it's pretty or accessible. Pick a site where the <em>drivers of degradation</em> can actually be addressed — otherwise restoration will fail.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">2</div><div class="step-title">Build a real community partnership &amp; start FPIC</div></div>
+        <p>This is the make-or-break step. Hold open meetings (multiple, in the local language, with women and youth attending separately so they can speak freely). Explain what carbon credits are, how the money flows, what you need from them, what they get, and that they can say <em>no</em> at any time. Document every meeting with attendance, photos, signed minutes. Set up a community committee.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>Village elders, women's groups, youth groups, local government, a trusted NGO that already works in the area, a translator</div>
+          <div class="meta-item"><strong>Time</strong>3–9 months (don't rush this)</div>
+          <div class="meta-item"><strong>Cost</strong>$15,000–$50,000 (meetings, translation, transport, food)</div>
+          <div class="meta-item"><strong>Looks like success</strong>Signed Letter of Consent + community committee charter + Free, Prior &amp; Informed Consent (FPIC) record</div>
+        </div>
+        <div class="pitfall">If you can't get FPIC, the project is dead before it starts. Don't try to fake it — auditors will spot a single-meeting "FPIC" instantly and your project will fail validation.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">3</div><div class="step-title">Lock in carbon &amp; land rights</div></div>
+        <p>Carbon credits can only be sold by whoever legally owns them. In many countries this is unsettled. You need <strong>three things in writing</strong>: (1) who owns the land, (2) who has the right to manage it (this can be customary/community), and (3) who owns the carbon. Get a lawyer who has done at least one carbon project in your country. Sign a long-term agreement (≥30 years) with the community.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>Local lawyer (specialist in land/natural resources), Ministry of Environment focal point, district lands office, community committee</div>
+          <div class="meta-item"><strong>Time</strong>3–12 months</div>
+          <div class="meta-item"><strong>Cost</strong>$10,000–$30,000 in legal fees</div>
+          <div class="meta-item"><strong>Looks like success</strong>Signed Carbon Rights Agreement + co-management or tenure agreement + government letter of no objection</div>
+        </div>
+        <div class="pitfall">Tenure is the #1 reason carbon projects collapse. If the government changes its mind after you've spent $200k on validation, you lose everything. Get government endorsement <em>in writing</em> early.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">4</div><div class="step-title">Write a Project Idea Note (PIN) and find a feasibility grant</div></div>
+        <p>A PIN is a 10–15 page document: where, what, who, how much carbon, how much money, who buys, who benefits. It's your fundraising tool. Use it to apply for feasibility grants. Many funders have grant windows specifically for this stage — see the "Money map" section below.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>A consultant who has written PINs (the standard bodies — Verra, Plan Vivo — list approved consultants), or use Verra's free PIN template</div>
+          <div class="meta-item"><strong>Time</strong>2–4 months to write + 3–6 months to fundraise</div>
+          <div class="meta-item"><strong>Cost</strong>$5,000–$25,000 to write (cheaper if you do it yourself)</div>
+          <div class="meta-item"><strong>Looks like success</strong>Submitted PIN + at least one feasibility grant secured ($50k–$300k)</div>
+        </div>
+        <div class="pitfall">Don't pay anyone $50k+ to write a generic PIN. Most templates are openly available. Pay for technical content (carbon estimates, biology) — not for boilerplate.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">5</div><div class="step-title">Choose your standard &amp; methodology</div></div>
+        <p>The standard is the rulebook your project follows. Three main options:</p>
+        <ul>
+          <li><strong>Verra (VCS + CCB):</strong> Highest market liquidity, biggest buyers, strict MRV. Use methodology <em>VM0033</em> for tidal wetlands &amp; seagrass restoration, or <em>VM0007 / REDD+ modules</em> for conservation. Best for projects ≥1,000 ha.</li>
+          <li><strong>Plan Vivo:</strong> Smallholder-friendly, mandates ≥60% of revenue to community, lower fixed costs, lower credit prices. Best for small community projects (under 1,000 ha).</li>
+          <li><strong>Gold Standard:</strong> Strong on co-benefits and SDG alignment. Less common for blue carbon but growing.</li>
+        </ul>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>Email the standard's secretariat directly. They give free guidance to early-stage projects. Verra: ip@verra.org · Plan Vivo: info@planvivo.org</div>
+          <div class="meta-item"><strong>Time</strong>1–2 months to decide</div>
+          <div class="meta-item"><strong>Cost</strong>Decision is free. Registration fee at next step.</div>
+          <div class="meta-item"><strong>Looks like success</strong>Written choice + the methodology PDF on your laptop, read cover-to-cover</div>
+        </div>
+        <div class="pitfall">Don't pick Verra "because it's the biggest" if you're a 200-ha community project. The MRV cost will swallow your revenue. Plan Vivo or aggregation under an existing Verra project is often the right answer.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">6</div><div class="step-title">Do the baseline study &amp; carbon measurements</div></div>
+        <p>Measure what's there now. Take soil cores to ≥1 metre depth in mangrove/saltmarsh sites — soil typically holds 50–90% of total carbon. Measure standing biomass using allometric equations (height + diameter → carbon). Establish permanent monitoring plots. This baseline is what every future verification compares against, so it must be done well.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>A national university with a marine ecology / soil science department (much cheaper than international consultants). Mangrove Action Project runs CBEMR training. CIFOR-ICRAF has field protocols.</div>
+          <div class="meta-item"><strong>Time</strong>3–9 months (depends on plot count)</div>
+          <div class="meta-item"><strong>Cost</strong>$30,000–$120,000</div>
+          <div class="meta-item"><strong>Looks like success</strong>Baseline carbon stock report with statistical confidence intervals, plot coordinates, photos, lab analysis certificates</div>
+        </div>
+        <div class="pitfall">Don't outsource everything. Train community members as parabiologists — they collect data for the next 30 years and the cost-savings are enormous.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">7</div><div class="step-title">Write the Project Design Document (PDD)</div></div>
+        <p>The PDD is the master document — usually 80–200 pages. It describes the project, the baseline, the methodology, monitoring plan, leakage analysis, community engagement, risk assessment, and benefit sharing. The standard provides a template. This goes to the validator.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>A PDD-writing consultant who has passed a Verra/Plan Vivo PDD before. Ask for references. Common firms: South Pole, Climate Focus, Anthesis, ClimeCo, Earthood (also a VVB), Conservation International project services. Hire a local co-writer to keep costs down.</div>
+          <div class="meta-item"><strong>Time</strong>6–12 months</div>
+          <div class="meta-item"><strong>Cost</strong>$50,000–$200,000</div>
+          <div class="meta-item"><strong>Looks like success</strong>Draft PDD ready for validation + listed on the registry as "under development"</div>
+        </div>
+        <div class="pitfall">Don't sign a PDD contract that gives the consultant a cut of future credits. Pay a flat fee. Otherwise you lose negotiating power forever.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">8</div><div class="step-title">Validation by an accredited Validation/Verification Body (VVB)</div></div>
+        <p>An independent third-party auditor reviews your PDD, visits the site, interviews the community, and certifies that the project meets the standard. They are paid by you but accountable to the standard. Validation is a one-time event for the whole project.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>A standard-accredited VVB. Verra publishes the list. Common VVBs for blue carbon: Earthood, TÜV NORD, AENOR, Aster Global, EPIC Sustainability, Ruby Canyon Environmental, S&amp;A Carbon</div>
+          <div class="meta-item"><strong>Time</strong>6–12 months</div>
+          <div class="meta-item"><strong>Cost</strong>$40,000–$120,000</div>
+          <div class="meta-item"><strong>Looks like success</strong>Validation Report issued · project moves from "under development" to "registered"</div>
+        </div>
+        <div class="pitfall">Don't use the same firm to write the PDD and validate it — that's a conflict of interest and the standard will reject it. The PDD writer and the VVB <em>must</em> be different organisations.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">9</div><div class="step-title">Implement — actually do the restoration / conservation</div></div>
+        <p>This is the work. CBEMR projects breach abandoned dyke walls and let tidal flow restore mangroves naturally. Direct planting projects raise nurseries and plant seedlings (carefully — only on hydrologically suitable sites). Conservation projects fund patrols, alternative livelihoods, and community ranger jobs. Monitoring plots are checked at agreed intervals (usually annually).</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>The community workforce. A field manager (full-time staff — not a consultant). Local nursery if planting. Patrol team if conservation.</div>
+          <div class="meta-item"><strong>Time</strong>Ongoing — typically 5–10 years of intensive activity, then maintenance</div>
+          <div class="meta-item"><strong>Cost</strong>The setup &amp; OpEx numbers from the Project Designer tab</div>
+          <div class="meta-item"><strong>Looks like success</strong>Year-on-year photos showing canopy returning, soil accreting, fish coming back, community livelihoods improving</div>
+        </div>
+        <div class="pitfall">If month 6 photos look identical to month 1 photos, something is wrong. Investigate fast — the cheapest fix is in year 1, not year 5.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">10</div><div class="step-title">First verification &amp; credit issuance</div></div>
+        <p>Around year 2–5 (depending on standard and project type), the VVB returns and verifies how much CO₂ has actually been sequestered or avoided. The standard then issues credits to your registry account. Each credit has a unique serial number. You can now sell.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>The same VVB (or a new one). Your monitoring data is the input.</div>
+          <div class="meta-item"><strong>Time</strong>4–8 months (audit + issuance)</div>
+          <div class="meta-item"><strong>Cost</strong>$30,000–$80,000 per verification cycle (typically every 2–5 years)</div>
+          <div class="meta-item"><strong>Looks like success</strong>Credits visible in your Verra / Plan Vivo registry account, ready to sell or transfer</div>
+        </div>
+        <div class="pitfall">Many projects over-promise and under-deliver in the first verification. It's better to issue fewer credits with airtight evidence than chase a big number that gets challenged.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">11</div><div class="step-title">Sell credits — directly, via a marketplace, or to a coalition</div></div>
+        <p>This is where the money finally arrives. See the "Where credits get sold" and "Who actually buys" tables below. The fastest cash is via a marketplace; the highest price is via a long-term direct corporate offtake; the most strategic is to join a buyer's coalition (LEAF, Frontier, Symbiosis) for guaranteed multi-year demand.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>A trusted broker or a direct corporate sustainability lead (LinkedIn is your friend). Your standard's registry handles the legal transfer.</div>
+          <div class="meta-item"><strong>Time</strong>1–6 months per deal</div>
+          <div class="meta-item"><strong>Cost</strong>Brokers charge 5–20% commission. Direct sales: just your time + legal review of offtake agreement.</div>
+          <div class="meta-item"><strong>Looks like success</strong>Signed offtake or spot sale + credits "retired" on the registry + cash in the project bank account</div>
+        </div>
+        <div class="pitfall">Never sign a long-term fixed-price contract for all your credits. Lock in floor prices for a portion (≤30%) and keep the rest floating with the market. Walk away from any buyer who refuses to disclose how they will <em>use</em> the credits.</div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-head"><div class="step-num">12</div><div class="step-title">Distribute revenue &amp; reinvest</div></div>
+        <p>Net revenue (after MRV costs) flows according to your benefit-sharing agreement. Best practice: a portion to direct community payments, a portion to community projects (water, schools, healthcare), a portion to alternative livelihoods (so they survive after credits end), a portion to project operations &amp; future verifications. Publish the breakdown annually — transparency builds trust with both community and buyers.</p>
+        <div class="step-meta">
+          <div class="meta-item"><strong>Who you need</strong>The community committee (decides allocations), an accountant, a banking partner that doesn't eat your money in fees</div>
+          <div class="meta-item"><strong>Time</strong>Annual cycle</div>
+          <div class="meta-item"><strong>Cost</strong>~3–5% of revenue in admin / accounting</div>
+          <div class="meta-item"><strong>Looks like success</strong>Annual benefit-sharing report published. Real assets in the community: school built, water system, clinic, alternative livelihoods.</div>
+        </div>
+        <div class="pitfall">If revenue only flows to a project committee and never visibly reaches households or community assets, conflict will erupt. The community feeling cheated is the single biggest reversal risk.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>💰 Money map — where to find capital at each stage</h2>
+      <p>You don't need millions to start. You need the right money at the right stage. Here is a practical funding ladder.</p>
+
+      <div class="buyer-grid" style="margin-top:14px;">
+        <div class="buyer-cat">
+          <h4>Step 1–2: Discovery ($5k–$50k)</h4>
+          <ul>
+            <li><strong>National Geographic Society</strong> — Explorer grants up to $30k</li>
+            <li><strong>Conservation, Food &amp; Health Foundation</strong> — small grants for early-stage</li>
+            <li><strong>Rufford Small Grants</strong> — up to £6k for nature conservation</li>
+            <li><strong>Local NGO partners</strong> — Mangrove Action Project, Wetlands International, IUCN national offices often have small seed grants</li>
+            <li><strong>National Geographic Wayfinder + Pristine Seas</strong></li>
+            <li><strong>Pew Marine Fellows</strong> — $150k over 3 yrs for individuals</li>
+          </ul>
+        </div>
+
+        <div class="buyer-cat">
+          <h4>Step 3–5: Feasibility ($50k–$300k)</h4>
+          <ul>
+            <li><strong>Global Environment Facility (GEF) Small Grants</strong> — up to $50k via UNDP country offices</li>
+            <li><strong>USAID Climate Adaptation grants</strong> (when available)</li>
+            <li><strong>FCDO Blue Planet Fund</strong> — UK government, large blue carbon focus</li>
+            <li><strong>Norwegian NICFI</strong> — climate &amp; forest initiative</li>
+            <li><strong>IKI</strong> — German International Climate Initiative</li>
+            <li><strong>Bezos Earth Fund</strong> — direct grants to selected projects</li>
+            <li><strong>Walton Family Foundation Marine</strong></li>
+            <li><strong>Builders Initiative / Builders Vision</strong></li>
+          </ul>
+        </div>
+
+        <div class="buyer-cat">
+          <h4>Step 6–8: PDD &amp; Validation ($150k–$500k)</h4>
+          <ul>
+            <li><strong>ORRAA Innovation Fund</strong> — Ocean Risk &amp; Resilience Action Alliance — specifically for blue carbon &amp; coastal resilience pre-finance</li>
+            <li><strong>Mangrove Breakthrough Investment Roadmap</strong> — $4bn pipeline</li>
+            <li><strong>Global Fund for Coral Reefs (GFCR)</strong> — blended finance for reef-adjacent including mangroves</li>
+            <li><strong>UN Capital Development Fund (UNCDF) BRIDGE Facility</strong></li>
+            <li><strong>Convergence Blended Finance design grants</strong></li>
+            <li><strong>FMO / Proparco / IDB Lab / IFC</strong> — Development Finance Institutions, catalytic capital</li>
+            <li><strong>Ashoka, Echoing Green</strong> — fellowships with stipends if you're an individual founder</li>
+          </ul>
+        </div>
+
+        <div class="buyer-cat">
+          <h4>Step 9–10: Implementation pre-finance</h4>
+          <ul>
+            <li><strong>Ex-ante credit pre-purchase</strong> — buyers pay upfront at a discount (typically 30–50%) for future delivery</li>
+            <li><strong>South Pole, Respira, ClimeCo, Climate Impact Partners</strong> — project finance partners that offer ex-ante deals</li>
+            <li><strong>The Nature Conservancy Africa Capital</strong> — debt for project developers</li>
+            <li><strong>=Mtree, Pachama Originals, Salesforce Sustainability Cloud Originals</strong> — buyer-developer co-investments</li>
+            <li><strong>Blue Bonds / Debt-for-Nature swaps</strong> — sovereign-level financing (Seychelles, Belize, Gabon, Barbados precedents)</li>
+          </ul>
+        </div>
+
+        <div class="buyer-cat">
+          <h4>Step 11+: Long-term offtake</h4>
+          <ul>
+            <li><strong>LEAF Coalition</strong> — government &amp; corporate consortium ($1bn+ for jurisdictional REDD+)</li>
+            <li><strong>Symbiosis Coalition</strong> — Google, Meta, Microsoft, Salesforce committed to 20M tonnes nature-based by 2030</li>
+            <li><strong>Frontier (Stripe-led)</strong> — focused on durable carbon removal</li>
+            <li><strong>NextGen CDR Facility (South Pole + Mitsubishi)</strong></li>
+            <li><strong>SBTi-aligned corporates</strong> — see buyer list below</li>
+          </ul>
+        </div>
+
+        <div class="buyer-cat">
+          <h4>Accelerators &amp; capacity</h4>
+          <ul>
+            <li><strong>Ocean Solutions Accelerator</strong> (Sustainable Ocean Alliance)</li>
+            <li><strong>Katapult Ocean</strong> — Norwegian blue economy investor + accelerator</li>
+            <li><strong>Hatch Blue</strong> — sustainable aquaculture &amp; ocean</li>
+            <li><strong>UNCDF BlueAccelerator</strong> — Tanzania-focused</li>
+            <li><strong>Acumen Foundry</strong> — for early-stage social enterprises</li>
+            <li><strong>Mangrove Action Project</strong> — practical CBEMR training (apply for the next field school)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>🧑‍💼 Who actually buys blue carbon credits</h2>
+      <p>The buyer side is where many projects get stuck. Here are the real demand pools.</p>
+
+      <div class="buyer-grid">
+        <div class="buyer-cat">
+          <h4>Tech (highest prices, largest volume)</h4>
+          <ul>
+            <li>Microsoft (largest single buyer; emphasises permanence)</li>
+            <li>Salesforce (founding member of Symbiosis)</li>
+            <li>Google &amp; Alphabet</li>
+            <li>Meta</li>
+            <li>Apple (Restore Fund — equity in projects)</li>
+            <li>Amazon (Right Now Climate Fund)</li>
+            <li>Stripe Climate (Frontier-driven)</li>
+            <li>Workday, Adobe, ServiceNow</li>
+          </ul>
+        </div>
+        <div class="buyer-cat">
+          <h4>Financial services</h4>
+          <ul>
+            <li>BlackRock</li>
+            <li>JPMorgan Chase (Net Zero Banking Alliance)</li>
+            <li>Morgan Stanley</li>
+            <li>Bank of America</li>
+            <li>Standard Chartered (SC Ventures)</li>
+            <li>HSBC Pollination</li>
+            <li>BNP Paribas</li>
+          </ul>
+        </div>
+        <div class="buyer-cat">
+          <h4>Consumer goods &amp; food</h4>
+          <ul>
+            <li>Unilever (buys mangrove credits for &quot;net positive nature&quot;)</li>
+            <li>Nestlé (large NbS buyer)</li>
+            <li>Procter &amp; Gamble</li>
+            <li>L'Oréal</li>
+            <li>Danone</li>
+            <li>Mars Inc.</li>
+            <li>Patagonia</li>
+            <li>Kering</li>
+            <li>LVMH</li>
+          </ul>
+        </div>
+        <div class="buyer-cat">
+          <h4>Energy / Industry (be selective)</h4>
+          <ul>
+            <li>Shell Nature-Based Solutions</li>
+            <li>BP</li>
+            <li>TotalEnergies</li>
+            <li>Eni</li>
+            <li>Ørsted</li>
+            <li>ENGIE</li>
+          </ul>
+          <p style="color:#fbb;font-size:0.78em;margin-top:6px;line-height:1.4;">⚠️ Screen these against SBTi / VCMI before selling. Selling to a buyer that uses your credits to greenwash will damage your reputation forever.</p>
+        </div>
+        <div class="buyer-cat">
+          <h4>Coalitions &amp; clubs (bulk demand)</h4>
+          <ul>
+            <li>LEAF Coalition — jurisdictional REDD+</li>
+            <li>Symbiosis Coalition — high-quality nature-based</li>
+            <li>Frontier — durable removal (CDR)</li>
+            <li>NextGen CDR Facility</li>
+            <li>Climate Asset Management (HSBC + Pollination)</li>
+            <li>Coalition for Negative Emissions</li>
+          </ul>
+        </div>
+        <div class="buyer-cat">
+          <h4>Sovereign &amp; jurisdictional buyers</h4>
+          <ul>
+            <li>Singapore (carbon tax allowing high-quality international credits)</li>
+            <li>Korea ETS</li>
+            <li>Switzerland (Article 6.2 cooperative agreements)</li>
+            <li>Norway (NICFI &amp; bilateral)</li>
+            <li>Japan JCM (Joint Crediting Mechanism)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>🏪 Where credits actually get sold (channels &amp; tradeoffs)</h2>
+      <table class="channel-table">
+        <thead>
+          <tr><th>Channel</th><th>Best for</th><th>Pros</th><th>Cons / commission</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tag">Direct corporate offtake</td>
+            <td>Established projects with credible track record</td>
+            <td>Highest price ($30–$80+/t). Long-term certainty. Buyer co-marketing builds project visibility.</td>
+            <td>Slow — 6–18 months per deal. Need a sales pipeline. Buyer due diligence is heavy.</td>
+          </tr>
+          <tr>
+            <td class="tag">Marketplace listing</td>
+            <td>Pre-issued credits ready to sell</td>
+            <td>Fast liquidity. Discoverable. Standardised contracts.</td>
+            <td>5–15% platform fees. Less control over who buys. Spot prices can swing.</td>
+          </tr>
+          <tr>
+            <td class="tag">Broker</td>
+            <td>Project developers without sales capacity</td>
+            <td>Existing buyer network. Can move volume quickly.</td>
+            <td>10–20% commission. Risk of being commoditised. Some brokers are ethical, some aren't — ask for references.</td>
+          </tr>
+          <tr>
+            <td class="tag">Project finance partner / aggregator</td>
+            <td>Early-stage projects needing pre-finance</td>
+            <td>Capital up-front. Take on sales burden. May provide MRV support.</td>
+            <td>Take ~20–35% of credits or revenue. Lock-in for project lifetime. Negotiate hard on the off-ramp.</td>
+          </tr>
+          <tr>
+            <td class="tag">Buyer's coalition</td>
+            <td>Projects matching coalition criteria</td>
+            <td>Multi-year guaranteed demand. Brand-name credibility. Often involves capacity support.</td>
+            <td>Strict eligibility. Application processes are long. Coalition sets the terms.</td>
+          </tr>
+          <tr>
+            <td class="tag">Bilateral country (Article 6)</td>
+            <td>Projects in countries with cooperative agreements (e.g. Switzerland↔Ghana)</td>
+            <td>Backed by sovereign demand. Premium prices.</td>
+            <td>Politically complex. Requires national authorisation. Slow.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin-top:18px; color:#7adfa6; font-size:0.9em; text-transform:uppercase; letter-spacing:1px;">Recommended specific marketplaces &amp; brokers</h4>
+      <div class="buyer-grid">
+        <div class="buyer-cat">
+          <h4>Marketplaces</h4>
+          <ul>
+            <li><strong>Patch</strong> (patch.io) — API-based, easy to list</li>
+            <li><strong>Pachama</strong> (pachama.com) — quality-screened</li>
+            <li><strong>Salesforce Net Zero Marketplace</strong></li>
+            <li><strong>Cloverly</strong> — corporate offset platform</li>
+            <li><strong>CTX Global</strong> — institutional spot</li>
+          </ul>
+        </div>
+        <div class="buyer-cat">
+          <h4>Ratings (do this before listing — it sets your price)</h4>
+          <ul>
+            <li><strong>Sylvera</strong> — leading rating agency</li>
+            <li><strong>BeZero Carbon</strong></li>
+            <li><strong>Calyx Global</strong></li>
+            <li><strong>Renoster</strong></li>
+            <li>Each provides a free baseline — paid for full rating. Strong ratings unlock $10–$20/t price premiums.</li>
+          </ul>
+        </div>
+        <div class="buyer-cat">
+          <h4>Project finance / aggregator partners</h4>
+          <ul>
+            <li><strong>South Pole</strong></li>
+            <li><strong>Climate Impact Partners</strong></li>
+            <li><strong>Respira International</strong></li>
+            <li><strong>ClimeCo</strong></li>
+            <li><strong>Native (BEF)</strong></li>
+            <li><strong>NatureMetrics &amp; Pachama Originals</strong></li>
+          </ul>
+        </div>
+        <div class="buyer-cat">
+          <h4>Brokers (verify references)</h4>
+          <ul>
+            <li>Numerco</li>
+            <li>Karbone</li>
+            <li>Anew Climate</li>
+            <li>ACT Commodities</li>
+            <li>Vertree (Hartree)</li>
+            <li>ClearBlue Markets</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>📋 The document checklist (everything you'll need)</h2>
+      <p>Print this. Tick items off as you go. If you can produce all of these, your project is registry-ready.</p>
+      <div class="doc-checklist">
+        <div class="doc-item"><div class="doc-name">FPIC Documentation Pack</div><div class="doc-desc">Meeting minutes, attendance lists, photos, signed letters of consent in local language</div><div class="doc-when">Step 2</div></div>
+        <div class="doc-item"><div class="doc-name">Carbon Rights Agreement</div><div class="doc-desc">Who owns the credits — community, developer, government — and the revenue split</div><div class="doc-when">Step 3</div></div>
+        <div class="doc-item"><div class="doc-name">Land Tenure / Co-management Agreement</div><div class="doc-desc">Long-term (≥30 yrs) right to manage the site. Customary tenure is acceptable if formally recognised.</div><div class="doc-when">Step 3</div></div>
+        <div class="doc-item"><div class="doc-name">Government Letter of No Objection</div><div class="doc-desc">From Ministry of Environment + relevant land/forestry agency</div><div class="doc-when">Step 3</div></div>
+        <div class="doc-item"><div class="doc-name">Project Idea Note (PIN)</div><div class="doc-desc">10–15 page summary used to fundraise feasibility</div><div class="doc-when">Step 4</div></div>
+        <div class="doc-item"><div class="doc-name">Baseline Carbon Stock Report</div><div class="doc-desc">Above-ground biomass + soil carbon to ≥1m depth, with statistical confidence intervals</div><div class="doc-when">Step 6</div></div>
+        <div class="doc-item"><div class="doc-name">Project Design Document (PDD)</div><div class="doc-desc">The master document — 80–200 pages following the standard's template</div><div class="doc-when">Step 7</div></div>
+        <div class="doc-item"><div class="doc-name">Monitoring Plan</div><div class="doc-desc">What you'll measure, how often, by whom, with what equipment, against what targets</div><div class="doc-when">Step 7</div></div>
+        <div class="doc-item"><div class="doc-name">Leakage Assessment</div><div class="doc-desc">How will you stop the same harm moving to a neighbouring site?</div><div class="doc-when">Step 7</div></div>
+        <div class="doc-item"><div class="doc-name">Non-Permanence Risk Assessment</div><div class="doc-desc">Verra's NPRT or equivalent — drives your buffer pool %</div><div class="doc-when">Step 7</div></div>
+        <div class="doc-item"><div class="doc-name">Benefit-Sharing Agreement</div><div class="doc-desc">Who gets what % of revenue, how it's paid, what happens in lean years</div><div class="doc-when">Step 7</div></div>
+        <div class="doc-item"><div class="doc-name">Grievance Redress Mechanism</div><div class="doc-desc">How a community member raises a concern without retaliation, and how it gets resolved</div><div class="doc-when">Step 7</div></div>
+        <div class="doc-item"><div class="doc-name">RACI Chart</div><div class="doc-desc">Responsible / Accountable / Consulted / Informed for every key decision</div><div class="doc-when">Step 7</div></div>
+        <div class="doc-item"><div class="doc-name">MEAL Plan</div><div class="doc-desc">Monitoring, Evaluation, Accountability &amp; Learning indicators with frequency</div><div class="doc-when">Step 7</div></div>
+        <div class="doc-item"><div class="doc-name">Validation Report</div><div class="doc-desc">From the VVB — confirms the project meets the standard</div><div class="doc-when">Step 8</div></div>
+        <div class="doc-item"><div class="doc-name">Annual Verification Reports</div><div class="doc-desc">From the VVB — confirms how many credits to issue this cycle</div><div class="doc-when">Step 10+</div></div>
+        <div class="doc-item"><div class="doc-name">Annual Benefit-Sharing Report</div><div class="doc-desc">Public, transparent — what the community actually received</div><div class="doc-when">Step 12</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>📅 Your first 90 days (start-tomorrow plan)</h2>
+      <p>If you do nothing else, do these things in this order over the next 90 days. They cost almost nothing and de-risk every later step.</p>
+      <div class="week-plan">
+        <div class="wk">Week 1</div><div class="act">Walk the site for two full days. Photograph everything. Talk to at least 10 fishers / farmers / women / elders <em>separately</em>. Ask: what was here 30 years ago? What changed? Who owns the land? Who decides?</div>
+        <div class="wk">Week 2</div><div class="act">Pull historical satellite imagery in Google Earth Pro back to 1990. Save annotated screenshots showing degradation timeline.</div>
+        <div class="wk">Week 3</div><div class="act">Identify your 3 most-trusted community partners. Ask permission to convene a first formal meeting. Don't promise money, don't promise outcomes — listen.</div>
+        <div class="wk">Week 4</div><div class="act">Email three potential allies: (1) the nearest university marine/forestry department, (2) a respected national NGO, (3) the district environment officer. Introduce yourself. Ask for a 30-minute meeting.</div>
+        <div class="wk">Week 5</div><div class="act">Hold the first community meeting. Translate every word. No PowerPoint — use a flipchart. Document attendance, photos, key questions raised. Schedule the next meeting.</div>
+        <div class="wk">Week 6</div><div class="act">Draft a 2-page Project Idea Note. Share with your three allies for feedback.</div>
+        <div class="wk">Week 7</div><div class="act">Identify your 5 best-fit funders from the Money Map above. Read their last 3 grant rounds. Find an email address for each.</div>
+        <div class="wk">Week 8</div><div class="act">Hold the second community meeting. Bring back a draft project concept. Listen for objections. Adjust.</div>
+        <div class="wk">Week 9</div><div class="act">Reach out to a national lawyer with carbon experience. Ask: what does carbon ownership look like in this country? Get a 1-page memo.</div>
+        <div class="wk">Week 10</div><div class="act">Make first contact with the standard you're leaning towards (Verra info@ or Plan Vivo). Ask for guidance. They give 30-min calls to early-stage projects.</div>
+        <div class="wk">Week 11</div><div class="act">Send your PIN to your top 3 funder fits. Ask for a meeting, not a grant — yet.</div>
+        <div class="wk">Week 12</div><div class="act">Hold a community meeting to share progress. Confirm or adjust direction. Decide together: do we proceed to feasibility?</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>🚩 Red flags &amp; common scams</h2>
+      <p>The blue carbon space attracts both heroes and opportunists. Avoid these traps.</p>
+      <div class="red-flag"><strong>"We'll do everything for you — just sign here."</strong> Any partner asking for &gt;30% of credits in perpetuity, with no exit clause, is a bad deal. The community + project should always retain the majority.</div>
+      <div class="red-flag"><strong>Fixed price for 30 years.</strong> If the carbon market rises, you've locked your community into structurally unfair pricing. Always negotiate floors, escalators, or floating prices.</div>
+      <div class="red-flag"><strong>NDAs that cover environmental or social outcomes.</strong> Price confidentiality is normal. Hiding what the project is doing in the field is not. Walk away.</div>
+      <div class="red-flag"><strong>"Carbon cowboy" buyers without published net-zero strategies.</strong> Selling credits to a fossil-fuel company that uses them to delay decarbonisation will sink your reputation. Screen every buyer against SBTi / VCMI guidance.</div>
+      <div class="red-flag"><strong>Standards no one has heard of.</strong> Stick to ICVCM-aligned standards (Verra, Plan Vivo, Gold Standard, ART TREES). Niche standards have weak buyer demand and may not survive.</div>
+      <div class="red-flag"><strong>Projects that promise 100+ tCO₂/ha/year.</strong> If you're not deep in REDD+ for an extremely high-deforestation baseline, this is too good to be true. Conservative estimates win.</div>
+      <div class="red-flag"><strong>"Help" that doesn't include training.</strong> Any partner who can't (or won't) train your community in MRV, monitoring, and basic finance is locking you into permanent dependency.</div>
+    </div>
+
+    <div class="card" style="margin-top:20px;">
+      <h2>📞 Free help — organisations that will actually talk to you</h2>
+      <p>These organisations have mandates to support new project developers, especially community-led ones in the Global South. Don't be shy — email them.</p>
+      <ul style="color:#c0d0d0; line-height:1.85; margin-left:20px; font-size:0.93em;">
+        <li><strong>Mangrove Action Project (MAP)</strong> — runs CBEMR field schools. The cheapest, most effective restoration training on earth. <a href="https://mangroveactionproject.org/" target="_blank">mangroveactionproject.org</a></li>
+        <li><strong>Wetlands International</strong> — country offices in Africa, Asia, LatAm. Provide technical support to community projects. <a href="https://www.wetlands.org/" target="_blank">wetlands.org</a></li>
+        <li><strong>Conservation International — Blue Carbon</strong> — pioneered the methodology, run regional capacity programmes. <a href="https://www.conservation.org/" target="_blank">conservation.org</a></li>
+        <li><strong>Global Mangrove Alliance</strong> — convenor of 100+ NGOs. Connect to whoever is already working in your country. <a href="https://www.mangrovealliance.org/" target="_blank">mangrovealliance.org</a></li>
+        <li><strong>International Blue Carbon Institute (IBCI)</strong> — Singapore-based capacity-building. <a href="https://internationalbluecarboninstitute.org/" target="_blank">internationalbluecarboninstitute.org</a></li>
+        <li><strong>The Blue Carbon Initiative</strong> — joint CI / IOC-UNESCO / IUCN. Source of all peer-reviewed methodology. <a href="https://thebluecarboninitiative.org/" target="_blank">thebluecarboninitiative.org</a></li>
+        <li><strong>Ocean Risk &amp; Resilience Action Alliance (ORRAA)</strong> — funder &amp; convenor of innovative coastal finance. <a href="https://www.oceanriskalliance.org/" target="_blank">oceanriskalliance.org</a></li>
+        <li><strong>Restor</strong> — open data platform; map your project, find peers nearby. <a href="https://restor.eco/" target="_blank">restor.eco</a></li>
+        <li><strong>CIFOR-ICRAF</strong> — research institutes with field protocols you can use directly. <a href="https://www.cifor-icraf.org/" target="_blank">cifor-icraf.org</a></li>
+        <li><strong>The Nature Conservancy — Africa &amp; Asia coastal teams</strong> — partner on larger projects.</li>
+        <li><strong>The Pew Charitable Trusts — Coastal Resilience &amp; Marine Habitats</strong></li>
+        <li><strong>Verra &amp; Plan Vivo secretariats</strong> — both will give 30-minute orientation calls to early-stage projects. <em>Just ask.</em></li>
+      </ul>
+    </div>
+
+  </section>
+
+  <!-- TAB 4: FINANCIAL MODEL -->
   <section id="financial" class="tab-content">
     <div class="card">
       <h2>🧮 Full 30-year financial model</h2>
@@ -843,7 +1416,7 @@
 </div>
 
 <footer>
-  Built with ☩ by <a href="https://useful-af.circle.so" target="_blank">Useful AF</a> — Free AI tools for the impact sector ·
+  Built with ☩ by <a href="https://useful-af.circle.so" target="_blank">Useful AF</a> — AI tools for the impact sector ·
   Design framework adapted from <a href="https://www.oceanriskalliance.org/resource/high-quality-blue-carbon-principles-and-guidance-2/" target="_blank">High-Quality Blue Carbon Principles &amp; Guidance (2024)</a>
 </footer>
 
@@ -1634,56 +2207,387 @@ function updateMemo() {
 function downloadExcel() {
   const r = window._latest || compute();
   const wb = XLSX.utils.book_new();
-
-  // Inputs
-  const inputs = [
-    ['Input','Value'],
-    ['Ecosystem', state.ecosystem],
-    ['Project type', state.projectType],
-    ['Intervention', state.intervention],
-    ['Area (ha)', state.area],
-    ['Country/region', state.country],
-    ['Site condition', state.condition],
-    ['Tenure', state.tenure],
-    ['Sequestration rate (tCO2e/ha/yr)', state.seq],
-    ['Buffer pool %', state.buffer],
-    ['Carbon standard', state.standard],
-    ['Setup cost $/ha', state.setupCost],
-    ['OpEx $/ha/yr', state.opex],
-    ['MRV % of revenue', state.mrv],
-    ['Credit price $/tCO2e', state.price],
-    ['Ex-ante share %', state.exante],
-    ['Ex-ante discount %', state.discount],
-    ['Grant funding $', state.grant],
-    ['Community share %', state.commShare],
-    ['FPIC', state.fpic],
-    ['Livelihood plan', state.livelihood],
-    ['Project lifetime (years)', state.years],
-    ['Discount rate %', state.discRate]
-  ];
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(inputs), 'Inputs');
-
-  // Cashflow
-  const cfHeader = ['Year','Gross tCO2e','Net tCO2e','Issuable tCO2e','Revenue $','Setup $','OpEx $','MRV $','Grant $','Community $','Net to project $','Cumulative $'];
-  const cfRows = r.rows.map(x => [x.year, Math.round(x.gross), Math.round(x.net), Math.round(x.issuable), Math.round(x.revenue), Math.round(x.setup), Math.round(x.opex), Math.round(x.mrv), Math.round(x.grant), Math.round(x.community), Math.round(x.net_proj), Math.round(x.cum)]);
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([cfHeader, ...cfRows]), 'Cashflow');
-
-  // Summary
-  const summary = [
-    ['Metric','Value'],
-    ['Lifetime tCO2e (net)', Math.round(r.lifetimeCO2)],
-    ['Buffer reserved (tCO2e)', Math.round(r.bufferReserved)],
-    ['Lifetime revenue $', Math.round(r.lifetimeRev)],
-    ['Lifetime cost $', Math.round(r.lifetimeCost)],
-    ['NPV $', Math.round(r.npv)],
-    ['IRR %', r.irr === null ? 'n/a' : (r.irr*100).toFixed(2)],
-    ['Breakeven year', r.breakeven]
-  ];
   const scores = computeScores();
-  Object.entries(scores).forEach(([k,v]) => summary.push(['HQBC: ' + k, v]));
-  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summary), 'Summary');
+  const today = new Date().toISOString().split('T')[0];
 
-  XLSX.writeFile(wb, 'blue-carbon-project-model.xlsx');
+  // Helpers — formatted cell builders
+  const $$  = v => ({ v: Math.round(v||0), t: 'n', z: '"$"#,##0' });        // dollars no decimals
+  const $$M = v => ({ v: Math.round(v||0), t: 'n', z: '"$"#,##0;[Red]("$"#,##0)' }); // dollars w/ red negatives
+  const num = v => ({ v: Math.round(v||0), t: 'n', z: '#,##0' });           // integer with commas
+  const pct = v => ({ v: (v||0)/100, t: 'n', z: '0.0%' });                  // expects 0-100
+  const dec = v => ({ v: v||0, t: 'n', z: '0.00' });                        // decimal
+  const txt = v => ({ v: String(v ?? ''), t: 's' });
+  const head = v => ({ v: String(v ?? ''), t: 's', s: { font: { bold: true } } }); // header cell
+  const title = v => ({ v: String(v ?? ''), t: 's' });
+  const setCols = (ws, widths) => { ws['!cols'] = widths.map(w => ({ wch: w })); };
+  const setMerge = (ws, range) => { ws['!merges'] = (ws['!merges']||[]).concat([range]); };
+
+  /* ============================================================
+     SHEET 1 — README (overview)
+  ============================================================ */
+  const eco = state.ecosystem.charAt(0).toUpperCase() + state.ecosystem.slice(1);
+  const ptype = ({restoration:'Ecological restoration', conservation:'Conservation / REDD+', sustainable:'Sustainable management'})[state.projectType];
+  const standardName = ({verra:'Verra VCS + CCB', planvivo:'Plan Vivo', goldstandard:'Gold Standard', 'non-credit':'Non-crediting (impact only)'})[state.standard];
+  const countryName = ({
+    'indonesia':'Indonesia / Philippines / SE Asia',
+    'east-africa':'Kenya / Tanzania / Mozambique (E. Africa)',
+    'west-africa':'Senegal / Guinea / Nigeria (W. Africa)',
+    'latam':'Colombia / Ecuador / Mexico (LatAm)',
+    'caribbean':'Caribbean & Central America',
+    'south-asia':'India / Bangladesh / Sri Lanka',
+    'pacific':'Pacific Islands / Australia',
+    'usa-eu':'USA / UK / EU'
+  })[state.country];
+
+  const readme = [
+    [title('Blue Carbon Project Designer — Financial Model')],
+    [],
+    [head('Project'), txt(`${eco} ${ptype.toLowerCase()} in ${countryName}`)],
+    [head('Area'), num(state.area), txt('hectares')],
+    [head('Standard'), txt(standardName)],
+    [head('Lifetime'), num(state.years), txt('years')],
+    [head('Generated'), txt(today)],
+    [],
+    [title('SHEETS IN THIS WORKBOOK')],
+    [txt('1. README'), txt('This page')],
+    [txt('2. Summary'), txt('Headline metrics, KPIs & quality scores')],
+    [txt('3. Inputs'), txt('All assumptions you configured')],
+    [txt('4. Cashflow'), txt(`Year-by-year financials over ${state.years} years`)],
+    [txt('5. Sensitivity'), txt('How NPV moves when key variables change ±25%')],
+    [txt('6. Action Plan'), txt('Your 12-step roadmap from idea to first sale')],
+    [txt('7. Document Checklist'), txt('All documents you must produce')],
+    [txt('8. Funding Sources'), txt('Where to find money at each stage')],
+    [txt('9. Buyers & Channels'), txt('Who buys credits and where to sell them')],
+    [],
+    [title('NOTES')],
+    [txt('• All currency in USD unless otherwise stated.')],
+    [txt('• Values are estimates for planning. Final figures require site-specific measurement & a registered methodology.')],
+    [txt('• Generated by Useful AF — useful-af.circle.so')]
+  ];
+  const wsReadme = XLSX.utils.aoa_to_sheet(readme);
+  setCols(wsReadme, [22, 50, 16]);
+  setMerge(wsReadme, { s:{r:0,c:0}, e:{r:0,c:2} });
+  setMerge(wsReadme, { s:{r:8,c:0}, e:{r:8,c:2} });
+  setMerge(wsReadme, { s:{r:20,c:0}, e:{r:20,c:2} });
+  XLSX.utils.book_append_sheet(wb, wsReadme, 'README');
+
+  /* ============================================================
+     SHEET 2 — SUMMARY
+  ============================================================ */
+  const avgScore = (Object.values(scores).reduce((a,b)=>a+b,0) / Object.values(scores).length);
+  const summary = [
+    [title('PROJECT SUMMARY')],
+    [],
+    [head('CARBON IMPACT'), head('VALUE'), head('UNIT')],
+    [txt('Lifetime gross sequestration'), num(r.lifetimeCO2 / (1 - state.buffer/100)), txt('tCO2e')],
+    [txt('Buffer pool reserved'), num(r.bufferReserved), txt('tCO2e')],
+    [txt('Lifetime net (saleable)'), num(r.lifetimeCO2), txt('tCO2e')],
+    [txt('Average annual sequestration'), num(r.annualSeq), txt('tCO2e/yr')],
+    [txt('Per-hectare rate'), dec(r.perHa), txt('tCO2e/ha/yr')],
+    [txt('Equivalent cars off road'), num(r.cars), txt('cars/yr')],
+    [],
+    [head('FINANCIAL'), head('VALUE'), head('UNIT')],
+    [txt('Lifetime revenue'), $$(r.lifetimeRev), txt('USD')],
+    [txt('Grant funding secured'), $$(state.grant), txt('USD')],
+    [txt('Total inflows'), $$(r.lifetimeRev + state.grant), txt('USD')],
+    [txt('Lifetime costs'), $$(r.lifetimeCost), txt('USD')],
+    [txt('Net to project'), $$M(r.lifetimeRev + state.grant - r.lifetimeCost), txt('USD')],
+    [txt('NPV'), $$M(r.npv), txt(`USD @ ${state.discRate}% discount`)],
+    [txt('IRR'), txt(r.irr === null || isNaN(r.irr) ? 'n/a' : (r.irr*100).toFixed(2) + '%'), txt('annualised')],
+    [txt('Breakeven year'), txt(r.breakeven), txt('cumulative cashflow ≥ 0')],
+    [],
+    [head('HQBC QUALITY SCORES (1-5)'), head('SCORE'), head('INTERPRETATION')],
+  ];
+  const interp = (s) => s >= 4.5 ? 'Aspirational' : s >= 3.5 ? 'Above best-practice' : s >= 2.5 ? 'Best-practice' : s >= 1.5 ? 'Basic' : 'Minimal';
+  Object.entries(scores).forEach(([k,v]) => summary.push([txt(k), dec(v), txt(interp(v))]));
+  summary.push([txt('Average'), dec(avgScore), txt(interp(avgScore))]);
+  const wsSum = XLSX.utils.aoa_to_sheet(summary);
+  setCols(wsSum, [40, 18, 30]);
+  setMerge(wsSum, { s:{r:0,c:0}, e:{r:0,c:2} });
+  XLSX.utils.book_append_sheet(wb, wsSum, 'Summary');
+
+  /* ============================================================
+     SHEET 3 — INPUTS
+  ============================================================ */
+  const interventionLabel = ({
+    cbemr:'CBEMR (Community-Based Ecological Mangrove Restoration)',
+    planting:'Direct planting of seedlings',
+    hydro:'Hydrological restoration',
+    combined:'Combined (hydrology + planting)',
+    protection:'Protection only (no active restoration)',
+    seeding:'Seed-based seagrass restoration'
+  })[state.intervention];
+  const inputs = [
+    [title('PROJECT INPUTS — All assumptions used in this model')],
+    [],
+    [head('CATEGORY'), head('PARAMETER'), head('VALUE'), head('NOTES')],
+    [txt('Ecosystem'), txt('Type'), txt(eco), txt('Mangrove / Seagrass / Saltmarsh')],
+    [txt('Ecosystem'), txt('Project type'), txt(ptype), txt('Restoration / Conservation / Sustainable mgmt')],
+    [txt('Ecosystem'), txt('Intervention method'), txt(interventionLabel), txt('Determines cost & survival')],
+    [txt('Site & Scale'), txt('Project area'), num(state.area), txt('hectares')],
+    [txt('Site & Scale'), txt('Country / region'), txt(countryName), txt('')],
+    [txt('Site & Scale'), txt('Site condition'), txt(state.condition), txt('Degraded / Partial / Intact')],
+    [txt('Site & Scale'), txt('Tenure clarity'), txt(state.tenure), txt('Strong / Medium / Weak — #1 risk factor')],
+    [txt('Carbon'), txt('Sequestration rate'), dec(state.seq), txt('tCO2e/ha/yr')],
+    [txt('Carbon'), txt('Buffer pool reserve'), pct(state.buffer), txt('Insurance against reversal')],
+    [txt('Carbon'), txt('Carbon standard'), txt(standardName), txt('Verra / Plan Vivo / Gold Standard')],
+    [txt('Costs'), txt('Setup cost per ha'), $$(state.setupCost), txt('Y1 capex')],
+    [txt('Costs'), txt('Annual O&M per ha'), $$(state.opex), txt('Operating expenses')],
+    [txt('Costs'), txt('MRV (% of revenue)'), pct(state.mrv), txt('Measurement, Reporting & Verification')],
+    [txt('Revenue'), txt('Credit price'), $$(state.price), txt('USD/tCO2e — spot price')],
+    [txt('Revenue'), txt('Ex-ante share'), pct(state.exante), txt('% sold upfront pre-issuance')],
+    [txt('Revenue'), txt('Ex-ante discount'), pct(state.discount), txt('% reduction vs spot price')],
+    [txt('Revenue'), txt('Grant funding'), $$(state.grant), txt('Catalytic capital secured')],
+    [txt('Community'), txt('Community revenue share'), pct(state.commShare), txt('% of net revenue to IPs/LCs')],
+    [txt('Community'), txt('FPIC status'), txt(state.fpic), txt('Free, Prior & Informed Consent')],
+    [txt('Community'), txt('Alternative livelihood plan'), txt(state.livelihood), txt('Independent income streams')],
+    [txt('Time'), txt('Project lifetime'), num(state.years), txt('years')],
+    [txt('Time'), txt('Discount rate (NPV)'), pct(state.discRate), txt('Annual')]
+  ];
+  const wsInp = XLSX.utils.aoa_to_sheet(inputs);
+  setCols(wsInp, [16, 32, 22, 50]);
+  setMerge(wsInp, { s:{r:0,c:0}, e:{r:0,c:3} });
+  XLSX.utils.book_append_sheet(wb, wsInp, 'Inputs');
+
+  /* ============================================================
+     SHEET 4 — CASHFLOW
+  ============================================================ */
+  const cf = [
+    [title(`YEAR-BY-YEAR CASHFLOW — ${state.years} years`)],
+    [],
+    [head('Year'), head('Gross tCO2e'), head('Net tCO2e'), head('Issuable tCO2e'),
+     head('Revenue'), head('Setup'), head('OpEx'), head('MRV'), head('Grant'),
+     head('Community'), head('Net to project'), head('Cumulative')]
+  ];
+  r.rows.forEach(x => {
+    cf.push([
+      txt('Y' + x.year),
+      num(x.gross),
+      num(x.net),
+      num(x.issuable),
+      $$(x.revenue),
+      $$(x.setup),
+      $$(x.opex),
+      $$(x.mrv),
+      $$(x.grant),
+      $$(x.community),
+      $$M(x.net_proj),
+      $$M(x.cum)
+    ]);
+  });
+  // totals row
+  const T = (key) => r.rows.reduce((s,x)=>s+x[key],0);
+  cf.push([
+    head('TOTAL'),
+    num(T('gross')), num(T('net')), num(T('issuable')),
+    $$(T('revenue')), $$(T('setup')), $$(T('opex')), $$(T('mrv')),
+    $$(T('grant')), $$(T('community')), $$M(T('net_proj')),
+    txt('—')
+  ]);
+  const wsCf = XLSX.utils.aoa_to_sheet(cf);
+  setCols(wsCf, [8, 14, 14, 14, 16, 14, 14, 14, 14, 16, 18, 18]);
+  setMerge(wsCf, { s:{r:0,c:0}, e:{r:0,c:11} });
+  XLSX.utils.book_append_sheet(wb, wsCf, 'Cashflow');
+
+  /* ============================================================
+     SHEET 5 — SENSITIVITY
+  ============================================================ */
+  const sensVars = [
+    { key: 'price',      label: 'Credit price' },
+    { key: 'seq',        label: 'Sequestration rate' },
+    { key: 'area',       label: 'Project area' },
+    { key: 'setupCost',  label: 'Setup cost' },
+    { key: 'opex',       label: 'Annual O&M' },
+    { key: 'commShare',  label: 'Community share' },
+    { key: 'mrv',        label: 'MRV cost' },
+    { key: 'discount',   label: 'Ex-ante discount' }
+  ];
+  const baseNPV = r.npv;
+  const sensRows = [
+    [title('SENSITIVITY ANALYSIS — How NPV changes with ±25% on each variable')],
+    [],
+    [head('Variable'), head('NPV at -25%'), head('NPV (base)'), head('NPV at +25%'), head('Range $')]
+  ];
+  sensVars.forEach(v => {
+    const orig = state[v.key];
+    state[v.key] = orig * 1.25;
+    const high = compute().npv;
+    state[v.key] = orig * 0.75;
+    const low = compute().npv;
+    state[v.key] = orig;
+    sensRows.push([txt(v.label), $$M(low), $$M(baseNPV), $$M(high), $$(Math.abs(high-low))]);
+  });
+  // restore latest
+  recompute();
+  const wsSens = XLSX.utils.aoa_to_sheet(sensRows);
+  setCols(wsSens, [25, 18, 18, 18, 18]);
+  setMerge(wsSens, { s:{r:0,c:0}, e:{r:0,c:4} });
+  XLSX.utils.book_append_sheet(wb, wsSens, 'Sensitivity');
+
+  /* ============================================================
+     SHEET 6 — ACTION PLAN (12-step roadmap)
+  ============================================================ */
+  const actions = [
+    [title('YOUR 12-STEP ACTION PLAN — Idea to First Credit Sale')],
+    [],
+    [head('#'), head('Step'), head('Time'), head('Cost (USD)'), head('Who you need'), head('Success looks like'), head('Pitfall to avoid')],
+    [num(1), txt('Pick the site & understand it'), txt('1–3 months'), txt('$2k–$10k'), txt('Local fishers, elders, district forestry officer, university expert'), txt('5-page site brief: location, area, condition, drivers'), txt('Pretty/accessible site without addressing degradation drivers')],
+    [num(2), txt('Build community partnership & start FPIC'), txt('3–9 months'), txt('$15k–$50k'), txt('Elders, women & youth groups, local NGO, translator'), txt('Signed Letter of Consent, community committee charter, FPIC record'), txt('Single-meeting "FPIC" — auditors will reject it')],
+    [num(3), txt('Lock in carbon & land rights'), txt('3–12 months'), txt('$10k–$30k'), txt('Local lawyer specialising in carbon, Ministry of Env, lands office'), txt('Signed Carbon Rights Agreement + tenure agreement + govt no-objection letter'), txt('Skipping government endorsement — political risk kills projects')],
+    [num(4), txt('Write Project Idea Note (PIN) & raise feasibility grant'), txt('5–10 months'), txt('$5k–$25k'), txt('PIN consultant or use Verra/Plan Vivo template'), txt('Submitted PIN + at least one feasibility grant ($50k–$300k)'), txt('Paying $50k+ for a generic PIN — templates are openly available')],
+    [num(5), txt('Choose standard & methodology'), txt('1–2 months'), txt('Free decision'), txt('Standard secretariat (Verra ip@verra.org / Plan Vivo info@planvivo.org)'), txt('Decision in writing + methodology PDF read cover-to-cover'), txt('Picking biggest standard regardless of project size')],
+    [num(6), txt('Baseline study & carbon measurements'), txt('3–9 months'), txt('$30k–$120k'), txt('National university, MAP CBEMR training, CIFOR-ICRAF protocols'), txt('Baseline carbon report with confidence intervals, plot data'), txt('Outsourcing everything — train community parabiologists')],
+    [num(7), txt('Write Project Design Document (PDD)'), txt('6–12 months'), txt('$50k–$200k'), txt('PDD consultant who has passed Verra/Plan Vivo before'), txt('Draft PDD ready for validation, listed "under development"'), txt('Paying consultant a credit % rather than a flat fee')],
+    [num(8), txt('Validation by accredited VVB'), txt('6–12 months'), txt('$40k–$120k'), txt('Standard-accredited VVB (Earthood, TÜV NORD, AENOR, etc)'), txt('Validation Report → project moves to "registered"'), txt('Same firm writing PDD and validating — conflict of interest')],
+    [num(9), txt('Implement restoration / conservation'), txt('Ongoing 5–10 yrs'), txt('Setup + OpEx (see model)'), txt('Community workforce, full-time field manager, nursery/patrols'), txt('Year-on-year canopy returning, soil accreting, fish back, livelihoods up'), txt('Month 6 photos identical to month 1 — investigate fast')],
+    [num(10), txt('First verification & credit issuance'), txt('4–8 months'), txt('$30k–$80k per cycle'), txt('Same VVB or new one; community monitoring data'), txt('Credits visible in registry account, ready to sell or transfer'), txt('Over-promising big numbers that fail audit — fewer airtight credits is better')],
+    [num(11), txt('Sell credits — direct, marketplace, or coalition'), txt('1–6 months/deal'), txt('5–35% commission depending on channel'), txt('Broker or direct corporate sustainability lead (LinkedIn)'), txt('Signed offtake or spot sale + credits retired + cash in account'), txt('Long-term fixed-price contract for ALL credits — keep majority floating')],
+    [num(12), txt('Distribute revenue & reinvest'), txt('Annual cycle'), txt('3–5% admin'), txt('Community committee, accountant, low-fee banking partner'), txt('Annual benefit-sharing report + visible community assets (school, water, clinic)'), txt('Revenue stuck at committee level — community feels cheated → reversal risk')],
+    [],
+    [title('FUNDING SOURCES BY STAGE')],
+    [head('Stage'), head('Amount'), head('Specific funders to approach')],
+    [txt('Discovery (Steps 1–2)'), txt('$5k–$50k'), txt('National Geographic Explorer Grants, Rufford Small Grants, Pew Marine Fellows, local NGO seed grants')],
+    [txt('Feasibility (Steps 3–5)'), txt('$50k–$300k'), txt('GEF Small Grants (UNDP), USAID, FCDO Blue Planet Fund, Norwegian NICFI, IKI (Germany), Bezos Earth Fund, Walton Family Foundation Marine')],
+    [txt('PDD & Validation (Steps 6–8)'), txt('$150k–$500k'), txt('ORRAA Innovation Fund, Mangrove Breakthrough, Global Fund for Coral Reefs, UNCDF BRIDGE, Convergence design grants, FMO/Proparco/IFC')],
+    [txt('Implementation pre-finance (Step 9–10)'), txt('Variable'), txt('Ex-ante credit sales (South Pole, Respira, ClimeCo, Climate Impact Partners), TNC Africa Capital, Pachama Originals, Blue Bonds')],
+    [txt('Long-term offtake (Step 11+)'), txt('Multi-year'), txt('LEAF Coalition, Symbiosis Coalition, Frontier (Stripe), NextGen CDR, SBTi-aligned corporates')]
+  ];
+  const wsAct = XLSX.utils.aoa_to_sheet(actions);
+  setCols(wsAct, [4, 38, 16, 22, 40, 50, 50]);
+  setMerge(wsAct, { s:{r:0,c:0}, e:{r:0,c:6} });
+  setMerge(wsAct, { s:{r:16,c:0}, e:{r:16,c:6} });
+  XLSX.utils.book_append_sheet(wb, wsAct, 'Action Plan');
+
+  /* ============================================================
+     SHEET 7 — DOCUMENT CHECKLIST
+  ============================================================ */
+  const docs = [
+    [title('DOCUMENT CHECKLIST — All documents you must produce')],
+    [],
+    [head('Done?'), head('Document'), head('When'), head('Description')],
+    [txt('☐'), txt('FPIC Documentation Pack'), txt('Step 2'), txt('Meeting minutes, attendance lists, photos, signed letters in local language')],
+    [txt('☐'), txt('Carbon Rights Agreement'), txt('Step 3'), txt('Who owns the credits and the revenue split')],
+    [txt('☐'), txt('Land Tenure / Co-management Agreement'), txt('Step 3'), txt('Long-term (≥30 yrs) right to manage the site')],
+    [txt('☐'), txt('Government Letter of No Objection'), txt('Step 3'), txt('From Ministry of Environment + relevant land/forestry agency')],
+    [txt('☐'), txt('Project Idea Note (PIN)'), txt('Step 4'), txt('10–15 page summary used to fundraise feasibility')],
+    [txt('☐'), txt('Baseline Carbon Stock Report'), txt('Step 6'), txt('Above-ground biomass + soil to ≥1m, with confidence intervals')],
+    [txt('☐'), txt('Project Design Document (PDD)'), txt('Step 7'), txt('Master document — 80–200 pages, follows standard template')],
+    [txt('☐'), txt('Monitoring Plan'), txt('Step 7'), txt('What you measure, how often, by whom, against what targets')],
+    [txt('☐'), txt('Leakage Assessment'), txt('Step 7'), txt('How will you stop the same harm moving to a neighbouring site?')],
+    [txt('☐'), txt('Non-Permanence Risk Assessment'), txt('Step 7'), txt('Verra NPRT or equivalent — drives buffer pool %')],
+    [txt('☐'), txt('Benefit-Sharing Agreement'), txt('Step 7'), txt('Who gets what %, how it is paid, what happens in lean years')],
+    [txt('☐'), txt('Grievance Redress Mechanism'), txt('Step 7'), txt('How a community member raises a concern without retaliation')],
+    [txt('☐'), txt('RACI Chart'), txt('Step 7'), txt('Responsible / Accountable / Consulted / Informed for each decision')],
+    [txt('☐'), txt('MEAL Plan'), txt('Step 7'), txt('Monitoring, Evaluation, Accountability & Learning indicators')],
+    [txt('☐'), txt('Validation Report'), txt('Step 8'), txt('From the VVB — confirms project meets the standard')],
+    [txt('☐'), txt('Annual Verification Reports'), txt('Step 10+'), txt('From the VVB — confirms how many credits to issue this cycle')],
+    [txt('☐'), txt('Annual Benefit-Sharing Report'), txt('Step 12'), txt('Public, transparent — what the community actually received')]
+  ];
+  const wsDoc = XLSX.utils.aoa_to_sheet(docs);
+  setCols(wsDoc, [8, 38, 12, 70]);
+  setMerge(wsDoc, { s:{r:0,c:0}, e:{r:0,c:3} });
+  XLSX.utils.book_append_sheet(wb, wsDoc, 'Document Checklist');
+
+  /* ============================================================
+     SHEET 8 — BUYERS & CHANNELS
+  ============================================================ */
+  const buyers = [
+    [title('WHO BUYS BLUE CARBON CREDITS — & WHERE TO SELL')],
+    [],
+    [head('Category'), head('Buyer / Channel'), head('Notes')],
+    [txt('Tech (highest prices)'), txt('Microsoft'), txt('Largest single buyer; emphasises permanence')],
+    [txt('Tech'), txt('Salesforce'), txt('Founding member of Symbiosis')],
+    [txt('Tech'), txt('Google / Alphabet'), txt('Symbiosis Coalition member')],
+    [txt('Tech'), txt('Meta'), txt('Symbiosis Coalition member')],
+    [txt('Tech'), txt('Apple — Restore Fund'), txt('Takes equity in projects rather than just buying credits')],
+    [txt('Tech'), txt('Amazon — Right Now Climate Fund'), txt('')],
+    [txt('Tech'), txt('Stripe Climate / Frontier'), txt('Focused on durable carbon removal')],
+    [txt('Financial services'), txt('BlackRock'), txt('')],
+    [txt('Financial services'), txt('JPMorgan Chase'), txt('Net Zero Banking Alliance')],
+    [txt('Financial services'), txt('Standard Chartered (SC Ventures)'), txt('')],
+    [txt('Financial services'), txt('HSBC Pollination'), txt('')],
+    [txt('Consumer goods'), txt('Unilever'), txt('Buys mangrove credits for "net positive nature"')],
+    [txt('Consumer goods'), txt('Nestlé'), txt('Large NbS buyer')],
+    [txt('Consumer goods'), txt('Procter & Gamble, L\'Oréal, Danone, Mars, Patagonia, Kering, LVMH'), txt('')],
+    [txt('Energy (screen carefully)'), txt('Shell NbS, BP, TotalEnergies, Eni, Ørsted, ENGIE'), txt('Verify against SBTi/VCMI before selling')],
+    [txt('Coalitions'), txt('LEAF Coalition'), txt('Government & corporate consortium — jurisdictional REDD+')],
+    [txt('Coalitions'), txt('Symbiosis Coalition'), txt('Google + Meta + Microsoft + Salesforce — 20M tonnes nature-based by 2030')],
+    [txt('Coalitions'), txt('Frontier (Stripe-led)'), txt('Durable carbon removal focus')],
+    [txt('Coalitions'), txt('NextGen CDR Facility'), txt('South Pole + Mitsubishi')],
+    [txt('Sovereign'), txt('Singapore (carbon tax with int\'l offsets allowed)'), txt('')],
+    [txt('Sovereign'), txt('Korea ETS, Switzerland (Article 6.2), Norway (NICFI), Japan JCM'), txt('')],
+    [],
+    [title('SELLING CHANNELS — TRADEOFFS')],
+    [head('Channel'), head('Pros'), head('Cons / Commission')],
+    [txt('Direct corporate offtake'), txt('Highest price ($30–$80+/t), long-term certainty, brand co-marketing'), txt('Slow (6–18mo per deal), needs sales pipeline, heavy due diligence')],
+    [txt('Marketplace (Patch, Pachama, SF Net Zero, Cloverly, CTX)'), txt('Fast liquidity, discoverable, standardised contracts'), txt('5–15% platform fees, less control over buyer, spot price swings')],
+    [txt('Broker (Numerco, Karbone, Anew, ACT, Vertree, ClearBlue)'), txt('Existing buyer network, can move volume quickly'), txt('10–20% commission, commoditisation risk — verify references')],
+    [txt('Project finance / aggregator (South Pole, Respira, ClimeCo, CIP)'), txt('Capital up-front, take on sales burden, may provide MRV support'), txt('Take ~20–35% of credits/revenue, project-lifetime lock-in')],
+    [txt('Buyer\'s coalition (LEAF, Frontier, Symbiosis)'), txt('Multi-year guaranteed demand, brand credibility, capacity support'), txt('Strict eligibility, long applications, coalition sets terms')],
+    [txt('Bilateral country (Article 6)'), txt('Sovereign-backed demand, premium prices'), txt('Politically complex, requires national authorisation, slow')],
+    [],
+    [title('RATINGS — Get rated BEFORE listing (sets your price)')],
+    [head('Agency'), head('Why')],
+    [txt('Sylvera'), txt('Leading rating agency')],
+    [txt('BeZero Carbon'), txt('Strong on transparency')],
+    [txt('Calyx Global'), txt('')],
+    [txt('Renoster'), txt('Up-and-coming. Each agency provides a free baseline; paid for full rating. Strong ratings unlock $10–$20/t price premiums.')]
+  ];
+  const wsBuy = XLSX.utils.aoa_to_sheet(buyers);
+  setCols(wsBuy, [28, 50, 60]);
+  setMerge(wsBuy, { s:{r:0,c:0}, e:{r:0,c:2} });
+  setMerge(wsBuy, { s:{r:24,c:0}, e:{r:24,c:2} });
+  setMerge(wsBuy, { s:{r:33,c:0}, e:{r:33,c:2} });
+  XLSX.utils.book_append_sheet(wb, wsBuy, 'Buyers & Channels');
+
+  /* ============================================================
+     SHEET 9 — FUNDING SOURCES
+  ============================================================ */
+  const funding = [
+    [title('MONEY MAP — Where to find capital at each stage')],
+    [],
+    [head('Stage'), head('Amount'), head('Funder'), head('What for'), head('How to apply')],
+    [txt('Discovery'), txt('$5k–$50k'), txt('National Geographic Society — Explorer Grants'), txt('Site discovery, early community work'), txt('explorers.nationalgeographic.org')],
+    [txt('Discovery'), txt('Up to £6k'), txt('Rufford Small Grants for Nature Conservation'), txt('Early conservation field work'), txt('rufford.org')],
+    [txt('Discovery'), txt('$150k / 3 yrs'), txt('Pew Marine Fellows'), txt('Mid-career conservation leaders'), txt('pewtrusts.org/marine-fellows')],
+    [txt('Discovery'), txt('Variable'), txt('Local NGO partners (MAP, Wetlands Intl, IUCN national offices)'), txt('Seed grants & technical support'), txt('Direct outreach to country office')],
+    [txt('Feasibility'), txt('Up to $50k'), txt('GEF Small Grants Programme'), txt('Community-based environment'), txt('Through UNDP country office')],
+    [txt('Feasibility'), txt('Variable'), txt('USAID Climate Adaptation grants'), txt('Coastal resilience'), txt('grants.gov / country mission')],
+    [txt('Feasibility'), txt('Multi-year'), txt('FCDO Blue Planet Fund (UK government)'), txt('Blue carbon at scale'), txt('gov.uk/government/publications/blue-planet-fund')],
+    [txt('Feasibility'), txt('Multi-year'), txt('Norwegian NICFI'), txt('Climate & forest initiative'), txt('regjeringen.no/nicfi')],
+    [txt('Feasibility'), txt('€100k–€20M'), txt('IKI — German International Climate Initiative'), txt('Mitigation & biodiversity'), txt('international-climate-initiative.com')],
+    [txt('Feasibility'), txt('Variable'), txt('Bezos Earth Fund'), txt('Direct grants to selected projects'), txt('bezosearthfund.org')],
+    [txt('Feasibility'), txt('Variable'), txt('Walton Family Foundation Marine'), txt('Coastal communities & sustainable seafood'), txt('waltonfamilyfoundation.org')],
+    [txt('Feasibility'), txt('Variable'), txt('Builders Initiative / Builders Vision'), txt('Ocean & coastal'), txt('buildersvision.com')],
+    [txt('PDD & Validation'), txt('Variable'), txt('ORRAA Innovation Fund'), txt('Specifically for blue carbon & coastal resilience pre-finance'), txt('oceanriskalliance.org')],
+    [txt('PDD & Validation'), txt('$4bn pipeline'), txt('Mangrove Breakthrough Investment Roadmap'), txt('Mangroves at scale'), txt('mangrovebreakthrough.org')],
+    [txt('PDD & Validation'), txt('Variable'), txt('Global Fund for Coral Reefs (GFCR)'), txt('Reef-adjacent including mangroves'), txt('globalfundcoralreefs.org')],
+    [txt('PDD & Validation'), txt('Variable'), txt('UN Capital Development Fund (UNCDF) BRIDGE Facility'), txt('LDC blue economy'), txt('uncdf.org')],
+    [txt('PDD & Validation'), txt('Up to $200k'), txt('Convergence Blended Finance design grants'), txt('Structuring blended-finance deals'), txt('convergence.finance')],
+    [txt('PDD & Validation'), txt('Variable'), txt('FMO / Proparco / IDB Lab / IFC'), txt('DFI catalytic capital'), txt('Direct outreach via country office')],
+    [txt('Implementation'), txt('Variable'), txt('Ex-ante credit pre-purchase (South Pole, Respira, ClimeCo, CIP)'), txt('Project finance partners offer pre-finance for future credits'), txt('Direct outreach')],
+    [txt('Implementation'), txt('Variable'), txt('TNC Africa Capital'), txt('Debt for project developers'), txt('nature.org')],
+    [txt('Implementation'), txt('Sovereign'), txt('Blue Bonds / Debt-for-Nature Swaps'), txt('Seychelles, Belize, Gabon, Barbados precedents'), txt('Via national Treasury + TNC NatureVest')],
+    [txt('Long-term'), txt('Multi-year'), txt('LEAF Coalition'), txt('Government & corporate consortium ($1bn+ for jurisdictional REDD+)'), txt('leafcoalition.org')],
+    [txt('Long-term'), txt('20M tonnes by 2030'), txt('Symbiosis Coalition (Google, Meta, Microsoft, Salesforce)'), txt('High-quality nature-based credits'), txt('symbiosiscoalition.org')],
+    [txt('Long-term'), txt('Multi-year'), txt('Frontier (Stripe-led)'), txt('Durable carbon removal'), txt('frontierclimate.com')],
+    [],
+    [title('ACCELERATORS & CAPACITY BUILDERS')],
+    [head('Programme'), head('Region / Focus'), head('Notes')],
+    [txt('Ocean Solutions Accelerator (Sustainable Ocean Alliance)'), txt('Global'), txt('soalliance.org')],
+    [txt('Katapult Ocean'), txt('Global, Nordic-anchored'), txt('katapult.vc/ocean')],
+    [txt('Hatch Blue'), txt('Sustainable aquaculture & ocean'), txt('hatch.blue')],
+    [txt('UNCDF BlueAccelerator'), txt('Tanzania, Pemba'), txt('uncdf.org')],
+    [txt('Acumen Foundry'), txt('Early-stage social enterprises'), txt('acumen.org')],
+    [txt('Mangrove Action Project field schools'), txt('Global; CBEMR training'), txt('mangroveactionproject.org')]
+  ];
+  const wsFnd = XLSX.utils.aoa_to_sheet(funding);
+  setCols(wsFnd, [22, 18, 50, 50, 40]);
+  setMerge(wsFnd, { s:{r:0,c:0}, e:{r:0,c:4} });
+  setMerge(wsFnd, { s:{r:27,c:0}, e:{r:27,c:4} });
+  XLSX.utils.book_append_sheet(wb, wsFnd, 'Funding Sources');
+
+  XLSX.writeFile(wb, `blue-carbon-${state.ecosystem}-${state.area}ha.xlsx`);
 }
 
 function downloadCSV() {
