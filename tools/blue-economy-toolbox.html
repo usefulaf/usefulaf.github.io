@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blue Economy Toolbox — Find Ocean Funders, Startups & Partners | Useful AF</title>
+<meta name="description" content="A curated directory of 150+ verified Blue Economy organisations: funders, startups, NGOs, accelerators and research institutions across the global ocean impact ecosystem." />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a1628; --panel:#0f1e30; --panel2:#132a44; --line:#1a3a52;
+    --ink:#e6edf5; --mute:#7c93ad; --accent:#2ecc71; --accent2:#3aa1ff;
+    --warn:#f0b232; --bad:#e74c3c;
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.5;min-height:100%}
+  a{color:var(--accent2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1400px;margin:0 auto;padding:24px}
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#2ecc71,#3aa1ff);display:grid;place-items:center;font-weight:800;color:#04111d}
+  h1{font-size:1.4rem;letter-spacing:-.3px}
+  .sub{color:var(--mute);font-size:.85rem}
+  .pill{display:inline-block;padding:3px 9px;border-radius:999px;background:#0c2336;border:1px solid var(--line);color:var(--mute);font-size:.72rem;margin-left:6px}
+
+  .filters{display:grid;grid-template-columns:1.2fr repeat(5,1fr);gap:10px;margin-bottom:14px}
+  @media(max-width:1100px){.filters{grid-template-columns:1fr 1fr 1fr}}
+  @media(max-width:600px){.filters{grid-template-columns:1fr 1fr}}
+  .filters input,.filters select{
+    background:var(--panel);border:1px solid var(--line);color:var(--ink);
+    padding:10px 12px;border-radius:8px;font-size:.92rem;width:100%;
+  }
+  .filters input:focus,.filters select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,204,113,.18)}
+
+  .controlbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:18px}
+  .count{color:var(--mute);font-size:.92rem}
+  .count strong{color:var(--ink)}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{padding:8px 14px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;cursor:pointer;font-size:.88rem;transition:all .2s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#04111d;border-color:var(--accent);font-weight:600}
+  .btn.primary:hover{background:#27c167;color:#04111d}
+  .tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .tab{padding:8px 14px;background:transparent;border:0;color:var(--mute);cursor:pointer;font-size:.88rem;transition:all .2s}
+  .tab.active{background:var(--accent);color:#04111d;font-weight:600}
+  .tab:not(.active):hover{color:var(--ink);background:var(--panel)}
+
+  .activeFilters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;min-height:0}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:#0c2336;border:1px solid var(--accent);color:var(--accent);padding:4px 10px;border-radius:999px;font-size:.78rem;cursor:pointer}
+  .chip:hover{background:var(--accent);color:#04111d}
+
+  /* OVERVIEW */
+  .overview{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:980px){.overview{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h3{font-size:.95rem;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+  .barRow{display:grid;grid-template-columns:130px 1fr 50px;align-items:center;gap:10px;margin-bottom:8px}
+  .barRow .lbl{font-size:.84rem;color:var(--ink)}
+  .barRow .barTrack{background:#0c2336;border-radius:6px;overflow:hidden;height:14px}
+  .barRow .barFill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .35s ease}
+  .barRow .num{text-align:right;font-size:.82rem;color:var(--mute);font-variant-numeric:tabular-nums}
+  #map{height:440px;border-radius:12px;border:1px solid var(--line);background:#04111d}
+  .leaflet-container{background:#062239 !important}
+  .leaflet-popup-content-wrapper{background:var(--panel) !important;color:var(--ink) !important;border:1px solid var(--line);border-radius:8px}
+  .leaflet-popup-tip{background:var(--panel) !important}
+  .leaflet-popup-content a{color:var(--accent)}
+
+  /* LIST */
+  table{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  thead{background:var(--panel2)}
+  th{padding:12px 14px;text-align:left;font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;color:var(--mute);cursor:pointer;border-bottom:1px solid var(--line);user-select:none}
+  th:hover{color:var(--accent)}
+  td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:.88rem;vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  tr:hover{background:rgba(46,204,113,.04)}
+  td .tag{display:inline-block;background:#0c2336;border:1px solid var(--line);padding:2px 7px;border-radius:6px;font-size:.7rem;color:var(--mute);margin:1px 2px 1px 0}
+  td .typeTag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.72rem;font-weight:600}
+  td .nameLink{color:var(--accent);font-weight:600}
+  td .yes{color:var(--accent);font-weight:600}
+  td .no{color:#5a6f8a}
+
+  /* CARDS */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+  .org{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:all .2s}
+  .org:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .org .name{font-weight:700;color:var(--ink);font-size:1rem}
+  .org .meta{color:var(--mute);font-size:.78rem;display:flex;gap:8px;flex-wrap:wrap}
+  .org .desc{font-size:.83rem;color:#bcd0e6;line-height:1.5}
+  .org .focus{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+  .org .focus .tag{background:#0c2336;border:1px solid var(--line);padding:2px 7px;border-radius:6px;font-size:.7rem;color:var(--mute)}
+  .org .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}
+  .org .visit{font-size:.8rem}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--mute)}
+  .empty h2{color:var(--ink);font-size:1.2rem;margin-bottom:6px}
+
+  footer{margin-top:32px;padding:18px 0;border-top:1px solid var(--line);text-align:center;color:var(--mute);font-size:.82rem}
+  footer a{color:var(--accent)}
+
+  /* type colour helpers */
+  .t-Funder{background:rgba(240,178,50,.18);color:#f0b232;border:1px solid rgba(240,178,50,.4)}
+  .t-Private\\ company{background:rgba(58,161,255,.18);color:#3aa1ff;border:1px solid rgba(58,161,255,.4)}
+  .t-Nonprofit{background:rgba(46,204,113,.18);color:#2ecc71;border:1px solid rgba(46,204,113,.4)}
+  .t-Project\\/Platform{background:rgba(155,89,182,.18);color:#9b59b6;border:1px solid rgba(155,89,182,.4)}
+  .t-Startup\\ Support{background:rgba(231,76,60,.18);color:#e74c3c;border:1px solid rgba(231,76,60,.4)}
+  .t-Network{background:rgba(26,188,156,.18);color:#1abc9c;border:1px solid rgba(26,188,156,.4)}
+  .t-Education\\/R\\&D{background:rgba(149,165,166,.18);color:#bdc3c7;border:1px solid rgba(149,165,166,.4)}
+  .t-Institution{background:rgba(127,140,141,.18);color:#95a5a6;border:1px solid rgba(127,140,141,.4)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="logo">🌊</div>
+      <div>
+        <h1>The Blue Economy Toolbox <span class="pill">USEFUL AF</span></h1>
+        <div class="sub">Verified ocean funders, startups, NGOs, accelerators and research institutes — all in one place.</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="suggestBtn">＋ Suggest organisation</button>
+      <button class="btn primary" id="exportBtn">⬇ Export CSV</button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <input id="qSearch" type="search" placeholder="Search by name, country, or description…" />
+    <select id="qFocus"><option value="">All focus areas</option></select>
+    <select id="qType"><option value="">All types</option></select>
+    <select id="qFunding">
+      <option value="">All funding sources</option>
+      <option value="yes">Receives external funding</option>
+      <option value="no">No external funding</option>
+    </select>
+    <select id="qContinent"><option value="">All continents</option></select>
+    <select id="qCountry"><option value="">All countries</option></select>
+  </div>
+
+  <div class="activeFilters" id="activeFilters"></div>
+
+  <div class="controlbar">
+    <div class="count">Showing <strong id="cFiltered">0</strong> of <strong id="cTotal">0</strong> verified organisations</div>
+    <div class="tabs" id="viewTabs">
+      <button class="tab active" data-view="overview">Overview</button>
+      <button class="tab" data-view="list">List</button>
+      <button class="tab" data-view="cards">Cards</button>
+    </div>
+  </div>
+
+  <main>
+    <section id="vOverview"></section>
+    <section id="vList" style="display:none"></section>
+    <section id="vCards" style="display:none"></section>
+  </main>
+
+  <footer>
+    Built by <a href="https://usefulaf.github.io">Useful AF</a> — AI tools for impact founders, NGOs and investors.
+    Inspired by the original <a href="https://theoceantoolbox.com/" target="_blank" rel="noopener">Ocean Toolbox</a>.
+    Data is research-curated; verify details with each organisation directly before outreach.
+  </footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+/* ============================================================
+   CURATED DATASET  (156 verified Blue Economy organisations)
+   ============================================================ */
+const ORGS = [
+
+  // ==================== FUNDERS / VC / PHILANTHROPY ====================
+  {n:"Katapult Ocean", t:"Funder", f:true, c:"Europe", co:"Norway", lat:59.91, lng:10.75, fa:["Generalist","Carbon/Climate","Aquaculture/Fisheries"], u:"https://katapult.vc/ocean/", s:"Oslo-based accelerator + impact fund backing early-stage ocean tech startups."},
+  {n:"S2G Investments (Oceans)", t:"Funder", f:true, c:"North America", co:"USA", lat:41.88, lng:-87.63, fa:["Generalist","Aquaculture/Fisheries","Seaweeds/Algae","Energy/Maritime"], u:"https://www.s2gventures.com/", s:"Multi-stage growth fund investing across the seafood and ocean value chain."},
+  {n:"Aqua-Spark", t:"Funder", f:true, c:"Europe", co:"Netherlands", lat:52.09, lng:5.12, fa:["Aquaculture/Fisheries","Biosolutions"], u:"https://www.aqua-spark.nl/", s:"Global investment fund focused on sustainable aquaculture businesses."},
+  {n:"Ocean 14 Capital", t:"Funder", f:true, c:"Europe", co:"United Kingdom", lat:51.51, lng:-0.13, fa:["Generalist","Aquaculture/Fisheries","Waste/Pollution"], u:"https://ocean14capital.com/", s:"€200m+ growth equity fund targeting Blue Economy SDG-14 aligned scale-ups."},
+  {n:"Builders Vision (Oceans)", t:"Funder", f:true, c:"North America", co:"USA", lat:41.88, lng:-87.63, fa:["Generalist","Aquaculture/Fisheries","Carbon/Climate"], u:"https://www.buildersvision.com/", s:"Lukas Walton-backed impact platform with major ocean grants and investments."},
+  {n:"Schmidt Marine Technology Partners", t:"Funder", f:true, c:"North America", co:"USA", lat:37.41, lng:-122.07, fa:["Data/Tech","Generalist"], u:"https://www.schmidtmarine.org/", s:"Funds development and deployment of marine technology for ocean health."},
+  {n:"Walton Family Foundation (Oceans)", t:"Funder", f:true, c:"North America", co:"USA", lat:36.37, lng:-94.20, fa:["Aquaculture/Fisheries","Education/Policy"], u:"https://www.waltonfamilyfoundation.org/our-work/oceans", s:"Major US philanthropic funder of fisheries reform and aquaculture."},
+  {n:"David and Lucile Packard Foundation", t:"Funder", f:true, c:"North America", co:"USA", lat:37.39, lng:-122.08, fa:["Aquaculture/Fisheries","Education/Policy","Corals/Biodiversity"], u:"https://www.packard.org/", s:"Long-time funder of marine science, fisheries, and conservation."},
+  {n:"Oceankind", t:"Funder", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Generalist","Aquaculture/Fisheries"], u:"https://www.oceankind.org/", s:"Private philanthropic initiative supporting ocean health worldwide."},
+  {n:"Bezos Earth Fund (Oceans)", t:"Funder", f:true, c:"North America", co:"USA", lat:38.90, lng:-77.03, fa:["Carbon/Climate","Mangroves/Coastal"], u:"https://www.bezosearthfund.org/", s:"$10B fund with ocean and coastal restoration as a major program area."},
+  {n:"Bloomberg Vibrant Oceans Initiative", t:"Funder", f:true, c:"North America", co:"USA", lat:40.76, lng:-73.97, fa:["Aquaculture/Fisheries","Education/Policy","Corals/Biodiversity"], u:"https://www.bloomberg.org/environment/protecting-the-oceans/vibrant-oceans-initiative/", s:"Bloomberg Philanthropies' flagship ocean program targeting fisheries and reefs."},
+  {n:"Oak Foundation", t:"Funder", f:true, c:"Europe", co:"Switzerland", lat:46.20, lng:6.14, fa:["Education/Policy","Aquaculture/Fisheries"], u:"https://oakfnd.org/", s:"Geneva-based foundation supporting marine conservation and policy."},
+  {n:"MAVA Foundation", t:"Funder", f:true, c:"Europe", co:"Switzerland", lat:46.51, lng:6.63, fa:["Corals/Biodiversity","Mangroves/Coastal"], u:"https://mava-foundation.org/", s:"Long-running biodiversity funder with major Mediterranean and West Africa ocean portfolio."},
+  {n:"Bertarelli Foundation", t:"Funder", f:true, c:"Europe", co:"Switzerland", lat:46.20, lng:6.14, fa:["Corals/Biodiversity","Education/Policy"], u:"https://www.fondation-bertarelli.org/", s:"Backs marine science and the establishment of large MPAs."},
+  {n:"Pew Charitable Trusts (Oceans)", t:"Funder", f:true, c:"North America", co:"USA", lat:39.95, lng:-75.16, fa:["Education/Policy","Aquaculture/Fisheries"], u:"https://www.pewtrusts.org/en/topics/oceans", s:"Major policy-focused funder behind global MPAs and fisheries reform."},
+  {n:"Helmsley Charitable Trust", t:"Funder", f:true, c:"North America", co:"USA", lat:40.75, lng:-73.98, fa:["Generalist"], u:"https://helmsleytrust.org/", s:"NY-based funder with conservation grantmaking in marine and coastal habitats."},
+  {n:"Gordon and Betty Moore Foundation", t:"Funder", f:true, c:"North America", co:"USA", lat:37.45, lng:-122.18, fa:["Education/Policy","Aquaculture/Fisheries","Data/Tech"], u:"https://www.moore.org/", s:"Funds wild salmon ecosystems, marine science and ocean observation."},
+  {n:"National Geographic Society (Pristine Seas)", t:"Funder", f:true, c:"North America", co:"USA", lat:38.91, lng:-77.04, fa:["Corals/Biodiversity","Education/Policy"], u:"https://www.nationalgeographic.org/society/our-programs/pristine-seas/", s:"Pristine Seas program funds expeditions and MPAs."},
+  {n:"Marisla Foundation", t:"Funder", f:true, c:"North America", co:"USA", lat:33.65, lng:-117.74, fa:["Aquaculture/Fisheries","Corals/Biodiversity"], u:"https://www.marisla.org/", s:"Long-standing private foundation with a marine conservation focus."},
+  {n:"Builders Initiative", t:"Funder", f:true, c:"North America", co:"USA", lat:41.88, lng:-87.63, fa:["Generalist"], u:"https://www.buildersinitiative.org/", s:"Charitable arm of Builders Vision, makes ocean grants and PRIs."},
+  {n:"Tom Ford Plastic Innovation Prize", t:"Funder", f:true, c:"North America", co:"USA", lat:34.05, lng:-118.24, fa:["Waste/Pollution","Biosolutions"], u:"https://www.lonelywhale.org/tomfordoceanplasticprize", s:"$1.2m prize for biodegradable replacements to thin-film plastics."},
+  {n:"Earthshot Prize", t:"Funder", f:true, c:"Europe", co:"United Kingdom", lat:51.50, lng:-0.14, fa:["Generalist","Carbon/Climate"], u:"https://earthshotprize.org/", s:"£1m × 5 prizes annually, including the Revive Our Oceans category."},
+  {n:"Rockefeller Foundation (Oceans)", t:"Funder", f:true, c:"North America", co:"USA", lat:40.76, lng:-73.97, fa:["Aquaculture/Fisheries","Education/Policy"], u:"https://www.rockefellerfoundation.org/", s:"Co-founded the Blue Economy investment principles work."},
+  {n:"Vulcan Inc. (Allen Family)", t:"Funder", f:true, c:"North America", co:"USA", lat:47.62, lng:-122.34, fa:["Data/Tech","Aquaculture/Fisheries"], u:"https://www.vulcan.com/", s:"Built Skylight (illegal fishing detection) and funds ocean tech."},
+  {n:"Lyda Hill Philanthropies", t:"Funder", f:true, c:"North America", co:"USA", lat:32.78, lng:-96.80, fa:["Education/Policy","Generalist"], u:"https://www.lydahillphilanthropies.org/", s:"Backs nature-based solutions including reefs and coastal resilience."},
+  {n:"Calouste Gulbenkian Foundation (Oceano Azul)", t:"Funder", f:true, c:"Europe", co:"Portugal", lat:38.74, lng:-9.15, fa:["Education/Policy","Corals/Biodiversity"], u:"https://gulbenkian.pt/", s:"Lisbon foundation with major ocean portfolio under Oceano Azul."},
+  {n:"Minderoo Foundation (Flourishing Oceans)", t:"Funder", f:true, c:"Oceania", co:"Australia", lat:-31.95, lng:115.86, fa:["Aquaculture/Fisheries","Data/Tech"], u:"https://www.minderoo.org/flourishing-oceans/", s:"Forrest family foundation, large fisheries transparency programs."},
+  {n:"Schmidt Ocean Institute", t:"Funder", f:true, c:"North America", co:"USA", lat:37.39, lng:-122.08, fa:["Data/Tech","Education/Policy"], u:"https://schmidtocean.org/", s:"Operates Falkor (too) research vessel, free ocean science access."},
+  {n:"Becht Family Charitable Trust", t:"Funder", f:true, c:"North America", co:"USA", lat:40.75, lng:-74.05, fa:["Generalist"], u:"#", s:"Niche US trust active in ocean conservation."},
+  {n:"Climate Imperative Foundation", t:"Funder", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Carbon/Climate","Energy/Maritime"], u:"https://climateimperative.org/", s:"Funds maritime decarbonisation and shipping fuels."},
+
+  // ==================== STARTUP SUPPORT (incubators, accelerators) ====================
+  {n:"SeaAhead", t:"Startup Support", f:true, c:"North America", co:"USA", lat:42.36, lng:-71.06, fa:["Generalist","Data/Tech","Energy/Maritime"], u:"https://www.sea-ahead.com/", s:"Boston-based BlueTech innovation hub and venture studio."},
+  {n:"Ocean Hub Africa", t:"Startup Support", f:true, c:"Africa", co:"South Africa", lat:-33.92, lng:18.42, fa:["Generalist","Aquaculture/Fisheries"], u:"https://oceanhub.africa/", s:"Cape Town accelerator for African ocean impact startups."},
+  {n:"Ocean Startup Project", t:"Startup Support", f:true, c:"North America", co:"Canada", lat:44.65, lng:-63.58, fa:["Aquaculture/Fisheries","Data/Tech"], u:"https://oceanstartupproject.ca/", s:"Atlantic Canada ocean accelerator + funding programs."},
+  {n:"PortXL", t:"Startup Support", f:true, c:"Europe", co:"Netherlands", lat:51.92, lng:4.48, fa:["Energy/Maritime","Data/Tech"], u:"https://portxl.org/", s:"Rotterdam-based port and maritime accelerator."},
+  {n:"Iceland Ocean Cluster", t:"Network", f:false, c:"Europe", co:"Iceland", lat:64.15, lng:-21.94, fa:["Aquaculture/Fisheries","Biosolutions","Generalist"], u:"https://www.sjavarklasinn.is/en/", s:"Reykjavik cluster pioneering 100% fish utilisation models."},
+  {n:"Hatch Innovation Services", t:"Startup Support", f:true, c:"Europe", co:"Norway", lat:60.39, lng:5.32, fa:["Aquaculture/Fisheries","Seaweeds/Algae"], u:"https://www.hatch.blue/", s:"Aquaculture-specialist accelerator and venture fund."},
+  {n:"Sustainable Ocean Alliance", t:"Network", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Generalist"], u:"https://www.soalliance.org/", s:"Largest global youth-led ocean network with Ecopreneur program."},
+  {n:"SecondMuse", t:"Startup Support", f:true, c:"North America", co:"USA", lat:35.08, lng:-106.65, fa:["Generalist","Waste/Pollution","Carbon/Climate"], u:"https://www.secondmuse.com/", s:"Operates the Ocean Plastic Innovation Challenge among many ocean programs."},
+  {n:"Ocean Exchange", t:"Network", f:true, c:"North America", co:"USA", lat:32.08, lng:-81.10, fa:["Generalist","Energy/Maritime"], u:"https://oceanexchange.org/", s:"Annual prize competition spotlighting blue economy solutions."},
+  {n:"Ocean Impact Organisation", t:"Network", f:true, c:"Oceania", co:"Australia", lat:-33.87, lng:151.21, fa:["Generalist"], u:"https://oceanimpact.org/", s:"Sydney-based hub connecting ocean impact founders, capital and corporates."},
+  {n:"BlueBioValue", t:"Startup Support", f:true, c:"Europe", co:"Portugal", lat:38.74, lng:-9.15, fa:["Biosolutions","Aquaculture/Fisheries"], u:"https://www.bluebiovalue.com/", s:"Lisbon accelerator for marine bioeconomy ventures."},
+  {n:"BlueInvest (EU)", t:"Funder", f:true, c:"Europe", co:"Belgium", lat:50.85, lng:4.35, fa:["Generalist","Energy/Maritime"], u:"https://blueinvest-community.eu/", s:"EU's flagship blue economy investor matchmaking and grants."},
+  {n:"Sea2See / Bluetech Cluster", t:"Network", f:false, c:"Europe", co:"Spain", lat:41.39, lng:2.16, fa:["Generalist"], u:"https://bluetechcluster.com/", s:"Catalan blue tech cluster of 100+ ocean tech firms."},
+  {n:"Ocean Opportunity Lab (TOOL)", t:"Network", f:true, c:"North America", co:"USA", lat:38.91, lng:-77.04, fa:["Generalist"], u:"https://theoceanopportunitylab.com/", s:"Networks 1,000+ entrepreneur-supporting orgs globally."},
+  {n:"BlueTech Cluster Alliance", t:"Network", f:false, c:"Europe", co:"Spain", lat:43.27, lng:-2.92, fa:["Generalist","Energy/Maritime"], u:"https://bluetechclusteralliance.com/", s:"Federation of European blue tech clusters."},
+  {n:"Climate-KIC Blue Economy", t:"Startup Support", f:true, c:"Europe", co:"Belgium", lat:50.85, lng:4.35, fa:["Carbon/Climate","Energy/Maritime"], u:"https://www.climate-kic.org/", s:"EIT-funded climate accelerator with blue economy themes."},
+  {n:"BlueTech Forum", t:"Network", f:false, c:"North America", co:"USA", lat:32.72, lng:-117.16, fa:["Energy/Maritime","Data/Tech"], u:"https://bluetechforum.com/", s:"San Diego-anchored maritime tech network."},
+  {n:"Sea Forward (Surfrider)", t:"Startup Support", f:true, c:"North America", co:"USA", lat:34.04, lng:-118.71, fa:["Waste/Pollution","Generalist"], u:"https://www.surfrider.org/", s:"Surfrider's emerging startup support program for clean coastlines."},
+
+  // ==================== NETWORKS / COALITIONS ====================
+  {n:"World Ocean Council", t:"Network", f:false, c:"Europe", co:"France", lat:48.85, lng:2.35, fa:["Generalist","Energy/Maritime"], u:"https://oceancouncil.org/", s:"Global ocean industry alliance for sustainable Blue Economy."},
+  {n:"1000 Ocean Startups Coalition", t:"Network", f:false, c:"Europe", co:"France", lat:48.85, lng:2.35, fa:["Generalist"], u:"https://www.1000oceanstartups.org/", s:"Coalition of 30+ orgs aiming for 1,000 scaled ocean startups by 2030."},
+  {n:"Friends of Ocean Action (WEF)", t:"Network", f:false, c:"Europe", co:"Switzerland", lat:46.51, lng:6.63, fa:["Education/Policy","Generalist"], u:"https://www.weforum.org/friends-of-ocean-action/", s:"WEF-hosted leader group accelerating SDG-14 solutions."},
+  {n:"Ocean Visions", t:"Network", f:true, c:"North America", co:"USA", lat:33.75, lng:-84.39, fa:["Carbon/Climate","Data/Tech"], u:"https://oceanvisions.org/", s:"Network advancing ocean-climate solutions with research collaborations."},
+  {n:"Ocean Decade Alliance (UNESCO)", t:"Institution", f:true, c:"Europe", co:"France", lat:48.85, lng:2.35, fa:["Education/Policy","Generalist"], u:"https://oceandecade.org/", s:"UN Decade of Ocean Science (2021–2030) coordinating body."},
+  {n:"Blue Climate Initiative", t:"Network", f:true, c:"Oceania", co:"French Polynesia", lat:-17.65, lng:-149.43, fa:["Carbon/Climate"], u:"https://www.blueclimateinitiative.org/", s:"Tetiaroa Society initiative, $1m biennial Blue Climate Prize."},
+  {n:"The Liquid Grid", t:"Project/Platform", f:false, c:"North America", co:"USA", lat:41.65, lng:-70.93, fa:["Data/Tech","Generalist"], u:"https://theliquidgrid.com/", s:"Curated map and database of the global ocean tech ecosystem."},
+  {n:"Investable Oceans", t:"Project/Platform", f:false, c:"North America", co:"USA", lat:40.76, lng:-73.97, fa:["Generalist"], u:"https://investableoceans.com/", s:"Marketplace connecting impact capital with vetted ocean ventures."},
+  {n:"Sustainable Markets Initiative — Ocean", t:"Network", f:false, c:"Europe", co:"United Kingdom", lat:51.50, lng:-0.14, fa:["Generalist","Aquaculture/Fisheries"], u:"https://www.sustainable-markets.org/", s:"King Charles-led CEO coalition with Ocean workstream."},
+  {n:"BioMarine", t:"Network", f:false, c:"Europe", co:"France", lat:43.30, lng:5.40, fa:["Biosolutions","Aquaculture/Fisheries"], u:"https://biomarine.org/", s:"Global marine biotech business network."},
+
+  // ==================== NONPROFITS ====================
+  {n:"The Ocean Cleanup", t:"Nonprofit", f:true, c:"Europe", co:"Netherlands", lat:51.92, lng:4.47, fa:["Waste/Pollution","Data/Tech"], u:"https://theoceancleanup.com/", s:"Develops technologies to extract plastic from oceans and rivers."},
+  {n:"Sea Shepherd Global", t:"Nonprofit", f:true, c:"Europe", co:"Netherlands", lat:51.81, lng:5.10, fa:["Aquaculture/Fisheries","Education/Policy"], u:"https://www.seashepherdglobal.org/", s:"Direct-action marine wildlife conservation group."},
+  {n:"Oceana", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:38.91, lng:-77.04, fa:["Aquaculture/Fisheries","Education/Policy"], u:"https://oceana.org/", s:"World's largest international ocean advocacy organisation."},
+  {n:"Surfrider Foundation", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:33.79, lng:-118.40, fa:["Waste/Pollution","Communities/Tourism"], u:"https://www.surfrider.org/", s:"Grassroots coastal protection organisation across 80+ chapters."},
+  {n:"Marine Stewardship Council", t:"Nonprofit", f:true, c:"Europe", co:"United Kingdom", lat:51.51, lng:-0.13, fa:["Aquaculture/Fisheries"], u:"https://www.msc.org/", s:"Global blue-fish-label certification of sustainable wild fisheries."},
+  {n:"Aquaculture Stewardship Council", t:"Nonprofit", f:true, c:"Europe", co:"Netherlands", lat:52.09, lng:5.12, fa:["Aquaculture/Fisheries"], u:"https://www.asc-aqua.org/", s:"Global certification body for responsible farmed seafood."},
+  {n:"The Ocean Foundation", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:38.91, lng:-77.04, fa:["Generalist","Mangroves/Coastal","Carbon/Climate"], u:"https://oceanfdn.org/", s:"Global community foundation entirely focused on ocean health."},
+  {n:"WildAid (Marine Program)", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Aquaculture/Fisheries","Education/Policy"], u:"https://wildaid.org/", s:"Reduces demand for illegal wildlife products + MPA enforcement tech."},
+  {n:"Coral Restoration Foundation", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:25.08, lng:-80.45, fa:["Corals/Biodiversity"], u:"https://coralrestoration.org/", s:"World's largest coral reef restoration NGO, based in the Florida Keys."},
+  {n:"Coral Guardian", t:"Nonprofit", f:true, c:"Europe", co:"France", lat:48.85, lng:2.35, fa:["Corals/Biodiversity","Communities/Tourism"], u:"https://www.coralguardian.org/", s:"Community-led reef restoration in Indonesia and beyond."},
+  {n:"SECORE International", t:"Nonprofit", f:true, c:"Europe", co:"Germany", lat:50.95, lng:6.97, fa:["Corals/Biodiversity"], u:"https://www.secore.org/", s:"Global coral restoration via sexual reproduction techniques."},
+  {n:"Mission Blue", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Corals/Biodiversity","Education/Policy"], u:"https://mission-blue.org/", s:"Sylvia Earle's network of 'Hope Spots' for marine protection."},
+  {n:"Ocean Conservancy", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:38.91, lng:-77.04, fa:["Waste/Pollution","Education/Policy"], u:"https://oceanconservancy.org/", s:"Operates the International Coastal Cleanup since 1986."},
+  {n:"Plastic Bank", t:"Nonprofit", f:true, c:"North America", co:"Canada", lat:49.28, lng:-123.12, fa:["Waste/Pollution","Communities/Tourism"], u:"https://plasticbank.com/", s:"Pays community collectors above-market rates for ocean-bound plastic."},
+  {n:"5 Gyres Institute", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:34.05, lng:-118.24, fa:["Waste/Pollution","Education/Policy"], u:"https://www.5gyres.org/", s:"Plastic pollution research and advocacy across the five gyres."},
+  {n:"Environmental Defense Fund (Oceans)", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:40.76, lng:-73.97, fa:["Aquaculture/Fisheries","Education/Policy"], u:"https://www.edf.org/oceans", s:"Pioneers catch shares and rights-based fisheries management."},
+  {n:"WWF Oceans", t:"Nonprofit", f:true, c:"Europe", co:"Switzerland", lat:46.51, lng:6.63, fa:["Generalist","Aquaculture/Fisheries"], u:"https://www.worldwildlife.org/initiatives/oceans", s:"Global marine program from World Wildlife Fund."},
+  {n:"Conservation International — Center for Oceans", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:38.85, lng:-77.04, fa:["Corals/Biodiversity","Mangroves/Coastal"], u:"https://www.conservation.org/", s:"Operates blue carbon and seascapes programs in 30+ countries."},
+  {n:"WCS Marine Conservation", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:40.85, lng:-73.88, fa:["Corals/Biodiversity","Aquaculture/Fisheries"], u:"https://www.wcs.org/our-work/oceans", s:"Wildlife Conservation Society's global ocean and seascape program."},
+  {n:"Rare", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:38.85, lng:-77.04, fa:["Communities/Tourism","Aquaculture/Fisheries"], u:"https://rare.org/", s:"Behaviour-change non-profit; Fish Forever runs in 20+ countries."},
+  {n:"Reef Check Foundation", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:34.04, lng:-118.40, fa:["Corals/Biodiversity","Data/Tech"], u:"https://www.reefcheck.org/", s:"Citizen-science reef monitoring across 90+ countries."},
+  {n:"OceanMind", t:"Nonprofit", f:true, c:"Europe", co:"United Kingdom", lat:51.66, lng:-1.27, fa:["Data/Tech","Aquaculture/Fisheries"], u:"https://oceanmind.global/", s:"Satellite + AI to detect IUU fishing for governments."},
+  {n:"Global Fishing Watch", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:38.91, lng:-77.04, fa:["Data/Tech","Aquaculture/Fisheries"], u:"https://globalfishingwatch.org/", s:"Open AIS data and AI for transparency in commercial fishing."},
+  {n:"SkyTruth", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:39.32, lng:-77.74, fa:["Data/Tech","Waste/Pollution"], u:"https://skytruth.org/", s:"Satellite monitoring of oil spills, fishing, and ocean industry."},
+  {n:"4ocean", t:"Private company", f:false, c:"North America", co:"USA", lat:26.71, lng:-80.05, fa:["Waste/Pollution","Communities/Tourism"], u:"https://4ocean.com/", s:"For-profit, employs full-time crews to remove ocean plastic."},
+  {n:"Plastic Soup Foundation", t:"Nonprofit", f:true, c:"Europe", co:"Netherlands", lat:52.37, lng:4.90, fa:["Waste/Pollution","Education/Policy"], u:"https://www.plasticsoupfoundation.org/", s:"Amsterdam NGO campaigning on plastic pollution and microplastics."},
+  {n:"Mangrove Action Project", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:47.61, lng:-122.33, fa:["Mangroves/Coastal","Communities/Tourism"], u:"https://mangroveactionproject.org/", s:"Pioneer of community-based ecological mangrove restoration."},
+  {n:"Seacology", t:"Nonprofit", f:true, c:"North America", co:"USA", lat:37.87, lng:-122.27, fa:["Mangroves/Coastal","Corals/Biodiversity"], u:"https://www.seacology.org/", s:"Protects island ecosystems via village-scale partnerships."},
+  {n:"Reef-World Foundation", t:"Nonprofit", f:true, c:"Europe", co:"United Kingdom", lat:51.51, lng:-0.13, fa:["Corals/Biodiversity","Communities/Tourism"], u:"https://reef-world.org/", s:"Runs the Green Fins sustainable diving and snorkelling programme."},
+  {n:"Marine Conservation Society", t:"Nonprofit", f:true, c:"Europe", co:"United Kingdom", lat:52.07, lng:-2.72, fa:["Aquaculture/Fisheries","Waste/Pollution"], u:"https://www.mcsuk.org/", s:"UK's leading marine charity, runs the Good Fish Guide."},
+  {n:"Blue Marine Foundation", t:"Nonprofit", f:true, c:"Europe", co:"United Kingdom", lat:51.50, lng:-0.13, fa:["Aquaculture/Fisheries","Corals/Biodiversity"], u:"https://www.bluemarinefoundation.com/", s:"Establishes MPAs and advocates for sustainable fisheries."},
+  {n:"Sea Trust Wales", t:"Nonprofit", f:false, c:"Europe", co:"United Kingdom", lat:51.99, lng:-5.05, fa:["Corals/Biodiversity","Education/Policy"], u:"https://www.seatrust.org.uk/", s:"Welsh marine wildlife monitoring and education charity."},
+
+  // ==================== PRIVATE COMPANIES / STARTUPS ====================
+  {n:"Notpla", t:"Private company", f:true, c:"Europe", co:"United Kingdom", lat:51.51, lng:-0.10, fa:["Biosolutions","Waste/Pollution"], u:"https://www.notpla.com/", s:"Seaweed-based packaging replacing single-use plastics; Earthshot winner."},
+  {n:"Loliware", t:"Private company", f:true, c:"North America", co:"USA", lat:40.71, lng:-74.00, fa:["Biosolutions","Waste/Pollution"], u:"https://www.loliware.com/", s:"Seaweed-resin straws and tableware that decompose at sea."},
+  {n:"Sway", t:"Private company", f:true, c:"North America", co:"USA", lat:37.87, lng:-122.27, fa:["Biosolutions","Waste/Pollution","Seaweeds/Algae"], u:"https://swaythefuture.com/", s:"Seaweed-based replacements for plastic films and bags."},
+  {n:"Kelp Blue", t:"Private company", f:true, c:"Africa", co:"Namibia", lat:-26.65, lng:15.16, fa:["Seaweeds/Algae","Carbon/Climate"], u:"https://www.kelp.blue/", s:"Large-scale offshore Macrocystis kelp farming for biostimulants and carbon."},
+  {n:"Running Tide", t:"Private company", f:true, c:"North America", co:"USA", lat:43.66, lng:-70.26, fa:["Carbon/Climate","Seaweeds/Algae"], u:"https://www.runningtide.com/", s:"Ocean carbon removal via macroalgae sinking and alkalinity enhancement."},
+  {n:"Brilliant Planet", t:"Private company", f:true, c:"Europe", co:"United Kingdom", lat:51.51, lng:-0.13, fa:["Seaweeds/Algae","Carbon/Climate"], u:"https://www.brilliantplanet.com/", s:"Open-pond microalgae carbon removal in coastal deserts."},
+  {n:"Atlantic Sea Farms", t:"Private company", f:true, c:"North America", co:"USA", lat:43.86, lng:-69.62, fa:["Seaweeds/Algae","Aquaculture/Fisheries"], u:"https://atlanticseafarms.com/", s:"Largest US kelp aquaculture company supporting Maine fishermen."},
+  {n:"Sea6 Energy", t:"Private company", f:true, c:"Asia", co:"India", lat:12.97, lng:77.59, fa:["Seaweeds/Algae","Biosolutions"], u:"https://sea6energy.com/", s:"Bengaluru-based offshore tropical seaweed farming for bioproducts."},
+  {n:"Symbrosia", t:"Private company", f:true, c:"North America", co:"USA", lat:19.74, lng:-156.06, fa:["Seaweeds/Algae","Carbon/Climate","Aquaculture/Fisheries"], u:"https://www.symbrosia.co/", s:"Hawaii-based grower of Asparagopsis to cut cattle methane."},
+  {n:"Sea Forest", t:"Private company", f:true, c:"Oceania", co:"Australia", lat:-43.07, lng:147.18, fa:["Seaweeds/Algae","Carbon/Climate"], u:"https://www.seaforest.com.au/", s:"Tasmanian Asparagopsis grower for livestock methane reduction."},
+  {n:"CH4 Global", t:"Private company", f:true, c:"Oceania", co:"Australia", lat:-34.93, lng:138.60, fa:["Seaweeds/Algae","Carbon/Climate"], u:"https://ch4global.com/", s:"Asparagopsis at scale across Australia and New Zealand."},
+  {n:"Aker BioMarine", t:"Private company", f:false, c:"Europe", co:"Norway", lat:59.91, lng:10.75, fa:["Aquaculture/Fisheries","Biosolutions"], u:"https://akerbiomarine.com/", s:"World's largest sustainable krill harvester and ingredients supplier."},
+  {n:"Mowi", t:"Private company", f:false, c:"Europe", co:"Norway", lat:60.39, lng:5.32, fa:["Aquaculture/Fisheries"], u:"https://mowi.com/", s:"World's largest Atlantic salmon aquaculture producer."},
+  {n:"Cermaq", t:"Private company", f:false, c:"Europe", co:"Norway", lat:59.91, lng:10.75, fa:["Aquaculture/Fisheries","Data/Tech"], u:"https://www.cermaq.com/", s:"Mitsubishi-owned salmon farmer; pioneer of iFarm individual fish AI."},
+  {n:"Tidal X (Alphabet)", t:"Private company", f:true, c:"North America", co:"USA", lat:37.45, lng:-122.18, fa:["Data/Tech","Aquaculture/Fisheries"], u:"https://x.company/projects/tidal/", s:"Alphabet moonshot using underwater AI cameras for fish farms."},
+  {n:"Aquabyte", t:"Private company", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Data/Tech","Aquaculture/Fisheries"], u:"https://www.aquabyte.ai/", s:"Computer vision for sea-lice and biomass in salmon farming."},
+  {n:"ReelData AI", t:"Private company", f:true, c:"North America", co:"Canada", lat:44.65, lng:-63.58, fa:["Data/Tech","Aquaculture/Fisheries"], u:"https://reeldata.ai/", s:"Halifax startup, AI for land-based RAS aquaculture."},
+  {n:"Innovasea", t:"Private company", f:true, c:"North America", co:"USA", lat:42.36, lng:-71.06, fa:["Aquaculture/Fisheries","Data/Tech"], u:"https://www.innovasea.com/", s:"Sensors, fish tracking and submersible cages for aquaculture."},
+  {n:"Forever Oceans", t:"Private company", f:true, c:"North America", co:"USA", lat:38.85, lng:-77.04, fa:["Aquaculture/Fisheries","Data/Tech"], u:"https://www.foreveroceans.com/", s:"Open-ocean offshore fish farming with autonomous robotics."},
+  {n:"Saildrone", t:"Private company", f:true, c:"North America", co:"USA", lat:37.78, lng:-122.27, fa:["Data/Tech","Energy/Maritime"], u:"https://www.saildrone.com/", s:"Wind-powered uncrewed surface vehicles for ocean data."},
+  {n:"Sofar Ocean", t:"Private company", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Data/Tech","Energy/Maritime"], u:"https://www.sofarocean.com/", s:"Largest private ocean weather network — Spotter buoys + Wayfinder routing."},
+  {n:"Open Ocean Robotics", t:"Private company", f:true, c:"North America", co:"Canada", lat:48.43, lng:-123.37, fa:["Data/Tech","Energy/Maritime"], u:"https://www.openoceanrobotics.com/", s:"Solar autonomous data boats for ocean monitoring."},
+  {n:"Bedrock Ocean Exploration", t:"Private company", f:true, c:"North America", co:"USA", lat:40.71, lng:-74.00, fa:["Data/Tech","Energy/Maritime"], u:"https://bedrockocean.com/", s:"AUV-based seabed surveys-as-a-service for offshore wind."},
+  {n:"Terradepth", t:"Private company", f:true, c:"North America", co:"USA", lat:30.27, lng:-97.74, fa:["Data/Tech"], u:"https://terradepth.com/", s:"Cloud-platform AUV ocean data company."},
+  {n:"Sea Machines Robotics", t:"Private company", f:true, c:"North America", co:"USA", lat:42.36, lng:-71.06, fa:["Energy/Maritime","Data/Tech"], u:"https://sea-machines.com/", s:"Autonomous control systems for commercial vessels."},
+  {n:"Seabin Project", t:"Private company", f:true, c:"Oceania", co:"Australia", lat:-33.87, lng:151.21, fa:["Waste/Pollution","Data/Tech"], u:"https://seabin.io/", s:"Floating marina debris collectors and citizen-science data."},
+  {n:"CalWave Power Technologies", t:"Private company", f:true, c:"North America", co:"USA", lat:37.87, lng:-122.27, fa:["Energy/Maritime"], u:"https://calwave.energy/", s:"Berkeley wave energy converter, deploying off California."},
+  {n:"CorPower Ocean", t:"Private company", f:true, c:"Europe", co:"Sweden", lat:59.33, lng:18.07, fa:["Energy/Maritime","Carbon/Climate"], u:"https://corpowerocean.com/", s:"Sweden-based wave energy convertor in commercial trial."},
+  {n:"Eco Wave Power", t:"Private company", f:false, c:"Asia", co:"Israel", lat:32.08, lng:34.78, fa:["Energy/Maritime"], u:"https://www.ecowavepower.com/", s:"Nasdaq-listed onshore wave energy provider."},
+  {n:"Minesto", t:"Private company", f:false, c:"Europe", co:"Sweden", lat:57.71, lng:11.97, fa:["Energy/Maritime"], u:"https://minesto.com/", s:"Tidal kite technology, commercial deployment in Faroe Islands."},
+  {n:"Ørsted", t:"Private company", f:false, c:"Europe", co:"Denmark", lat:55.68, lng:12.57, fa:["Energy/Maritime","Carbon/Climate"], u:"https://orsted.com/", s:"World's largest offshore wind developer."},
+  {n:"Yara Marine Technologies", t:"Private company", f:false, c:"Europe", co:"Norway", lat:59.91, lng:10.75, fa:["Energy/Maritime","Carbon/Climate"], u:"https://yaramarine.com/", s:"Scrubbers and fleet decarbonisation tech for shipping."},
+  {n:"Boundary Layer Technologies", t:"Private company", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Energy/Maritime","Carbon/Climate"], u:"https://www.boundarylayer.tech/", s:"Hydrofoil container ships for low-carbon ocean freight."},
+  {n:"Coral Vita", t:"Private company", f:true, c:"North America", co:"Bahamas", lat:26.55, lng:-78.69, fa:["Corals/Biodiversity","Communities/Tourism"], u:"https://www.coralvita.co/", s:"Land-based coral farms restoring reefs at scale; Earthshot winner."},
+  {n:"Coral Maker", t:"Private company", f:true, c:"North America", co:"USA", lat:36.97, lng:-122.03, fa:["Corals/Biodiversity"], u:"https://www.coralmaker.org/", s:"Robotic coral seeding and modular reef restoration."},
+  {n:"Rrreefs", t:"Private company", f:true, c:"Europe", co:"Switzerland", lat:47.37, lng:8.54, fa:["Corals/Biodiversity"], u:"https://www.rrreefs.com/", s:"3D-printed clay reef structures for restoration."},
+  {n:"Equatic", t:"Private company", f:true, c:"North America", co:"USA", lat:34.07, lng:-118.44, fa:["Carbon/Climate"], u:"https://www.equatic.tech/", s:"UCLA spinout, electrochemical ocean carbon removal + green hydrogen."},
+  {n:"Captura", t:"Private company", f:true, c:"North America", co:"USA", lat:34.14, lng:-118.12, fa:["Carbon/Climate"], u:"https://capturacorp.com/", s:"Caltech spinout, direct ocean capture of CO2."},
+  {n:"Planetary Technologies", t:"Private company", f:true, c:"North America", co:"Canada", lat:44.65, lng:-63.58, fa:["Carbon/Climate"], u:"https://www.planetarytech.com/", s:"Ocean alkalinity enhancement at coastal outfalls."},
+  {n:"Ebb Carbon", t:"Private company", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Carbon/Climate"], u:"https://www.ebbcarbon.com/", s:"Electrochemical ocean alkalinity, removing CO2 at industrial scale."},
+  {n:"Vesta", t:"Private company", f:true, c:"North America", co:"USA", lat:37.77, lng:-122.41, fa:["Carbon/Climate"], u:"https://www.vesta.earth/", s:"Coastal carbon capture using olivine sand."},
+  {n:"Banyu Carbon", t:"Private company", f:true, c:"North America", co:"USA", lat:47.66, lng:-122.31, fa:["Carbon/Climate"], u:"https://www.banyucarbon.com/", s:"Photochemical ocean CO2 removal."},
+  {n:"Gigablue", t:"Private company", f:true, c:"Asia", co:"Israel", lat:32.08, lng:34.78, fa:["Carbon/Climate"], u:"https://gigablue.co/", s:"Buoyant carbon-binding particles for marine carbon dioxide removal."},
+  {n:"Seaweed Generation", t:"Private company", f:true, c:"Europe", co:"United Kingdom", lat:51.51, lng:-0.13, fa:["Seaweeds/Algae","Carbon/Climate"], u:"https://seaweedgeneration.com/", s:"Robotic Sargassum collection and deep-ocean sequestration."},
+  {n:"Phycobloom", t:"Private company", f:true, c:"Europe", co:"United Kingdom", lat:51.51, lng:-0.13, fa:["Seaweeds/Algae","Energy/Maritime"], u:"https://phycobloom.com/", s:"Engineered algae producing biocrude oil from sunlight + CO2."},
+
+  // ==================== EDUCATION / R&D ====================
+  {n:"Woods Hole Oceanographic Institution", t:"Education/R&D", f:true, c:"North America", co:"USA", lat:41.52, lng:-70.67, fa:["Data/Tech","Education/Policy"], u:"https://www.whoi.edu/", s:"World's largest private oceanographic research institution."},
+  {n:"Scripps Institution of Oceanography", t:"Education/R&D", f:true, c:"North America", co:"USA", lat:32.87, lng:-117.25, fa:["Data/Tech","Education/Policy"], u:"https://scripps.ucsd.edu/", s:"UC San Diego ocean and earth science institute since 1903."},
+  {n:"Plymouth Marine Laboratory", t:"Education/R&D", f:true, c:"Europe", co:"United Kingdom", lat:50.37, lng:-4.14, fa:["Data/Tech","Carbon/Climate"], u:"https://www.pml.ac.uk/", s:"UK marine science laboratory and ocean observation hub."},
+  {n:"Mercator Ocean International", t:"Education/R&D", f:true, c:"Europe", co:"France", lat:43.55, lng:1.46, fa:["Data/Tech","Carbon/Climate"], u:"https://www.mercator-ocean.eu/", s:"Toulouse-based provider of EU Copernicus Marine Service."},
+  {n:"NIOZ Royal Netherlands Inst. for Sea Research", t:"Education/R&D", f:true, c:"Europe", co:"Netherlands", lat:53.00, lng:4.79, fa:["Data/Tech","Corals/Biodiversity"], u:"https://www.nioz.nl/en", s:"National marine research institute of the Netherlands."},
+  {n:"CSIRO Oceans & Atmosphere", t:"Education/R&D", f:true, c:"Oceania", co:"Australia", lat:-42.88, lng:147.33, fa:["Data/Tech","Carbon/Climate"], u:"https://www.csiro.au/en/about/people/business-units/oceans-and-atmosphere", s:"Australia's national ocean and atmosphere research division."},
+  {n:"Australian Institute of Marine Science", t:"Education/R&D", f:true, c:"Oceania", co:"Australia", lat:-19.27, lng:147.06, fa:["Corals/Biodiversity","Data/Tech"], u:"https://www.aims.gov.au/", s:"AIMS — Australia's tropical marine science agency for the GBR."},
+  {n:"NIVA — Norwegian Inst. for Water Research", t:"Education/R&D", f:true, c:"Europe", co:"Norway", lat:59.91, lng:10.75, fa:["Aquaculture/Fisheries","Carbon/Climate"], u:"https://www.niva.no/en", s:"Largest aquatic environment research institute in Norway."},
+
+  // ==================== INSTITUTIONS ====================
+  {n:"Intergovernmental Oceanographic Commission (UNESCO)", t:"Institution", f:true, c:"Europe", co:"France", lat:48.85, lng:2.30, fa:["Education/Policy","Data/Tech"], u:"https://ioc.unesco.org/", s:"UN body coordinating ocean research, observation and capacity development."},
+  {n:"International Maritime Organization", t:"Institution", f:false, c:"Europe", co:"United Kingdom", lat:51.49, lng:-0.12, fa:["Energy/Maritime","Education/Policy"], u:"https://www.imo.org/", s:"UN agency setting standards for shipping safety and emissions."},
+  {n:"NOAA — National Oceanic & Atmospheric Admin.", t:"Institution", f:true, c:"North America", co:"USA", lat:38.99, lng:-76.94, fa:["Data/Tech","Education/Policy"], u:"https://www.noaa.gov/", s:"US federal agency for ocean, coast, weather, and fisheries."},
+  {n:"EU Mission Restore our Ocean and Waters", t:"Institution", f:true, c:"Europe", co:"Belgium", lat:50.85, lng:4.35, fa:["Generalist","Carbon/Climate"], u:"https://oceans-and-waters.ec.europa.eu/", s:"€500m+ EU mission with four lighthouse sea-basin programs."},
+  {n:"FAO Fisheries & Aquaculture", t:"Institution", f:false, c:"Europe", co:"Italy", lat:41.89, lng:12.49, fa:["Aquaculture/Fisheries","Education/Policy"], u:"https://www.fao.org/fishery", s:"UN body for the State of World Fisheries and Aquaculture report."},
+  {n:"International Seabed Authority", t:"Institution", f:false, c:"North America", co:"Jamaica", lat:17.97, lng:-76.79, fa:["Education/Policy","Energy/Maritime"], u:"https://www.isa.org.jm/", s:"UN body regulating mineral resources of the international seabed."},
+
+  // ==================== PROJECTS / PLATFORMS ====================
+  {n:"Allen Coral Atlas", t:"Project/Platform", f:true, c:"North America", co:"USA", lat:47.62, lng:-122.34, fa:["Corals/Biodiversity","Data/Tech"], u:"https://allencoralatlas.org/", s:"High-res satellite mapping of every shallow coral reef on Earth."},
+  {n:"Global Mangrove Watch", t:"Project/Platform", f:true, c:"Europe", co:"United Kingdom", lat:51.51, lng:-0.13, fa:["Mangroves/Coastal","Data/Tech"], u:"https://www.globalmangrovewatch.org/", s:"Open-access global mangrove monitoring platform."},
+  {n:"MERMAID (WCS)", t:"Project/Platform", f:true, c:"North America", co:"USA", lat:40.85, lng:-73.88, fa:["Corals/Biodiversity","Data/Tech"], u:"https://datamermaid.org/", s:"Open-source coral reef monitoring data platform."},
+  {n:"ReefCloud (AIMS)", t:"Project/Platform", f:true, c:"Oceania", co:"Australia", lat:-19.27, lng:147.06, fa:["Corals/Biodiversity","Data/Tech"], u:"https://reefcloud.ai/", s:"AI image analysis for global coral reef condition assessment."},
+  {n:"Marine Conservation Institute (MPAtlas)", t:"Project/Platform", f:true, c:"North America", co:"USA", lat:47.62, lng:-122.34, fa:["Corals/Biodiversity","Education/Policy"], u:"https://mpatlas.org/", s:"Tracks the world's marine protected areas + Blue Park awards."},
+  {n:"Skylight (Vulcan)", t:"Project/Platform", f:true, c:"North America", co:"USA", lat:47.62, lng:-122.34, fa:["Data/Tech","Aquaculture/Fisheries"], u:"https://www.skylight.global/", s:"Free maritime intelligence platform for IUU fishing detection."},
+  {n:"PortMaps", t:"Project/Platform", f:false, c:"Europe", co:"Germany", lat:53.55, lng:9.99, fa:["Data/Tech","Energy/Maritime"], u:"#", s:"Open-source vessel call data for port decarbonisation analysis."}
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+  q:"", focus:"", type:"", funding:"", continent:"", country:"",
+  view:"overview", sortKey:"n", sortDir:1
+};
+let map, markerLayer;
+
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
+function init(){
+  populateSelects();
+  bindEvents();
+  render();
+}
+
+function populateSelects(){
+  const allFocus = new Set();
+  const allTypes = new Set();
+  const allConts = new Set();
+  const allCountries = new Set();
+  ORGS.forEach(o=>{
+    o.fa.forEach(f=>allFocus.add(f));
+    allTypes.add(o.t);
+    allConts.add(o.c);
+    allCountries.add(o.co);
+  });
+  fill("qFocus", [...allFocus].sort());
+  fill("qType",  [...allTypes].sort());
+  fill("qContinent", [...allConts].sort());
+  fill("qCountry", [...allCountries].sort());
+}
+
+function fill(id, items){
+  const sel = document.getElementById(id);
+  items.forEach(v=>{
+    const o = document.createElement("option");
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  });
+}
+
+function bindEvents(){
+  ["qSearch","qFocus","qType","qFunding","qContinent","qCountry"].forEach(id=>{
+    document.getElementById(id).addEventListener("input", e=>{
+      const k = id.replace("q","").toLowerCase();
+      const map={search:"q",focus:"focus",type:"type",funding:"funding",continent:"continent",country:"country"};
+      state[map[k]] = e.target.value;
+      // intelligent geo: when continent changes, reset country if not in continent
+      if(k==="continent"){
+        const cs = countriesIn(e.target.value);
+        const cur = document.getElementById("qCountry").value;
+        if(cur && !cs.includes(cur)){
+          state.country = "";
+          document.getElementById("qCountry").value = "";
+        }
+        rebuildCountrySelect();
+      }
+      render();
+    });
+  });
+  document.querySelectorAll("#viewTabs .tab").forEach(t=>{
+    t.addEventListener("click", ()=>{
+      document.querySelectorAll("#viewTabs .tab").forEach(b=>b.classList.remove("active"));
+      t.classList.add("active");
+      state.view = t.dataset.view;
+      render();
+    });
+  });
+  document.getElementById("exportBtn").addEventListener("click", exportCSV);
+  document.getElementById("suggestBtn").addEventListener("click", ()=>{
+    window.open("mailto:hello@impact47.com?subject=Suggest%20a%20Blue%20Economy%20organisation&body=Org%20name%3A%0AWebsite%3A%0AHQ%20country%3A%0AType%20(funder%2Fstartup%2Fnonprofit%2Fetc.)%3A%0AFocus%20areas%3A%0AOne-line%20summary%3A%0A","_blank");
+  });
+}
+
+function countriesIn(continent){
+  if(!continent) return [...new Set(ORGS.map(o=>o.co))];
+  return [...new Set(ORGS.filter(o=>o.c===continent).map(o=>o.co))];
+}
+function rebuildCountrySelect(){
+  const sel = document.getElementById("qCountry");
+  const current = state.country;
+  sel.innerHTML='<option value="">All countries</option>';
+  countriesIn(state.continent).sort().forEach(co=>{
+    const o = document.createElement("option");
+    o.value = co; o.textContent = co;
+    if(co===current) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+/* ============================================================
+   FILTERING
+   ============================================================ */
+function getFiltered(){
+  const q = state.q.trim().toLowerCase();
+  return ORGS.filter(o=>{
+    if(state.focus && !o.fa.includes(state.focus)) return false;
+    if(state.type && o.t !== state.type) return false;
+    if(state.funding==="yes" && !o.f) return false;
+    if(state.funding==="no"  &&  o.f) return false;
+    if(state.continent && o.c !== state.continent) return false;
+    if(state.country && o.co !== state.country) return false;
+    if(q){
+      const blob = (o.n+" "+o.s+" "+o.co+" "+o.fa.join(" ")+" "+o.t).toLowerCase();
+      if(!blob.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  const filtered = getFiltered();
+  document.getElementById("cFiltered").textContent = filtered.length;
+  document.getElementById("cTotal").textContent = ORGS.length;
+  renderActiveFilters();
+  document.getElementById("vOverview").style.display = state.view==="overview"?"":"none";
+  document.getElementById("vList").style.display     = state.view==="list"?"":"none";
+  document.getElementById("vCards").style.display    = state.view==="cards"?"":"none";
+  if(state.view==="overview") renderOverview(filtered);
+  if(state.view==="list")     renderList(filtered);
+  if(state.view==="cards")    renderCards(filtered);
+}
+
+function renderActiveFilters(){
+  const wrap = document.getElementById("activeFilters");
+  wrap.innerHTML = "";
+  const items = [];
+  if(state.q)        items.push(["q",       "Search: "+state.q]);
+  if(state.focus)    items.push(["focus",   "Focus: "+state.focus]);
+  if(state.type)     items.push(["type",    "Type: "+state.type]);
+  if(state.funding)  items.push(["funding", "Funding: "+(state.funding==="yes"?"Funded":"None")]);
+  if(state.continent)items.push(["continent","Continent: "+state.continent]);
+  if(state.country)  items.push(["country", "Country: "+state.country]);
+  items.forEach(([k,label])=>{
+    const c = document.createElement("button");
+    c.className = "chip";
+    c.innerHTML = label+" &times;";
+    c.addEventListener("click", ()=>{
+      state[k]="";
+      const idMap={q:"qSearch",focus:"qFocus",type:"qType",funding:"qFunding",continent:"qContinent",country:"qCountry"};
+      document.getElementById(idMap[k]).value="";
+      if(k==="continent") rebuildCountrySelect();
+      render();
+    });
+    wrap.appendChild(c);
+  });
+  if(items.length){
+    const clear = document.createElement("button");
+    clear.className = "chip";
+    clear.style.background="transparent";
+    clear.style.borderColor="var(--mute)";
+    clear.style.color="var(--mute)";
+    clear.textContent = "Clear all";
+    clear.addEventListener("click", ()=>{
+      Object.assign(state,{q:"",focus:"",type:"",funding:"",continent:"",country:""});
+      ["qSearch","qFocus","qType","qFunding","qContinent","qCountry"].forEach(id=>document.getElementById(id).value="");
+      rebuildCountrySelect();
+      render();
+    });
+    wrap.appendChild(clear);
+  }
+}
+
+/* ----- OVERVIEW ----- */
+function renderOverview(filtered){
+  const root = document.getElementById("vOverview");
+  if(!filtered.length){ root.innerHTML = emptyState(); return; }
+
+  const focusCounts = {};
+  filtered.forEach(o=>o.fa.forEach(f=>focusCounts[f]=(focusCounts[f]||0)+1));
+  const typeCounts = {};
+  filtered.forEach(o=>typeCounts[o.t]=(typeCounts[o.t]||0)+1);
+
+  const focusBars = barChart(focusCounts);
+  const typeBars  = barChart(typeCounts);
+
+  root.innerHTML = `
+    <div class="overview">
+      <div class="card">
+        <h3>Global distribution (${filtered.length} orgs)</h3>
+        <div id="map"></div>
+      </div>
+      <div class="card">
+        <h3>By focus area</h3>
+        ${focusBars}
+      </div>
+      <div class="card">
+        <h3>By type</h3>
+        ${typeBars}
+      </div>
+      <div class="card">
+        <h3>By continent</h3>
+        ${barChart(countBy(filtered,'c'))}
+      </div>
+    </div>`;
+  setTimeout(()=>renderMap(filtered),0);
+}
+
+function countBy(arr,k){
+  const r = {}; arr.forEach(o=>r[o[k]]=(r[o[k]]||0)+1); return r;
+}
+function barChart(counts){
+  const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const max = entries[0]?entries[0][1]:1;
+  return entries.map(([k,v])=>`
+    <div class="barRow">
+      <div class="lbl">${escapeHTML(k)}</div>
+      <div class="barTrack"><div class="barFill" style="width:${(v/max*100).toFixed(1)}%"></div></div>
+      <div class="num">${v}</div>
+    </div>`).join("");
+}
+
+function renderMap(filtered){
+  if(!map){
+    map = L.map('map',{worldCopyJump:true,scrollWheelZoom:false}).setView([20,0],1.6);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+      attribution:'&copy; OpenStreetMap &copy; CARTO',subdomains:'abcd',maxZoom:18
+    }).addTo(map);
+    markerLayer = L.layerGroup().addTo(map);
+  }
+  markerLayer.clearLayers();
+  filtered.forEach(o=>{
+    if(typeof o.lat!=="number"||typeof o.lng!=="number") return;
+    const colour = typeColour(o.t);
+    const m = L.circleMarker([o.lat,o.lng],{
+      radius:6, color:colour, weight:2, fillColor:colour, fillOpacity:.55
+    });
+    m.bindPopup(`<strong>${escapeHTML(o.n)}</strong><br/>
+      <span style="color:#7c93ad;font-size:.8rem">${escapeHTML(o.t)} · ${escapeHTML(o.co)}</span><br/>
+      <em style="font-size:.78rem">${escapeHTML(o.fa.join(", "))}</em><br/>
+      <p style="margin:6px 0;font-size:.82rem">${escapeHTML(o.s)}</p>
+      ${o.u && o.u!=="#"?`<a href="${o.u}" target="_blank" rel="noopener">Visit website →</a>`:""}`);
+    markerLayer.addLayer(m);
+  });
+}
+function typeColour(t){
+  return ({
+    "Funder":"#f0b232","Private company":"#3aa1ff","Nonprofit":"#2ecc71",
+    "Project/Platform":"#9b59b6","Startup Support":"#e74c3c","Network":"#1abc9c",
+    "Education/R&D":"#bdc3c7","Institution":"#95a5a6"
+  })[t] || "#888";
+}
+
+/* ----- LIST ----- */
+function renderList(filtered){
+  const root = document.getElementById("vList");
+  if(!filtered.length){ root.innerHTML = emptyState(); return; }
+  const sorted = [...filtered].sort((a,b)=>{
+    const k=state.sortKey;
+    let av=a[k]??"", bv=b[k]??"";
+    if(Array.isArray(av)) av = av.join(", ");
+    if(Array.isArray(bv)) bv = bv.join(", ");
+    return state.sortDir * (String(av).toLowerCase()>String(bv).toLowerCase()?1:String(av).toLowerCase()<String(bv).toLowerCase()?-1:0);
+  });
+  const head = [
+    ["n","Name"],["t","Type"],["f","Funding"],["c","Continent"],["co","Country"],["fa","Focus areas"]
+  ].map(([k,l])=>`<th data-sk="${k}">${l}${state.sortKey===k?(state.sortDir===1?" ▲":" ▼"):""}</th>`).join("");
+  const rows = sorted.map(o=>`
+    <tr>
+      <td><a class="nameLink" href="${o.u && o.u!=="#"?o.u:"#"}" target="_blank" rel="noopener">${escapeHTML(o.n)}</a>
+        <div style="color:var(--mute);font-size:.78rem;margin-top:3px">${escapeHTML(o.s)}</div></td>
+      <td><span class="typeTag" style="color:${typeColour(o.t)};border:1px solid ${typeColour(o.t)}55;background:${typeColour(o.t)}1f;padding:2px 8px;border-radius:6px">${escapeHTML(o.t)}</span></td>
+      <td>${o.f?'<span class="yes">● Yes</span>':'<span class="no">○ No</span>'}</td>
+      <td>${escapeHTML(o.c)}</td>
+      <td>${escapeHTML(o.co)}</td>
+      <td>${o.fa.map(f=>`<span class="tag">${escapeHTML(f)}</span>`).join("")}</td>
+    </tr>`).join("");
+  root.innerHTML = `<div style="overflow-x:auto"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  root.querySelectorAll("th[data-sk]").forEach(th=>{
+    th.addEventListener("click",()=>{
+      const k = th.dataset.sk;
+      if(state.sortKey===k) state.sortDir*=-1;
+      else { state.sortKey = k; state.sortDir = 1; }
+      render();
+    });
+  });
+}
+
+/* ----- CARDS ----- */
+function renderCards(filtered){
+  const root = document.getElementById("vCards");
+  if(!filtered.length){ root.innerHTML = emptyState(); return; }
+  root.innerHTML = `<div class="grid">${filtered.map(o=>`
+    <article class="org">
+      <div class="name">${escapeHTML(o.n)}</div>
+      <div class="meta">
+        <span class="typeTag" style="color:${typeColour(o.t)};border:1px solid ${typeColour(o.t)}55;background:${typeColour(o.t)}1f;padding:2px 8px;border-radius:6px">${escapeHTML(o.t)}</span>
+        <span>📍 ${escapeHTML(o.co)}</span>
+        <span>${o.f?'💰 Funded':'🟢 No external funding'}</span>
+      </div>
+      <div class="desc">${escapeHTML(o.s)}</div>
+      <div class="focus">${o.fa.map(f=>`<span class="tag">${escapeHTML(f)}</span>`).join("")}</div>
+      <div class="row">
+        <span style="color:var(--mute);font-size:.78rem">${escapeHTML(o.c)}</span>
+        ${o.u && o.u!=="#"?`<a class="visit" href="${o.u}" target="_blank" rel="noopener">Visit website →</a>`:""}
+      </div>
+    </article>`).join("")}</div>`;
+}
+
+function emptyState(){
+  return `<div class="empty">
+    <h2>No organisations match those filters</h2>
+    <p>Try removing a filter or broadening your search.</p>
+  </div>`;
+}
+
+/* ----- CSV EXPORT ----- */
+function exportCSV(){
+  const rows = getFiltered();
+  if(!rows.length){ alert("No rows to export — adjust your filters first."); return; }
+  const head = ["Name","Type","Receives external funding","Continent","Country","Focus areas","Website","Summary"];
+  const csv = [head.join(",")].concat(rows.map(o=>[
+    csvCell(o.n), csvCell(o.t), o.f?"Yes":"No", csvCell(o.c), csvCell(o.co),
+    csvCell(o.fa.join("; ")), csvCell(o.u||""), csvCell(o.s)
+  ].join(","))).join("\n");
+  const blob = new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "blue-economy-toolbox.csv";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function csvCell(v){
+  v = String(v??""); if(/[",\n]/.test(v)) v = `"${v.replace(/"/g,'""')}"`;
+  return v;
+}
+function escapeHTML(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+init();
+</script>
+</body>
+</html>
