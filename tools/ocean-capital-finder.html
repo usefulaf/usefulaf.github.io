@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ocean Capital Finder — Investors, Accelerators, Venture Studios & Startups | Useful AF</title>
+<meta name="description" content="A curated, filterable database of 130+ active investors, accelerators, venture studios and startups in the Blue Economy — with fund sizes, ticket sizes, stage focus, portfolio counts and notable bets." />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0a1628; --panel:#0f1e30; --panel2:#132a44; --line:#1a3a52;
+    --ink:#e6edf5; --mute:#7c93ad; --accent:#2ecc71; --accent2:#3aa1ff;
+    --warn:#f0b232; --bad:#e74c3c; --pink:#e570c8;
+  }
+  html,body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;line-height:1.5;min-height:100%}
+  a{color:var(--accent2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1480px;margin:0 auto;padding:24px}
+  header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:22px}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#2ecc71,#3aa1ff);display:grid;place-items:center;font-weight:800;color:#04111d;font-size:1.3rem}
+  h1{font-size:1.45rem;letter-spacing:-.3px}
+  .sub{color:var(--mute);font-size:.85rem}
+  .pill{display:inline-block;padding:3px 9px;border-radius:999px;background:#0c2336;border:1px solid var(--line);color:var(--mute);font-size:.72rem;margin-left:6px}
+
+  .filtersWrap{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+  .filters{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:10px;margin-bottom:10px}
+  .filters.row2{grid-template-columns:repeat(4,1fr)}
+  @media(max-width:1100px){.filters,.filters.row2{grid-template-columns:1fr 1fr 1fr}}
+  @media(max-width:600px){.filters,.filters.row2{grid-template-columns:1fr 1fr}}
+  .filters input,.filters select{
+    background:var(--bg);border:1px solid var(--line);color:var(--ink);
+    padding:10px 12px;border-radius:8px;font-size:.9rem;width:100%;
+  }
+  .filters input:focus,.filters select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(46,204,113,.18)}
+
+  .controlbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:18px}
+  .count{color:var(--mute);font-size:.92rem}
+  .count strong{color:var(--ink)}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{padding:8px 14px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:8px;cursor:pointer;font-size:.88rem;transition:all .2s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#04111d;border-color:var(--accent);font-weight:600}
+  .btn.primary:hover{background:#27c167;color:#04111d}
+  .tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+  .tab{padding:8px 14px;background:transparent;border:0;color:var(--mute);cursor:pointer;font-size:.88rem;transition:all .2s}
+  .tab.active{background:var(--accent);color:#04111d;font-weight:600}
+  .tab:not(.active):hover{color:var(--ink);background:var(--panel)}
+
+  .activeFilters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;min-height:0}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:#0c2336;border:1px solid var(--accent);color:var(--accent);padding:4px 10px;border-radius:999px;font-size:.78rem;cursor:pointer}
+  .chip:hover{background:var(--accent);color:#04111d}
+
+  /* OVERVIEW */
+  .overview{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:980px){.overview{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .card h3{font-size:.95rem;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+  .barRow{display:grid;grid-template-columns:140px 1fr 50px;align-items:center;gap:10px;margin-bottom:8px}
+  .barRow .lbl{font-size:.84rem;color:var(--ink)}
+  .barRow .barTrack{background:#0c2336;border-radius:6px;overflow:hidden;height:14px}
+  .barRow .barFill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .35s ease}
+  .barRow .num{text-align:right;font-size:.82rem;color:var(--mute);font-variant-numeric:tabular-nums}
+  #map{height:440px;border-radius:12px;border:1px solid var(--line);background:#04111d}
+  .leaflet-container{background:#062239 !important}
+  .leaflet-popup-content-wrapper{background:var(--panel) !important;color:var(--ink) !important;border:1px solid var(--line);border-radius:8px}
+  .leaflet-popup-tip{background:var(--panel) !important}
+  .leaflet-popup-content a{color:var(--accent)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  @media(max-width:780px){.stats{grid-template-columns:1fr 1fr}}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .stat .v{font-size:1.6rem;font-weight:700;color:var(--accent)}
+  .stat .k{font-size:.78rem;color:var(--mute);text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
+
+  /* LIST */
+  .listWrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse}
+  thead{background:var(--panel2);position:sticky;top:0}
+  th{padding:12px 14px;text-align:left;font-size:.74rem;text-transform:uppercase;letter-spacing:.5px;color:var(--mute);cursor:pointer;border-bottom:1px solid var(--line);user-select:none;white-space:nowrap}
+  th:hover{color:var(--accent)}
+  td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:.84rem;vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  tr:hover{background:rgba(46,204,113,.04)}
+  td .tag{display:inline-block;background:#0c2336;border:1px solid var(--line);padding:2px 7px;border-radius:6px;font-size:.7rem;color:var(--mute);margin:1px 2px 1px 0}
+  td .typeTag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.7rem;font-weight:600;white-space:nowrap}
+  td .nameLink{color:var(--accent);font-weight:600}
+  td .kpi{font-variant-numeric:tabular-nums;color:var(--ink)}
+  td .mute{color:var(--mute)}
+
+  /* CARDS */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+  .org{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:all .2s}
+  .org:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 24px rgba(46,204,113,.08)}
+  .org .titleRow{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .org .name{font-weight:700;color:var(--ink);font-size:1.02rem;line-height:1.3}
+  .org .meta{color:var(--mute);font-size:.78rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .org .desc{font-size:.83rem;color:#bcd0e6;line-height:1.5}
+  .org .focus{display:flex;flex-wrap:wrap;gap:4px}
+  .org .focus .tag{background:#0c2336;border:1px solid var(--line);padding:2px 7px;border-radius:6px;font-size:.7rem;color:var(--mute)}
+  .org .kpiBlock{background:#0c2336;border:1px solid var(--line);border-radius:8px;padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .org .kpiBlock .k{font-size:.7rem;color:var(--mute);text-transform:uppercase;letter-spacing:.4px}
+  .org .kpiBlock .v{font-size:.85rem;color:var(--ink);font-weight:600;margin-top:2px}
+  .org .notable{font-size:.78rem;color:#9bb8d8}
+  .org .notable b{color:var(--mute);font-size:.7rem;text-transform:uppercase;letter-spacing:.4px;font-weight:600;display:block;margin-bottom:3px}
+  .org .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}
+  .org .visit{font-size:.82rem}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--mute)}
+  .empty h2{color:var(--ink);font-size:1.2rem;margin-bottom:6px}
+
+  footer{margin-top:32px;padding:18px 0;border-top:1px solid var(--line);text-align:center;color:var(--mute);font-size:.82rem}
+  footer a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <div class="logo">🌊</div>
+      <div>
+        <h1>Ocean Capital Finder <span class="pill">USEFUL AF</span></h1>
+        <div class="sub">Active investors, accelerators, venture studios and startups in the Blue Economy — with fund sizes, ticket sizes, stage focus and notable bets.</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="suggestBtn">＋ Suggest organisation</button>
+      <button class="btn primary" id="exportBtn">⬇ Export CSV</button>
+    </div>
+  </header>
+
+  <div class="filtersWrap">
+    <div class="filters">
+      <input id="qSearch" type="search" placeholder="Search by name, country, backer, focus…" />
+      <select id="qType"><option value="">All types</option></select>
+      <select id="qFocus"><option value="">All focus areas</option></select>
+      <select id="qContinent"><option value="">All continents</option></select>
+      <select id="qCountry"><option value="">All countries</option></select>
+    </div>
+    <div class="filters row2">
+      <select id="qStage">
+        <option value="">All stages (investor focus / startup stage)</option>
+        <option>Pre-seed</option><option>Seed</option><option>Series A</option>
+        <option>Series B</option><option>Series C</option><option>Growth</option><option>Public</option>
+      </select>
+      <select id="qCheck">
+        <option value="">All ticket sizes</option>
+        <option value="0-250">Up to $250K</option>
+        <option value="250-1000">$250K – $1M</option>
+        <option value="1000-5000">$1M – $5M</option>
+        <option value="5000-25000">$5M – $25M</option>
+        <option value="25000-9999999">$25M+</option>
+      </select>
+      <select id="qFounded">
+        <option value="">Any founding year</option>
+        <option value="0-2009">Pre-2010</option>
+        <option value="2010-2015">2010 – 2015</option>
+        <option value="2016-2020">2016 – 2020</option>
+        <option value="2021-2099">2021 onward</option>
+      </select>
+      <select id="qLead">
+        <option value="">Lead or follow</option>
+        <option value="lead">Lead investor</option>
+        <option value="follow">Follow only</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="activeFilters" id="activeFilters"></div>
+
+  <div class="controlbar">
+    <div class="count">Showing <strong id="cFiltered">0</strong> of <strong id="cTotal">0</strong> verified organisations</div>
+    <div class="tabs" id="viewTabs">
+      <button class="tab active" data-view="overview">Overview</button>
+      <button class="tab" data-view="list">List</button>
+      <button class="tab" data-view="cards">Cards</button>
+    </div>
+  </div>
+
+  <main>
+    <section id="vOverview"></section>
+    <section id="vList" style="display:none"></section>
+    <section id="vCards" style="display:none"></section>
+  </main>
+
+  <footer>
+    Built by <a href="https://usefulaf.github.io">Useful AF</a> — free AI tools for impact founders, NGOs and investors.
+    KPIs are research-curated from public sources; verify with each organisation directly before any outreach or capital decision.
+  </footer>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script>
+/* ============================================================
+   DATASET
+   ============================================================ */
+const ORGS = [
+// ============================ VC FUNDS ============================
+  {n:"Katapult Ocean", t:"VC Fund", c:"Europe", co:"Norway", city:"Oslo", lat:59.91, lng:10.75,
+    fa:["Generalist","Carbon/Climate","Aquaculture/Fisheries"], yr:2018,
+    aum:50, check:"100K-500K", stage:["Pre-seed","Seed"], pf:50, lead:true,
+    notable:["Saildrone","Coral Vita","Sway","Kelp Blue"],
+    u:"https://katapult.vc/ocean/", s:"Oslo accelerator-fund hybrid; world's most prolific early-stage ocean investor."},
+  {n:"S2G Ventures (Oceans & Seafood)", t:"VC Fund", c:"North America", co:"USA", city:"Chicago", lat:41.88, lng:-87.63,
+    fa:["Generalist","Aquaculture/Fisheries","Seaweeds/Algae","Carbon/Climate"], yr:2014,
+    aum:300, check:"500K-15M", stage:["Seed","Series A","Series B","Growth"], pf:25, lead:true,
+    notable:["Cargill aqua nutrition","ReelData","Atlantic Sea Farms"],
+    u:"https://www.s2gventures.com/", s:"Builders Vision multi-stage food, agriculture and ocean fund."},
+  {n:"Aqua-Spark", t:"VC Fund", c:"Europe", co:"Netherlands", city:"Utrecht", lat:52.09, lng:5.12,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2013,
+    aum:400, check:"1M-15M", stage:["Series A","Series B","Growth"], pf:30, lead:true,
+    notable:["eFishery","Calysta","Sogn Aqua","Xpertsea"],
+    u:"https://www.aqua-spark.nl/", s:"World's largest dedicated sustainable-aquaculture investor; long-hold thesis."},
+  {n:"Ocean 14 Capital", t:"VC Fund", c:"Europe", co:"United Kingdom", city:"London", lat:51.51, lng:-0.13,
+    fa:["Generalist","Aquaculture/Fisheries","Waste/Pollution","Carbon/Climate"], yr:2021,
+    aum:225, check:"5M-15M", stage:["Series A","Series B","Growth"], pf:12, lead:true,
+    notable:["Sea Forest","Rondo Energy","SyAqua","ViAqua"],
+    u:"https://ocean14capital.com/", s:"€225M Article 9 SDG-14 growth equity fund anchored by Builders Vision and Minderoo."},
+  {n:"SWEN Blue Ocean", t:"VC Fund", c:"Europe", co:"France", city:"Paris", lat:48.85, lng:2.35,
+    fa:["Generalist","Aquaculture/Fisheries","Carbon/Climate","Energy/Maritime"], yr:2021,
+    aum:170, check:"3M-10M", stage:["Series A","Series B"], pf:10, lead:true,
+    notable:["Aquaai","WSense","Sealution"],
+    u:"https://www.swen-cp.fr/en/our-funds/swen-blue-ocean/", s:"€170M Paris-based ocean impact growth fund."},
+  {n:"Mirova Sustainable Ocean Fund", t:"VC Fund", c:"Europe", co:"France", city:"Paris", lat:48.86, lng:2.35,
+    fa:["Aquaculture/Fisheries","Mangroves/Coastal","Communities/Tourism"], yr:2020,
+    aum:300, check:"3M-10M", stage:["Series A","Growth"], pf:14, lead:true,
+    notable:["Akua","Sea Forest","Innovasea"],
+    u:"https://www.mirova.com/", s:"$300M+ Article 9 ocean fund managed by Natixis-owned Mirova."},
+  {n:"Hatch Blue", t:"VC Fund", c:"Europe", co:"Norway", city:"Bergen", lat:60.39, lng:5.32,
+    fa:["Aquaculture/Fisheries","Seaweeds/Algae","Biosolutions"], yr:2017,
+    aum:65, check:"100K-2M", stage:["Pre-seed","Seed","Series A"], pf:50, lead:false,
+    notable:["ReelData","BioFishency","BluGen"],
+    u:"https://www.hatch.blue/", s:"Aquaculture-specialist accelerator + early-stage fund operating Bergen, Singapore, Hawaii."},
+  {n:"Builders Vision (Ocean)", t:"Foundation", c:"North America", co:"USA", city:"Chicago", lat:41.88, lng:-87.63,
+    fa:["Generalist","Aquaculture/Fisheries","Carbon/Climate"], yr:2021,
+    aum:1500, check:"500K-25M", stage:["Seed","Series A","Series B","Growth"], pf:60, lead:true,
+    notable:["Coral Vita","Saildrone","Kelp Blue","Symbrosia","Atlantic Sea Farms"],
+    u:"https://www.buildersvision.com/", s:"Lukas Walton's $billion impact platform combining catalytic grants with growth equity (Builders Initiative + S2G)."},
+  {n:"Propeller VC", t:"VC Fund", c:"North America", co:"USA", city:"Boston", lat:42.36, lng:-71.06,
+    fa:["Carbon/Climate","Energy/Maritime","Data/Tech"], yr:2022,
+    aum:100, check:"500K-3M", stage:["Pre-seed","Seed"], pf:18, lead:true,
+    notable:["Running Tide","Sofar Ocean","Captura"],
+    u:"https://www.propeller.vc/", s:"$100M Boston seed fund focused on ocean-climate decarbonisation tech."},
+  {n:"Lowercarbon Capital (Marine)", t:"VC Fund", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate","Seaweeds/Algae","Energy/Maritime"], yr:2018,
+    aum:2000, check:"1M-25M", stage:["Pre-seed","Seed","Series A","Series B"], pf:90, lead:true,
+    notable:["Brilliant Planet","Captura","Equatic","Banyu Carbon","Boundary Layer"],
+    u:"https://lowercarboncapital.com/", s:"Chris Sacca's climate fund with the most active marine carbon-removal portfolio in the world."},
+  {n:"Future Ocean Capital", t:"VC Fund", c:"Europe", co:"United Kingdom", city:"Edinburgh", lat:55.95, lng:-3.19,
+    fa:["Aquaculture/Fisheries","Data/Tech","Energy/Maritime"], yr:2022,
+    aum:50, check:"500K-3M", stage:["Seed","Series A"], pf:8, lead:true,
+    notable:["—"],
+    u:"https://www.futureoceancapital.com/", s:"Edinburgh-based seed fund deploying into UK and Nordic ocean-tech."},
+  {n:"World Fund (Ocean & Climate)", t:"VC Fund", c:"Europe", co:"Germany", city:"Berlin", lat:52.52, lng:13.40,
+    fa:["Carbon/Climate","Energy/Maritime","Seaweeds/Algae"], yr:2021,
+    aum:350, check:"1M-10M", stage:["Seed","Series A"], pf:20, lead:true,
+    notable:["Planted","Marvel Fusion","Phycobloom"],
+    u:"https://www.worldfund.vc/", s:"€350M European climate fund with active ocean-climate sub-thesis."},
+  {n:"Faber Ventures", t:"VC Fund", c:"Europe", co:"Portugal", city:"Lisbon", lat:38.74, lng:-9.15,
+    fa:["Aquaculture/Fisheries","Data/Tech","Carbon/Climate"], yr:2012,
+    aum:170, check:"500K-3M", stage:["Pre-seed","Seed"], pf:35, lead:true,
+    notable:["Riverr","i-charging","SilicoLife"],
+    u:"https://faber.vc/", s:"Iberian deep-tech VC running a Blue Tech Innovation Fund."},
+  {n:"Pelagic Capital", t:"VC Fund", c:"North America", co:"USA", city:"New York", lat:40.71, lng:-74.00,
+    fa:["Aquaculture/Fisheries","Carbon/Climate","Data/Tech"], yr:2023,
+    aum:75, check:"500K-3M", stage:["Seed","Series A"], pf:9, lead:false,
+    notable:["—"],
+    u:"#", s:"Emerging US blue-economy VC, generalist Series Seed/A."},
+  {n:"Blue Horizon", t:"VC Fund", c:"Europe", co:"Switzerland", city:"Zurich", lat:47.37, lng:8.54,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2016,
+    aum:850, check:"3M-15M", stage:["Series A","Series B","Growth"], pf:60, lead:true,
+    notable:["Bluenalu","Wildtype","Aleph Farms","Mosa Meat"],
+    u:"https://bluehorizon.com/", s:"World's largest alt-protein fund — significant cellular and plant seafood investments."},
+  {n:"Big Idea Ventures (New Protein Fund)", t:"VC Fund", c:"North America", co:"USA", city:"New York", lat:40.71, lng:-74.00,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2018,
+    aum:50, check:"125K-500K", stage:["Pre-seed","Seed"], pf:80, lead:true,
+    notable:["Shiok Meats","Atlantic Fish","Aqua Cultured"],
+    u:"https://bigideaventures.com/", s:"Accelerator + fund backing alt-seafood startups across NY, Singapore and Paris."},
+  {n:"Lever VC", t:"VC Fund", c:"Asia", co:"Hong Kong", city:"Hong Kong", lat:22.32, lng:114.17,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2018,
+    aum:120, check:"500K-3M", stage:["Seed","Series A"], pf:30, lead:false,
+    notable:["Wildtype","Umami Bioworks","TurtleTree"],
+    u:"https://www.levervc.com/", s:"Global alt-protein VC with strong cell-cultivated seafood portfolio."},
+  {n:"Stray Dog Capital", t:"VC Fund", c:"North America", co:"USA", city:"Leawood KS", lat:38.97, lng:-94.62,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2013,
+    aum:80, check:"250K-2M", stage:["Pre-seed","Seed","Series A"], pf:50, lead:false,
+    notable:["Finless Foods","New Wave Foods"],
+    u:"https://straydogcapital.com/", s:"Mission-driven plant-based and cellular-seafood early-stage fund."},
+  {n:"At One Ventures", t:"VC Fund", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate","Waste/Pollution","Seaweeds/Algae"], yr:2020,
+    aum:600, check:"1M-10M", stage:["Seed","Series A"], pf:35, lead:true,
+    notable:["Running Tide","Captura","Symbrosia"],
+    u:"https://atoneventures.com/", s:"Tom Chi's deep-tech climate fund with significant ocean-tech allocation."},
+  {n:"Prelude Ventures", t:"VC Fund", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate","Energy/Maritime"], yr:2014,
+    aum:1300, check:"1M-15M", stage:["Series A","Series B","Growth"], pf:50, lead:true,
+    notable:["Saildrone","Sofar Ocean"],
+    u:"https://preludeventures.com/", s:"Climate-focused fund with marine intelligence and shipping decarbonisation bets."},
+  {n:"BlueYard Capital", t:"VC Fund", c:"Europe", co:"Germany", city:"Berlin", lat:52.52, lng:13.40,
+    fa:["Carbon/Climate","Data/Tech","Seaweeds/Algae"], yr:2016,
+    aum:400, check:"500K-5M", stage:["Pre-seed","Seed"], pf:60, lead:true,
+    notable:["Brilliant Planet","Cradle"],
+    u:"https://www.blueyard.com/", s:"Berlin/SF deep-tech fund with Brilliant Planet algae-CO2 investment."},
+  {n:"Galvanize Climate Solutions (Marine)", t:"VC Fund", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate","Energy/Maritime"], yr:2021,
+    aum:1000, check:"5M-25M", stage:["Series B","Growth"], pf:25, lead:true,
+    notable:["Ebb Carbon","Equatic"],
+    u:"https://www.galvanizeclimate.com/", s:"Tom Steyer / Katie Hall climate growth equity, active in ocean carbon removal."},
+  {n:"Khosla Ventures (Marine bets)", t:"VC Fund", c:"North America", co:"USA", city:"Menlo Park", lat:37.45, lng:-122.18,
+    fa:["Aquaculture/Fisheries","Biosolutions","Carbon/Climate"], yr:2004,
+    aum:15000, check:"500K-25M", stage:["Seed","Series A","Series B","Growth"], pf:30, lead:true,
+    notable:["Calysta","Sea Machines","Wildtype"],
+    u:"https://www.khoslaventures.com/", s:"Vinod Khosla's deep-tech fund; long history in marine bio + autonomy."},
+  {n:"AiiM Partners", t:"VC Fund", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate","Aquaculture/Fisheries","Waste/Pollution"], yr:2018,
+    aum:115, check:"1M-5M", stage:["Series A","Series B"], pf:20, lead:false,
+    notable:["Sway","Loliware"],
+    u:"https://www.aiim.partners/", s:"Material-tech and ocean-impact focused growth-stage VC."},
+  {n:"Regeneration.VC", t:"VC Fund", c:"North America", co:"USA", city:"Los Angeles", lat:34.05, lng:-118.24,
+    fa:["Waste/Pollution","Biosolutions","Carbon/Climate"], yr:2021,
+    aum:55, check:"500K-2M", stage:["Seed","Series A"], pf:25, lead:false,
+    notable:["Sway","Algenesis"],
+    u:"https://www.regeneration.vc/", s:"Leonardo DiCaprio-backed circular economy fund, active in ocean materials."},
+  {n:"Closed Loop Partners (Ocean)", t:"VC Fund", c:"North America", co:"USA", city:"New York", lat:40.71, lng:-74.00,
+    fa:["Waste/Pollution","Biosolutions"], yr:2014,
+    aum:500, check:"1M-15M", stage:["Series A","Growth"], pf:40, lead:true,
+    notable:["Loliware","Plastic Bank"],
+    u:"https://www.closedlooppartners.com/", s:"NY-based circular economy investor; Ocean Plastic Innovation initiative."},
+  {n:"Earthshot Ventures", t:"VC Fund", c:"North America", co:"USA", city:"Honolulu", lat:21.31, lng:-157.86,
+    fa:["Carbon/Climate","Aquaculture/Fisheries","Energy/Maritime"], yr:2022,
+    aum:60, check:"250K-2M", stage:["Pre-seed","Seed"], pf:15, lead:true,
+    notable:["Symbrosia"],
+    u:"https://www.earthshotventures.com/", s:"Hawaii-based climate seed fund with strong Pacific ocean-tech focus."},
+  {n:"Investible Climate Tech Fund (Marine)", t:"VC Fund", c:"Oceania", co:"Australia", city:"Sydney", lat:-33.87, lng:151.21,
+    fa:["Carbon/Climate","Aquaculture/Fisheries","Data/Tech"], yr:2022,
+    aum:75, check:"500K-3M", stage:["Pre-seed","Seed"], pf:12, lead:true,
+    notable:["Sea Forest"],
+    u:"https://investible.com/", s:"Sydney climate tech fund, includes blue-economy plays from APAC."},
+  {n:"Climate Capital", t:"VC Fund", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate","Energy/Maritime"], yr:2018,
+    aum:60, check:"100K-500K", stage:["Pre-seed","Seed"], pf:120, lead:false,
+    notable:["Captura","Ebb Carbon"],
+    u:"https://climatecapital.co/", s:"High-volume climate seed syndicate backing ocean-CO2-removal deals."},
+  {n:"Carbon Removal Partners", t:"VC Fund", c:"Europe", co:"Switzerland", city:"Zurich", lat:47.37, lng:8.54,
+    fa:["Carbon/Climate"], yr:2022,
+    aum:50, check:"500K-3M", stage:["Seed","Series A"], pf:8, lead:true,
+    notable:["Banyu Carbon"],
+    u:"https://www.carbonremovalpartners.com/", s:"Specialist CDR seed fund with marine-CDR allocation."},
+  {n:"Frontier Climate (offtake)", t:"Foundation", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate","Seaweeds/Algae"], yr:2022,
+    aum:1000, check:"500K-50M", stage:["Growth"], pf:30, lead:true,
+    notable:["Captura","Ebb Carbon","Planetary","Equatic","Vesta"],
+    u:"https://frontierclimate.com/", s:"Stripe + Alphabet + Shopify + McKinsey $1B advance market commitment for permanent CDR — most ocean-CDR offtakes signed here."},
+  {n:"Climate Imperative Foundation", t:"Foundation", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate","Energy/Maritime"], yr:2022,
+    aum:600, check:"1M-10M", stage:["Growth"], pf:25, lead:true,
+    notable:["—"],
+    u:"https://climateimperative.org/", s:"Funds maritime decarbonisation and shipping fuels."},
+
+  // ============================ FOUNDATIONS / GRANTMAKERS ============================
+  {n:"Walton Family Foundation", t:"Foundation", c:"North America", co:"USA", city:"Bentonville AR", lat:36.37, lng:-94.20,
+    fa:["Aquaculture/Fisheries","Education/Policy"], yr:1987,
+    aum:5400, check:"50K-5M", stage:["Growth"], pf:200, lead:true,
+    notable:["Fishery Improvement Projects (FIPs)","Aquaculture innovation grants"],
+    u:"https://www.waltonfamilyfoundation.org/our-work/oceans", s:"Largest US private funder of fisheries reform; multi-year grants and PRIs."},
+  {n:"David and Lucile Packard Foundation (Oceans)", t:"Foundation", c:"North America", co:"USA", city:"Los Altos", lat:37.39, lng:-122.08,
+    fa:["Aquaculture/Fisheries","Education/Policy","Corals/Biodiversity"], yr:1964,
+    aum:8500, check:"100K-3M", stage:["Growth"], pf:300, lead:true,
+    notable:["Western Pacific fisheries grants","MBARI"],
+    u:"https://www.packard.org/", s:"Founding ocean philanthropy, ~$80M/year ocean program."},
+  {n:"Bezos Earth Fund (Coastal & Mangroves)", t:"Foundation", c:"North America", co:"USA", city:"Washington DC", lat:38.90, lng:-77.03,
+    fa:["Carbon/Climate","Mangroves/Coastal"], yr:2020,
+    aum:10000, check:"1M-100M", stage:["Growth"], pf:80, lead:true,
+    notable:["Conservation International","Re-greening Africa"],
+    u:"https://www.bezosearthfund.org/", s:"$10B fund with major coastal restoration grant portfolio."},
+  {n:"Bloomberg Vibrant Oceans Initiative", t:"Foundation", c:"North America", co:"USA", city:"New York", lat:40.76, lng:-73.97,
+    fa:["Aquaculture/Fisheries","Corals/Biodiversity"], yr:2014,
+    aum:100, check:"500K-5M", stage:["Growth"], pf:50, lead:true,
+    notable:["Global Fishing Watch","50 Reefs"],
+    u:"https://www.bloomberg.org/environment/protecting-the-oceans/vibrant-oceans-initiative/", s:"Bloomberg Philanthropies' flagship fisheries + coral-reef program."},
+  {n:"Oak Foundation (Marine)", t:"Foundation", c:"Europe", co:"Switzerland", city:"Geneva", lat:46.20, lng:6.14,
+    fa:["Education/Policy","Aquaculture/Fisheries"], yr:1983,
+    aum:300, check:"100K-2M", stage:["Growth"], pf:120, lead:false,
+    notable:["Oceana","EJF"],
+    u:"https://oakfnd.org/", s:"Geneva-based philanthropy, multi-decade ocean conservation funder."},
+  {n:"Minderoo Foundation (Flourishing Oceans)", t:"Foundation", c:"Oceania", co:"Australia", city:"Perth", lat:-31.95, lng:115.86,
+    fa:["Aquaculture/Fisheries","Data/Tech"], yr:2001,
+    aum:150, check:"500K-5M", stage:["Growth"], pf:40, lead:true,
+    notable:["Global Fishing Index","TraSeable"],
+    u:"https://www.minderoo.org/flourishing-oceans/", s:"Forrest family foundation, fisheries transparency programs."},
+  {n:"Schmidt Marine Technology Partners", t:"Foundation", c:"North America", co:"USA", city:"Palo Alto", lat:37.41, lng:-122.07,
+    fa:["Data/Tech","Generalist"], yr:2015,
+    aum:50, check:"100K-500K", stage:["Pre-seed","Seed"], pf:80, lead:false,
+    notable:["Open Ocean Robotics","Saildrone"],
+    u:"https://www.schmidtmarine.org/", s:"Eric & Wendy Schmidt's marine tech grants + PRIs for early-stage ventures."},
+  {n:"Gulbenkian Oceano Azul", t:"Foundation", c:"Europe", co:"Portugal", city:"Lisbon", lat:38.74, lng:-9.15,
+    fa:["Education/Policy","Corals/Biodiversity"], yr:2017,
+    aum:80, check:"100K-1M", stage:["Growth"], pf:35, lead:false,
+    notable:["Oceanário de Lisboa initiatives"],
+    u:"https://gulbenkian.pt/", s:"Lisbon foundation operating Europe's largest ocean philanthropy programme."},
+  {n:"Oceankind", t:"Foundation", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Generalist","Aquaculture/Fisheries"], yr:2019,
+    aum:200, check:"500K-5M", stage:["Growth"], pf:50, lead:true,
+    notable:["Global Fishing Watch","Stanford Doerr School"],
+    u:"https://www.oceankind.org/", s:"Eric & Wendy Schmidt private philanthropy, $40M+ annual ocean grants."},
+
+  // ============================ CORPORATE VC ============================
+  {n:"Maersk Growth", t:"Corporate VC", c:"Europe", co:"Denmark", city:"Copenhagen", lat:55.68, lng:12.57,
+    fa:["Energy/Maritime","Carbon/Climate","Data/Tech"], yr:2017,
+    aum:200, check:"1M-10M", stage:["Series A","Series B"], pf:25, lead:false,
+    notable:["Sea Machines","Boundary Layer","ZeroNorth"],
+    u:"https://maersk.com/growth", s:"A.P. Moller Maersk's CVC arm focused on shipping decarbonisation tech."},
+  {n:"Yara Growth Ventures", t:"Corporate VC", c:"Europe", co:"Norway", city:"Oslo", lat:59.91, lng:10.75,
+    fa:["Carbon/Climate","Energy/Maritime","Aquaculture/Fisheries"], yr:2020,
+    aum:100, check:"500K-5M", stage:["Series A","Series B"], pf:15, lead:false,
+    notable:["Manolin","Calysta"],
+    u:"https://www.yara.com/", s:"Yara International's CVC; ammonia-shipping fuels and marine-feed bets."},
+  {n:"Cargill Aqua Nutrition Innovation", t:"Corporate VC", c:"North America", co:"USA", city:"Minneapolis", lat:44.97, lng:-93.27,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2018,
+    aum:0, check:"500K-3M", stage:["Series A","Series B"], pf:10, lead:false,
+    notable:["KnipBio","ReelData"],
+    u:"https://www.cargill.com/aquaculture", s:"Cargill's aquafeed innovation arm + early-stage investment programme."},
+  {n:"Skretting (Nutreco) Innovation", t:"Corporate VC", c:"Europe", co:"Norway", city:"Stavanger", lat:58.97, lng:5.73,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2018,
+    aum:0, check:"500K-3M", stage:["Series A"], pf:8, lead:false,
+    notable:["Veramaris","Calysta"],
+    u:"https://www.skretting.com/", s:"World's largest aquafeed company with strategic partnerships in alt-protein feed."},
+
+  // ============================ GOVERNMENT FUNDS ============================
+  {n:"BlueInvest (EU + EIF)", t:"Government Fund", c:"Europe", co:"Belgium", city:"Brussels", lat:50.85, lng:4.35,
+    fa:["Generalist","Energy/Maritime","Aquaculture/Fisheries"], yr:2019,
+    aum:500, check:"500K-10M", stage:["Pre-seed","Seed","Series A","Series B"], pf:60, lead:false,
+    notable:["EIF blue-economy fund-of-funds"],
+    u:"https://blueinvest-community.eu/", s:"European Commission + EIF €500M+ blue economy investor matchmaking and fund-of-funds."},
+  {n:"Innovation Norway — Ocean Programme", t:"Government Fund", c:"Europe", co:"Norway", city:"Oslo", lat:59.91, lng:10.75,
+    fa:["Energy/Maritime","Aquaculture/Fisheries","Data/Tech"], yr:2004,
+    aum:0, check:"100K-3M", stage:["Pre-seed","Seed","Series A"], pf:200, lead:false,
+    notable:["—"],
+    u:"https://www.innovasjonnorge.no/en/", s:"Norwegian government grants + soft loans dominant in funding ocean-tech startups."},
+  {n:"BPI France Plan Mer", t:"Government Fund", c:"Europe", co:"France", city:"Paris", lat:48.85, lng:2.35,
+    fa:["Energy/Maritime","Carbon/Climate","Aquaculture/Fisheries"], yr:2022,
+    aum:300, check:"500K-15M", stage:["Seed","Series A","Series B"], pf:30, lead:false,
+    notable:["—"],
+    u:"https://www.bpifrance.fr/", s:"€300M French public investment bank ocean strategy."},
+  {n:"DOE Loan Programs Office (Marine Energy)", t:"Government Fund", c:"North America", co:"USA", city:"Washington DC", lat:38.90, lng:-77.03,
+    fa:["Energy/Maritime","Carbon/Climate"], yr:2005,
+    aum:400000, check:"50M-1B", stage:["Growth"], pf:5, lead:true,
+    notable:["Offshore wind transmission projects"],
+    u:"https://www.energy.gov/lpo/", s:"US loan guarantees for marine energy + offshore-wind infrastructure."},
+  {n:"NOAA SBIR (Ocean)", t:"Government Fund", c:"North America", co:"USA", city:"Silver Spring MD", lat:38.99, lng:-76.94,
+    fa:["Data/Tech","Aquaculture/Fisheries","Energy/Maritime"], yr:1982,
+    aum:0, check:"175K-650K", stage:["Pre-seed","Seed"], pf:300, lead:false,
+    notable:["Saildrone","Sofar Ocean","Open Ocean Robotics"],
+    u:"https://techpartnerships.noaa.gov/sbir/", s:"NOAA non-dilutive grants — Phase I $175k, Phase II $650k for ocean-tech startups."},
+  {n:"Sustainable Development Investment Partnership (Blue Economy)", t:"Government Fund", c:"Europe", co:"Switzerland", city:"Geneva", lat:46.20, lng:6.14,
+    fa:["Aquaculture/Fisheries","Generalist"], yr:2015,
+    aum:200, check:"5M-25M", stage:["Growth"], pf:8, lead:false,
+    notable:["—"],
+    u:"https://www.sustainabledevelopmentinvestmentpartnership.org/", s:"OECD + WEF blended-finance facility, blue-economy track."},
+  {n:"Caribbean Biodiversity Fund (Blue)", t:"Government Fund", c:"North America", co:"Bahamas", city:"Nassau", lat:25.04, lng:-77.34,
+    fa:["Mangroves/Coastal","Corals/Biodiversity"], yr:2012,
+    aum:90, check:"100K-2M", stage:["Growth"], pf:30, lead:false,
+    notable:["—"],
+    u:"https://www.caribbeanbiodiversityfund.org/", s:"Regional conservation trust, blue-economy debt-conversion programmes."},
+
+  // ============================ ACCELERATORS & INCUBATORS ============================
+  {n:"SeaAhead", t:"Accelerator", c:"North America", co:"USA", city:"Boston", lat:42.36, lng:-71.06,
+    fa:["Generalist","Data/Tech","Energy/Maritime"], yr:2017,
+    cohorts:1, cohortSize:10, terms:"Equity-free, $25K stipend",
+    pf:80, notable:["Aquabotix","Noteefy"],
+    u:"https://www.sea-ahead.com/", s:"Boston BlueSwell incubator (12 weeks) + venture studio operating with NEAq."},
+  {n:"Ocean Hub Africa", t:"Accelerator", c:"Africa", co:"South Africa", city:"Cape Town", lat:-33.92, lng:18.42,
+    fa:["Generalist","Aquaculture/Fisheries","Waste/Pollution"], yr:2019,
+    cohorts:1, cohortSize:10, terms:"Equity-free, mentorship + grants up to $15K",
+    pf:50, notable:["Maris","SafetyMar","Abalobi"],
+    u:"https://oceanhub.africa/", s:"Cape Town accelerator for African ocean impact startups."},
+  {n:"Ocean Startup Project", t:"Accelerator", c:"North America", co:"Canada", city:"Halifax", lat:44.65, lng:-63.58,
+    fa:["Aquaculture/Fisheries","Data/Tech"], yr:2020,
+    cohorts:2, cohortSize:15, terms:"Equity-free, up to CAD$25K",
+    pf:120, notable:["ReelData","HabMar","FisheyeAI"],
+    u:"https://oceanstartupproject.ca/", s:"Atlantic Canada ocean accelerator, the country's largest blue-tech programme."},
+  {n:"PortXL", t:"Accelerator", c:"Europe", co:"Netherlands", city:"Rotterdam", lat:51.92, lng:4.48,
+    fa:["Energy/Maritime","Data/Tech","Carbon/Climate"], yr:2015,
+    cohorts:1, cohortSize:12, terms:"Equity optional, corporate POCs",
+    pf:130, notable:["Zelim","Avikus","Value Maritime"],
+    u:"https://portxl.org/", s:"Rotterdam port + maritime accelerator with global Singapore + Antwerp programmes."},
+  {n:"Hatch Aquaculture Accelerator", t:"Accelerator", c:"Europe", co:"Norway", city:"Bergen", lat:60.39, lng:5.32,
+    fa:["Aquaculture/Fisheries","Seaweeds/Algae"], yr:2017,
+    cohorts:2, cohortSize:8, terms:"€100K for ~6%",
+    pf:80, notable:["ReelData","Manolin","Vertical Oceans"],
+    u:"https://www.hatch.blue/", s:"World's leading aquaculture accelerator, twice yearly cohort across Bergen + Singapore."},
+  {n:"BlueBioValue", t:"Accelerator", c:"Europe", co:"Portugal", city:"Lisbon", lat:38.74, lng:-9.15,
+    fa:["Biosolutions","Aquaculture/Fisheries"], yr:2018,
+    cohorts:1, cohortSize:12, terms:"Equity-free, €15K",
+    pf:60, notable:["Sea4Us","SilicoLife"],
+    u:"https://www.bluebiovalue.com/", s:"Lisbon marine bioeconomy accelerator backed by Calouste Gulbenkian + Faber."},
+  {n:"BlueInvest Academy", t:"Accelerator", c:"Europe", co:"Belgium", city:"Brussels", lat:50.85, lng:4.35,
+    fa:["Generalist","Carbon/Climate"], yr:2020,
+    cohorts:1, cohortSize:30, terms:"Equity-free EU programme",
+    pf:200, notable:["—"],
+    u:"https://blueinvest-community.eu/", s:"EU's flagship blue-economy investor-readiness training and matchmaking."},
+  {n:"Ocean Solutions Accelerator (SOA)", t:"Accelerator", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Generalist"], yr:2017,
+    cohorts:1, cohortSize:8, terms:"Equity-free, $5–25K grants",
+    pf:60, notable:["Coral Vita","Loliware","Saathi"],
+    u:"https://www.soalliance.org/oceansolutions", s:"Sustainable Ocean Alliance's flagship 6-month accelerator for early-stage founders <35."},
+  {n:"Climate-KIC Blue", t:"Accelerator", c:"Europe", co:"Belgium", city:"Brussels", lat:50.85, lng:4.35,
+    fa:["Carbon/Climate","Energy/Maritime"], yr:2010,
+    cohorts:2, cohortSize:20, terms:"Up to €50K equity-free",
+    pf:200, notable:["—"],
+    u:"https://www.climate-kic.org/", s:"EIT Climate-KIC's accelerator with growing blue-economy track."},
+  {n:"IndieBio (Marine cohort)", t:"Accelerator", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Biosolutions","Aquaculture/Fisheries","Carbon/Climate"], yr:2014,
+    cohorts:2, cohortSize:12, terms:"$525K for 8%",
+    pf:160, notable:["Wildtype","Memphis Meats","Geltor"],
+    u:"https://indiebio.co/", s:"SOSV's life-sciences accelerator with strong cell-cultivated seafood + marine-bio cohort."},
+  {n:"Blue Tech Cluster Accelerator", t:"Accelerator", c:"Europe", co:"Spain", city:"Barcelona", lat:41.39, lng:2.16,
+    fa:["Generalist","Data/Tech"], yr:2018,
+    cohorts:1, cohortSize:10, terms:"Equity-free + corporate matchmaking",
+    pf:60, notable:["—"],
+    u:"https://bluetechcluster.com/", s:"Catalan blue-tech cluster runs an annual scale-up accelerator."},
+  {n:"Iceland Ocean Cluster Bluemind", t:"Incubator", c:"Europe", co:"Iceland", city:"Reykjavik", lat:64.15, lng:-21.94,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2011,
+    cohorts:0, cohortSize:0, terms:"Membership + co-working",
+    pf:70, notable:["Kerecis","Lýsi","Genis"],
+    u:"https://www.sjavarklasinn.is/en/", s:"Reykjavik 100% fish-utilisation cluster, model replicated globally."},
+  {n:"OneBlue (Australia)", t:"Accelerator", c:"Oceania", co:"Australia", city:"Sydney", lat:-33.87, lng:151.21,
+    fa:["Generalist","Aquaculture/Fisheries"], yr:2022,
+    cohorts:1, cohortSize:10, terms:"Equity-free + AUD$25K",
+    pf:25, notable:["—"],
+    u:"https://oceanimpact.org/", s:"Ocean Impact Organisation's APAC accelerator."},
+  {n:"Sea Forward (Surfrider/Patagonia)", t:"Accelerator", c:"North America", co:"USA", city:"San Clemente", lat:33.43, lng:-117.61,
+    fa:["Waste/Pollution","Communities/Tourism"], yr:2021,
+    cohorts:1, cohortSize:8, terms:"Equity-free, brand support",
+    pf:20, notable:["Algenesis"],
+    u:"https://www.surfrider.org/", s:"Surfrider + Patagonia's emerging accelerator for ocean-positive consumer brands."},
+
+  // ============================ VENTURE STUDIOS ============================
+  {n:"SecondMuse Ocean Plastic Studio", t:"Venture Studio", c:"North America", co:"USA", city:"Albuquerque", lat:35.08, lng:-106.65,
+    fa:["Waste/Pollution","Biosolutions","Generalist"], yr:2008,
+    pf:35, notable:["Loliware","Sway"],
+    u:"https://www.secondmuse.com/", s:"Network-driven studio building ocean-plastic ventures across SE Asia + USA."},
+  {n:"Builders Vision Studio", t:"Venture Studio", c:"North America", co:"USA", city:"Chicago", lat:41.88, lng:-87.63,
+    fa:["Generalist","Aquaculture/Fisheries"], yr:2021,
+    pf:8, notable:["—"],
+    u:"https://www.buildersvision.com/", s:"In-house Lukas Walton studio incubating new ocean ventures off the S2G thesis."},
+  {n:"Mantle Climate Venture Studio", t:"Venture Studio", c:"Europe", co:"United Kingdom", city:"London", lat:51.51, lng:-0.13,
+    fa:["Carbon/Climate","Seaweeds/Algae"], yr:2023,
+    pf:5, notable:["—"],
+    u:"https://mantle.studio/", s:"London climate venture studio with marine-CDR portfolio."},
+  {n:"Ocean Futures Studio (Sustainable Ocean Alliance)", t:"Venture Studio", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Generalist"], yr:2022,
+    pf:10, notable:["—"],
+    u:"https://www.soalliance.org/", s:"SOA's emerging studio model spinning out ventures from the Ocean Solutions network."},
+  {n:"Phyconomy Studio", t:"Venture Studio", c:"Europe", co:"United Kingdom", city:"London", lat:51.51, lng:-0.13,
+    fa:["Seaweeds/Algae","Biosolutions"], yr:2021,
+    pf:6, notable:["—"],
+    u:"https://phyconomy.net/", s:"Seaweed venture-building media + studio."},
+
+  // ============================ STARTUPS — Aquaculture / Seafood ============================
+  {n:"eFishery", t:"Startup", c:"Asia", co:"Indonesia", city:"Bandung", lat:-6.92, lng:107.61,
+    fa:["Aquaculture/Fisheries","Data/Tech"], yr:2013,
+    raised:280, sstage:"Series D", backers:["SoftBank","Temasek","Sequoia","Aqua-Spark"],
+    u:"https://efishery.com/", s:"World's largest aquaculture tech platform serving 200K+ Indonesian farmers."},
+  {n:"Aquabyte", t:"Startup", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Data/Tech","Aquaculture/Fisheries"], yr:2017,
+    raised:35, sstage:"Series B", backers:["NEA","Costanoa","Aquacultured"],
+    u:"https://www.aquabyte.ai/", s:"Computer vision for sea-lice + biomass in salmon farms; deployed at Cermaq, Mowi."},
+  {n:"ReelData AI", t:"Startup", c:"North America", co:"Canada", city:"Halifax", lat:44.65, lng:-63.58,
+    fa:["Data/Tech","Aquaculture/Fisheries"], yr:2019,
+    raised:11, sstage:"Series A", backers:["Hatch","Builders Vision","S2G"],
+    u:"https://reeldata.ai/", s:"AI for land-based RAS aquaculture; partnered with Atlantic Sapphire."},
+  {n:"Innovasea", t:"Startup", c:"North America", co:"USA", city:"Boston", lat:42.36, lng:-71.06,
+    fa:["Aquaculture/Fisheries","Data/Tech"], yr:2015,
+    raised:75, sstage:"Growth", backers:["Cuna del Mar","Builders Vision"],
+    u:"https://www.innovasea.com/", s:"Sensors, fish tracking + submersible cages for aquaculture; ~250 employees."},
+  {n:"Forever Oceans", t:"Startup", c:"North America", co:"USA", city:"Bethesda MD", lat:38.98, lng:-77.10,
+    fa:["Aquaculture/Fisheries","Data/Tech"], yr:2016,
+    raised:50, sstage:"Series B", backers:["Builders Vision","Conservation Resources"],
+    u:"https://www.foreveroceans.com/", s:"Open-ocean offshore fish farming with autonomous robotics; first commercial harvest 2024."},
+  {n:"Atlantic Sea Farms", t:"Startup", c:"North America", co:"USA", city:"Saco ME", lat:43.50, lng:-70.45,
+    fa:["Seaweeds/Algae","Aquaculture/Fisheries"], yr:2009,
+    raised:15, sstage:"Series A", backers:["S2G","Builders Vision"],
+    u:"https://atlanticseafarms.com/", s:"Largest US kelp aquaculture company supporting 30+ Maine fishermen."},
+  {n:"Cascadia Seaweed", t:"Startup", c:"North America", co:"Canada", city:"Sidney BC", lat:48.65, lng:-123.40,
+    fa:["Seaweeds/Algae","Aquaculture/Fisheries"], yr:2019,
+    raised:8, sstage:"Series A", backers:["Telus Pollinator","Conscious Investment"],
+    u:"https://www.cascadiaseaweed.com/", s:"Pacific Canada cultivated kelp for agri + pet feed."},
+  {n:"Kelp Blue", t:"Startup", c:"Africa", co:"Namibia", city:"Lüderitz", lat:-26.65, lng:15.16,
+    fa:["Seaweeds/Algae","Carbon/Climate"], yr:2020,
+    raised:30, sstage:"Series A", backers:["Climate Asset Mgmt","Katapult","Builders Vision"],
+    u:"https://www.kelp.blue/", s:"Large-scale offshore Macrocystis kelp farming for biostimulants + carbon."},
+  {n:"Sea6 Energy", t:"Startup", c:"Asia", co:"India", city:"Bangalore", lat:12.97, lng:77.59,
+    fa:["Seaweeds/Algae","Biosolutions"], yr:2010,
+    raised:25, sstage:"Series B", backers:["Aqua-Spark","Hatch"],
+    u:"https://sea6energy.com/", s:"Bengaluru offshore tropical seaweed farming for bioproducts; SeaCombine harvester."},
+  {n:"Symbrosia", t:"Startup", c:"North America", co:"USA", city:"Kona HI", lat:19.74, lng:-156.06,
+    fa:["Seaweeds/Algae","Carbon/Climate","Aquaculture/Fisheries"], yr:2018,
+    raised:12, sstage:"Series A", backers:["Builders Vision","Earthshot Ventures"],
+    u:"https://www.symbrosia.co/", s:"Hawaii Asparagopsis grower; reduces cattle methane 80%+."},
+  {n:"Sea Forest", t:"Startup", c:"Oceania", co:"Australia", city:"Triabunna TAS", lat:-43.07, lng:147.18,
+    fa:["Seaweeds/Algae","Carbon/Climate"], yr:2018,
+    raised:34, sstage:"Series B", backers:["Andrew Forrest","Ocean 14 Capital"],
+    u:"https://www.seaforest.com.au/", s:"World's first commercial Asparagopsis methane-reduction product (FutureFeed)."},
+  {n:"CH4 Global", t:"Startup", c:"Oceania", co:"Australia", city:"Adelaide", lat:-34.93, lng:138.60,
+    fa:["Seaweeds/Algae","Carbon/Climate"], yr:2018,
+    raised:39, sstage:"Series B", backers:["DCVC","Cleveland Avenue"],
+    u:"https://ch4global.com/", s:"Asparagopsis at scale across AU + NZ; first 1Mt-CO2e contracts signed."},
+  {n:"Wildtype", t:"Startup", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2016,
+    raised:120, sstage:"Series B", backers:["L Catterton","CRV","Leonardo DiCaprio"],
+    u:"https://www.wildtypefoods.com/", s:"Cell-cultivated salmon — FDA cleared for sale in 2024."},
+  {n:"BlueNalu", t:"Startup", c:"North America", co:"USA", city:"San Diego", lat:32.72, lng:-117.16,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2017,
+    raised:118, sstage:"Series B", backers:["Lewis & Clark","Rich's Investment","Sumitomo"],
+    u:"https://www.bluenalu.com/", s:"Cell-cultivated bluefin tuna toro; pilot facility in San Diego."},
+  {n:"Finless Foods", t:"Startup", c:"North America", co:"USA", city:"Emeryville", lat:37.83, lng:-122.29,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2017,
+    raised:50, sstage:"Series A", backers:["Hanwha","Draper Associates"],
+    u:"https://finlessfoods.com/", s:"Cell-cultivated and plant-based bluefin tuna."},
+  {n:"Umami Bioworks", t:"Startup", c:"Asia", co:"Singapore", city:"Singapore", lat:1.35, lng:103.82,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2020,
+    raised:13, sstage:"Series A", backers:["Big Idea Ventures","Lever VC"],
+    u:"https://www.umamibioworks.com/", s:"Singapore cell-cultivated seafood platform; merged with Shiok Meats."},
+  {n:"Avant Meats", t:"Startup", c:"Asia", co:"Hong Kong", city:"Hong Kong", lat:22.32, lng:114.17,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2018,
+    raised:15, sstage:"Series A", backers:["S2G","Lever VC"],
+    u:"https://www.avantmeats.com/", s:"Cell-cultivated fish maw + functional proteins."},
+  {n:"Plantish", t:"Startup", c:"Asia", co:"Israel", city:"Rehovot", lat:31.89, lng:34.81,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2021,
+    raised:14, sstage:"Seed", backers:["Pitango HealthTech","TechAviv"],
+    u:"https://www.plantish.com/", s:"3D-printed plant-based whole-cut salmon."},
+
+  // ============================ STARTUPS — Ocean Carbon Removal ============================
+  {n:"Running Tide", t:"Startup", c:"North America", co:"USA", city:"Portland ME", lat:43.66, lng:-70.26,
+    fa:["Carbon/Climate","Seaweeds/Algae"], yr:2017,
+    raised:54, sstage:"Series B", backers:["Lowercarbon","Chris Sacca","Microsoft"],
+    u:"https://www.runningtide.com/", s:"Ocean carbon removal via macroalgae sinking + alkalinity enhancement; ~30Kt sold."},
+  {n:"Brilliant Planet", t:"Startup", c:"Europe", co:"United Kingdom", city:"London", lat:51.51, lng:-0.13,
+    fa:["Seaweeds/Algae","Carbon/Climate"], yr:2013,
+    raised:24, sstage:"Series A", backers:["Union Square Ventures","Toyota Ventures"],
+    u:"https://www.brilliantplanet.com/", s:"Open-pond microalgae carbon removal in coastal deserts (Morocco, Namibia)."},
+  {n:"Equatic", t:"Startup", c:"North America", co:"USA", city:"Los Angeles", lat:34.07, lng:-118.44,
+    fa:["Carbon/Climate"], yr:2021,
+    raised:30, sstage:"Series A", backers:["Builders Vision","Frontier","UCLA"],
+    u:"https://www.equatic.tech/", s:"UCLA spinout: electrochemical ocean CO2 removal + green hydrogen co-product."},
+  {n:"Captura", t:"Startup", c:"North America", co:"USA", city:"Pasadena", lat:34.14, lng:-118.12,
+    fa:["Carbon/Climate"], yr:2021,
+    raised:45, sstage:"Series A", backers:["Equinor","Aramco Ventures","Future Planet Capital"],
+    u:"https://capturacorp.com/", s:"Caltech spinout: direct ocean capture of CO2 — pilot deployed at AltaSea."},
+  {n:"Planetary Technologies", t:"Startup", c:"North America", co:"Canada", city:"Halifax", lat:44.65, lng:-63.58,
+    fa:["Carbon/Climate"], yr:2019,
+    raised:11, sstage:"Seed", backers:["XPRIZE Carbon Removal","Microsoft"],
+    u:"https://www.planetarytech.com/", s:"Ocean alkalinity enhancement deployed at coastal water-treatment outfalls."},
+  {n:"Ebb Carbon", t:"Startup", c:"North America", co:"USA", city:"San Carlos", lat:37.50, lng:-122.26,
+    fa:["Carbon/Climate"], yr:2021,
+    raised:35, sstage:"Series A", backers:["Prelude","Galvanize Climate","Frontier"],
+    u:"https://www.ebbcarbon.com/", s:"Electrochemical ocean alkalinity, 350Kt offtake with Microsoft."},
+  {n:"Vesta", t:"Startup", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Carbon/Climate"], yr:2019,
+    raised:8, sstage:"Seed", backers:["Pillar VC","Lowercarbon"],
+    u:"https://www.vesta.earth/", s:"Coastal carbon capture using olivine sand on beaches."},
+  {n:"Banyu Carbon", t:"Startup", c:"North America", co:"USA", city:"Seattle", lat:47.66, lng:-122.31,
+    fa:["Carbon/Climate"], yr:2022,
+    raised:6, sstage:"Seed", backers:["Carbon Removal Partners","Propeller"],
+    u:"https://www.banyucarbon.com/", s:"Photochemical ocean CO2 removal — UW spinout."},
+  {n:"Gigablue", t:"Startup", c:"Asia", co:"Israel", city:"Tel Aviv", lat:32.08, lng:34.78,
+    fa:["Carbon/Climate"], yr:2022,
+    raised:11, sstage:"Seed", backers:["Builders Vision"],
+    u:"https://gigablue.co/", s:"Buoyant carbon-binding particles for marine CDR; New Zealand pilots."},
+  {n:"Seaweed Generation", t:"Startup", c:"Europe", co:"United Kingdom", city:"London", lat:51.51, lng:-0.13,
+    fa:["Seaweeds/Algae","Carbon/Climate"], yr:2021,
+    raised:5, sstage:"Seed", backers:["Pale blue dot","Builders Vision"],
+    u:"https://seaweedgeneration.com/", s:"Robotic Sargassum collection + deep-ocean sequestration."},
+  {n:"Phycobloom", t:"Startup", c:"Europe", co:"United Kingdom", city:"London", lat:51.51, lng:-0.13,
+    fa:["Seaweeds/Algae","Energy/Maritime"], yr:2022,
+    raised:6, sstage:"Seed", backers:["BlueYard","Lowercarbon"],
+    u:"https://phycobloom.com/", s:"Engineered algae producing biocrude oil from sunlight + CO2."},
+
+  // ============================ STARTUPS — Ocean Materials & Plastic ============================
+  {n:"Notpla", t:"Startup", c:"Europe", co:"United Kingdom", city:"London", lat:51.51, lng:-0.10,
+    fa:["Biosolutions","Waste/Pollution","Seaweeds/Algae"], yr:2014,
+    raised:25, sstage:"Series A", backers:["Earthshot","HSBC","Sky Ocean"],
+    u:"https://www.notpla.com/", s:"Seaweed-based packaging replacing single-use plastics; Earthshot winner; 4M+ units shipped."},
+  {n:"Loliware", t:"Startup", c:"North America", co:"USA", city:"New York", lat:40.71, lng:-74.00,
+    fa:["Biosolutions","Waste/Pollution","Seaweeds/Algae"], yr:2015,
+    raised:20, sstage:"Series A", backers:["Closed Loop","S2G","Tom Ford Prize"],
+    u:"https://www.loliware.com/", s:"Seaweed-resin straws + tableware that decompose at sea."},
+  {n:"Sway", t:"Startup", c:"North America", co:"USA", city:"Berkeley", lat:37.87, lng:-122.27,
+    fa:["Biosolutions","Waste/Pollution","Seaweeds/Algae"], yr:2020,
+    raised:9, sstage:"Seed", backers:["At One Ventures","Regeneration.VC","AiiM"],
+    u:"https://swaythefuture.com/", s:"Seaweed-based replacements for plastic films + bags; Tom Ford Prize winner."},
+  {n:"Algenesis", t:"Startup", c:"North America", co:"USA", city:"San Diego", lat:32.72, lng:-117.16,
+    fa:["Biosolutions","Waste/Pollution"], yr:2018,
+    raised:5, sstage:"Seed", backers:["Regeneration.VC"],
+    u:"https://algenesismaterials.com/", s:"Algae-derived bioplastic foams + flip-flops; UCSD spinout."},
+  {n:"4ocean", t:"Startup", c:"North America", co:"USA", city:"Boca Raton", lat:26.36, lng:-80.08,
+    fa:["Waste/Pollution","Communities/Tourism"], yr:2017,
+    raised:0, sstage:"Growth", backers:["Bootstrapped — B Corp"],
+    u:"https://4ocean.com/", s:"For-profit B Corp; full-time crews remove ocean plastic, funded by bracelet sales."},
+  {n:"Plastic Bank", t:"Startup", c:"North America", co:"Canada", city:"Vancouver", lat:49.28, lng:-123.12,
+    fa:["Waste/Pollution","Communities/Tourism"], yr:2013,
+    raised:30, sstage:"Growth", backers:["SAP","Henkel","Tribeca Venture"],
+    u:"https://plasticbank.com/", s:"Pays community collectors above-market rates for ocean-bound plastic; >100M kg collected."},
+
+  // ============================ STARTUPS — Ocean Data, Robotics & Maritime ============================
+  {n:"Saildrone", t:"Startup", c:"North America", co:"USA", city:"Alameda", lat:37.78, lng:-122.27,
+    fa:["Data/Tech","Energy/Maritime"], yr:2012,
+    raised:190, sstage:"Series C", backers:["BMW i Ventures","Lux","Capricorn"],
+    u:"https://www.saildrone.com/", s:"Wind-powered uncrewed surface vehicles; world's largest fleet (100+) of autonomous ocean drones."},
+  {n:"Sofar Ocean", t:"Startup", c:"North America", co:"USA", city:"San Francisco", lat:37.77, lng:-122.41,
+    fa:["Data/Tech","Energy/Maritime"], yr:2016,
+    raised:60, sstage:"Series B", backers:["Union Square","Foundry Group","Prelude"],
+    u:"https://www.sofarocean.com/", s:"Largest private ocean weather network — Spotter buoys + Wayfinder shipping routing."},
+  {n:"Open Ocean Robotics", t:"Startup", c:"North America", co:"Canada", city:"Victoria BC", lat:48.43, lng:-123.37,
+    fa:["Data/Tech","Energy/Maritime"], yr:2018,
+    raised:8, sstage:"Series A", backers:["Schmidt Marine","Builders Vision"],
+    u:"https://www.openoceanrobotics.com/", s:"Solar autonomous data boats for ocean monitoring."},
+  {n:"Bedrock Ocean Exploration", t:"Startup", c:"North America", co:"USA", city:"New York", lat:40.71, lng:-74.00,
+    fa:["Data/Tech","Energy/Maritime"], yr:2020,
+    raised:25, sstage:"Series A", backers:["Northzone","Eniac"],
+    u:"https://bedrockocean.com/", s:"AUV-based seabed surveys-as-a-service for offshore wind."},
+  {n:"Terradepth", t:"Startup", c:"North America", co:"USA", city:"Austin TX", lat:30.27, lng:-97.74,
+    fa:["Data/Tech"], yr:2018,
+    raised:20, sstage:"Series A", backers:["Microsoft","Insight"],
+    u:"https://terradepth.com/", s:"Cloud-platform AUV ocean data company."},
+  {n:"Sea Machines Robotics", t:"Startup", c:"North America", co:"USA", city:"Boston", lat:42.36, lng:-71.06,
+    fa:["Energy/Maritime","Data/Tech"], yr:2015,
+    raised:50, sstage:"Series B", backers:["Brunswick","Eniac","Toyota"],
+    u:"https://sea-machines.com/", s:"Autonomous control systems for commercial vessels."},
+  {n:"Candela", t:"Startup", c:"Europe", co:"Sweden", city:"Stockholm", lat:59.33, lng:18.07,
+    fa:["Energy/Maritime","Carbon/Climate"], yr:2014,
+    raised:135, sstage:"Series C", backers:["EQT","Kinnevik"],
+    u:"https://candela.com/", s:"Electric hydrofoil boats — P-12 commercial ferry now in Stockholm service."},
+  {n:"Boundary Layer Technologies", t:"Startup", c:"North America", co:"USA", city:"Alameda", lat:37.77, lng:-122.27,
+    fa:["Energy/Maritime","Carbon/Climate"], yr:2018,
+    raised:14, sstage:"Series A", backers:["Lowercarbon","Maersk Growth"],
+    u:"https://www.boundarylayer.tech/", s:"Hydrofoil container ships for low-carbon ocean freight."},
+  {n:"Manolin", t:"Startup", c:"North America", co:"USA", city:"Bend OR", lat:44.06, lng:-121.31,
+    fa:["Aquaculture/Fisheries","Data/Tech"], yr:2017,
+    raised:8, sstage:"Series A", backers:["Hatch","Yara Growth"],
+    u:"https://www.manolin.com/", s:"Predictive analytics + insurance for salmon farms."},
+  {n:"Tidal X (Alphabet)", t:"Startup", c:"North America", co:"USA", city:"Mountain View", lat:37.45, lng:-122.18,
+    fa:["Data/Tech","Aquaculture/Fisheries"], yr:2017,
+    raised:0, sstage:"Series B", backers:["Alphabet (X moonshot)"],
+    u:"https://x.company/projects/tidal/", s:"Alphabet moonshot using underwater AI cameras + ML for fish farms."},
+
+  // ============================ STARTUPS — Marine Energy ============================
+  {n:"CalWave Power Technologies", t:"Startup", c:"North America", co:"USA", city:"Berkeley", lat:37.87, lng:-122.27,
+    fa:["Energy/Maritime"], yr:2014,
+    raised:25, sstage:"Series A", backers:["DOE Loan","Cleanergy"],
+    u:"https://calwave.energy/", s:"Berkeley wave energy converter, deploying off California."},
+  {n:"CorPower Ocean", t:"Startup", c:"Europe", co:"Sweden", city:"Stockholm", lat:59.33, lng:18.07,
+    fa:["Energy/Maritime","Carbon/Climate"], yr:2009,
+    raised:55, sstage:"Series B", backers:["Northern Light Wind","Innovation Norway"],
+    u:"https://corpowerocean.com/", s:"Sweden-based wave energy convertor in commercial trial off Portugal."},
+  {n:"Eco Wave Power", t:"Startup", c:"Asia", co:"Israel", city:"Tel Aviv", lat:32.08, lng:34.78,
+    fa:["Energy/Maritime"], yr:2011,
+    raised:0, sstage:"Public", backers:["Nasdaq:WAVE"],
+    u:"https://www.ecowavepower.com/", s:"Nasdaq-listed onshore wave energy provider; UK + Portugal projects."},
+  {n:"Minesto", t:"Startup", c:"Europe", co:"Sweden", city:"Gothenburg", lat:57.71, lng:11.97,
+    fa:["Energy/Maritime"], yr:2007,
+    raised:0, sstage:"Public", backers:["Nasdaq Stockholm"],
+    u:"https://minesto.com/", s:"Tidal kite technology in commercial deployment in Faroe Islands."},
+  {n:"Magallanes Renovables", t:"Startup", c:"Europe", co:"Spain", city:"Vigo", lat:42.24, lng:-8.72,
+    fa:["Energy/Maritime"], yr:2009,
+    raised:18, sstage:"Series A", backers:["Repsol","Bpifrance"],
+    u:"https://www.magallanesrenovables.com/", s:"Floating tidal turbines deployed at EMEC Orkney."},
+  {n:"Northern Lights JV (Equinor/Shell/TotalEnergies)", t:"Startup", c:"Europe", co:"Norway", city:"Bergen", lat:60.39, lng:5.32,
+    fa:["Carbon/Climate","Energy/Maritime"], yr:2017,
+    raised:1500, sstage:"Growth", backers:["Equinor","Shell","TotalEnergies"],
+    u:"https://norlights.com/", s:"Offshore subsea CO2 storage operator; first commercial cross-border CCS chain online 2024."},
+
+  // ============================ STARTUPS — Reefs, Coastal & Biodiversity ============================
+  {n:"Coral Vita", t:"Startup", c:"North America", co:"Bahamas", city:"Grand Bahama", lat:26.55, lng:-78.69,
+    fa:["Corals/Biodiversity","Communities/Tourism"], yr:2015,
+    raised:5, sstage:"Seed", backers:["Earthshot","Builders Vision","Katapult"],
+    u:"https://www.coralvita.co/", s:"Land-based coral farms restoring reefs at scale; Earthshot 2021 winner."},
+  {n:"Coral Maker", t:"Startup", c:"North America", co:"USA", city:"Santa Cruz", lat:36.97, lng:-122.03,
+    fa:["Corals/Biodiversity"], yr:2021,
+    raised:3, sstage:"Seed", backers:["Salesforce","Autodesk Foundation"],
+    u:"https://www.coralmaker.org/", s:"Robotic coral seeding + modular reef restoration."},
+  {n:"Rrreefs", t:"Startup", c:"Europe", co:"Switzerland", city:"Zurich", lat:47.37, lng:8.54,
+    fa:["Corals/Biodiversity"], yr:2020,
+    raised:2, sstage:"Pre-seed", backers:["Innosuisse","Engagement Migros"],
+    u:"https://www.rrreefs.com/", s:"3D-printed clay reef structures for restoration; Colombia + Tanzania pilots."},
+  {n:"ReefGen", t:"Startup", c:"North America", co:"USA", city:"San Diego", lat:32.72, lng:-117.16,
+    fa:["Corals/Biodiversity","Data/Tech"], yr:2020,
+    raised:4, sstage:"Seed", backers:["Builders Vision","SOSV"],
+    u:"https://reefgen.io/", s:"Robotic coral planting at industrial scale."},
+  {n:"Ostrea (Pew oyster restoration spinout)", t:"Startup", c:"North America", co:"USA", city:"New York", lat:40.71, lng:-74.00,
+    fa:["Aquaculture/Fisheries","Mangroves/Coastal"], yr:2022,
+    raised:2, sstage:"Pre-seed", backers:["—"],
+    u:"#", s:"Oyster reef restoration as natural coastal infrastructure; pilot in NY harbour."},
+
+  // ============================ STARTUPS — Established / Strategic ============================
+  {n:"Aker BioMarine", t:"Startup", c:"Europe", co:"Norway", city:"Oslo", lat:59.91, lng:10.75,
+    fa:["Aquaculture/Fisheries","Biosolutions"], yr:2006,
+    raised:0, sstage:"Public", backers:["Oslo:AKBM"],
+    u:"https://akerbiomarine.com/", s:"World's largest sustainable krill harvester + ingredients supplier."},
+  {n:"Ørsted (Offshore Wind)", t:"Startup", c:"Europe", co:"Denmark", city:"Copenhagen", lat:55.68, lng:12.57,
+    fa:["Energy/Maritime","Carbon/Climate"], yr:1972,
+    raised:0, sstage:"Public", backers:["Cph:ORSTED"],
+    u:"https://orsted.com/", s:"World's largest offshore wind developer; built 30+ GW pipeline."}
+];
+
+/* Investor types (have fund-size / check-size / stage filters apply differently than startups) */
+const INVESTOR_TYPES = ["VC Fund","Foundation","Corporate VC","Government Fund"];
+const ACCELERATOR_TYPES = ["Accelerator","Incubator","Venture Studio"];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+  q:"", type:"", focus:"", continent:"", country:"",
+  stage:"", check:"", founded:"", lead:"",
+  view:"overview", sortKey:"n", sortDir:1
+};
+let map, markerLayer;
+
+/* ============================================================
+   BOOTSTRAP
+   ============================================================ */
+function init(){
+  populateSelects();
+  bindEvents();
+  render();
+}
+
+function populateSelects(){
+  const allFocus = new Set();
+  const allTypes = new Set();
+  const allConts = new Set();
+  ORGS.forEach(o=>{
+    o.fa.forEach(f=>allFocus.add(f));
+    allTypes.add(o.t);
+    allConts.add(o.c);
+  });
+  fill("qFocus", [...allFocus].sort());
+  fill("qType",  [...allTypes].sort());
+  fill("qContinent", [...allConts].sort());
+  rebuildCountrySelect();
+}
+
+function fill(id, items){
+  const sel = document.getElementById(id);
+  items.forEach(v=>{
+    const o = document.createElement("option");
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  });
+}
+
+function bindEvents(){
+  ["qSearch","qType","qFocus","qContinent","qCountry","qStage","qCheck","qFounded","qLead"].forEach(id=>{
+    document.getElementById(id).addEventListener("input", e=>{
+      const k = id.replace("q","").toLowerCase();
+      const map={search:"q",type:"type",focus:"focus",continent:"continent",country:"country",stage:"stage",check:"check",founded:"founded",lead:"lead"};
+      state[map[k]] = e.target.value;
+      if(k==="continent"){
+        const cs = countriesIn(e.target.value);
+        const cur = document.getElementById("qCountry").value;
+        if(cur && !cs.includes(cur)){ state.country = ""; }
+        rebuildCountrySelect();
+      }
+      render();
+    });
+  });
+  document.querySelectorAll("#viewTabs .tab").forEach(t=>{
+    t.addEventListener("click", ()=>{
+      document.querySelectorAll("#viewTabs .tab").forEach(b=>b.classList.remove("active"));
+      t.classList.add("active");
+      state.view = t.dataset.view;
+      render();
+    });
+  });
+  document.getElementById("exportBtn").addEventListener("click", exportCSV);
+  document.getElementById("suggestBtn").addEventListener("click", ()=>{
+    window.open("mailto:hello@impact47.com?subject=Suggest%20a%20Blue%20Economy%20organisation&body=Org%20name%3A%0AWebsite%3A%0AHQ%20country%3A%0AType%20(VC%20Fund%2FAccelerator%2FStartup%2Fetc.)%3A%0AFund%20size%20or%20raised%3A%0ATicket%20size%3A%0AStage%20focus%3A%0ANotable%20portfolio%20or%20backers%3A%0AOne-line%20summary%3A%0A","_blank");
+  });
+}
+
+function countriesIn(continent){
+  if(!continent) return [...new Set(ORGS.map(o=>o.co))];
+  return [...new Set(ORGS.filter(o=>o.c===continent).map(o=>o.co))];
+}
+function rebuildCountrySelect(){
+  const sel = document.getElementById("qCountry");
+  const current = state.country;
+  sel.innerHTML='<option value="">All countries</option>';
+  countriesIn(state.continent).sort().forEach(co=>{
+    const o = document.createElement("option");
+    o.value = co; o.textContent = co;
+    if(co===current) o.selected = true;
+    sel.appendChild(o);
+  });
+}
+
+/* ============================================================
+   PARSERS / HELPERS
+   ============================================================ */
+// "100K-500K" or "1M-15M" -> {min,max} in $K
+function parseCheck(str){
+  if(!str) return null;
+  const tok = s=>{
+    const m = String(s).trim().match(/(\d+(?:\.\d+)?)([KMB]?)/i);
+    if(!m) return 0;
+    let n = parseFloat(m[1]);
+    const u = (m[2]||"K").toUpperCase();
+    if(u==="M") n *= 1000;
+    else if(u==="B") n *= 1000000;
+    return n; // in K USD
+  };
+  const parts = str.split("-");
+  const min = tok(parts[0]);
+  const max = tok(parts[1] || parts[0]);
+  return {min, max};
+}
+function inCheckBucket(org, bucket){
+  if(!bucket) return true;
+  const [a,b] = bucket.split("-").map(Number); // K
+  // Investors: use their check
+  const c = parseCheck(org.check);
+  if(c) return c.min <= b && c.max >= a;
+  // Startups: bucket roughly to round-size if available
+  if(typeof org.raised === "number"){
+    // map the typical round size to $K
+    const roundK = org.raised * 1000;
+    return roundK >= a && roundK <= b;
+  }
+  return false;
+}
+function inFoundedBucket(org, bucket){
+  if(!bucket) return true;
+  const [a,b] = bucket.split("-").map(Number);
+  return typeof org.yr==="number" && org.yr >= a && org.yr <= b;
+}
+function matchesStage(org, stage){
+  if(!stage) return true;
+  if(Array.isArray(org.stage) && org.stage.includes(stage)) return true;
+  if(org.sstage === stage) return true;
+  return false;
+}
+
+/* ============================================================
+   FILTERING
+   ============================================================ */
+function getFiltered(){
+  const q = state.q.trim().toLowerCase();
+  return ORGS.filter(o=>{
+    if(state.type && o.t !== state.type) return false;
+    if(state.focus && !o.fa.includes(state.focus)) return false;
+    if(state.continent && o.c !== state.continent) return false;
+    if(state.country && o.co !== state.country) return false;
+    if(!matchesStage(o, state.stage)) return false;
+    if(!inCheckBucket(o, state.check)) return false;
+    if(!inFoundedBucket(o, state.founded)) return false;
+    if(state.lead==="lead"   && o.lead !== true)  return false;
+    if(state.lead==="follow" && o.lead === true)  return false;
+    if(q){
+      const blob = (o.n+" "+o.s+" "+o.co+" "+(o.city||"")+" "+o.fa.join(" ")+" "+o.t+" "+(o.notable||[]).join(" ")+" "+(o.backers||[]).join(" ")).toLowerCase();
+      if(!blob.includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  const filtered = getFiltered();
+  document.getElementById("cFiltered").textContent = filtered.length;
+  document.getElementById("cTotal").textContent = ORGS.length;
+  renderActiveFilters();
+  document.getElementById("vOverview").style.display = state.view==="overview"?"":"none";
+  document.getElementById("vList").style.display     = state.view==="list"?"":"none";
+  document.getElementById("vCards").style.display    = state.view==="cards"?"":"none";
+  if(state.view==="overview") renderOverview(filtered);
+  if(state.view==="list")     renderList(filtered);
+  if(state.view==="cards")    renderCards(filtered);
+}
+
+function renderActiveFilters(){
+  const wrap = document.getElementById("activeFilters");
+  wrap.innerHTML = "";
+  const items = [];
+  const labels = {
+    q:s=>"Search: "+s, type:s=>"Type: "+s, focus:s=>"Focus: "+s,
+    continent:s=>"Continent: "+s, country:s=>"Country: "+s,
+    stage:s=>"Stage: "+s,
+    check:s=>"Ticket: "+({"0-250":"≤$250K","250-1000":"$250K–$1M","1000-5000":"$1M–$5M","5000-25000":"$5M–$25M","25000-9999999":"$25M+"})[s],
+    founded:s=>"Founded: "+({"0-2009":"Pre-2010","2010-2015":"2010–2015","2016-2020":"2016–2020","2021-2099":"2021+"})[s],
+    lead:s=>"Role: "+(s==="lead"?"Lead investor":"Follow only")
+  };
+  Object.keys(labels).forEach(k=>{
+    if(state[k]) items.push([k,labels[k](state[k])]);
+  });
+  items.forEach(([k,label])=>{
+    const c = document.createElement("button");
+    c.className = "chip";
+    c.innerHTML = label+" &times;";
+    c.addEventListener("click", ()=>{
+      state[k]="";
+      const idMap={q:"qSearch",type:"qType",focus:"qFocus",continent:"qContinent",country:"qCountry",stage:"qStage",check:"qCheck",founded:"qFounded",lead:"qLead"};
+      document.getElementById(idMap[k]).value="";
+      if(k==="continent") rebuildCountrySelect();
+      render();
+    });
+    wrap.appendChild(c);
+  });
+  if(items.length){
+    const clear = document.createElement("button");
+    clear.className = "chip";
+    clear.style.background="transparent";
+    clear.style.borderColor="var(--mute)";
+    clear.style.color="var(--mute)";
+    clear.textContent = "Clear all";
+    clear.addEventListener("click", ()=>{
+      Object.assign(state,{q:"",type:"",focus:"",continent:"",country:"",stage:"",check:"",founded:"",lead:""});
+      ["qSearch","qType","qFocus","qContinent","qCountry","qStage","qCheck","qFounded","qLead"].forEach(id=>document.getElementById(id).value="");
+      rebuildCountrySelect();
+      render();
+    });
+    wrap.appendChild(clear);
+  }
+}
+
+/* ----- OVERVIEW ----- */
+function renderOverview(filtered){
+  const root = document.getElementById("vOverview");
+  if(!filtered.length){ root.innerHTML = emptyState(); return; }
+
+  // headline KPIs from filtered
+  const investors = filtered.filter(o=>INVESTOR_TYPES.includes(o.t));
+  const startups  = filtered.filter(o=>o.t==="Startup");
+  const accels    = filtered.filter(o=>ACCELERATOR_TYPES.includes(o.t));
+  const totalAUM  = investors.reduce((s,o)=>s+(o.aum||0),0);
+  const totalRaised = startups.reduce((s,o)=>s+(o.raised||0),0);
+
+  const focusCounts = {}; filtered.forEach(o=>o.fa.forEach(f=>focusCounts[f]=(focusCounts[f]||0)+1));
+  const typeCounts  = {}; filtered.forEach(o=>typeCounts[o.t]=(typeCounts[o.t]||0)+1);
+
+  root.innerHTML = `
+    <div class="stats">
+      <div class="stat"><div class="v">${investors.length}</div><div class="k">Investors / funds</div></div>
+      <div class="stat"><div class="v">${accels.length}</div><div class="k">Accelerators &amp; studios</div></div>
+      <div class="stat"><div class="v">${startups.length}</div><div class="k">Startups</div></div>
+      <div class="stat"><div class="v">${fmtMoney(totalAUM*1e6)}</div><div class="k">Combined investor AUM</div></div>
+    </div>
+    <div class="overview">
+      <div class="card">
+        <h3>Global distribution (${filtered.length} orgs)</h3>
+        <div id="map"></div>
+      </div>
+      <div class="card">
+        <h3>By focus area</h3>
+        ${barChart(focusCounts)}
+      </div>
+      <div class="card">
+        <h3>By type</h3>
+        ${barChart(typeCounts)}
+      </div>
+      <div class="card">
+        <h3>By continent</h3>
+        ${barChart(countBy(filtered,'c'))}
+      </div>
+      <div class="card" style="grid-column:1 / -1">
+        <h3>Top investors by portfolio count (filtered)</h3>
+        ${topInvestors(filtered)}
+      </div>
+    </div>`;
+  setTimeout(()=>renderMap(filtered),0);
+}
+
+function fmtMoney(usd){
+  if(!usd) return "—";
+  if(usd >= 1e9) return "$"+(usd/1e9).toFixed(1)+"B";
+  if(usd >= 1e6) return "$"+(usd/1e6).toFixed(0)+"M";
+  if(usd >= 1e3) return "$"+(usd/1e3).toFixed(0)+"K";
+  return "$"+usd;
+}
+function countBy(arr,k){
+  const r = {}; arr.forEach(o=>r[o[k]]=(r[o[k]]||0)+1); return r;
+}
+function barChart(counts){
+  const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const max = entries[0]?entries[0][1]:1;
+  return entries.map(([k,v])=>`
+    <div class="barRow">
+      <div class="lbl">${escapeHTML(k)}</div>
+      <div class="barTrack"><div class="barFill" style="width:${(v/max*100).toFixed(1)}%"></div></div>
+      <div class="num">${v}</div>
+    </div>`).join("");
+}
+function topInvestors(filtered){
+  const inv = filtered.filter(o=>INVESTOR_TYPES.includes(o.t) && typeof o.pf==="number");
+  inv.sort((a,b)=>b.pf-a.pf);
+  const top = inv.slice(0,10);
+  if(!top.length) return '<div class="mute">No investors in current filter set.</div>';
+  return `<div class="listWrap"><table>
+    <thead><tr>
+      <th>Investor</th><th>Type</th><th>HQ</th>
+      <th>Fund / AUM</th><th>Ticket</th><th>Stages</th><th>Portfolio</th>
+    </tr></thead>
+    <tbody>${top.map(o=>`<tr>
+      <td><a class="nameLink" href="${(o.u&&o.u!=="#")?o.u:"#"}" target="_blank" rel="noopener">${escapeHTML(o.n)}</a></td>
+      <td><span class="typeTag" style="${typeTagStyle(o.t)}">${escapeHTML(o.t)}</span></td>
+      <td>${escapeHTML(o.city?o.city+", ":"")}${escapeHTML(o.co)}</td>
+      <td class="kpi">${o.aum?fmtMoney(o.aum*1e6):'<span class="mute">—</span>'}</td>
+      <td class="kpi">${o.check?"$"+escapeHTML(o.check):'<span class="mute">—</span>'}</td>
+      <td>${(o.stage||[]).map(s=>`<span class="tag">${escapeHTML(s)}</span>`).join("")}</td>
+      <td class="kpi">${o.pf||"—"}</td>
+    </tr>`).join("")}</tbody></table></div>`;
+}
+
+function renderMap(filtered){
+  if(!map){
+    map = L.map('map',{worldCopyJump:true,scrollWheelZoom:false}).setView([20,0],1.6);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+      attribution:'&copy; OpenStreetMap &copy; CARTO',subdomains:'abcd',maxZoom:18
+    }).addTo(map);
+    markerLayer = L.layerGroup().addTo(map);
+  }
+  markerLayer.clearLayers();
+  filtered.forEach(o=>{
+    if(typeof o.lat!=="number"||typeof o.lng!=="number") return;
+    const colour = typeColour(o.t);
+    const m = L.circleMarker([o.lat,o.lng],{
+      radius:6, color:colour, weight:2, fillColor:colour, fillOpacity:.6
+    });
+    m.bindPopup(`<strong>${escapeHTML(o.n)}</strong><br/>
+      <span style="color:#7c93ad;font-size:.8rem">${escapeHTML(o.t)} · ${escapeHTML(o.city||"")}${o.city?", ":""}${escapeHTML(o.co)}${o.yr?" · est. "+o.yr:""}</span><br/>
+      <em style="font-size:.78rem">${escapeHTML(o.fa.join(", "))}</em>
+      <p style="margin:6px 0;font-size:.82rem">${escapeHTML(o.s)}</p>
+      ${kpiInline(o)}
+      ${o.u && o.u!=="#"?`<a href="${o.u}" target="_blank" rel="noopener">Visit website →</a>`:""}`);
+    markerLayer.addLayer(m);
+  });
+}
+function kpiInline(o){
+  if(INVESTOR_TYPES.includes(o.t)){
+    return `<div style="font-size:.78rem;color:#9bb8d8;margin-bottom:4px">
+      ${o.aum?`<b>Fund:</b> ${fmtMoney(o.aum*1e6)} `:""}
+      ${o.check?`· <b>Ticket:</b> $${escapeHTML(o.check)} `:""}
+      ${o.pf?`· <b>Portfolio:</b> ${o.pf}`:""}
+      ${o.notable&&o.notable.length?`<br/><b>Backed:</b> ${escapeHTML(o.notable.slice(0,3).join(", "))}`:""}
+    </div>`;
+  }
+  if(o.t==="Startup"){
+    return `<div style="font-size:.78rem;color:#9bb8d8;margin-bottom:4px">
+      ${o.sstage?`<b>Stage:</b> ${escapeHTML(o.sstage)} `:""}
+      ${o.raised?`· <b>Raised:</b> ${fmtMoney(o.raised*1e6)} `:""}
+      ${o.backers&&o.backers.length?`<br/><b>Backers:</b> ${escapeHTML(o.backers.slice(0,3).join(", "))}`:""}
+    </div>`;
+  }
+  if(ACCELERATOR_TYPES.includes(o.t)){
+    return `<div style="font-size:.78rem;color:#9bb8d8;margin-bottom:4px">
+      ${o.cohorts?`<b>Cohorts/yr:</b> ${o.cohorts} `:""}
+      ${o.cohortSize?`· <b>Size:</b> ${o.cohortSize} `:""}
+      ${o.terms?`<br/><b>Terms:</b> ${escapeHTML(o.terms)}`:""}
+      ${o.pf?`<br/><b>Alumni:</b> ${o.pf}`:""}
+    </div>`;
+  }
+  return "";
+}
+
+function typeColour(t){
+  return ({
+    "VC Fund":"#3aa1ff","Foundation":"#f0b232","Corporate VC":"#9b59b6",
+    "Government Fund":"#1abc9c","Accelerator":"#e74c3c","Incubator":"#e570c8",
+    "Venture Studio":"#bb78f0","Startup":"#2ecc71"
+  })[t] || "#888";
+}
+function typeTagStyle(t){
+  const c = typeColour(t);
+  return `color:${c};border:1px solid ${c}55;background:${c}1f;padding:2px 8px;border-radius:6px`;
+}
+
+/* ----- LIST ----- */
+function renderList(filtered){
+  const root = document.getElementById("vList");
+  if(!filtered.length){ root.innerHTML = emptyState(); return; }
+  const sorted = [...filtered].sort((a,b)=>{
+    const k=state.sortKey;
+    let av=a[k]??"", bv=b[k]??"";
+    if(k==="aum"||k==="raised"||k==="pf"||k==="yr"){
+      av = Number(av)||0; bv = Number(bv)||0;
+      return state.sortDir * (av>bv?1:av<bv?-1:0);
+    }
+    if(Array.isArray(av)) av = av.join(", ");
+    if(Array.isArray(bv)) bv = bv.join(", ");
+    return state.sortDir * (String(av).toLowerCase()>String(bv).toLowerCase()?1:String(av).toLowerCase()<String(bv).toLowerCase()?-1:0);
+  });
+  const head = [
+    ["n","Name"],["t","Type"],["co","HQ"],["yr","Founded"],
+    ["aum","Fund / Raised"],["check","Ticket"],["pf","Portfolio"],
+    ["fa","Focus"]
+  ].map(([k,l])=>`<th data-sk="${k}">${l}${state.sortKey===k?(state.sortDir===1?" ▲":" ▼"):""}</th>`).join("");
+  const rows = sorted.map(o=>{
+    const isInv = INVESTOR_TYPES.includes(o.t);
+    const moneyVal = isInv ? (o.aum?fmtMoney(o.aum*1e6):"") : (o.raised?fmtMoney(o.raised*1e6):"");
+    const moneyLbl = isInv ? "AUM" : "raised";
+    const stages = isInv ? (o.stage||[]).join(", ") : (o.sstage||"");
+    return `
+      <tr>
+        <td><a class="nameLink" href="${o.u && o.u!=="#"?o.u:"#"}" target="_blank" rel="noopener">${escapeHTML(o.n)}</a>
+          <div class="mute" style="font-size:.75rem;margin-top:3px">${escapeHTML(o.s)}</div>
+          ${stages?`<div class="mute" style="font-size:.72rem;margin-top:3px">↳ ${escapeHTML(stages)}${o.lead?' · <span style="color:var(--accent)">Lead</span>':''}</div>`:''}
+        </td>
+        <td><span class="typeTag" style="${typeTagStyle(o.t)}">${escapeHTML(o.t)}</span></td>
+        <td>${escapeHTML(o.city?o.city+", ":"")}${escapeHTML(o.co)}<div class="mute" style="font-size:.72rem">${escapeHTML(o.c)}</div></td>
+        <td class="kpi">${o.yr||"—"}</td>
+        <td class="kpi">${moneyVal||'<span class="mute">—</span>'}${moneyVal?`<div class="mute" style="font-size:.7rem">${moneyLbl}</div>`:""}</td>
+        <td class="kpi">${o.check?"$"+escapeHTML(o.check):'<span class="mute">—</span>'}</td>
+        <td class="kpi">${o.pf||'<span class="mute">—</span>'}</td>
+        <td>${o.fa.map(f=>`<span class="tag">${escapeHTML(f)}</span>`).join("")}
+          ${(o.notable&&o.notable.length)?`<div class="mute" style="font-size:.72rem;margin-top:4px">↳ ${escapeHTML(o.notable.slice(0,4).join(", "))}</div>`:""}
+          ${(o.backers&&o.backers.length)?`<div class="mute" style="font-size:.72rem;margin-top:4px">↳ Backers: ${escapeHTML(o.backers.slice(0,4).join(", "))}</div>`:""}
+        </td>
+      </tr>`;
+  }).join("");
+  root.innerHTML = `<div class="listWrap"><table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table></div>`;
+  root.querySelectorAll("th[data-sk]").forEach(th=>{
+    th.addEventListener("click",()=>{
+      const k = th.dataset.sk;
+      if(state.sortKey===k) state.sortDir*=-1;
+      else { state.sortKey = k; state.sortDir = 1; }
+      render();
+    });
+  });
+}
+
+/* ----- CARDS ----- */
+function renderCards(filtered){
+  const root = document.getElementById("vCards");
+  if(!filtered.length){ root.innerHTML = emptyState(); return; }
+  root.innerHTML = `<div class="grid">${filtered.map(o=>cardHTML(o)).join("")}</div>`;
+}
+function cardHTML(o){
+  const isInv  = INVESTOR_TYPES.includes(o.t);
+  const isAcc  = ACCELERATOR_TYPES.includes(o.t);
+  const isStart= o.t==="Startup";
+  let kpis = "";
+  if(isInv){
+    kpis = `<div class="kpiBlock">
+      <div><div class="k">Fund / AUM</div><div class="v">${o.aum?fmtMoney(o.aum*1e6):"—"}</div></div>
+      <div><div class="k">Ticket</div><div class="v">${o.check?"$"+escapeHTML(o.check):"—"}</div></div>
+      <div><div class="k">Stage focus</div><div class="v" style="font-size:.78rem;font-weight:500">${(o.stage||[]).join(", ")||"—"}</div></div>
+      <div><div class="k">Portfolio</div><div class="v">${o.pf||"—"}${o.lead?' · <span style="color:var(--accent);font-size:.7rem">LEADS</span>':""}</div></div>
+    </div>`;
+    if(o.notable && o.notable.length) kpis += `<div class="notable"><b>Notable backings</b>${escapeHTML(o.notable.slice(0,5).join(" · "))}</div>`;
+  } else if(isStart){
+    kpis = `<div class="kpiBlock">
+      <div><div class="k">Stage</div><div class="v">${o.sstage||"—"}</div></div>
+      <div><div class="k">Total raised</div><div class="v">${o.raised?fmtMoney(o.raised*1e6):"—"}</div></div>
+      <div><div class="k">Founded</div><div class="v">${o.yr||"—"}</div></div>
+      <div><div class="k">HQ</div><div class="v" style="font-size:.78rem;font-weight:500">${escapeHTML((o.city?o.city+", ":"")+o.co)}</div></div>
+    </div>`;
+    if(o.backers && o.backers.length) kpis += `<div class="notable"><b>Backed by</b>${escapeHTML(o.backers.slice(0,5).join(" · "))}</div>`;
+  } else if(isAcc){
+    kpis = `<div class="kpiBlock">
+      <div><div class="k">Cohorts / yr</div><div class="v">${o.cohorts||"—"}</div></div>
+      <div><div class="k">Cohort size</div><div class="v">${o.cohortSize||"—"}</div></div>
+      <div><div class="k">Terms</div><div class="v" style="font-size:.75rem;font-weight:500">${escapeHTML(o.terms||"—")}</div></div>
+      <div><div class="k">Alumni</div><div class="v">${o.pf||"—"}</div></div>
+    </div>`;
+    if(o.notable && o.notable.length) kpis += `<div class="notable"><b>Notable alumni</b>${escapeHTML(o.notable.slice(0,5).join(" · "))}</div>`;
+  }
+  return `
+    <article class="org">
+      <div class="titleRow">
+        <div class="name">${escapeHTML(o.n)}</div>
+        <span class="typeTag" style="${typeTagStyle(o.t)}">${escapeHTML(o.t)}</span>
+      </div>
+      <div class="meta">
+        <span>📍 ${escapeHTML((o.city?o.city+", ":"")+o.co)}</span>
+        ${o.yr?`<span>· est. ${o.yr}</span>`:""}
+      </div>
+      <div class="desc">${escapeHTML(o.s)}</div>
+      ${kpis}
+      <div class="focus">${o.fa.map(f=>`<span class="tag">${escapeHTML(f)}</span>`).join("")}</div>
+      <div class="row">
+        <span class="mute" style="font-size:.78rem">${escapeHTML(o.c)}</span>
+        ${o.u && o.u!=="#"?`<a class="visit" href="${o.u}" target="_blank" rel="noopener">Visit website →</a>`:""}
+      </div>
+    </article>`;
+}
+
+function emptyState(){
+  return `<div class="empty">
+    <h2>No organisations match those filters</h2>
+    <p>Try removing a filter or broadening your search.</p>
+  </div>`;
+}
+
+/* ----- CSV EXPORT ----- */
+function exportCSV(){
+  const rows = getFiltered();
+  if(!rows.length){ alert("No rows to export — adjust your filters first."); return; }
+  const head = ["Name","Type","City","Country","Continent","Founded","Focus areas",
+    "Fund/AUM (USD M)","Typical ticket (USD K range)","Stage focus","Portfolio count","Lead investor",
+    "Total raised (USD M)","Startup stage","Backers","Cohorts/yr","Cohort size","Terms","Notable","Website","Summary"];
+  const csv = [head.join(",")].concat(rows.map(o=>[
+    csvCell(o.n), csvCell(o.t), csvCell(o.city||""), csvCell(o.co), csvCell(o.c), o.yr||"",
+    csvCell(o.fa.join("; ")),
+    o.aum||"", csvCell(o.check||""), csvCell((o.stage||[]).join("; ")), o.pf||"", (o.lead===true?"Yes":o.lead===false?"No":""),
+    o.raised||"", csvCell(o.sstage||""), csvCell((o.backers||[]).join("; ")),
+    o.cohorts||"", o.cohortSize||"", csvCell(o.terms||""), csvCell((o.notable||[]).join("; ")),
+    csvCell(o.u||""), csvCell(o.s)
+  ].join(","))).join("\n");
+  const blob = new Blob([csv],{type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = "ocean-capital-finder.csv";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function csvCell(v){
+  v = String(v??""); if(/[",\n]/.test(v)) v = `"${v.replace(/"/g,'""')}"`;
+  return v;
+}
+function escapeHTML(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+init();
+</script>
+</body>
+</html>
