@@ -204,7 +204,7 @@
         select:focus,
         textarea:focus {
             outline: none;
-            border-color: var(-primary-green);
+            border-color: var(--primary-green);
             box-shadow: 0 0 0 3px rgba(45, 125, 70, 0.1);
         }
 
@@ -228,7 +228,7 @@
         }
 
         .toggle-switch.active {
-            background-color: var(-primary-green);
+            background-color: var(--primary-green);
         }
 
         .toggle-switch::after {
@@ -249,6 +249,2812 @@
 
         .toggle-label {
             font-size: 0.9rem;
-            color: var(-text-dark);
+            color: var(--text-dark);
             flex: 1;
         }
+
+        /* Term Sheet Styles */
+        .termsheet {
+            background-color: var(--white);
+            padding: 3rem;
+            font-family: 'Georgia', serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            font-size: 0.95rem;
+        }
+
+        .termsheet-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--navy);
+            padding-bottom: 1.5rem;
+        }
+
+        .termsheet-header h1 {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .termsheet-header p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .termsheet-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .termsheet-section h2 {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--navy);
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--primary-green);
+            padding-left: 0.75rem;
+        }
+
+        .termsheet-section h3 {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .termsheet-para {
+            margin-bottom: 0.75rem;
+            text-align: justify;
+        }
+
+        .termsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .termsheet-table th,
+        .termsheet-table td {
+            border: 1px solid #999;
+            padding: 0.6rem;
+            text-align: left;
+        }
+
+        .termsheet-table th {
+            background-color: #f0f0f0;
+            font-weight: bold;
+            color: var(--navy);
+        }
+
+        .termsheet-table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        /* Right Panel - Deal Health Checker */
+        .flag {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid transparent;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .flag.red {
+            background-color: #ffebee;
+            border-left-color: var(--red);
+            color: var(--red);
+        }
+
+        .flag.red .flag-title {
+            font-weight: 700;
+            color: var(--red);
+        }
+
+        .flag.amber {
+            background-color: #fff3e0;
+            border-left-color: var(--amber);
+            color: #e65100;
+        }
+
+        .flag.amber .flag-title {
+            font-weight: 700;
+            color: var(--amber);
+        }
+
+        .flag.green {
+            background-color: #e8f5e9;
+            border-left-color: var(--green);
+            color: var(--green);
+        }
+
+        .flag.green .flag-title {
+            font-weight: 700;
+            color: var(--green);
+        }
+
+        .flag-icon {
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        .flag-title {
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .flag-desc {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 0.8rem;
+        }
+
+        .flag-action {
+            display: block;
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            opacity: 0.9;
+        }
+
+        /* Calc Panel */
+        .calc-result {
+            background-color: #f5f5f5;
+            padding: 0.75rem;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+        }
+
+        .calc-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .calc-value {
+            font-size: 1.2rem;
+            color: var(--primary-green);
+            font-weight: 700;
+        }
+
+        .calc-note {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+        }
+
+        /* Tabs */
+        .tab-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 0.6rem 1rem;
+            background-color: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-light);
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 0.6rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #1e5a33;
+        }
+
+        .btn-secondary {
+            background-color: var(--teal);
+            color: var(--white);
+        }
+
+        .btn-secondary:hover {
+            background-color: #0f4a4a;
+        }
+
+        /* Scrollbar */
+        .panel-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .panel-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb {
+            background: var(--primary-green);
+            border-radius: 4px;
+        }
+
+        .panel-content::-webkit-scrollbar-thumb:hover {
+            background: #1e5a33;
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .container {
+                grid-template-columns: 300px 1fr 320px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+                height: auto;
+            }
+
+            .panel {
+                height: 400px;
+            }
+        }
+
+        @media print {
+            body, header, .container, .panel {
+                background: white;
+                box-shadow: none;
+            }
+            .panel-header, .action-buttons {
+                display: none;
+            }
+        }
+
+        /* Investor Template Library */
+        .template-library {
+            background: linear-gradient(135deg, #1a2730 0%, #2d7d46 100%);
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .template-library-title {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 0.6rem;
+        }
+
+        .template-library-label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.75rem;
+        }
+
+        .template-select {
+            width: 100%;
+            padding: 0.55rem 0.75rem;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            color: #ffffff;
+            font-size: 0.88rem;
+            margin-bottom: 0.6rem;
+            cursor: pointer;
+        }
+
+        .template-select option {
+            background: #1a2730;
+            color: #ffffff;
+        }
+
+        .template-load-btn {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            background: #b8860b;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 0.5rem;
+        }
+
+        .template-load-btn:hover {
+            background: #9a6f0a;
+        }
+
+        .template-info {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.4;
+            min-height: 2.5rem;
+        }
+
+        .template-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .template-tag {
+            background: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.85);
+            font-size: 0.7rem;
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Impact Term Sheet Builder v2</h1>
+        <div class="deal-type-selector" id="dealTypeSelector">
+            <button class="deal-type-btn active" data-type="safe">SAFE</button>
+            <button class="deal-type-btn" data-type="convertible">Conv. Note</button>
+            <button class="deal-type-btn" data-type="rbf">RBF</button>
+            <button class="deal-type-btn" data-type="equity">Priced Equity</button>
+            <button class="deal-type-btn" data-type="loan">Impact Loan</button>
+            <button class="deal-type-btn" data-type="grant">Recoverable Grant</button>
+            <button class="deal-type-btn" data-type="sib">Social Impact Bond</button>
+            <button class="deal-type-btn" data-type="safi">SAFI</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- LEFT PANEL: INPUTS -->
+        <div class="panel" id="leftPanel">
+            <div class="panel-header">Deal Parameters</div>
+            <div class="panel-content">
+
+                <!-- INVESTOR TEMPLATE LIBRARY -->
+                <div class="template-library">
+                    <div class="template-library-title">Quick-Start</div>
+                    <div class="template-library-label">📋 Load Investor Template</div>
+                    <select class="template-select" id="templateSelector" onchange="updateTemplateInfo()">
+                        <option value="">— Choose investor type —</option>
+                        <optgroup label="Impact VC / Equity">
+                            <option value="acumen">Acumen (Lean Data, patient capital)</option>
+                            <option value="omidyar">Omidyar Network (governance-focused)</option>
+                            <option value="leapfrog">LeapFrog Investments (emerging market FS)</option>
+                            <option value="blueOrchard">BlueOrchard / Schroders (microfinance DFI)</option>
+                        </optgroup>
+                        <optgroup label="DFIs / Public Finance">
+                            <option value="ifc">IFC (World Bank DFI — equity tranche)</option>
+                            <option value="cdc">British International Investment (BII/CDC)</option>
+                            <option value="fmo">FMO (Dutch DFI — mezzanine)</option>
+                        </optgroup>
+                        <optgroup label="Philanthropic / Recoverable">
+                            <option value="mackenzie">MacKenzie Scott / Collaborative Grant</option>
+                            <option value="gates">Gates Foundation PRI (Program-Related Investment)</option>
+                            <option value="skoll">Skoll Foundation (social enterprise support)</option>
+                        </optgroup>
+                        <optgroup label="Revenue-Based &amp; Blended">
+                            <option value="secha">SECHA / Impact RBF Africa</option>
+                            <option value="rootCapital">Root Capital (ag. SME loan — emerging market)</option>
+                            <option value="triodos">Triodos Investment (green bond / loan)</option>
+                        </optgroup>
+                        <optgroup label="ILPA Standard Templates">
+                            <option value="ilpaSeed">ILPA-Style Seed (impact aligned, founder-friendly)</option>
+                            <option value="ilpaSeriesA">ILPA-Style Series A (standard impact VC)</option>
+                        </optgroup>
+                    </select>
+                    <button class="template-load-btn" onclick="loadSelectedTemplate()">⚡ Load Template</button>
+                    <div class="template-info" id="templateInfo">Select an investor type to see deal term defaults and notes.</div>
+                    <div class="template-tags" id="templateTags"></div>
+                </div>
+
+                <!-- Party Information -->
+                <div class="section">
+                    <div class="section-title">Parties</div>
+                    <div class="form-group">
+                        <label>Company Name</label>
+                        <input type="text" id="companyName" placeholder="e.g. ClimateWorks Inc">
+                    </div>
+                    <div class="form-group">
+                        <label>Investor Name</label>
+                        <input type="text" id="investorName" placeholder="e.g. Impact Fund Partners">
+                    </div>
+                    <div class="form-group">
+                        <label>Investment Amount ($)</label>
+                        <input type="number" id="investmentAmount" placeholder="500000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Investment</label>
+                        <input type="date" id="investmentDate">
+                    </div>
+                </div>
+
+                <!-- SAFE/Convertible Parameters -->
+                <div class="section" id="safeSection">
+                    <div class="section-title">SAFE Terms</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Valuation Cap ($)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Typical: 3-8x current revenue. Uncapped SAFE is high-risk for founders.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="safeCap" placeholder="e.g., 3000000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Discount Rate (%)
+                            <label class="label-with-info">
+                                Discount Rate (%)
+                                <div class="info-icon">
+                                    ℹ️
+                                    <div class="tooltip">Market standard: 15-20% for impact. Higher = more founder dilution.</div>
+                                </div>
+                            </label>
+                        </label>
+                        <input type="number" id="safeDiscount" placeholder="20" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            MFN (Most Favoured Nations)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">If enabled, you get same terms if better SAFE issued later. Standard for angels.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch active" id="safeMFN" data-field="safeMFN"></button>
+                            <span class="toggle-label">Included</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Convertible Note Parameters -->
+                <div class="section" id="convertibleSection" style="display:none;">
+                    <div class="section-title">Conv. Note Terms</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Annual Interest Rate (%)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Impact market: 5-8%. Commercial: 8-12%. Higher = unfavourable to founder.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="convInterest" placeholder="6" min="0" max="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Maturity (months)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Standard: 18-24 months. Longer = more founder-friendly.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="convMaturity" placeholder="24" min="6" max="60">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Discount (%)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">15-20% standard. Discount on future qualified financing price.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="convDiscount" placeholder="20" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Qualified Financing Threshold ($)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Usually $500K-$1M. Conversion triggers at this funding round.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="convQualified" placeholder="500000" min="0">
+                    </div>
+                </div>
+
+                <!-- RBF Parameters -->
+                <div class="section" id="rbfSection" style="display:none;">
+                    <div class="section-title">RBF Terms</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Revenue Share (%)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Impact standard: 2-8%. Commercial: 8-15%. Monthly revenue × share until cap.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="rbfShare" placeholder="5" min="0" max="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Cap Multiple
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Impact: 1.3-2.0x. Commercial: 1.5-3x. Payments stop after investment × cap.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="rbfCap" placeholder="1.5" min="1" max="5" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Payment Holiday (months)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Standard: 3-6 months. Gives breathing room before revenue-sharing starts.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="rbfHoliday" placeholder="3" min="0" max="12">
+                    </div>
+                </div>
+
+                <!-- Priced Equity Parameters -->
+                <div class="section" id="equitySection" style="display:none;">
+                    <div class="section-title">Equity Terms</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Pre-Money Valuation ($)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Company value before this investment. Share % = investment / (pre-money + investment).</div>
+                            </div>
+                        </label>
+                        <input type="number" id="equityPreMoney" placeholder="2000000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Liquidation Preference
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">1x non-participating = founder-friendly. Participating or >1x = unfavourable.</div>
+                            </div>
+                        </label>
+                        <select id="equityLiqPref">
+                            <option value="1x-non">1x Non-Participating (Founder-friendly)</option>
+                            <option value="1x-part">1x Participating (Neutral)</option>
+                            <option value="2x-part">2x Participating (Investor-friendly)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Anti-Dilution
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Weighted-average broad-based = market standard. Full ratchet = founder-unfavourable.</div>
+                            </div>
+                        </label>
+                        <select id="equityAntiDilution">
+                            <option value="wa-broad">Weighted-Average Broad-Based (Standard)</option>
+                            <option value="wa-narrow">Weighted-Average Narrow-Based</option>
+                            <option value="full-ratchet">Full Ratchet (Unfavourable)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Investor Board Seats
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Seed: typically 0-1. Series A: 1 investor seat + 1 independent. Avoid investor majority.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="equityBoardSeats" placeholder="1" min="0" max="5">
+                    </div>
+                </div>
+
+                <!-- Impact Loan Parameters -->
+                <div class="section" id="loanSection" style="display:none;">
+                    <div class="section-title">Impact Loan Terms</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Interest Rate (%)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Below-market: 2-4%. Market-rate: 5-8%. Above-market: 8%+. More interest = higher risk.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="loanRate" placeholder="6" min="0" max="15">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Term (years)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Typical: 3-7 years. Longer terms = lower annual payments.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="loanTerm" placeholder="5" min="1" max="20">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Grace Period (months)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">0-24 months. No principal payments during grace period (interest still accrues).</div>
+                            </div>
+                        </label>
+                        <input type="number" id="loanGrace" placeholder="6" min="0" max="24">
+                    </div>
+                </div>
+
+                <!-- Recoverable Grant Parameters -->
+                <div class="section" id="grantSection" style="display:none;">
+                    <div class="section-title">Recoverable Grant Terms</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Repayment Trigger
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">When must repayment begin? E.g., "Successful exit", "Profitability", "Revenue >$1M".</div>
+                            </div>
+                        </label>
+                        <input type="text" id="grantTrigger" placeholder="e.g., Successful exit or $2M revenue">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Repayment Percentage (%)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Typically 50-100% of grant amount. Lower = more founder-friendly.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="grantRepayment" placeholder="75" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Maximum Repayment ($)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Cap on repayment (e.g., 1.2x original grant). Protects founders in upside scenarios.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="grantMaxRepay" placeholder="e.g., 1.2x" min="0">
+                    </div>
+                </div>
+
+                <!-- Social Impact Bond Parameters -->
+                <div class="section" id="sibSection" style="display:none;">
+                    <div class="section-title">SIB Terms</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Target Outcome
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Specific, measurable goal (e.g., "1000 people placed in employment").</div>
+                            </div>
+                        </label>
+                        <textarea id="sibOutcome" placeholder="e.g., 1000 unemployed youth placed in sustainable jobs" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Outcome Payment per Unit ($)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Investor repaid for each successful outcome achieved.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="sibPaymentPerUnit" placeholder="500" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Program Duration (months)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">How long until impact is measured? Usually 24-48 months.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="sibDuration" placeholder="36" min="12" max="84">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Minimum Achievement for Investor Return (%)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">At what % achievement does investor get repaid? E.g., 50% = breakeven at 50% target achieved.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="sibMinAchievement" placeholder="50" min="0" max="100">
+                    </div>
+                </div>
+
+                <!-- SAFI Parameters -->
+                <div class="section" id="safiSection" style="display:none;">
+                    <div class="section-title">SAFI Terms</div>
+                    <p style="font-size:0.8rem;color:#888;margin-bottom:0.75rem;line-height:1.4;">Simple Agreement for Future Impact — converts to equity or returns based on measurable impact outcomes, not just financing events.</p>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Valuation Cap ($)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Like a SAFE, this caps conversion valuation. Protects founders from excessive dilution at high future valuations.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="safiValuationCap" placeholder="e.g., 5000000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Discount Rate (%)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Impact market: 10-20%. Discount applied at conversion to reward early impact-aligned risk. Lower = more founder-friendly.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="safiDiscount" placeholder="15" min="0" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Impact Conversion Trigger
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">The specific impact milestone that triggers conversion (e.g., "1000 beneficiaries reached", "Net Zero verified"). Must be measurable and time-bound.</div>
+                            </div>
+                        </label>
+                        <textarea id="safiConversionTrigger" placeholder="e.g., 1,000 verified beneficiaries reached by Dec 2027 per independent assessor" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Primary Impact Metric
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">The IRIS+ or standardised metric used to measure impact. E.g., PI9470 (jobs created), GRI 201-1 (economic value). Specificity prevents disputes.</div>
+                            </div>
+                        </label>
+                        <input type="text" id="safiImpactMetric" placeholder="e.g., IRIS+ PI9470: Employment generated">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Impact Cap (at conversion)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Maximum equity stake or return on impact achievement. Prevents windfalls. E.g., "investor converts to max 15% equity regardless of impact achieved".</div>
+                            </div>
+                        </label>
+                        <input type="text" id="safiImpactCap" placeholder="e.g., Maximum 15% equity stake at full impact achievement">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Impact Default Clause
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">What happens if impact is not achieved? Options: Revert to SAFE terms, return principal, reduce conversion rate. Protects investor against impact washing.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch active" id="safiImpactDefault" data-field="safiImpactDefault"></button>
+                            <span class="toggle-label">Impact Default → Revert to SAFE Terms</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            MFN (Most Favoured Nations)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Investor gets same or better terms if later SAFI/SAFE issued with superior terms. Standard for early-stage impact deals.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch active" id="safiMFN" data-field="safiMFN"></button>
+                            <span class="toggle-label">MFN Included</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anti-Dilution & Governance -->
+                <div class="section">
+                    <div class="section-title">Governance</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Investor Vote Rights
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Majority consent = investor can block decisions. Avoid investor > founder voting power.</div>
+                            </div>
+                        </label>
+                        <select id="voteRights">
+                            <option value="none">No special voting rights</option>
+                            <option value="major">Major decisions only (sale, acquisition, etc.)</option>
+                            <option value="all">All decisions require consent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Drag-Along Threshold (%)
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">% vote needed to force minority shareholders to sell. 50%+ = risky. 75%+ = market standard. Avoid.</div>
+                            </div>
+                        </label>
+                        <input type="number" id="dragAlong" placeholder="50" min="50" max="100">
+                    </div>
+                </div>
+
+                <!-- Impact Covenants -->
+                <div class="section">
+                    <div class="section-title">Impact Covenants</div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Mission Lock
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Legally binds the company to its mission. Cannot change core purpose without investor consent.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="missionLock" data-field="missionLock"></button>
+                            <span class="toggle-label">Include Mission Lock</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Impact Reporting
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Contractual obligation (stronger than B Corp). Quarterly/annual reporting of impact metrics.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="impactReporting" data-field="impactReporting"></button>
+                            <span class="toggle-label">Require Reporting</span>
+                        </div>
+                        <select id="reportingFrequency" style="display:none;">
+                            <option value="quarterly">Quarterly</option>
+                            <option value="annual">Annual</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Third-Party Impact Verification
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Annual or periodic audit by independent impact assessor. Adds cost but increases credibility.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="thirdPartyVerif" data-field="thirdPartyVerif"></button>
+                            <span class="toggle-label">Require Verification</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Impact Default Clause
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">If impact targets are missed, separate consequences from financial default. Creates incentive for impact.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="impactDefault" data-field="impactDefault"></button>
+                            <span class="toggle-label">Include Clause</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            B Corp Status Maintenance
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Company must maintain B Corp certification (if applicable). Ensures social/environmental accountability.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="bCorpStatus" data-field="bCorpStatus"></button>
+                            <span class="toggle-label">Require B Corp</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            SDG Alignment Statement
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Maps company impact to UN Sustainable Development Goals. Strengthens mission clarity.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="sdgAlignment" data-field="sdgAlignment"></button>
+                            <span class="toggle-label">Include SDGs</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            IRIS+ Metric Reporting
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">GIIN standard metrics (WHO, WHAT, HOW MUCH, CONTRIBUTION, RISK). Industry best practice.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="irisMetrics" data-field="irisMetrics"></button>
+                            <span class="toggle-label">Require IRIS+</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Impact Board Seat
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Independent director with impact mandate. Ensures impact stays on board agenda.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="impactBoardSeat" data-field="impactBoardSeat"></button>
+                            <span class="toggle-label">Include Board Seat</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Community Benefit Sharing
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Company commits to share profits or ownership with communities served. Equity-focused.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="communityBenefit" data-field="communityBenefit"></button>
+                            <span class="toggle-label">Include Benefit Sharing</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-with-info">
+                            Environmental Covenant
+                            <div class="info-icon">
+                                ℹ️
+                                <div class="tooltip">Company commits to no net harm to environment. Binding legal obligation.</div>
+                            </div>
+                        </label>
+                        <div class="toggle-group">
+                            <button class="toggle-switch" id="envCovenant" data-field="envCovenant"></button>
+                            <span class="toggle-label">Include Covenant</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CENTER PANEL: TERM SHEET -->
+        <div class="panel" id="centerPanel">
+            <div class="panel-header">
+                Term Sheet Preview
+                <div class="action-buttons" style="margin-top: 0.5rem;">
+                    <button class="btn btn-primary" onclick="printTermSheet()">Print</button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">Copy</button>
+                </div>
+            </div>
+            <div class="panel-content" id="termsheetPreview">
+                <div class="termsheet" id="termsheetContent">
+                    <!-- Generated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: HEALTH CHECKER & CALCULATIONS -->
+        <div class="panel" id="rightPanel">
+            <div class="panel-header">Deal Health Check</div>
+            <div class="panel-content">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="switchTab('flags')">Red Flags</button>
+                    <button class="tab-btn" onclick="switchTab('calculations')">Returns</button>
+                    <button class="tab-btn" onclick="switchTab('benchmarks')">Benchmarks</button>
+                </div>
+
+                <!-- Flags Tab -->
+                <div id="flags" class="tab-content active">
+                    <div id="flagsContainer">
+                        <!-- Generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Calculations Tab -->
+                <div id="calculations" class="tab-content">
+                    <div id="calculationsContainer">
+                        <!-- Generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Benchmarks Tab -->
+                <div id="benchmarks" class="tab-content">
+                    <h4 style="margin-bottom: 1rem; color: var(--primary-green); font-weight: 600;">Market Standards by Deal Type</h4>
+                    <div id="benchmarksContainer">
+                        <!-- Generated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let appState = {
+            dealType: 'safe',
+            companyName: '',
+            investorName: '',
+            investmentAmount: 0,
+            investmentDate: new Date().toISOString().split('T')[0],
+            // SAFE
+            safeCap: 0,
+            safeDiscount: 0,
+            safeMFN: true,
+            // Convertible
+            convInterest: 0,
+            convMaturity: 0,
+            convDiscount: 0,
+            convQualified: 0,
+            // RBF
+            rbfShare: 0,
+            rbfCap: 0,
+            rbfHoliday: 0,
+            // Equity
+            equityPreMoney: 0,
+            equityLiqPref: '1x-non',
+            equityAntiDilution: 'wa-broad',
+            equityBoardSeats: 0,
+            // Loan
+            loanRate: 0,
+            loanTerm: 0,
+            loanGrace: 0,
+            // Grant
+            grantTrigger: '',
+            grantRepayment: 0,
+            grantMaxRepay: 0,
+            // SIB
+            sibOutcome: '',
+            sibPaymentPerUnit: 0,
+            sibDuration: 0,
+            sibMinAchievement: 0,
+            // SAFI (Simple Agreement for Future Impact)
+            safiImpactCap: '',
+            safiImpactMetric: '',
+            safiConversionTrigger: '',
+            safiValuationCap: 0,
+            safiDiscount: 0,
+            safiImpactDefault: true,
+            safiMFN: true,
+            // Governance
+            voteRights: 'none',
+            dragAlong: 50,
+            // Impact Covenants
+            missionLock: false,
+            impactReporting: false,
+            reportingFrequency: 'quarterly',
+            thirdPartyVerif: false,
+            impactDefault: false,
+            bCorpStatus: false,
+            sdgAlignment: false,
+            irisMetrics: false,
+            impactBoardSeat: false,
+            communityBenefit: false,
+            envCovenant: false
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            renderTermSheet();
+            renderFlags();
+            renderCalculations();
+            renderBenchmarks();
+        });
+
+        function setupEventListeners() {
+            // Deal type selector
+            document.querySelectorAll('.deal-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.deal-type-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    appState.dealType = this.dataset.type;
+                    updateDealTypeSections();
+                    renderTermSheet();
+                    renderFlags();
+                    renderCalculations();
+                });
+            });
+
+            // Party inputs
+            document.getElementById('companyName').addEventListener('input', e => {
+                appState.companyName = e.target.value;
+                renderTermSheet();
+            });
+            document.getElementById('investorName').addEventListener('input', e => {
+                appState.investorName = e.target.value;
+                renderTermSheet();
+            });
+            document.getElementById('investmentAmount').addEventListener('input', e => {
+                appState.investmentAmount = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderCalculations();
+                renderFlags();
+            });
+            document.getElementById('investmentDate').addEventListener('input', e => {
+                appState.investmentDate = e.target.value;
+                renderTermSheet();
+            });
+
+            // SAFE inputs
+            document.getElementById('safeCap').addEventListener('input', e => {
+                appState.safeCap = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderFlags();
+                renderCalculations();
+            });
+            document.getElementById('safeDiscount').addEventListener('input', e => {
+                appState.safeDiscount = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderFlags();
+                renderCalculations();
+            });
+
+            // Convertible inputs
+            document.getElementById('convInterest').addEventListener('input', e => {
+                appState.convInterest = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderFlags();
+            });
+            document.getElementById('convMaturity').addEventListener('input', e => {
+                appState.convMaturity = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+            });
+            document.getElementById('convDiscount').addEventListener('input', e => {
+                appState.convDiscount = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderFlags();
+            });
+            document.getElementById('convQualified').addEventListener('input', e => {
+                appState.convQualified = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+            });
+
+            // RBF inputs
+            document.getElementById('rbfShare').addEventListener('input', e => {
+                appState.rbfShare = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderFlags();
+            });
+            document.getElementById('rbfCap').addEventListener('input', e => {
+                appState.rbfCap = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+            });
+            document.getElementById('rbfHoliday').addEventListener('input', e => {
+                appState.rbfHoliday = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+            });
+
+            // Equity inputs
+            document.getElementById('equityPreMoney').addEventListener('input', e => {
+                appState.equityPreMoney = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderCalculations();
+            });
+            document.getElementById('equityLiqPref').addEventListener('change', e => {
+                appState.equityLiqPref = e.target.value;
+                renderTermSheet();
+                renderFlags();
+            });
+            document.getElementById('equityAntiDilution').addEventListener('change', e => {
+                appState.equityAntiDilution = e.target.value;
+                renderTermSheet();
+                renderFlags();
+            });
+            document.getElementById('equityBoardSeats').addEventListener('input', e => {
+                appState.equityBoardSeats = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderFlags();
+            });
+
+            // Loan inputs
+            document.getElementById('loanRate').addEventListener('input', e => {
+                appState.loanRate = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderFlags();
+                renderCalculations();
+            });
+            document.getElementById('loanTerm').addEventListener('input', e => {
+                appState.loanTerm = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderCalculations();
+            });
+            document.getElementById('loanGrace').addEventListener('input', e => {
+                appState.loanGrace = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+            });
+
+            // Grant inputs
+            document.getElementById('grantTrigger').addEventListener('input', e => {
+                appState.grantTrigger = e.target.value;
+                renderTermSheet();
+            });
+            document.getElementById('grantRepayment').addEventListener('input', e => {
+                appState.grantRepayment = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+            });
+            document.getElementById('grantMaxRepay').addEventListener('input', e => {
+                appState.grantMaxRepay = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+            });
+
+            // SIB inputs
+            document.getElementById('sibOutcome').addEventListener('input', e => {
+                appState.sibOutcome = e.target.value;
+                renderTermSheet();
+            });
+            document.getElementById('sibPaymentPerUnit').addEventListener('input', e => {
+                appState.sibPaymentPerUnit = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderCalculations();
+            });
+            document.getElementById('sibDuration').addEventListener('input', e => {
+                appState.sibDuration = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+            });
+            document.getElementById('sibMinAchievement').addEventListener('input', e => {
+                appState.sibMinAchievement = parseFloat(e.target.value) || 0;
+                renderTermSheet();
+                renderCalculations();
+            });
+
+            // SAFI inputs
+            document.getElementById('safiValuationCap').addEventListener('input', e => {
+                appState.safiValuationCap = parseFloat(e.target.value) || 0;
+                renderTermSheet(); renderCalculations();
+            });
+            document.getElementById('safiDiscount').addEventListener('input', e => {
+                appState.safiDiscount = parseFloat(e.target.value) || 0;
+                renderTermSheet(); renderFlags();
+            });
+            document.getElementById('safiConversionTrigger').addEventListener('input', e => {
+                appState.safiConversionTrigger = e.target.value;
+                renderTermSheet();
+            });
+            document.getElementById('safiImpactMetric').addEventListener('input', e => {
+                appState.safiImpactMetric = e.target.value;
+                renderTermSheet();
+            });
+            document.getElementById('safiImpactCap').addEventListener('input', e => {
+                appState.safiImpactCap = e.target.value;
+                renderTermSheet();
+            });
+
+            // Governance inputs
+            document.getElementById('voteRights').addEventListener('change', e => {
+                appState.voteRights = e.target.value;
+                renderTermSheet();
+                renderFlags();
+            });
+            document.getElementById('dragAlong').addEventListener('input', e => {
+                appState.dragAlong = parseFloat(e.target.value) || 50;
+                renderTermSheet();
+                renderFlags();
+            });
+
+            // Toggle switches
+            setupToggleSwitch('safeMFN', 'safeMFN');
+            setupToggleSwitch('safiImpactDefault', 'safiImpactDefault');
+            setupToggleSwitch('safiMFN', 'safiMFN');
+            setupToggleSwitch('missionLock', 'missionLock');
+            setupToggleSwitch('impactReporting', 'impactReporting');
+            setupToggleSwitch('thirdPartyVerif', 'thirdPartyVerif');
+            setupToggleSwitch('impactDefault', 'impactDefault');
+            setupToggleSwitch('bCorpStatus', 'bCorpStatus');
+            setupToggleSwitch('sdgAlignment', 'sdgAlignment');
+            setupToggleSwitch('irisMetrics', 'irisMetrics');
+            setupToggleSwitch('impactBoardSeat', 'impactBoardSeat');
+            setupToggleSwitch('communityBenefit', 'communityBenefit');
+            setupToggleSwitch('envCovenant', 'envCovenant');
+
+            // Reporting frequency toggle visibility
+            document.getElementById('impactReporting').addEventListener('click', function() {
+                const select = document.getElementById('reportingFrequency');
+                select.style.display = this.classList.contains('active') ? 'block' : 'none';
+            });
+            document.getElementById('reportingFrequency').addEventListener('change', e => {
+                appState.reportingFrequency = e.target.value;
+                renderTermSheet();
+            });
+        }
+
+        function setupToggleSwitch(elementId, stateKey) {
+            const toggle = document.getElementById(elementId);
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                appState[stateKey] = this.classList.contains('active');
+                renderTermSheet();
+                renderFlags();
+            });
+        }
+
+        function updateDealTypeSections() {
+            const sections = [
+                'safeSection', 'convertibleSection', 'rbfSection', 'equitySection',
+                'loanSection', 'grantSection', 'sibSection', 'safiSection'
+            ];
+            sections.forEach(s => document.getElementById(s).style.display = 'none');
+
+            const sectionMap = {
+                'safe': 'safeSection',
+                'convertible': 'convertibleSection',
+                'rbf': 'rbfSection',
+                'equity': 'equitySection',
+                'loan': 'loanSection',
+                'grant': 'grantSection',
+                'sib': 'sibSection',
+                'safi': 'safiSection'
+            };
+
+            if (sectionMap[appState.dealType]) {
+                document.getElementById(sectionMap[appState.dealType]).style.display = 'block';
+            }
+        }
+
+        function renderTermSheet() {
+            const content = generateTermSheetContent();
+            document.getElementById('termsheetContent').innerHTML = content;
+        }
+
+        function generateTermSheetContent() {
+            let html = `
+                <div class="termsheet-header">
+                    <h1>${{safe:'SAFE',safi:'SAFI',convertible:'Convertible Note',rbf:'Revenue-Based Finance',equity:'Priced Equity',loan:'Impact Loan',grant:'Recoverable Grant',sib:'Social Impact Bond'}[appState.dealType] || appState.dealType.toUpperCase()} Term Sheet</h1>
+                    <p>${appState.dealType === 'safi' ? 'Simple Agreement for Future Impact' : 'Investment Agreement'}</p>
+                </div>
+            `;
+
+            html += `
+                <div class="termsheet-section">
+                    <h2>1. Parties and Effective Date</h2>
+                    <p class="termsheet-para">
+                        This Term Sheet ("Agreement") is entered into as of ${appState.investmentDate || '[Date]'} between
+                        <strong>${appState.companyName || '[Company Name]'}</strong> ("Company") and
+                        <strong>${appState.investorName || '[Investor Name]'}</strong> ("Investor").
+                    </p>
+                </div>
+            `;
+
+            html += `
+                <div class="termsheet-section">
+                    <h2>2. Investment Terms</h2>
+                    <table class="termsheet-table">
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Terms</th>
+                        </tr>
+                        <tr>
+                            <td>Investment Amount</td>
+                            <td>${formatCurrency(appState.investmentAmount)}</td>
+                        </tr>
+            `;
+
+            if (appState.dealType === 'safe') {
+                html += `
+                    <tr>
+                        <td>Valuation Cap</td>
+                        <td>${appState.safeCap ? formatCurrency(appState.safeCap) : '[Uncapped]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Discount Rate</td>
+                        <td>${appState.safeDiscount ? appState.safeDiscount + '%' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>MFN Rights</td>
+                        <td>${appState.safeMFN ? 'Yes' : 'No'}</td>
+                    </tr>
+                `;
+            } else if (appState.dealType === 'convertible') {
+                html += `
+                    <tr>
+                        <td>Annual Interest Rate</td>
+                        <td>${appState.convInterest ? appState.convInterest + '%' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Maturity Date</td>
+                        <td>${appState.convMaturity ? appState.convMaturity + ' months' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Conversion Discount</td>
+                        <td>${appState.convDiscount ? appState.convDiscount + '%' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Qualified Financing Threshold</td>
+                        <td>${appState.convQualified ? formatCurrency(appState.convQualified) : '[To be determined]'}</td>
+                    </tr>
+                `;
+            } else if (appState.dealType === 'rbf') {
+                html += `
+                    <tr>
+                        <td>Revenue Share (%)</td>
+                        <td>${appState.rbfShare ? appState.rbfShare + '%' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Cap Multiple</td>
+                        <td>${appState.rbfCap ? appState.rbfCap + 'x' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Holiday</td>
+                        <td>${appState.rbfHoliday ? appState.rbfHoliday + ' months' : 'None'}</td>
+                    </tr>
+                `;
+            } else if (appState.dealType === 'equity') {
+                const postMoney = appState.equityPreMoney + appState.investmentAmount;
+                const sharePercent = postMoney > 0 ? ((appState.investmentAmount / postMoney) * 100).toFixed(2) : 0;
+                html += `
+                    <tr>
+                        <td>Pre-Money Valuation</td>
+                        <td>${formatCurrency(appState.equityPreMoney)}</td>
+                    </tr>
+                    <tr>
+                        <td>Post-Money Valuation</td>
+                        <td>${formatCurrency(postMoney)}</td>
+                    </tr>
+                    <tr>
+                        <td>Investor Ownership</td>
+                        <td>${sharePercent}%</td>
+                    </tr>
+                    <tr>
+                        <td>Liquidation Preference</td>
+                        <td>${getLiqPrefLabel(appState.equityLiqPref)}</td>
+                    </tr>
+                    <tr>
+                        <td>Anti-Dilution</td>
+                        <td>${getAntiDilutionLabel(appState.equityAntiDilution)}</td>
+                    </tr>
+                    <tr>
+                        <td>Investor Board Seats</td>
+                        <td>${appState.equityBoardSeats}</td>
+                    </tr>
+                `;
+            } else if (appState.dealType === 'loan') {
+                const monthlyPayment = calculateLoanPayment(appState.investmentAmount, appState.loanRate, appState.loanTerm);
+                html += `
+                    <tr>
+                        <td>Interest Rate (Annual)</td>
+                        <td>${appState.loanRate ? appState.loanRate + '%' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Term</td>
+                        <td>${appState.loanTerm ? appState.loanTerm + ' years' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Grace Period</td>
+                        <td>${appState.loanGrace ? appState.loanGrace + ' months' : 'None'}</td>
+                    </tr>
+                    <tr>
+                        <td>Estimated Monthly Payment</td>
+                        <td>${formatCurrency(monthlyPayment)}</td>
+                    </tr>
+                `;
+            } else if (appState.dealType === 'grant') {
+                html += `
+                    <tr>
+                        <td>Repayment Trigger</td>
+                        <td>${appState.grantTrigger || '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Repayment Percentage</td>
+                        <td>${appState.grantRepayment ? appState.grantRepayment + '%' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Maximum Repayment</td>
+                        <td>${appState.grantMaxRepay ? formatCurrency(appState.grantMaxRepay) : 'None'}</td>
+                    </tr>
+                `;
+            } else if (appState.dealType === 'sib') {
+                html += `
+                    <tr>
+                        <td>Target Outcome</td>
+                        <td>${appState.sibOutcome || '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Outcome Payment per Unit</td>
+                        <td>${formatCurrency(appState.sibPaymentPerUnit)}</td>
+                    </tr>
+                    <tr>
+                        <td>Program Duration</td>
+                        <td>${appState.sibDuration ? appState.sibDuration + ' months' : '[To be determined]'}</td>
+                    </tr>
+                `;
+            } else if (appState.dealType === 'safi') {
+                html += `
+                    <tr>
+                        <td>Instrument Type</td>
+                        <td>Simple Agreement for Future Impact (SAFI)</td>
+                    </tr>
+                    <tr>
+                        <td>Valuation Cap</td>
+                        <td>${appState.safiValuationCap ? formatCurrency(appState.safiValuationCap) : '[Uncapped — high dilution risk]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Discount Rate</td>
+                        <td>${appState.safiDiscount ? appState.safiDiscount + '%' : '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Impact Conversion Trigger</td>
+                        <td>${appState.safiConversionTrigger || '[To be determined — must be measurable and time-bound]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Primary Impact Metric</td>
+                        <td>${appState.safiImpactMetric || '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Impact Cap at Conversion</td>
+                        <td>${appState.safiImpactCap || '[To be determined]'}</td>
+                    </tr>
+                    <tr>
+                        <td>Impact Default Clause</td>
+                        <td>${appState.safiImpactDefault ? 'Yes — Reverts to SAFE terms if impact not achieved' : 'No impact default clause'}</td>
+                    </tr>
+                    <tr>
+                        <td>MFN Rights</td>
+                        <td>${appState.safiMFN ? 'Yes — Most Favoured Nations applies' : 'No'}</td>
+                    </tr>
+                `;
+            }
+
+            html += `</table></div>`;
+
+            // SAFI-specific legal framework section
+            if (appState.dealType === 'safi') {
+                html += `
+                <div class="termsheet-section">
+                    <h2>2a. SAFI Legal Framework</h2>
+                    <h3>Nature of Instrument</h3>
+                    <p class="termsheet-para">This SAFI (Simple Agreement for Future Impact) is an impact-linked financing instrument that grants the Investor the right to receive equity or financial returns contingent upon the Company achieving defined, independently verified impact outcomes. The SAFI is not a debt instrument and creates no obligation to repay principal absent an impact default event.</p>
+                    <h3>Conversion Mechanism</h3>
+                    <p class="termsheet-para">Conversion to equity shall occur upon: (i) achievement of the Impact Conversion Trigger as verified by an independent assessor; and (ii) a priced equity financing round at or above the Qualified Financing Threshold. Conversion shall occur at the lower of the Valuation Cap price or the financing round price, minus the Discount Rate.</p>
+                    <h3>Impact Verification</h3>
+                    <p class="termsheet-para">Impact achievement shall be measured using ${appState.safiImpactMetric || '[Specified Impact Metric]'} and verified by a mutually agreed independent assessor within 90 days of the claimed trigger date. The Company shall bear reasonable assessment costs.</p>
+                    <h3>Impact Default</h3>
+                    <p class="termsheet-para">${appState.safiImpactDefault ? 'If the Impact Conversion Trigger is not achieved within the agreed timeframe, this SAFI shall automatically convert to a standard SAFE instrument under identical valuation cap and discount terms, without any cash repayment obligation.' : 'The parties agree to negotiate in good faith if the Impact Conversion Trigger is not achieved within the agreed timeframe.'}</p>
+                    <h3>Non-Dilution Prior to Conversion</h3>
+                    <p class="termsheet-para">Until conversion, the Investor holds no equity and has no voting rights. The SAFI represents a contingent future right only. The Company may issue equity, debt, or other SAFIs without triggering conversion except as specified herein.</p>
+                </div>`;
+            }
+
+            // Governance section
+            html += `
+                <div class="termsheet-section">
+                    <h2>3. Governance & Control</h2>
+                    <h3>Voting Rights</h3>
+                    <p class="termsheet-para">
+                        ${getVoteRightsDescription(appState.voteRights)}
+                    </p>
+                    <h3>Drag-Along Threshold</h3>
+                    <p class="termsheet-para">
+                        Investor may force minority shareholders to participate in a liquidity event if holders of ${appState.dragAlong}% of shares approve.
+                    </p>
+                </div>
+            `;
+
+            // Impact covenants section
+            if (hasImpactCovenants()) {
+                html += `<div class="termsheet-section"><h2>4. Impact Covenants</h2>`;
+
+                if (appState.missionLock) {
+                    html += `<h3>Mission Lock</h3><p class="termsheet-para">The Company covenants to maintain its core mission and social/environmental purpose. Any material change requires Investor approval.</p>`;
+                }
+                if (appState.impactReporting) {
+                    const freq = appState.reportingFrequency === 'quarterly' ? 'quarterly' : 'annual';
+                    html += `<h3>Impact Reporting</h3><p class="termsheet-para">The Company shall provide ${freq} impact reports detailing key metrics, outcomes, and progress toward stated targets.</p>`;
+                }
+                if (appState.thirdPartyVerif) {
+                    html += `<h3>Third-Party Verification</h3><p class="termsheet-para">Annual impact audit by independent verifier. Costs shared according to agreement.</p>`;
+                }
+                if (appState.impactDefault) {
+                    html += `<h3>Impact Default</h3><p class="termsheet-para">Material failure to achieve impact targets is a separate default condition, subject to cure provisions.</p>`;
+                }
+                if (appState.bCorpStatus) {
+                    html += `<h3>B Corp Certification</h3><p class="termsheet-para">The Company shall maintain B Corp certification throughout investment term.</p>`;
+                }
+                if (appState.sdgAlignment) {
+                    html += `<h3>SDG Alignment</h3><p class="termsheet-para">Company commits to UN Sustainable Development Goals aligned with its core mission.</p>`;
+                }
+                if (appState.irisMetrics) {
+                    html += `<h3>IRIS+ Metrics</h3><p class="termsheet-para">Impact measured using GIIN IRIS+ standard, covering WHO/WHAT/HOW MUCH/CONTRIBUTION/RISK dimensions.</p>`;
+                }
+                if (appState.impactBoardSeat) {
+                    html += `<h3>Impact Board Seat</h3><p class="termsheet-para">Independent director with impact mandate to oversee company's social/environmental performance.</p>`;
+                }
+                if (appState.communityBenefit) {
+                    html += `<h3>Community Benefit Sharing</h3><p class="termsheet-para">Company commits to share material economic benefits with communities served through ownership, profit-sharing, or dividend structures.</p>`;
+                }
+                if (appState.envCovenant) {
+                    html += `<h3>Environmental Covenant</h3><p class="termsheet-para">Company commits to no net harm principle and compliance with environmental regulations. Company shall monitor and report on environmental impact.</p>`;
+                }
+
+                html += `</div>`;
+            }
+
+            html += `
+                <div class="termsheet-section">
+                    <h2>5. Conditions</h2>
+                    <p class="termsheet-para">
+                        This Term Sheet shall be subject to satisfactory completion of legal due diligence and
+                        preparation of definitive agreements. All terms are subject to good faith negotiation
+                        and binding commitment upon signing of definitive agreements.
+                    </p>
+                </div>
+            `;
+
+            return html;
+        }
+
+        function renderFlags() {
+            const flags = generateRedFlags();
+            let html = '';
+            flags.forEach(flag => {
+                html += `
+                    <div class="flag ${flag.level}">
+                        <span class="flag-icon">${flag.icon}</span>
+                        <span class="flag-title">${flag.title}</span>
+                        <span class="flag-desc">${flag.description}</span>
+                        <span class="flag-action">Action: ${flag.action}</span>
+                    </div>
+                `;
+            });
+            document.getElementById('flagsContainer').innerHTML = html || '<p style="color: var(--green); text-align: center; padding: 1rem;">All clear! No major red flags detected.</p>';
+        }
+
+        function generateRedFlags() {
+            const flags = [];
+
+            if (appState.dealType === 'safe') {
+                if (!appState.safeCap) {
+                    flags.push({
+                        level: 'red',
+                        icon: '🔴',
+                        title: 'Uncapped SAFE',
+                        description: 'High dilution risk at exit',
+                        action: 'Negotiate valuation cap (3-8x revenue typical)'
+                    });
+                }
+                if (appState.safeDiscount > 25) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'Above-Market Discount',
+                        description: `${appState.safeDiscount}% is above 15-20% impact market standard`,
+                        action: 'Push for 15-20% discount range'
+                    });
+                }
+                if (appState.safeDiscount === 0) {
+                    flags.push({
+                        level: 'green',
+                        icon: '✅',
+                        title: 'No Discount',
+                        description: 'Most founder-friendly approach',
+                        action: 'Consider caps to attract investors'
+                    });
+                }
+            }
+
+            if (appState.dealType === 'convertible') {
+                if (appState.convInterest > 8) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'Above-Market Interest',
+                        description: `${appState.convInterest}% exceeds impact standard of 5-8%`,
+                        action: 'Negotiate rate down to 5-8%'
+                    });
+                }
+                if (appState.convDiscount > 25) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'High Conversion Discount',
+                        description: `${appState.convDiscount}% is above market (15-20%)`,
+                        action: 'Reduce discount to 15-20%'
+                    });
+                }
+            }
+
+            if (appState.dealType === 'rbf') {
+                if (appState.rbfShare > 8) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'High Revenue Share',
+                        description: `${appState.rbfShare}% exceeds impact market (2-8%)`,
+                        action: 'Negotiate down to 2-8% range'
+                    });
+                }
+                if (appState.rbfCap > 2.0) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'High Cap Multiple',
+                        description: `${appState.rbfCap}x exceeds impact standard (1.3-2.0x)`,
+                        action: 'Push for 1.3-2.0x multiple'
+                    });
+                }
+            }
+
+            if (appState.dealType === 'equity') {
+                if (appState.equityLiqPref !== '1x-non') {
+                    flags.push({
+                        level: 'red',
+                        icon: '🔴',
+                        title: 'Unfavourable Liquidation Preference',
+                        description: `${getLiqPrefLabel(appState.equityLiqPref)} is founder-unfavourable`,
+                        action: 'Insist on 1x Non-Participating'
+                    });
+                }
+                if (appState.equityAntiDilution === 'full-ratchet') {
+                    flags.push({
+                        level: 'red',
+                        icon: '🔴',
+                        title: 'Full Ratchet Anti-Dilution',
+                        description: 'Highly unfavourable to founders in down rounds',
+                        action: 'Negotiate Weighted-Average Broad-Based'
+                    });
+                }
+                const postMoney = appState.equityPreMoney + appState.investmentAmount;
+                const sharePercent = postMoney > 0 ? (appState.investmentAmount / postMoney) * 100 : 0;
+                if (sharePercent > 50) {
+                    flags.push({
+                        level: 'red',
+                        icon: '🔴',
+                        title: 'Investor Majority Control',
+                        description: 'Investor owns >50% - founders lose control',
+                        action: 'Structure as smaller round or increase valuation'
+                    });
+                }
+                if (appState.equityBoardSeats > 2) {
+                    flags.push({
+                        level: 'red',
+                        icon: '🔴',
+                        title: 'Too Many Investor Board Seats',
+                        description: 'Multiple investor seats risks founder control',
+                        action: 'Limit to 1 investor seat + 1 independent'
+                    });
+                }
+            }
+
+            if (appState.dealType === 'loan') {
+                if (appState.loanRate > 8) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'High Interest Rate',
+                        description: `${appState.loanRate}% exceeds impact market (5-8%)`,
+                        action: 'Negotiate to 5-8% range'
+                    });
+                }
+            }
+
+            // Governance flags
+            if (appState.voteRights === 'all') {
+                flags.push({
+                    level: 'red',
+                    icon: '🔴',
+                    title: 'Investor Consent on All Decisions',
+                    description: 'Investor can block every business decision',
+                    action: 'Limit to major decisions only (sale, acquisition, etc.)'
+                });
+            }
+
+            if (appState.dragAlong < 75) {
+                flags.push({
+                    level: 'amber',
+                    icon: '🟡',
+                    title: 'Low Drag-Along Threshold',
+                    description: `${appState.dragAlong}% threshold means investor can force exit with lower buy-in`,
+                    action: 'Push threshold to 75-80%'
+                });
+            }
+
+            // Impact flags
+            if (!appState.impactReporting && appState.investmentAmount > 100000) {
+                flags.push({
+                    level: 'amber',
+                    icon: '🟡',
+                    title: 'No Impact Reporting',
+                    description: 'Impact investors typically require quarterly/annual metrics',
+                    action: 'Add quarterly or annual impact reporting covenant'
+                });
+            }
+
+            if (!appState.impactReporting && !appState.impactDefault && !appState.irisMetrics) {
+                flags.push({
+                    level: 'green',
+                    icon: '✅',
+                    title: 'Minimal Impact Burden',
+                    description: 'No impact covenants - flexibility for founders',
+                    action: 'Consider adding impact reporting for impact investors'
+                });
+            }
+
+            if (appState.dealType === 'safi') {
+                if (!appState.safiConversionTrigger) {
+                    flags.push({
+                        level: 'red',
+                        icon: '🔴',
+                        title: 'No Impact Trigger Defined',
+                        description: 'SAFI without a measurable conversion trigger is unenforceable',
+                        action: 'Define specific, time-bound, independently verifiable impact milestone'
+                    });
+                }
+                if (!appState.safiValuationCap) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'Uncapped SAFI',
+                        description: 'No valuation cap means excessive dilution risk at exit',
+                        action: 'Negotiate valuation cap (3-8x current revenue typical)'
+                    });
+                }
+                if (!appState.safiImpactMetric) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'No Standardised Metric',
+                        description: 'Without IRIS+ or standardised metric, impact measurement is disputed',
+                        action: 'Specify IRIS+, GRI, or SDG-linked indicator with baseline data'
+                    });
+                }
+                if (appState.safiDiscount > 25) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'High Discount Rate',
+                        description: `${appState.safiDiscount}% exceeds impact market standard (10-20%)`,
+                        action: 'Negotiate to 10-20% range for impact-aligned deals'
+                    });
+                }
+                if (!appState.safiImpactDefault) {
+                    flags.push({
+                        level: 'amber',
+                        icon: '🟡',
+                        title: 'No Impact Default Protection',
+                        description: 'Without impact default clause, investor has no recourse if impact not achieved',
+                        action: 'Add clause: if trigger not met within timeframe, revert to SAFE terms'
+                    });
+                }
+                if (appState.safiConversionTrigger && appState.safiImpactMetric && appState.safiValuationCap) {
+                    flags.push({
+                        level: 'green',
+                        icon: '✅',
+                        title: 'Well-Structured SAFI',
+                        description: 'Trigger, metric and cap defined — legally enforceable framework',
+                        action: 'Ensure independent assessor is named in final agreement'
+                    });
+                }
+            }
+
+            return flags;
+        }
+
+        function renderCalculations() {
+            let html = '';
+
+            if (appState.dealType === 'safe') {
+                const scenarios = calculateSAFEDilution();
+                html += `<h4 style="margin-bottom: 1rem; color: var(--primary-green); font-weight: 600;">Dilution at Exit Valuations</h4>`;
+                scenarios.forEach(s => {
+                    html += `
+                        <div class="calc-result">
+                            <div class="calc-label">Exit at ${s.label}</div>
+                            <div class="calc-value">${s.dilution}%</div>
+                            <div class="calc-note">Your ownership becomes ${s.ownership}% (if uncapped dilutes more)</div>
+                        </div>
+                    `;
+                });
+            } else if (appState.dealType === 'convertible') {
+                const eff = calculateConvertibleReturn();
+                html += `
+                    <div class="calc-result">
+                        <div class="calc-label">Effective Dilution (at discount)</div>
+                        <div class="calc-value">${eff.dilution}%</div>
+                        <div class="calc-note">Founder discount vs future qualified round</div>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-label">Interest Accrued (12 mo)</div>
+                        <div class="calc-value">${formatCurrency(eff.interest12mo)}</div>
+                        <div class="calc-note">At ${appState.convInterest}% annual rate</div>
+                    </div>
+                `;
+            } else if (appState.dealType === 'rbf') {
+                const rbf = calculateRBFMetrics();
+                html += `
+                    <div class="calc-result">
+                        <div class="calc-label">Payoff Point (base scenario)</div>
+                        <div class="calc-value">${formatCurrency(rbf.payoffRevenue)}</div>
+                        <div class="calc-note">Cumulative revenue needed to repay investment</div>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-label">Max Payback (at cap)</div>
+                        <div class="calc-value">${formatCurrency(rbf.maxPayback)}</div>
+                        <div class="calc-note">Payments stop at ${appState.rbfCap}x cap</div>
+                    </div>
+                `;
+            } else if (appState.dealType === 'equity') {
+                const eq = calculateEquityMetrics();
+                html += `<h4 style="margin-bottom: 1rem; color: var(--primary-green); font-weight: 600;">Return Scenarios (5yr)</h4>`;
+                html += `
+                    <table class="termsheet-table" style="font-size: 0.8rem;">
+                        <tr>
+                            <th>Scenario</th>
+                            <th>Exit Val</th>
+                            <th>MOIC</th>
+                            <th>IRR</th>
+                        </tr>
+                        <tr>
+                            <td>Bear (2x)</td>
+                            <td>${formatCurrency(eq.bear.exitVal)}</td>
+                            <td>${eq.bear.moic}x</td>
+                            <td>${eq.bear.irr}%</td>
+                        </tr>
+                        <tr>
+                            <td>Base (5x)</td>
+                            <td>${formatCurrency(eq.base.exitVal)}</td>
+                            <td>${eq.base.moic}x</td>
+                            <td>${eq.base.irr}%</td>
+                        </tr>
+                        <tr>
+                            <td>Bull (10x)</td>
+                            <td>${formatCurrency(eq.bull.exitVal)}</td>
+                            <td>${eq.bull.moic}x</td>
+                            <td>${eq.bull.irr}%</td>
+                        </tr>
+                    </table>
+                `;
+            } else if (appState.dealType === 'loan') {
+                const loan = calculateLoanMetrics();
+                html += `
+                    <div class="calc-result">
+                        <div class="calc-label">Monthly Payment</div>
+                        <div class="calc-value">${formatCurrency(loan.monthlyPayment)}</div>
+                        <div class="calc-note">Based on ${appState.loanTerm}yr term at ${appState.loanRate}%</div>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-label">Total Interest Paid</div>
+                        <div class="calc-value">${formatCurrency(loan.totalInterest)}</div>
+                        <div class="calc-note">Over full ${appState.loanTerm} year term</div>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-label">Blended Cost of Capital</div>
+                        <div class="calc-value">${loan.blendedCost}%</div>
+                        <div class="calc-note">Effective annual rate including grace period</div>
+                    </div>
+                `;
+            } else if (appState.dealType === 'sib') {
+                const sib = calculateSIBMetrics();
+                html += `<h4 style="margin-bottom: 1rem; color: var(--primary-green); font-weight: 600;">Outcome Payment Scenarios</h4>`;
+                html += `
+                    <div class="calc-result">
+                        <div class="calc-label">50% Achievement</div>
+                        <div class="calc-value">${formatCurrency(sib.paymentAt50)}</div>
+                        <div class="calc-note">NPV of outcomes at 50% target</div>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-label">75% Achievement</div>
+                        <div class="calc-value">${formatCurrency(sib.paymentAt75)}</div>
+                        <div class="calc-note">NPV of outcomes at 75% target</div>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-label">100% Achievement</div>
+                        <div class="calc-value">${formatCurrency(sib.paymentAt100)}</div>
+                        <div class="calc-note">Full outcome payment (best case)</div>
+                    </div>
+                `;
+            } else if (appState.dealType === 'safi') {
+                const inv = appState.investmentAmount || 0;
+                const cap = appState.safiValuationCap || 0;
+                const disc = appState.safiDiscount || 15;
+                html += `<h4 style="margin-bottom: 1rem; color: var(--primary-green); font-weight: 600;">SAFI Dilution Scenarios (at Impact Achievement)</h4>`;
+                const scenarios = cap > 0
+                    ? [
+                        { label: 'At cap valuation', val: cap },
+                        { label: '2x cap valuation', val: cap * 2 },
+                        { label: '5x cap valuation', val: cap * 5 }
+                      ]
+                    : [
+                        { label: '$5M exit', val: 5000000 },
+                        { label: '$10M exit', val: 10000000 },
+                        { label: '$25M exit', val: 25000000 }
+                      ];
+                scenarios.forEach(s => {
+                    const dilution = inv > 0 && s.val > 0 ? ((inv / s.val) * 100).toFixed(1) : '?';
+                    const discountedVal = s.val * (1 - disc / 100);
+                    const dilutionWithDisc = inv > 0 && discountedVal > 0 ? ((inv / discountedVal) * 100).toFixed(1) : '?';
+                    html += `<div class="calc-result">
+                        <div class="calc-label">${s.label}</div>
+                        <div class="calc-value">${dilution}% → ${dilutionWithDisc}%</div>
+                        <div class="calc-note">Without discount → with ${disc}% discount applied</div>
+                    </div>`;
+                });
+                html += `<div class="calc-result" style="border-top:2px solid var(--primary-green);margin-top:0.5rem">
+                    <div class="calc-label">Impact Upside for Investor</div>
+                    <div class="calc-value">Alignment Premium</div>
+                    <div class="calc-note">SAFI aligns returns with impact — if trigger not met, reverts to SAFE (principal protected)</div>
+                </div>`;
+            } else {
+                html = '<p style="color: var(--text-light); padding: 1rem;">Return metrics will calculate based on terms entered.</p>';
+            }
+
+            document.getElementById('calculationsContainer').innerHTML = html;
+        }
+
+        function renderBenchmarks() {
+            const benchmarks = {
+                'safe': {
+                    'Valuation Cap': '3-8x current revenue',
+                    'Discount Rate': '15-20%',
+                    'MFN': 'Standard for angels',
+                },
+                'convertible': {
+                    'Interest Rate': '5-8% (impact), 8-12% (commercial)',
+                    'Maturity': '18-24 months',
+                    'Discount': '15-20%',
+                    'Qualified Financing': '$500K-$1M'
+                },
+                'rbf': {
+                    'Revenue Share': '2-8% (impact), 8-15% (commercial)',
+                    'Cap Multiple': '1.3-2.0x (impact), 1.5-3x (commercial)',
+                    'Payment Holiday': '3-6 months'
+                },
+                'equity': {
+                    'Seed Board': '2 Founders + 1 Investor (typical)',
+                    'Series A Board': '2F + 2I + 1 Independent',
+                    'Liquidation': '1x Non-Participating (standard)',
+                    'Anti-Dilution': 'Weighted-Average Broad-Based'
+                },
+                'loan': {
+                    'Interest Rate': '2-4% (concessional), 5-8% (market), 8%+ (commercial)',
+                    'Term': '3-7 years typical',
+                    'Grace Period': '0-24 months'
+                },
+                'grant': {
+                    'Repayment %': '50-100% of grant',
+                    'Cap': '1.0-1.5x original (prevents upside clawback)',
+                },
+                'sib': {
+                    'Achievement Threshold': '50-100% target for investor return',
+                    'Duration': '24-48 months typical',
+                    'Verification': 'Independent impact assessor required'
+                },
+                'safi': {
+                    'Valuation Cap': '3-8x current revenue (same as SAFE)',
+                    'Discount Rate': '10-20% (impact market standard)',
+                    'Impact Trigger': 'Must be SMART: Specific, Measurable, Achievable, Relevant, Time-bound',
+                    'Metric Standard': 'IRIS+ preferred; GRI, SDG-aligned, or UN SDG also acceptable',
+                    'Assessment': 'Independent third-party assessor typically required',
+                    'Default Fallback': 'Standard: revert to SAFE terms if impact not achieved',
+                    'Conversion Window': '18-48 months from investment (trigger must be within this)',
+                    'MFN': 'Standard — same as SAFE'
+                }
+            };
+
+            let html = '<h4 style="margin-bottom: 0.5rem; color: var(--primary-green); font-weight: 600;">Market Standards</h4>';
+            const relevant = benchmarks[appState.dealType] || {};
+            Object.entries(relevant).forEach(([key, val]) => {
+                html += `<div class="calc-result"><div class="calc-label">${key}</div><div class="calc-note">${val}</div></div>`;
+            });
+
+            document.getElementById('benchmarksContainer').innerHTML = html;
+        }
+
+        // Calculation functions
+        function calculateSAFEDilution() {
+            if (!appState.safeCap || appState.safeCap === 0) {
+                return [
+                    { label: '2x (bear)', dilution: 'Unknown (uncapped)', ownership: '?' },
+                    { label: '5x (base)', dilution: 'Unknown (uncapped)', ownership: '?' },
+                    { label: '10x (bull)', dilution: 'Unknown (uncapped)', ownership: '?' }
+                ];
+            }
+
+            const scenarios = [
+                { label: '2x', val: appState.safeCap * 2 },
+                { label: '5x', val: appState.safeCap * 5 },
+                { label: '10x', val: appState.safeCap * 10 }
+            ];
+
+            return scenarios.map(s => {
+                const effectivePrice = (s.val / (appState.investmentAmount / 100));
+                const dilutedOwnership = (appState.investmentAmount / s.val) * 100;
+                return {
+                    label: s.label,
+                    dilution: ((appState.safeDiscount / 100) * 100).toFixed(0) + '%',
+                    ownership: dilutedOwnership.toFixed(1)
+                };
+            });
+        }
+
+        function calculateConvertibleReturn() {
+            const dilution = appState.convDiscount || 20;
+            const interest12mo = (appState.investmentAmount * (appState.convInterest || 6) / 100);
+            return {
+                dilution: dilution.toFixed(1),
+                interest12mo: interest12mo
+            };
+        }
+
+        function calculateRBFMetrics() {
+            const sharePercent = appState.rbfShare / 100;
+            const monthlyRevenue = appState.investmentAmount / (12 * sharePercent * (appState.rbfCap || 1.5));
+            const payoffRevenue = appState.investmentAmount / sharePercent;
+            const maxPayback = appState.investmentAmount * (appState.rbfCap || 1.5);
+
+            return {
+                payoffRevenue: payoffRevenue,
+                maxPayback: maxPayback
+            };
+        }
+
+        function calculateEquityMetrics() {
+            const postMoney = appState.equityPreMoney + appState.investmentAmount;
+            const ownershipPercent = (appState.investmentAmount / postMoney) * 100;
+
+            const scenarios = {
+                bear: { multiple: 2 },
+                base: { multiple: 5 },
+                bull: { multiple: 10 }
+            };
+
+            Object.values(scenarios).forEach(s => {
+                const exitVal = appState.equityPreMoney * s.multiple;
+                const investorVal = (ownershipPercent / 100) * exitVal;
+                s.exitVal = exitVal;
+                s.moic = (investorVal / appState.investmentAmount).toFixed(2);
+                s.irr = ((Math.pow(investorVal / appState.investmentAmount, 1/5) - 1) * 100).toFixed(0);
+            });
+
+            return scenarios;
+        }
+
+        function calculateLoanPayment(principal, annualRate, years) {
+            const monthlyRate = (annualRate / 100) / 12;
+            const months = years * 12;
+            if (monthlyRate === 0) return principal / months;
+            return (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+        }
+
+        function calculateLoanMetrics() {
+            const monthlyPayment = calculateLoanPayment(appState.investmentAmount, appState.loanRate, appState.loanTerm);
+            const totalPayments = monthlyPayment * appState.loanTerm * 12;
+            const totalInterest = totalPayments - appState.investmentAmount;
+
+            // Blended cost accounting for grace period
+            const gracePeriodMonths = appState.loanGrace || 0;
+            const repaymentMonths = appState.loanTerm * 12 - gracePeriodMonths;
+            const blendedCost = ((totalInterest / appState.investmentAmount) / appState.loanTerm) * 100;
+
+            return {
+                monthlyPayment: monthlyPayment,
+                totalInterest: totalInterest,
+                blendedCost: blendedCost.toFixed(2)
+            };
+        }
+
+        function calculateSIBMetrics() {
+            const paymentPerUnit = appState.sibPaymentPerUnit || 0;
+            const minAchievement = appState.sibMinAchievement || 50;
+
+            // Estimate units based on investment and payment per unit
+            const maxUnits = appState.investmentAmount / paymentPerUnit;
+
+            return {
+                paymentAt50: (maxUnits * (50 / 100) * paymentPerUnit),
+                paymentAt75: (maxUnits * (75 / 100) * paymentPerUnit),
+                paymentAt100: (maxUnits * (100 / 100) * paymentPerUnit)
+            };
+        }
+
+        // Utility functions
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+
+        function hasImpactCovenants() {
+            return appState.missionLock || appState.impactReporting || appState.thirdPartyVerif ||
+                appState.impactDefault || appState.bCorpStatus || appState.sdgAlignment ||
+                appState.irisMetrics || appState.impactBoardSeat || appState.communityBenefit ||
+                appState.envCovenant;
+        }
+
+        function getLiqPrefLabel(val) {
+            const map = {
+                '1x-non': '1x Non-Participating (Founder-Friendly)',
+                '1x-part': '1x Participating (Neutral)',
+                '2x-part': '2x Participating (Investor-Friendly)'
+            };
+            return map[val] || val;
+        }
+
+        function getAntiDilutionLabel(val) {
+            const map = {
+                'wa-broad': 'Weighted-Average Broad-Based',
+                'wa-narrow': 'Weighted-Average Narrow-Based',
+                'full-ratchet': 'Full Ratchet'
+            };
+            return map[val] || val;
+        }
+
+        function getVoteRightsDescription(val) {
+            const map = {
+                'none': 'Investor has standard shareholder voting rights only.',
+                'major': 'Investor consent required for major decisions: sale, acquisition, liquidation, significant debt, material asset sales.',
+                'all': 'Investor consent required for all material business decisions.'
+            };
+            return map[val] || val;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function printTermSheet() {
+            window.print();
+        }
+
+        function copyToClipboard() {
+            const termsheet = document.getElementById('termsheetContent').innerText;
+            navigator.clipboard.writeText(termsheet).then(() => {
+                alert('Term sheet copied to clipboard!');
+            });
+        }
+
+        // ─── INVESTOR TEMPLATE LIBRARY ───────────────────────────────────────────
+        // Each template pre-fills appState with known/public market terms for that
+        // investor type, based on published deal data, annual reports, and industry
+        // databases (GIIN, ImpactAlpha, Convergence, OECD Blended Finance).
+        const INVESTOR_TEMPLATES = {
+
+            acumen: {
+                label: 'Acumen',
+                info: 'Acumen uses patient capital — typically Priced Equity or RBF for early-stage with 10yr+ horizons. Lean Data methodology for impact. Seed to Series A in Africa/South Asia.',
+                tags: ['Patient Capital', 'Africa', 'South Asia', 'SAFE → Equity', 'Lean Data'],
+                state: {
+                    dealType: 'safe',
+                    investorName: 'Acumen',
+                    safeCap: 3000000,
+                    safeDiscount: 20,
+                    safeMFN: true,
+                    voteRights: 'major',
+                    dragAlong: 75,
+                    missionLock: true,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: false,
+                    irisMetrics: true,
+                    sdgAlignment: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: false,
+                    impactBoardSeat: true
+                }
+            },
+
+            omidyar: {
+                label: 'Omidyar Network',
+                info: 'Omidyar invests across equity and grants. Strong governance requirements. Tends to require Mission Lock, independent board seat, and quarterly impact reporting. Series A / growth stage.',
+                tags: ['Governance-Heavy', 'Series A+', 'Tech for Social Good', 'Mission Lock Required'],
+                state: {
+                    dealType: 'equity',
+                    investorName: 'Omidyar Network',
+                    equityPreMoney: 8000000,
+                    equityLiqPref: '1x-non',
+                    equityAntiDilution: 'wa-broad',
+                    equityBoardSeats: 1,
+                    voteRights: 'major',
+                    dragAlong: 75,
+                    missionLock: true,
+                    impactReporting: true,
+                    reportingFrequency: 'quarterly',
+                    thirdPartyVerif: true,
+                    irisMetrics: true,
+                    sdgAlignment: true,
+                    impactBoardSeat: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: false
+                }
+            },
+
+            leapfrog: {
+                label: 'LeapFrog Investments',
+                info: 'LeapFrog focuses on financial services and healthcare in Africa/Asia. Priced equity, 5-7yr horizon, ~25-35% ownership target, strong ESG diligence. Targets 15-20% IRR.',
+                tags: ['Financial Services', 'Healthcare', 'Africa', 'Asia', 'Growth PE', '15-20% IRR target'],
+                state: {
+                    dealType: 'equity',
+                    investorName: 'LeapFrog Investments',
+                    equityPreMoney: 15000000,
+                    equityLiqPref: '1x-non',
+                    equityAntiDilution: 'wa-broad',
+                    equityBoardSeats: 2,
+                    voteRights: 'major',
+                    dragAlong: 75,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'quarterly',
+                    thirdPartyVerif: true,
+                    irisMetrics: true,
+                    sdgAlignment: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: true,
+                    impactBoardSeat: false
+                }
+            },
+
+            blueOrchard: {
+                label: 'BlueOrchard / Schroders',
+                info: 'BlueOrchard provides debt capital to microfinance institutions and SMEs. Concessional loans 4-7%, 3-5yr terms. Strong social/environmental performance standards (SPS). Emerging markets.',
+                tags: ['MFI', 'SME Debt', 'Concessional Loan', '4-7% rate', 'SPS Standards'],
+                state: {
+                    dealType: 'loan',
+                    investorName: 'BlueOrchard / Schroders',
+                    loanRate: 6,
+                    loanTerm: 4,
+                    loanGrace: 6,
+                    voteRights: 'none',
+                    dragAlong: 75,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'quarterly',
+                    thirdPartyVerif: false,
+                    irisMetrics: true,
+                    sdgAlignment: true,
+                    impactDefault: true,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: true,
+                    impactBoardSeat: false
+                }
+            },
+
+            ifc: {
+                label: 'IFC (World Bank DFI)',
+                info: 'IFC (International Finance Corp) takes equity stakes 5-20% in emerging market companies. Requires Environmental & Social (E&S) Action Plans, IFC Performance Standards, 2-board observer rights. Prefers priced equity or quasi-equity.',
+                tags: ['DFI', 'IFC PS Standards', 'E&S Required', 'Observer Rights', 'Emerging Markets'],
+                state: {
+                    dealType: 'equity',
+                    investorName: 'IFC (World Bank Group)',
+                    equityPreMoney: 20000000,
+                    equityLiqPref: '1x-non',
+                    equityAntiDilution: 'wa-broad',
+                    equityBoardSeats: 1,
+                    voteRights: 'major',
+                    dragAlong: 80,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: true,
+                    irisMetrics: false,
+                    sdgAlignment: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: true,
+                    impactBoardSeat: false
+                }
+            },
+
+            cdc: {
+                label: 'British International Investment (BII/CDC)',
+                info: 'BII (formerly CDC) is the UK\'s DFI. Invests via equity and mezzanine. Requires ANDE-aligned impact frameworks, gender-lens metrics, and local job creation tracking. 5-10yr horizon, Africa & South Asia focus.',
+                tags: ['UK DFI', 'Mezzanine', 'Gender Lens', 'Job Creation', 'Africa', 'South Asia'],
+                state: {
+                    dealType: 'equity',
+                    investorName: 'British International Investment (BII)',
+                    equityPreMoney: 10000000,
+                    equityLiqPref: '1x-non',
+                    equityAntiDilution: 'wa-broad',
+                    equityBoardSeats: 1,
+                    voteRights: 'major',
+                    dragAlong: 75,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: true,
+                    irisMetrics: true,
+                    sdgAlignment: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: true,
+                    envCovenant: true,
+                    impactBoardSeat: false
+                }
+            },
+
+            fmo: {
+                label: 'FMO (Dutch DFI)',
+                info: 'FMO provides mezzanine and equity to financial institutions and agri/energy sectors. Typical: subordinated loans at 7-9%, 5-7yr term, 12-month grace. E&S covenants and gender metrics required. EDFI standards.',
+                tags: ['Dutch DFI', 'Mezzanine', 'Subordinated Loan', 'EDFI Standards', '7-9% rate'],
+                state: {
+                    dealType: 'loan',
+                    investorName: 'FMO (Nederlandse Financierings-Maatschappij)',
+                    loanRate: 8,
+                    loanTerm: 6,
+                    loanGrace: 12,
+                    voteRights: 'none',
+                    dragAlong: 75,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: true,
+                    irisMetrics: true,
+                    sdgAlignment: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: true,
+                    impactBoardSeat: false
+                }
+            },
+
+            mackenzie: {
+                label: 'MacKenzie Scott / Collaborative Grant',
+                info: 'MacKenzie Scott gives unrestricted grants — no repayment, no board seats, no reporting burdens. For similar collaborative grant structures: full grant, mission alignment only. Models minimal-covenant approach.',
+                tags: ['Grant', 'Unrestricted', 'No Reporting', 'Mission Alignment Only', 'Collaborative'],
+                state: {
+                    dealType: 'grant',
+                    investorName: 'Collaborative Foundation (Grant)',
+                    grantTrigger: 'No repayment trigger — unrestricted grant',
+                    grantRepayment: 0,
+                    grantMaxRepay: 0,
+                    voteRights: 'none',
+                    dragAlong: 75,
+                    missionLock: false,
+                    impactReporting: false,
+                    thirdPartyVerif: false,
+                    irisMetrics: false,
+                    sdgAlignment: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: false,
+                    impactBoardSeat: false
+                }
+            },
+
+            gates: {
+                label: 'Gates Foundation PRI',
+                info: 'Gates PRIs (Program-Related Investments) are below-market loans or recoverable grants to social enterprises. Typical: 1-3% interest, 7-10yr term, 24mo grace. Intensive impact reporting using theory-of-change frameworks.',
+                tags: ['PRI', 'Below-Market Loan', '1-3%', 'Global Health', 'Ag Tech', 'Theory of Change'],
+                state: {
+                    dealType: 'loan',
+                    investorName: 'Gates Foundation (PRI)',
+                    loanRate: 2,
+                    loanTerm: 8,
+                    loanGrace: 24,
+                    voteRights: 'none',
+                    dragAlong: 75,
+                    missionLock: true,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: true,
+                    irisMetrics: false,
+                    sdgAlignment: true,
+                    impactDefault: true,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: false,
+                    impactBoardSeat: false
+                }
+            },
+
+            skoll: {
+                label: 'Skoll Foundation',
+                info: 'Skoll supports social entrepreneurs via grants and some equity investments. Mission-first, founder-friendly. No financial return expectation. Strong narrative impact reporting. Annual reporting cycle.',
+                tags: ['Social Enterprise', 'Founder-Friendly', 'Grant-Style', 'Annual Reporting'],
+                state: {
+                    dealType: 'grant',
+                    investorName: 'Skoll Foundation',
+                    grantTrigger: 'Achievement of stated mission impact milestones',
+                    grantRepayment: 0,
+                    grantMaxRepay: 0,
+                    voteRights: 'none',
+                    dragAlong: 75,
+                    missionLock: true,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: false,
+                    irisMetrics: false,
+                    sdgAlignment: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: false,
+                    impactBoardSeat: false
+                }
+            },
+
+            secha: {
+                label: 'SECHA / Impact RBF Africa',
+                info: 'Revenue-based finance vehicles operating in Sub-Saharan Africa (e.g. SECHA Capital). Typical: 4-7% revenue share, 1.4-1.8x cap, 3-6mo payment holiday, 2-4yr repayment window. No dilution.',
+                tags: ['RBF', 'Africa', 'No Dilution', '4-7% revenue share', '1.4-1.8x cap'],
+                state: {
+                    dealType: 'rbf',
+                    investorName: 'SECHA Capital',
+                    rbfShare: 5,
+                    rbfCap: 1.6,
+                    rbfHoliday: 4,
+                    voteRights: 'none',
+                    dragAlong: 75,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'quarterly',
+                    thirdPartyVerif: false,
+                    irisMetrics: false,
+                    sdgAlignment: false,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: false,
+                    impactBoardSeat: false
+                }
+            },
+
+            rootCapital: {
+                label: 'Root Capital (Ag SME Loan)',
+                info: 'Root Capital lends to agricultural SMEs in Latin America and Africa. Below-market loans at 8-12%, 1-3yr terms, seasonal repayment structures. Focuses on smallholder farmer impact. IRIS-aligned metrics.',
+                tags: ['Agriculture', 'SME Loan', 'Latin America', 'Africa', '8-12%', 'Smallholder Impact'],
+                state: {
+                    dealType: 'loan',
+                    investorName: 'Root Capital',
+                    loanRate: 10,
+                    loanTerm: 2,
+                    loanGrace: 3,
+                    voteRights: 'none',
+                    dragAlong: 75,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: false,
+                    irisMetrics: true,
+                    sdgAlignment: false,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: true,
+                    envCovenant: true,
+                    impactBoardSeat: false
+                }
+            },
+
+            triodos: {
+                label: 'Triodos Investment',
+                info: 'Triodos invests via green bonds and sustainability-linked loans. Typical: 4-6% loan rate, covenant-linked to sustainability targets (e.g. renewable energy share, GHG reduction). Requires environmental impact reporting annually.',
+                tags: ['Green Finance', 'Sustainability-Linked', 'Renewable Energy', '4-6% rate', 'European'],
+                state: {
+                    dealType: 'loan',
+                    investorName: 'Triodos Investment Management',
+                    loanRate: 5,
+                    loanTerm: 5,
+                    loanGrace: 6,
+                    voteRights: 'none',
+                    dragAlong: 75,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: true,
+                    irisMetrics: false,
+                    sdgAlignment: true,
+                    impactDefault: true,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: true,
+                    impactBoardSeat: false
+                }
+            },
+
+            ilpaSeed: {
+                label: 'ILPA-Style Seed (Impact, Founder-Friendly)',
+                info: 'Based on ILPA Principles 3.0 adapted for impact seed stage. SAFE structure, uncapped or modest cap, MFN, no board seat, mission lock optional. Minimal covenants. Standard for angel/seed impact rounds.',
+                tags: ['ILPA Principles', 'Seed Stage', 'Founder-Friendly', 'SAFE', 'Minimal Covenants'],
+                state: {
+                    dealType: 'safe',
+                    investorName: '[Impact Seed Investor]',
+                    safeCap: 4000000,
+                    safeDiscount: 20,
+                    safeMFN: true,
+                    voteRights: 'none',
+                    dragAlong: 80,
+                    missionLock: false,
+                    impactReporting: true,
+                    reportingFrequency: 'annual',
+                    thirdPartyVerif: false,
+                    irisMetrics: false,
+                    sdgAlignment: false,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: false,
+                    impactBoardSeat: false
+                }
+            },
+
+            ilpaSeriesA: {
+                label: 'ILPA-Style Series A (Standard Impact VC)',
+                info: 'ILPA Principles 3.0 for Series A impact VC rounds. Priced equity, 1x non-participating preference, broad-based weighted-average anti-dilution, 1 board seat, quarterly reporting, mission lock, IRIS+ metrics. Market-standard impact VC package.',
+                tags: ['ILPA Principles', 'Series A', 'Priced Equity', '1x Non-Participating', 'IRIS+ Required'],
+                state: {
+                    dealType: 'equity',
+                    investorName: '[Impact Series A Fund]',
+                    equityPreMoney: 6000000,
+                    equityLiqPref: '1x-non',
+                    equityAntiDilution: 'wa-broad',
+                    equityBoardSeats: 1,
+                    voteRights: 'major',
+                    dragAlong: 75,
+                    missionLock: true,
+                    impactReporting: true,
+                    reportingFrequency: 'quarterly',
+                    thirdPartyVerif: false,
+                    irisMetrics: true,
+                    sdgAlignment: true,
+                    impactDefault: false,
+                    bCorpStatus: false,
+                    communityBenefit: false,
+                    envCovenant: false,
+                    impactBoardSeat: false
+                }
+            }
+        };
+
+        function updateTemplateInfo() {
+            const key = document.getElementById('templateSelector').value;
+            const infoEl = document.getElementById('templateInfo');
+            const tagsEl = document.getElementById('templateTags');
+
+            if (!key || !INVESTOR_TEMPLATES[key]) {
+                infoEl.textContent = 'Select an investor type to see deal term defaults and notes.';
+                tagsEl.innerHTML = '';
+                return;
+            }
+
+            const tmpl = INVESTOR_TEMPLATES[key];
+            infoEl.textContent = tmpl.info;
+            tagsEl.innerHTML = tmpl.tags.map(t => `<span class="template-tag">${t}</span>`).join('');
+        }
+
+        function loadSelectedTemplate() {
+            const key = document.getElementById('templateSelector').value;
+            if (!key || !INVESTOR_TEMPLATES[key]) {
+                alert('Please select an investor type first.');
+                return;
+            }
+
+            const tmpl = INVESTOR_TEMPLATES[key];
+            const s = tmpl.state;
+
+            // Apply state overrides
+            Object.assign(appState, s);
+
+            // Update deal type buttons
+            document.querySelectorAll('.deal-type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === appState.dealType);
+            });
+            updateDealTypeSections();
+
+            // Update form fields
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val ?? ''; };
+            const setToggle = (id, active) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (active) el.classList.add('active'); else el.classList.remove('active');
+                appState[el.dataset.field] = active;
+            };
+            const setSelect = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+
+            // Investor name
+            setVal('investorName', s.investorName || '');
+
+            // SAFE
+            setVal('safeCap', s.safeCap || '');
+            setVal('safeDiscount', s.safeDiscount || '');
+            setToggle('safeMFN', s.safeMFN !== false);
+
+            // Convertible
+            setVal('convInterest', s.convInterest || '');
+            setVal('convMaturity', s.convMaturity || '');
+            setVal('convDiscount', s.convDiscount || '');
+            setVal('convQualified', s.convQualified || '');
+
+            // RBF
+            setVal('rbfShare', s.rbfShare || '');
+            setVal('rbfCap', s.rbfCap || '');
+            setVal('rbfHoliday', s.rbfHoliday || '');
+
+            // Equity
+            setVal('equityPreMoney', s.equityPreMoney || '');
+            setSelect('equityLiqPref', s.equityLiqPref || '1x-non');
+            setSelect('equityAntiDilution', s.equityAntiDilution || 'wa-broad');
+            setVal('equityBoardSeats', s.equityBoardSeats ?? '');
+
+            // Loan
+            setVal('loanRate', s.loanRate || '');
+            setVal('loanTerm', s.loanTerm || '');
+            setVal('loanGrace', s.loanGrace || '');
+
+            // Grant
+            setVal('grantTrigger', s.grantTrigger || '');
+            setVal('grantRepayment', s.grantRepayment || '');
+            setVal('grantMaxRepay', s.grantMaxRepay || '');
+
+            // Governance
+            setSelect('voteRights', s.voteRights || 'none');
+            setVal('dragAlong', s.dragAlong || 50);
+
+            // Impact covenants
+            setToggle('missionLock', !!s.missionLock);
+            setToggle('impactReporting', !!s.impactReporting);
+            setToggle('thirdPartyVerif', !!s.thirdPartyVerif);
+            setToggle('impactDefault', !!s.impactDefault);
+            setToggle('bCorpStatus', !!s.bCorpStatus);
+            setToggle('sdgAlignment', !!s.sdgAlignment);
+            setToggle('irisMetrics', !!s.irisMetrics);
+            setToggle('impactBoardSeat', !!s.impactBoardSeat);
+            setToggle('communityBenefit', !!s.communityBenefit);
+            setToggle('envCovenant', !!s.envCovenant);
+
+            // Reporting frequency visibility
+            const reportingFreqEl = document.getElementById('reportingFrequency');
+            if (reportingFreqEl) {
+                reportingFreqEl.style.display = s.impactReporting ? 'block' : 'none';
+                setSelect('reportingFrequency', s.reportingFrequency || 'annual');
+                appState.reportingFrequency = s.reportingFrequency || 'annual';
+            }
+
+            // Re-render all panels
+            renderTermSheet();
+            renderFlags();
+            renderCalculations();
+            renderBenchmarks();
+
+            // Scroll to top of left panel
+            document.querySelector('#leftPanel .panel-content').scrollTop = 0;
+
+            // Feedback
+            const btn = document.querySelector('.template-load-btn');
+            const origText = btn.textContent;
+            btn.textContent = '✅ Template Loaded!';
+            btn.style.background = '#2d7d46';
+            setTimeout(() => { btn.textContent = origText; btn.style.background = ''; }, 2000);
+        }
+        // ─────────────────────────────────────────────────────────────────────────
+    </script>
+</body>
+</html>
