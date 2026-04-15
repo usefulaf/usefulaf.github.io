@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impact Evidence Quality Assessor | Useful AF</title>
+<style>
+  :root {
+    --cream: #FAF7F2;
+    --warm-black: #1C1C1A;
+    --coral: #E85D3F;
+    --ochre: #D4A017;
+    --sage: #6B8F71;
+    --slate: #4A5568;
+    --light-slate: #718096;
+    --border: #E2D9CE;
+    --white: #FFFFFF;
+    --light-bg: #F5F0EA;
+    --success: #2D6A4F;
+    --warning: #B7791F;
+    --danger: #C53030;
+    --info: #2B6CB0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--warm-black);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  .header {
+    background: var(--warm-black);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--coral);
+  }
+  .header-brand { display: flex; align-items: center; gap: 12px; }
+  .wordmark { color: var(--cream); font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+  .wordmark span { color: var(--coral); }
+  .tool-title { color: var(--cream); font-size: 16px; font-weight: 600; opacity: 0.9; }
+  .tool-badge { background: var(--coral); color: white; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+
+  /* Layout */
+  .app-container { display: grid; grid-template-columns: 260px 1fr 320px; gap: 0; min-height: calc(100vh - 70px); }
+
+  /* Left Nav */
+  .left-nav {
+    background: var(--warm-black);
+    padding: 20px 0;
+    border-right: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-section-title {
+    color: var(--ochre);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 12px 20px 6px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    color: rgba(255,255,255,0.65);
+    font-size: 13px;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+  .nav-item.active { border-left-color: var(--coral); background: rgba(232,93,63,0.1); color: white; }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .nav-item .nav-status {
+    margin-left: auto;
+    font-size: 10px;
+    background: rgba(255,255,255,0.1);
+    padding: 2px 7px;
+    border-radius: 10px;
+  }
+  .nav-item.complete .nav-status { background: rgba(45,106,79,0.5); color: #9ae6b4; }
+
+  /* Main */
+  .main-content { padding: 24px; overflow-y: auto; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  .section-header {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-header h2 { font-size: 20px; font-weight: 700; color: var(--warm-black); }
+  .section-header p { color: var(--light-slate); margin-top: 4px; font-size: 13px; }
+
+  /* Framework info box */
+  .framework-box {
+    background: linear-gradient(135deg, var(--warm-black) 0%, #2d2d2b 100%);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--ochre);
+  }
+  .framework-box h4 { color: var(--ochre); font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+  .framework-box p { color: rgba(255,255,255,0.8); font-size: 12.5px; line-height: 1.6; }
+  .framework-box .sources { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+  .source-tag {
+    background: rgba(212,160,23,0.2);
+    color: var(--ochre);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  /* Cards */
+  .card {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .card-subtitle { font-size: 12px; color: var(--light-slate); margin-bottom: 16px; }
+
+  /* Form elements */
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--slate);
+    margin-bottom: 6px;
+  }
+  .tooltip-icon {
+    background: var(--light-slate);
+    color: white;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    cursor: help;
+    font-style: normal;
+    position: relative;
+  }
+  .tooltip-icon:hover::after {
+    content: attr(data-tip);
+    position: absolute;
+    left: 22px;
+    top: -8px;
+    background: var(--warm-black);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    white-space: normal;
+    width: 220px;
+    z-index: 100;
+    line-height: 1.5;
+  }
+
+  select, input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--warm-black);
+    background: var(--cream);
+    transition: border-color 0.15s;
+  }
+  select:focus, input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--coral);
+    background: white;
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* Rating scales */
+  .rating-grid { display: grid; gap: 12px; }
+  .rating-row {
+    background: var(--light-bg);
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+  .rating-row-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+  .rating-row-title { font-size: 13px; font-weight: 600; }
+  .rating-row-desc { font-size: 11.5px; color: var(--light-slate); margin-top: 2px; }
+  .rating-scale {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .rating-btn {
+    padding: 5px 12px;
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    background: white;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.15s;
+    color: var(--slate);
+  }
+  .rating-btn:hover { border-color: var(--coral); color: var(--coral); }
+  .rating-btn.selected { background: var(--coral); border-color: var(--coral); color: white; }
+  .rating-btn.level-1.selected { background: var(--danger); border-color: var(--danger); }
+  .rating-btn.level-2.selected { background: #e07b3d; border-color: #e07b3d; }
+  .rating-btn.level-3.selected { background: var(--ochre); border-color: var(--ochre); color: white; }
+  .rating-btn.level-4.selected { background: #5a9e6f; border-color: #5a9e6f; }
+  .rating-btn.level-5.selected { background: var(--success); border-color: var(--success); }
+
+  /* Score display */
+  .score-display {
+    background: var(--warm-black);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .score-big { font-size: 52px; font-weight: 900; color: var(--cream); line-height: 1; }
+  .score-label { color: rgba(255,255,255,0.6); font-size: 12px; margin-top: 4px; }
+  .score-grade {
+    font-size: 36px;
+    font-weight: 900;
+    padding: 10px 20px;
+    border-radius: 8px;
+    letter-spacing: -1px;
+  }
+  .grade-A { background: rgba(45,106,79,0.2); color: #9ae6b4; }
+  .grade-B { background: rgba(90,158,111,0.2); color: #68d391; }
+  .grade-C { background: rgba(183,121,31,0.2); color: var(--ochre); }
+  .grade-D { background: rgba(224,123,61,0.2); color: #fbd38d; }
+  .grade-F { background: rgba(197,48,48,0.2); color: #fc8181; }
+
+  .score-breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+  .score-dim {
+    background: white;
+    border-radius: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .score-dim .dim-val { font-size: 24px; font-weight: 800; }
+  .score-dim .dim-max { font-size: 12px; color: var(--light-slate); }
+  .score-dim .dim-name { font-size: 11px; color: var(--slate); font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Evidence level badge */
+  .evidence-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .badge-platinum { background: linear-gradient(135deg, #e8e0d0, #c8c0b0); color: #1a1a18; }
+  .badge-gold { background: linear-gradient(135deg, #f6d860, #d4a017); color: #3d2e00; }
+  .badge-silver { background: linear-gradient(135deg, #c8d0d8, #9aa8b4); color: #1a2530; }
+  .badge-bronze { background: linear-gradient(135deg, #d4a870, #a07840); color: #2a1a08; }
+  .badge-emerging { background: linear-gradient(135deg, #f0d0c8, #c09088); color: #2a1a18; }
+
+  /* Finding cards */
+  .finding-card {
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    border-left: 4px solid;
+  }
+  .finding-strength { background: #f0fff4; border-color: var(--success); }
+  .finding-gap { background: #fff5f5; border-color: var(--danger); }
+  .finding-improve { background: #fffbeb; border-color: var(--ochre); }
+  .finding-info { background: #ebf8ff; border-color: var(--info); }
+  .finding-title { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .finding-desc { font-size: 12.5px; color: var(--slate); line-height: 1.5; }
+
+  /* Action items */
+  .action-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .action-priority {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .priority-high { background: var(--danger); color: white; }
+  .priority-medium { background: var(--ochre); color: white; }
+  .priority-low { background: var(--sage); color: white; }
+  .action-content .action-title { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .action-content .action-detail { font-size: 12px; color: var(--light-slate); }
+  .action-effort {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--light-slate);
+    text-align: right;
+    min-width: 80px;
+  }
+
+  /* Tabs in right panel */
+  .right-panel {
+    background: var(--light-bg);
+    border-left: 1px solid var(--border);
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .right-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+
+  /* Benchmark table */
+  .bench-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 16px; }
+  .bench-table th {
+    background: var(--warm-black);
+    color: var(--cream);
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .bench-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); }
+  .bench-table tr:nth-child(even) td { background: rgba(0,0,0,0.02); }
+  .bench-table .highlight { color: var(--coral); font-weight: 700; }
+
+  /* Buttons */
+  .btn {
+    padding: 9px 18px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .btn-primary { background: var(--coral); color: white; }
+  .btn-primary:hover { background: #d44e30; }
+  .btn-secondary { background: var(--warm-black); color: white; }
+  .btn-secondary:hover { background: #333; }
+  .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--slate); }
+  .btn-outline:hover { border-color: var(--coral); color: var(--coral); }
+  .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+  }
+  .fill-red { background: var(--danger); }
+  .fill-orange { background: #e07b3d; }
+  .fill-yellow { background: var(--ochre); }
+  .fill-light-green { background: #5a9e6f; }
+  .fill-green { background: var(--success); }
+
+  /* Evidence ladder */
+  .evidence-ladder { margin: 16px 0; }
+  .ladder-rung {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .ladder-rung.current {
+    border-color: var(--coral);
+    background: rgba(232,93,63,0.05);
+  }
+  .ladder-rung .rung-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .rung-5 .rung-num { background: var(--success); color: white; }
+  .rung-4 .rung-num { background: #5a9e6f; color: white; }
+  .rung-3 .rung-num { background: var(--ochre); color: white; }
+  .rung-2 .rung-num { background: #e07b3d; color: white; }
+  .rung-1 .rung-num { background: var(--danger); color: white; }
+  .rung-title { font-size: 13px; font-weight: 600; }
+  .rung-example { font-size: 11px; color: var(--light-slate); }
+
+  /* Claude prompt box */
+  .claude-box {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-top: 20px;
+    border: 1px solid rgba(232,93,63,0.3);
+  }
+  .claude-box h3 { color: var(--coral); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .claude-prompt-text {
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.7;
+    font-family: 'Courier New', monospace;
+    white-space: pre-wrap;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .copy-btn {
+    margin-top: 10px;
+    background: rgba(232,93,63,0.15);
+    border: 1px solid rgba(232,93,63,0.4);
+    color: var(--coral);
+    padding: 6px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: rgba(232,93,63,0.25); }
+
+  /* Alert box */
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    border-left: 4px solid;
+    line-height: 1.5;
+  }
+  .alert-info { background: #ebf8ff; border-color: var(--info); color: #1a365d; }
+  .alert-warning { background: #fffbeb; border-color: var(--ochre); color: #7b341e; }
+
+  /* Checklist */
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .checklist-item:last-child { border-bottom: none; }
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .check-box.checked { background: var(--success); border-color: var(--success); color: white; }
+  .checklist-text { font-size: 13px; }
+  .checklist-sub { font-size: 11.5px; color: var(--light-slate); margin-top: 2px; }
+
+  /* Report output */
+  .report-section { margin-bottom: 24px; }
+  .report-section h3 { font-size: 14px; font-weight: 700; color: var(--warm-black); border-bottom: 2px solid var(--coral); padding-bottom: 6px; margin-bottom: 12px; }
+
+  /* Responsive */
+  @media (max-width: 1100px) {
+    .app-container { grid-template-columns: 220px 1fr; }
+    .right-panel { display: none; }
+  }
+  @media (max-width: 768px) {
+    .app-container { grid-template-columns: 1fr; }
+    .left-nav { display: none; }
+  }
+
+  /* Print */
+  @media print {
+    .left-nav, .right-panel, .header, .btn-group { display: none !important; }
+    .app-container { grid-template-columns: 1fr; }
+    .main-content { padding: 0; }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--light-slate);
+  }
+  .empty-state .big-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 14px; }
+
+  .inline-info {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(43,108,176,0.08);
+    color: var(--info);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="wordmark">Useful<span>AF</span></div>
+    <div style="width:1px;height:24px;background:rgba(255,255,255,0.2);"></div>
+    <div class="tool-title">Impact Evidence Quality Assessor</div>
+  </div>
+  <div class="tool-badge">TOOL #18</div>
+</div>
+
+<div class="app-container">
+
+  <!-- LEFT NAV -->
+  <nav class="left-nav">
+    <div class="nav-section-title">Assessment</div>
+    <div class="nav-item active" onclick="showTab('context')" id="nav-context">
+      <span class="nav-icon">📋</span> Organisation Context
+      <span class="nav-status" id="status-context">–</span>
+    </div>
+    <div class="nav-item" onclick="showTab('outcomes')" id="nav-outcomes">
+      <span class="nav-icon">🎯</span> Outcomes Defined
+      <span class="nav-status" id="status-outcomes">–</span>
+    </div>
+    <div class="nav-item" onclick="showTab('data')" id="nav-data">
+      <span class="nav-icon">📊</span> Data Collection
+      <span class="nav-status" id="status-data">–</span>
+    </div>
+    <div class="nav-item" onclick="showTab('attribution')" id="nav-attribution">
+      <span class="nav-icon">⚖️</span> Attribution & Causality
+      <span class="nav-status" id="status-attribution">–</span>
+    </div>
+    <div class="nav-item" onclick="showTab('comparators')" id="nav-comparators">
+      <span class="nav-icon">📐</span> Comparators & Benchmarks
+      <span class="nav-status" id="status-comparators">–</span>
+    </div>
+    <div class="nav-item" onclick="showTab('systems')" id="nav-systems">
+      <span class="nav-icon">🔄</span> Systems & Processes
+      <span class="nav-status" id="status-systems">–</span>
+    </div>
+
+    <div class="nav-section-title" style="margin-top:12px;">Results</div>
+    <div class="nav-item" onclick="showTab('scorecard')" id="nav-scorecard">
+      <span class="nav-icon">🏆</span> Scorecard & Grade
+    </div>
+    <div class="nav-item" onclick="showTab('actions')" id="nav-actions">
+      <span class="nav-icon">🚀</span> Action Roadmap
+    </div>
+    <div class="nav-item" onclick="showTab('report')" id="nav-report">
+      <span class="nav-icon">📄</span> Export Report
+    </div>
+    <div class="nav-item" onclick="showTab('prompt')" id="nav-prompt">
+      <span class="nav-icon">🤖</span> Claude Deep Dive
+    </div>
+
+    <div style="padding:20px 20px 0;margin-top:12px;border-top:1px solid rgba(255,255,255,0.08);">
+      <div style="color:rgba(255,255,255,0.4);font-size:11px;line-height:1.5;">Methodology: NESTA Standards of Evidence (2016), 3ie Evidence Gap Map framework, Bond evidence principles, J-PAL evidence hierarchy</div>
+    </div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- CONTEXT TAB -->
+    <div class="tab-pane active" id="tab-context">
+      <div class="section-header">
+        <h2>Organisation & Programme Context</h2>
+        <p>Tell us about your organisation and the intervention you're measuring. This shapes what level of evidence is feasible and appropriate.</p>
+      </div>
+
+      <div class="framework-box">
+        <h4>📚 Evidence Standards Applied in This Tool</h4>
+        <p>This tool uses the <strong>NESTA Standards of Evidence</strong> (5-level ladder), the <strong>Bond Evidence Principles</strong> (7 dimensions of evidence quality), and the <strong>3ie Evidence Strength framework</strong> to give you a rigorous, internationally-recognised quality assessment.</p>
+        <div class="sources">
+          <span class="source-tag">NESTA Standards of Evidence (2016)</span>
+          <span class="source-tag">Bond Evidence Principles (2019)</span>
+          <span class="source-tag">3ie Evidence Hierarchy</span>
+          <span class="source-tag">J-PAL Evidence Guidelines</span>
+          <span class="source-tag">UKAID DFID How To Note</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Organisation Profile</div>
+        <div class="card-subtitle">Basic information to calibrate the assessment</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div class="form-group">
+            <label class="form-label">Organisation Name</label>
+            <input type="text" id="org-name" placeholder="e.g. Green Futures Kenya" oninput="updateContext()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">
+              Organisation Type
+              <i class="tooltip-icon" data-tip="Type affects what evidence standards are typical and achievable. Hospitals can run RCTs; small NGOs rarely can.">?</i>
+            </label>
+            <select id="org-type" onchange="updateContext()">
+              <option value="">Select...</option>
+              <option value="ngo">NGO / Non-profit</option>
+              <option value="social-ent">Social Enterprise</option>
+              <option value="impact-fund">Impact Fund</option>
+              <option value="dev-org">Development Organisation (UN/INGO)</option>
+              <option value="gov">Government / Public Sector</option>
+              <option value="corp-csr">Corporate CSR Programme</option>
+              <option value="hybrid">Hybrid Organisation</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Sector</label>
+            <select id="sector" onchange="updateContext()">
+              <option value="">Select...</option>
+              <option value="health">Health</option>
+              <option value="education">Education</option>
+              <option value="livelihoods">Livelihoods / Economic Empowerment</option>
+              <option value="environment">Environment / Climate</option>
+              <option value="gender">Gender Equality</option>
+              <option value="food">Food Security / Agriculture</option>
+              <option value="water">WASH / Water & Sanitation</option>
+              <option value="finance">Financial Inclusion</option>
+              <option value="housing">Housing</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Annual Budget (USD)
+              <i class="tooltip-icon" data-tip="Budget affects what M&E investment is feasible. Orgs under $500K cannot realistically run RCTs. We benchmark expectations accordingly.">?</i>
+            </label>
+            <select id="budget" onchange="updateContext()">
+              <option value="">Select...</option>
+              <option value="under250">Under $250K</option>
+              <option value="250-500">$250K – $500K</option>
+              <option value="500k-2m">$500K – $2M</option>
+              <option value="2m-10m">$2M – $10M</option>
+              <option value="10m-50m">$10M – $50M</option>
+              <option value="over50m">Over $50M</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Stage of Programme
+              <i class="tooltip-icon" data-tip="NESTA explicitly says evidence requirements scale with stage. A pilot should not be held to the same standard as a scaled programme.">?</i>
+            </label>
+            <select id="prog-stage" onchange="updateContext()">
+              <option value="">Select...</option>
+              <option value="design">Design / Pre-launch</option>
+              <option value="pilot">Pilot (year 1-2)</option>
+              <option value="early-scale">Early scale (3-5 years)</option>
+              <option value="mature">Mature programme (5+ years)</option>
+              <option value="scaling">Actively scaling / replicating</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              Primary Audience for Evidence
+              <i class="tooltip-icon" data-tip="Grant makers focus on outputs; impact investors need outcome data; government wants cost-effectiveness; academics want causal rigour.">?</i>
+            </label>
+            <select id="audience" onchange="updateContext()">
+              <option value="">Select...</option>
+              <option value="grant">Grant Funders (philanthropic)</option>
+              <option value="impact-inv">Impact Investors</option>
+              <option value="dfi">Development Finance Institutions (DFI)</option>
+              <option value="gov">Government / Commissioners</option>
+              <option value="internal">Internal Learning</option>
+              <option value="public">Public Communication</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Programme Description (2-3 sentences)</label>
+          <textarea id="prog-desc" rows="3" placeholder="Briefly describe what your programme does, who it serves, and what change it aims to create..." oninput="updateContext()"></textarea>
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="showTab('outcomes')">Next: Outcomes Defined →</button>
+      </div>
+    </div>
+
+    <!-- OUTCOMES TAB -->
+    <div class="tab-pane" id="tab-outcomes">
+      <div class="section-header">
+        <h2>Outcomes Definition & Theory of Change</h2>
+        <p>How clearly are your outcomes defined? Vague outcomes make evidence impossible to collect or assess.</p>
+      </div>
+
+      <div class="alert alert-info">
+        <strong>Why this matters:</strong> The Nesta Standards of Evidence begin at Level 1 with "you can describe what you do and why it matters." Many organisations skip this step and jump to data collection — resulting in data that doesn't prove anything useful.
+      </div>
+
+      <div class="card">
+        <div class="card-title">Outcome Clarity</div>
+        <div class="card-subtitle">Rate each aspect of how you've defined your intended outcomes</div>
+        <div class="rating-grid" id="outcomes-ratings">
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Specificity of outcomes</div>
+                <div class="rating-row-desc">Are outcomes specific, measurable, and time-bound? (e.g. "20% increase in household income within 18 months" not "improve livelihoods")</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'outcomes','specificity',1)">1 – Vague</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'outcomes','specificity',2)">2 – Partial</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'outcomes','specificity',3)">3 – Adequate</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'outcomes','specificity',4)">4 – Clear</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'outcomes','specificity',5)">5 – Precise &amp; validated</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Theory of Change quality</div>
+                <div class="rating-row-desc">Do you have a documented ToC showing inputs → activities → outputs → outcomes → impact, with explicit assumptions?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'outcomes','toc',1)">1 – None</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'outcomes','toc',2)">2 – Informal</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'outcomes','toc',3)">3 – Documented</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'outcomes','toc',4)">4 – Tested &amp; revised</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'outcomes','toc',5)">5 – Evidence-based &amp; peer-reviewed</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Stakeholder involvement in outcome definition</div>
+                <div class="rating-row-desc">Were beneficiaries and affected communities involved in defining what "success" means?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'outcomes','stakeholders',1)">1 – Not at all</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'outcomes','stakeholders',2)">2 – Consulted once</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'outcomes','stakeholders',3)">3 – Regularly consulted</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'outcomes','stakeholders',4)">4 – Co-designed</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'outcomes','stakeholders',5)">5 – Community-led</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Outcome vs. output clarity</div>
+                <div class="rating-row-desc">Are you clearly distinguishing outputs (things you produce) from outcomes (changes in beneficiaries) from impact (long-term societal change)?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'outcomes','output-clarity',1)">1 – Mixed up</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'outcomes','output-clarity',2)">2 – Mostly outputs</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'outcomes','output-clarity',3)">3 – Outcomes identified</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'outcomes','output-clarity',4)">4 – Clear hierarchy</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'outcomes','output-clarity',5)">5 – Full IMP alignment</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-outline" onclick="showTab('context')">← Back</button>
+        <button class="btn btn-primary" onclick="showTab('data')">Next: Data Collection →</button>
+      </div>
+    </div>
+
+    <!-- DATA TAB -->
+    <div class="tab-pane" id="tab-data">
+      <div class="section-header">
+        <h2>Data Collection Quality</h2>
+        <p>Rate the quality of how you collect data on the outcomes you've defined. Data quality directly determines what claims you can make.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Data Collection Assessment</div>
+        <div class="card-subtitle">Be honest — funders and investors are increasingly able to spot data quality issues</div>
+        <div class="rating-grid">
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Sample size & representativeness</div>
+                <div class="rating-row-desc">Is your sample large enough to be statistically meaningful? Is it representative of your target population (not just the easiest-to-reach)?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'data','sample',1)">1 – Anecdotal (&lt;20)</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'data','sample',2)">2 – Small convenience</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'data','sample',3)">3 – Adequate, not random</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'data','sample',4)">4 – Statistically powered</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'data','sample',5)">5 – Census or random sample</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Data collection method rigour</div>
+                <div class="rating-row-desc">Self-reported surveys are less reliable than validated instruments; administrative records are better than recall. What are you using?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'data','method',1)">1 – Testimonials only</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'data','method',2)">2 – Ad-hoc surveys</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'data','method',3)">3 – Structured surveys</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'data','method',4)">4 – Validated instruments</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'data','method',5)">5 – Admin/biometric/longitudinal</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Baseline data availability</div>
+                <div class="rating-row-desc">Without a baseline (pre-intervention measurement), you cannot show change — only current status. This is one of the most common evidence gaps.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'data','baseline',1)">1 – No baseline</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'data','baseline',2)">2 – Reconstructed baseline</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'data','baseline',3)">3 – Partial baseline</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'data','baseline',4)">4 – Full baseline collected</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'data','baseline',5)">5 – Baseline + endline + follow-up</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Data independence</div>
+                <div class="rating-row-desc">Is data collected and analysed by people with an interest in positive outcomes? Self-assessment is inherently biased; independent verification matters.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'data','independence',1)">1 – Programme staff only</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'data','independence',2)">2 – Internal review</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'data','independence',3)">3 – External consultant</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'data','independence',4)">4 – Independent evaluator</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'data','independence',5)">5 – Academic / peer-reviewed</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Data frequency & consistency</div>
+                <div class="rating-row-desc">One-off data points are weak. Consistent longitudinal data enables trend analysis and demonstrates sustained impact.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'data','frequency',1)">1 – Once only</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'data','frequency',2)">2 – Ad-hoc</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'data','frequency',3)">3 – Annual</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'data','frequency',4)">4 – Quarterly + annual</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'data','frequency',5)">5 – Real-time + longitudinal</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-outline" onclick="showTab('outcomes')">← Back</button>
+        <button class="btn btn-primary" onclick="showTab('attribution')">Next: Attribution →</button>
+      </div>
+    </div>
+
+    <!-- ATTRIBUTION TAB -->
+    <div class="tab-pane" id="tab-attribution">
+      <div class="section-header">
+        <h2>Attribution, Causality & Counterfactual</h2>
+        <p>The hardest — and most important — question: would this change have happened anyway, without your intervention?</p>
+      </div>
+
+      <div class="framework-box">
+        <h4>⚠️ The Attribution Challenge</h4>
+        <p>DFID's "How to Note on Attribution" (2012) identifies attribution as the single biggest weakness in development sector evidence. Showing that beneficiaries improved after your programme is not the same as showing they improved <em>because of</em> your programme. Investors and DFIs are now requiring counterfactual analysis for any evidence-based claims.</p>
+        <div class="sources">
+          <span class="source-tag">DFID How to Note: Attribution (2012)</span>
+          <span class="source-tag">J-PAL Counterfactual Methods</span>
+          <span class="source-tag">3ie Evidence Framework</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Attribution & Counterfactual Assessment</div>
+        <div class="rating-grid">
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Counterfactual analysis</div>
+                <div class="rating-row-desc">How do you estimate what would have happened without your programme? (Deadweight, SROI term). Options range from assumption-based estimates to RCTs.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'attribution','counterfactual',1)">1 – None / assumed 0%</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'attribution','counterfactual',2)">2 – Literature-based estimate</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'attribution','counterfactual',3)">3 – Comparison group</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'attribution','counterfactual',4)">4 – Quasi-experimental (PSM, DiD)</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'attribution','counterfactual',5)">5 – RCT / natural experiment</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Attribution of change to your programme</div>
+                <div class="rating-row-desc">What % of observed change do you attribute to your programme vs other factors? Have you applied contribution analysis or other attribution methods?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'attribution','attribution-method',1)">1 – 100% claimed, no method</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'attribution','attribution-method',2)">2 – Rough estimate stated</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'attribution','attribution-method',3)">3 – Contribution analysis</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'attribution','attribution-method',4)">4 – Triangulated evidence</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'attribution','attribution-method',5)">5 – Causal mechanism validated</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Selection bias management</div>
+                <div class="rating-row-desc">Are the people who receive your programme systematically different from those who don't (self-selection, cherry-picking, referral bias)? How is this addressed?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'attribution','selection',1)">1 – Not considered</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'attribution','selection',2)">2 – Acknowledged</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'attribution','selection',3)">3 – Partially addressed</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'attribution','selection',4)">4 – Statistical controls</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'attribution','selection',5)">5 – Randomised assignment</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Unintended consequences documented</div>
+                <div class="rating-row-desc">Do you document negative outcomes, trade-offs, or unexpected effects? Credible evidence includes honest reporting of what didn't work or who was harmed.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'attribution','unintended',1)">1 – Never reported</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'attribution','unintended',2)">2 – Acknowledged in internal reports</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'attribution','unintended',3)">3 – Reported to funders</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'attribution','unintended',4)">4 – Systematically tracked</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'attribution','unintended',5)">5 – Publicly reported</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-outline" onclick="showTab('data')">← Back</button>
+        <button class="btn btn-primary" onclick="showTab('comparators')">Next: Comparators →</button>
+      </div>
+    </div>
+
+    <!-- COMPARATORS TAB -->
+    <div class="tab-pane" id="tab-comparators">
+      <div class="section-header">
+        <h2>Comparators, Benchmarks & Value for Money</h2>
+        <p>Funders and investors increasingly ask: "Is this a good use of money compared to alternatives?" Having benchmarks makes your evidence dramatically more compelling.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Benchmarking & Comparability</div>
+        <div class="rating-grid">
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">External benchmarks for outcomes</div>
+                <div class="rating-row-desc">Can you compare your outcomes to sector averages, similar programmes, or published benchmarks? (e.g. your cost-per-job vs DFID's $1,000 benchmark)</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'comparators','benchmarks',1)">1 – No benchmarks used</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'comparators','benchmarks',2)">2 – General sector data</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'comparators','benchmarks',3)">3 – Published programme benchmarks</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'comparators','benchmarks',4)">4 – Specific comparator programmes</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'comparators','benchmarks',5)">5 – Systematic review comparisons</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Cost-effectiveness analysis</div>
+                <div class="rating-row-desc">Do you know your cost per outcome (e.g. cost per life year saved, cost per child educated, cost per job created)? Can you defend this to a funder?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'comparators','cea',1)">1 – No cost data</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'comparators','cea',2)">2 – Cost per output only</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'comparators','cea',3)">3 – Cost per outcome estimated</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'comparators','cea',4)">4 – Full CEA with sensitivity</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'comparators','cea',5)">5 – Compared to GiveWell / J-PAL standards</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Value for Money narrative</div>
+                <div class="rating-row-desc">Can you articulate why your approach represents good value vs alternatives (including doing nothing)? UK FCDO and many impact investors require VfM analysis.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'comparators','vfm',1)">1 – Not considered</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'comparators','vfm',2)">2 – Qualitative assertion</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'comparators','vfm',3)">3 – Economy + efficiency</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'comparators','vfm',4)">4 – 4Es (Economy, Efficiency, Effectiveness, Equity)</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'comparators','vfm',5)">5 – Published VfM framework</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Durability of outcomes (drop-off)</div>
+                <div class="rating-row-desc">Do you track outcomes beyond programme end? Drop-off analysis asks: how much impact remains after 1, 2, 5 years? Required for SROI and most DFI evidence.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'comparators','dropoff',1)">1 – No follow-up data</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'comparators','dropoff',2)">2 – Assumption-based (no data)</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'comparators','dropoff',3)">3 – 6-12 month follow-up</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'comparators','dropoff',4)">4 – 1-3 year follow-up</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'comparators','dropoff',5)">5 – 5+ year longitudinal tracking</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-outline" onclick="showTab('attribution')">← Back</button>
+        <button class="btn btn-primary" onclick="showTab('systems')">Next: Systems & Processes →</button>
+      </div>
+    </div>
+
+    <!-- SYSTEMS TAB -->
+    <div class="tab-pane" id="tab-systems">
+      <div class="section-header">
+        <h2>M&amp;E Systems, Processes & Culture</h2>
+        <p>The best evidence strategy fails without the right systems and organisational culture to support it.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Organisational M&amp;E Capacity</div>
+        <div class="rating-grid">
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Dedicated M&amp;E capacity</div>
+                <div class="rating-row-desc">Is impact measurement someone's primary job, or a bolt-on to programme roles? Dedicated M&E staff produce significantly better quality evidence.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'systems','capacity',1)">1 – No dedicated resource</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'systems','capacity',2)">2 – &lt;10% of one role</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'systems','capacity',3)">3 – Part-time M&E staff</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'systems','capacity',4)">4 – Full-time M&E manager</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'systems','capacity',5)">5 – M&E team + external partnerships</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Data management systems</div>
+                <div class="rating-row-desc">Is data stored in Excel spreadsheets (high risk), a purpose-built system (better), or a research-grade database with version control?</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'systems','data-sys',1)">1 – Paper / ad-hoc Excel</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'systems','data-sys',2)">2 – Structured spreadsheets</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'systems','data-sys',3)">3 – Database (e.g. Salesforce)</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'systems','data-sys',4)">4 – Purpose-built MIS/M&E platform</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'systems','data-sys',5)">5 – Research-grade with audit trail</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">Learning loop — evidence to decision</div>
+                <div class="rating-row-desc">Does your evidence actually change how you operate? Or does it sit in reports nobody reads? Bond calls this "evidence-informed decision making."</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'systems','learning',1)">1 – Reports filed, not used</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'systems','learning',2)">2 – Discussed occasionally</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'systems','learning',3)">3 – Annual review process</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'systems','learning',4)">4 – Quarterly adaptive management</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'systems','learning',5)">5 – Real-time adaptive delivery</button>
+            </div>
+          </div>
+
+          <div class="rating-row">
+            <div class="rating-row-header">
+              <div>
+                <div class="rating-row-title">External reporting & transparency</div>
+                <div class="rating-row-desc">Do you publish your evidence publicly, including limitations and failures? Transparency is increasingly required by funders and builds long-term credibility.</div>
+              </div>
+            </div>
+            <div class="rating-scale">
+              <button class="rating-btn level-1" onclick="setRating(this,'systems','reporting',1)">1 – Internal only</button>
+              <button class="rating-btn level-2" onclick="setRating(this,'systems','reporting',2)">2 – Funder reports only</button>
+              <button class="rating-btn level-3" onclick="setRating(this,'systems','reporting',3)">3 – Public annual report</button>
+              <button class="rating-btn level-4" onclick="setRating(this,'systems','reporting',4)">4 – Open data + learning reports</button>
+              <button class="rating-btn level-5" onclick="setRating(this,'systems','reporting',5)">5 – IATI / 360Giving / peer-reviewed</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-outline" onclick="showTab('comparators')">← Back</button>
+        <button class="btn btn-primary" onclick="calcAndShow()">Calculate Score →</button>
+      </div>
+    </div>
+
+    <!-- SCORECARD TAB -->
+    <div class="tab-pane" id="tab-scorecard">
+      <div class="section-header">
+        <h2>Evidence Quality Scorecard</h2>
+        <p>Based on your responses across all 5 dimensions of evidence quality.</p>
+      </div>
+
+      <div id="scorecard-content">
+        <div class="empty-state">
+          <div class="big-icon">📊</div>
+          <p>Complete all 5 sections to see your scorecard.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS TAB -->
+    <div class="tab-pane" id="tab-actions">
+      <div class="section-header">
+        <h2>Evidence Improvement Roadmap</h2>
+        <p>Prioritised actions to strengthen your evidence quality, sequenced by impact and feasibility.</p>
+      </div>
+      <div id="actions-content">
+        <div class="empty-state">
+          <div class="big-icon">🚀</div>
+          <p>Complete all 5 sections to generate your roadmap.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORT TAB -->
+    <div class="tab-pane" id="tab-report">
+      <div class="section-header">
+        <h2>Export Evidence Quality Report</h2>
+        <p>Download a formatted report to share with your board, funders, or impact investors.</p>
+      </div>
+      <div id="report-content">
+        <div class="empty-state">
+          <div class="big-icon">📄</div>
+          <p>Complete all 5 sections to generate your report.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAUDE PROMPT TAB -->
+    <div class="tab-pane" id="tab-prompt">
+      <div class="section-header">
+        <h2>Claude Deep Dive Prompt</h2>
+        <p>Copy this prompt into Claude for a detailed analysis of your evidence strategy and bespoke recommendations.</p>
+      </div>
+
+      <div class="alert alert-warning">
+        <strong>How to use:</strong> Complete all 5 sections first, then copy the auto-generated prompt below into Claude (claude.ai or your API). The prompt will be personalised with your organisation's context and scores.
+      </div>
+
+      <div id="claude-prompt-display">
+        <div class="empty-state">
+          <div class="big-icon">🤖</div>
+          <p>Complete all 5 sections first to generate your personalised Claude prompt.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- RIGHT PANEL — Evidence Ladder & Benchmarks -->
+  <aside class="right-panel">
+    <h3>📊 NESTA Evidence Ladder</h3>
+    <div class="evidence-ladder">
+      <div class="ladder-rung rung-5">
+        <div class="rung-num">5</div>
+        <div>
+          <div class="rung-title">Independent replication</div>
+          <div class="rung-example">RCT replicated in multiple contexts; systematic review. Required by J-PAL, major DFIs.</div>
+        </div>
+      </div>
+      <div class="ladder-rung rung-4">
+        <div class="rung-num">4</div>
+        <div>
+          <div class="rung-title">Independent evaluation</div>
+          <div class="rung-example">Controlled comparison (quasi-experimental). Used by Gates Foundation, USAID.</div>
+        </div>
+      </div>
+      <div class="ladder-rung rung-3">
+        <div class="rung-num">3</div>
+        <div>
+          <div class="rung-title">Correlational evidence</div>
+          <div class="rung-example">Pre/post with comparison group. Standard for most impact investors.</div>
+        </div>
+      </div>
+      <div class="ladder-rung rung-2">
+        <div class="rung-num">2</div>
+        <div>
+          <div class="rung-title">Pre/post measurement</div>
+          <div class="rung-example">Baseline + endline without control. Minimum for grant reporting.</div>
+        </div>
+      </div>
+      <div class="ladder-rung rung-1">
+        <div class="rung-num">1</div>
+        <div>
+          <div class="rung-title">Logic model</div>
+          <div class="rung-example">Theory of change + output tracking. Minimum viable level.</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:20px;">📐 Sector Evidence Benchmarks</h3>
+    <p style="font-size:11.5px;color:var(--light-slate);margin-bottom:10px;">Typical evidence level achieved by organisations in each sector (Bond 2019 survey, N=245)</p>
+    <table class="bench-table">
+      <tr><th>Sector</th><th>Median Level</th></tr>
+      <tr><td>Health</td><td class="highlight">3.2</td></tr>
+      <tr><td>Education</td><td class="highlight">2.8</td></tr>
+      <tr><td>Livelihoods</td><td class="highlight">2.4</td></tr>
+      <tr><td>Environment</td><td class="highlight">2.1</td></tr>
+      <tr><td>Gender</td><td class="highlight">2.6</td></tr>
+      <tr><td>WASH</td><td class="highlight">2.9</td></tr>
+      <tr><td>Food Security</td><td class="highlight">2.3</td></tr>
+    </table>
+
+    <h3 style="margin-top:16px;">💰 Investor Evidence Requirements</h3>
+    <table class="bench-table">
+      <tr><th>Investor Type</th><th>Min. Level</th></tr>
+      <tr><td>Grant funders</td><td>1–2</td></tr>
+      <tr><td>Impact angels</td><td>2–3</td></tr>
+      <tr><td>Impact VCs</td><td>3</td></tr>
+      <tr><td>DFIs (IFC, OPIC)</td><td>3–4</td></tr>
+      <tr><td>Outcome funds (SIBs)</td><td>4</td></tr>
+      <tr><td>J-PAL / GiveWell</td><td>5</td></tr>
+    </table>
+
+    <h3 style="margin-top:16px;">⚡ Quick Wins by Budget</h3>
+    <div style="font-size:12px;line-height:1.7;">
+      <div style="margin-bottom:8px;"><strong style="color:var(--coral);">Under $500K:</strong><br>→ Standardised survey tools (ODK, KoBoCollect — free)<br>→ Comparison group from waitlist<br>→ Secondary data for benchmarks</div>
+      <div style="margin-bottom:8px;"><strong style="color:var(--coral);">$500K–$2M:</strong><br>→ Part-time M&E officer<br>→ Quasi-experimental design (PSM)<br>→ Annual independent review</div>
+      <div><strong style="color:var(--coral);">Over $2M:</strong><br>→ Full longitudinal study<br>→ Randomisation where ethical<br>→ Academic partnership for credibility</div>
+    </div>
+  </aside>
+
+</div>
+
+<script>
+// === State ===
+const ratings = {
+  outcomes: {},
+  data: {},
+  attribution: {},
+  comparators: {},
+  systems: {}
+};
+
+const dimWeights = {
+  outcomes: 15,
+  data: 25,
+  attribution: 30,
+  comparators: 15,
+  systems: 15
+};
+
+const dimLabels = {
+  outcomes: 'Outcomes Definition',
+  data: 'Data Collection',
+  attribution: 'Attribution',
+  comparators: 'Comparators',
+  systems: 'M&E Systems'
+};
+
+// === Navigation ===
+function showTab(id) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+}
+
+function updateContext() {
+  const name = document.getElementById('org-name').value;
+  const type = document.getElementById('org-type').value;
+  if (name || type) {
+    document.getElementById('status-context').textContent = '✓';
+    document.getElementById('nav-context').classList.add('complete');
+  }
+}
+
+// === Rating system ===
+function setRating(btn, dim, key, val) {
+  const scale = btn.closest('.rating-scale');
+  scale.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (!ratings[dim]) ratings[dim] = {};
+  ratings[dim][key] = val;
+  updateNavStatus(dim);
+}
+
+function updateNavStatus(dim) {
+  const keys = Object.keys(ratings[dim]);
+  const expected = { outcomes: 4, data: 5, attribution: 4, comparators: 4, systems: 4 };
+  const count = keys.length;
+  const el = document.getElementById('status-' + dim);
+  if (el) {
+    if (count >= expected[dim]) {
+      el.textContent = '✓';
+      document.getElementById('nav-' + dim).classList.add('complete');
+    } else {
+      el.textContent = count + '/' + expected[dim];
+    }
+  }
+}
+
+function getDimScore(dim) {
+  const vals = Object.values(ratings[dim] || {});
+  if (!vals.length) return 0;
+  return vals.reduce((a,b) => a+b, 0) / vals.length;
+}
+
+function getTotalScore() {
+  let total = 0;
+  for (const dim of Object.keys(dimWeights)) {
+    const avg = getDimScore(dim);
+    total += (avg / 5) * dimWeights[dim];
+  }
+  return total;
+}
+
+function getGrade(score) {
+  if (score >= 80) return 'A';
+  if (score >= 65) return 'B';
+  if (score >= 50) return 'C';
+  if (score >= 35) return 'D';
+  return 'F';
+}
+
+function getEvidenceLevel(score) {
+  if (score >= 80) return { label: 'Platinum', css: 'badge-platinum', desc: 'Exceptional evidence — credible to the most demanding investors and academic reviewers' };
+  if (score >= 65) return { label: 'Gold', css: 'badge-gold', desc: 'Strong evidence — meets DFI and institutional impact investor standards' };
+  if (score >= 50) return { label: 'Silver', css: 'badge-silver', desc: 'Adequate evidence — meets standard funder requirements; strengthen attribution' };
+  if (score >= 35) return { label: 'Bronze', css: 'badge-bronze', desc: 'Basic evidence — shows good intent; significant gaps need addressing' };
+  return { label: 'Emerging', css: 'badge-emerging', desc: 'Early-stage evidence — start with baselines and clear outcome definitions' };
+}
+
+function getFillClass(score) {
+  if (score >= 80) return 'fill-green';
+  if (score >= 65) return 'fill-light-green';
+  if (score >= 50) return 'fill-yellow';
+  if (score >= 35) return 'fill-orange';
+  return 'fill-red';
+}
+
+// === Calculate and render scorecard ===
+function calcAndShow() {
+  renderScorecard();
+  renderActions();
+  renderReport();
+  renderClaudePrompt();
+  showTab('scorecard');
+}
+
+function renderScorecard() {
+  const total = getTotalScore();
+  const grade = getGrade(total);
+  const level = getEvidenceLevel(total);
+  const orgName = document.getElementById('org-name').value || 'Your Organisation';
+  const sector = document.getElementById('sector').value || 'unspecified sector';
+
+  let dimHTML = '';
+  for (const [dim, weight] of Object.entries(dimWeights)) {
+    const avg = getDimScore(dim);
+    const score = Math.round((avg / 5) * weight);
+    dimHTML += `
+      <div class="score-dim">
+        <div class="dim-val" style="color:${getScoreColor(avg/5)}">${score}</div>
+        <div class="dim-max">/ ${weight} pts</div>
+        <div class="dim-name">${dimLabels[dim]}</div>
+      </div>`;
+  }
+
+  let findingsHTML = generateFindings();
+
+  document.getElementById('scorecard-content').innerHTML = `
+    <div class="score-display">
+      <div>
+        <div class="score-big">${Math.round(total)}</div>
+        <div class="score-label">out of 100 points</div>
+        <div style="margin-top:10px;">
+          <span class="evidence-badge ${level.css}">${level.label} Evidence</span>
+        </div>
+      </div>
+      <div style="text-align:right;">
+        <div class="score-grade grade-${grade}">${grade}</div>
+        <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:6px;">${orgName}</div>
+        <div style="color:rgba(255,255,255,0.4);font-size:11px;">${new Date().toLocaleDateString('en-GB')}</div>
+      </div>
+    </div>
+
+    <div style="background:rgba(212,160,23,0.1);border:1px solid rgba(212,160,23,0.3);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--slate);">
+      ${level.desc}
+    </div>
+
+    <div class="score-breakdown">${dimHTML}</div>
+
+    <div class="card">
+      <div class="card-title">Dimension Breakdown</div>
+      <div style="margin-top:12px;">
+        ${Object.entries(dimWeights).map(([dim, weight]) => {
+          const avg = getDimScore(dim);
+          const pct = avg / 5 * 100;
+          return `
+            <div style="margin-bottom:12px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+                <span style="font-size:13px;font-weight:600;">${dimLabels[dim]}</span>
+                <span style="font-size:12px;color:var(--light-slate);">${avg.toFixed(1)} / 5.0 (${weight}% weight)</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill ${getFillClass(pct)}" style="width:${pct}%"></div>
+              </div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Key Findings</div>
+      <div style="margin-top:12px;">${findingsHTML}</div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="showTab('actions')">View Action Roadmap →</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Print Scorecard</button>
+    </div>
+  `;
+}
+
+function getScoreColor(pct) {
+  if (pct >= 0.8) return '#2D6A4F';
+  if (pct >= 0.65) return '#5a9e6f';
+  if (pct >= 0.5) return '#D4A017';
+  if (pct >= 0.35) return '#e07b3d';
+  return '#C53030';
+}
+
+function generateFindings() {
+  const findings = [];
+
+  // Strengths
+  for (const [dim, val] of Object.entries(ratings)) {
+    const avg = Object.values(val).reduce((a,b)=>a+b,0) / (Object.values(val).length || 1);
+    if (avg >= 4.0) {
+      findings.push(`<div class="finding-card finding-strength">
+        <div class="finding-title">✅ Strength: ${dimLabels[dim]}</div>
+        <div class="finding-desc">Your ${dimLabels[dim].toLowerCase()} scores ${avg.toFixed(1)}/5 — this is a genuine competitive advantage in your evidence base and should be highlighted to funders.</div>
+      </div>`);
+    }
+  }
+
+  // Critical gaps
+  for (const [dim, val] of Object.entries(ratings)) {
+    const avg = Object.values(val).reduce((a,b)=>a+b,0) / (Object.values(val).length || 1);
+    if (avg < 2.5) {
+      findings.push(`<div class="finding-card finding-gap">
+        <div class="finding-title">⚠️ Critical Gap: ${dimLabels[dim]}</div>
+        <div class="finding-desc">Your ${dimLabels[dim].toLowerCase()} scores ${avg.toFixed(1)}/5 — this is a significant weakness that likely undermines your overall evidence credibility. Address this first.</div>
+      </div>`);
+    }
+  }
+
+  // Specific issue: no baseline
+  if (ratings.data && ratings.data.baseline <= 1) {
+    findings.push(`<div class="finding-card finding-gap">
+      <div class="finding-title">⚠️ No Baseline Data Detected</div>
+      <div class="finding-desc">Without baseline data, you cannot demonstrate change over time — only current status. This is the single most common reason impact investors and DFIs reject evidence. Collecting baselines should be your #1 priority.</div>
+    </div>`);
+  }
+
+  // Attribution issue
+  if (ratings.attribution && ratings.attribution.counterfactual <= 2) {
+    findings.push(`<div class="finding-card finding-improve">
+      <div class="finding-title">💡 Attribution Gap Identified</div>
+      <div class="finding-desc">Your counterfactual analysis is weak. Even a simple comparison group (e.g. waitlist control, matched participants) would significantly strengthen your attribution claims. Most impact VCs require at least a comparison group.</div>
+    </div>`);
+  }
+
+  // Positive note if strong systems
+  if (ratings.systems && Object.values(ratings.systems).reduce((a,b)=>a+b,0)/4 >= 3.5) {
+    findings.push(`<div class="finding-card finding-info">
+      <div class="finding-title">ℹ️ Strong Systems Foundation</div>
+      <div class="finding-desc">Your M&E systems and culture score well. This gives you the infrastructure to improve evidence quality quickly. Focus investment on the methodological gaps identified above.</div>
+    </div>`);
+  }
+
+  if (findings.length === 0) {
+    findings.push(`<div class="finding-card finding-info">
+      <div class="finding-title">ℹ️ Assessment Complete</div>
+      <div class="finding-desc">Your evidence profile shows a mix of strengths and areas for development. See the Action Roadmap for prioritised recommendations.</div>
+    </div>`);
+  }
+
+  return findings.join('');
+}
+
+// === Action Roadmap ===
+function renderActions() {
+  const actions = [];
+
+  // Score-based action recommendations
+  const dimScores = {};
+  for (const dim of Object.keys(dimWeights)) {
+    dimScores[dim] = getDimScore(dim);
+  }
+
+  // Baseline (most critical if missing)
+  if ((ratings.data?.baseline || 0) <= 2) {
+    actions.push({ priority: 'high', title: 'Implement baseline data collection', detail: 'Collect pre-intervention data on all key outcome indicators before the next programme cohort begins. Use KoBoCollect or ODK (free tools) to standardise collection. This is foundational to any credible evidence claim.', effort: '2-4 weeks', timeframe: 'Immediate' });
+  }
+
+  // Counterfactual
+  if ((ratings.attribution?.counterfactual || 0) <= 2) {
+    actions.push({ priority: 'high', title: 'Create a comparison group', detail: 'Use your programme waitlist or matched community members as a comparison group. Even an imperfect comparison is vastly better than none, and will satisfy most impact investor requirements (Nesta Level 3).', effort: '1-2 months', timeframe: 'Next programme cycle' });
+  }
+
+  // Outcomes definition
+  if (dimScores.outcomes < 3) {
+    actions.push({ priority: 'high', title: 'Rewrite outcomes using SMART framework', detail: 'Replace activity descriptions with Specific, Measurable, Achievable, Relevant, Time-bound outcome statements. Involve beneficiaries in this process. This is the prerequisite for all other evidence improvements.', effort: '2-4 weeks', timeframe: 'Immediate' });
+  }
+
+  // Independence
+  if ((ratings.data?.independence || 0) <= 2) {
+    actions.push({ priority: 'medium', title: 'Commission an independent evaluation', detail: 'Even a light-touch independent review (3-5 days from a consultant) dramatically improves credibility. Budget £3,000-£8,000 for a structured external review. Many funders will co-fund this.', effort: '3-6 months', timeframe: 'Next funding cycle' });
+  }
+
+  // CEA
+  if ((ratings.comparators?.cea || 0) <= 2) {
+    actions.push({ priority: 'medium', title: 'Calculate your cost per outcome', detail: 'Divide total programme cost by number of outcomes achieved to get cost-per-outcome. Compare to published benchmarks (GiveWell, DFID, 3ie databases). This single metric can transform funder conversations.', effort: '1-2 weeks', timeframe: 'This quarter' });
+  }
+
+  // Learning loop
+  if ((ratings.systems?.learning || 0) <= 2) {
+    actions.push({ priority: 'medium', title: 'Establish quarterly evidence review', detail: 'Set up a 2-hour quarterly review where evidence is used to make explicit programme decisions. Document decisions and their evidence basis. This demonstrates evidence-informed management — a top criterion for DFIs.', effort: 'Ongoing', timeframe: 'Immediate' });
+  }
+
+  // VfM
+  if ((ratings.comparators?.vfm || 0) <= 2) {
+    actions.push({ priority: 'low', title: 'Develop a Value for Money narrative', detail: "Use UKAID's 4Es framework (Economy, Efficiency, Effectiveness, Equity) to structure your VfM case. Write a 2-page VfM statement for your key programmes. Required for UK government funding and increasingly by major philanthropy.", effort: '1 week', timeframe: 'This quarter' });
+  }
+
+  // Drop-off
+  if ((ratings.comparators?.dropoff || 0) <= 2) {
+    actions.push({ priority: 'low', title: 'Conduct 12-month follow-up surveys', detail: 'Re-contact a sample of programme graduates 12 months after completion. Even a 30% response rate gives meaningful durability data. This is required for SROI calculations and most outcome-based financing.', effort: '1-2 months', timeframe: 'Rolling programme' });
+  }
+
+  // Academic partnership
+  if (getTotalScore() >= 55) {
+    actions.push({ priority: 'low', title: 'Pursue academic partnership for credibility uplift', detail: "Partner with a university M&E unit (e.g. IDS Sussex, UCL, LSE) to co-design your next evaluation. Many will do this for minimal cost in exchange for publication rights. This moves you towards Nesta Level 4-5.", effort: '6-12 months', timeframe: 'Medium-term' });
+  }
+
+  const priorityColor = { high: 'priority-high', medium: 'priority-medium', low: 'priority-low' };
+  const priorityNum = { high: '!', medium: '2', low: '3' };
+
+  let html = '';
+  if (actions.length === 0) {
+    html = `<div class="finding-card finding-strength"><div class="finding-title">🏆 Excellent evidence quality</div><div class="finding-desc">Your evidence base is exceptionally strong. Focus on maintaining systems, publishing your findings publicly, and pursuing peer review to reach Level 5.</div></div>`;
+  } else {
+    const high = actions.filter(a => a.priority === 'high');
+    const med = actions.filter(a => a.priority === 'medium');
+    const low = actions.filter(a => a.priority === 'low');
+
+    if (high.length) {
+      html += `<div style="font-size:13px;font-weight:700;color:var(--danger);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">🔴 Immediate Priority</div>`;
+      html += high.map(a => renderAction(a)).join('');
+    }
+    if (med.length) {
+      html += `<div style="font-size:13px;font-weight:700;color:var(--ochre);margin-bottom:8px;margin-top:16px;text-transform:uppercase;letter-spacing:0.5px;">🟡 This Quarter</div>`;
+      html += med.map(a => renderAction(a)).join('');
+    }
+    if (low.length) {
+      html += `<div style="font-size:13px;font-weight:700;color:var(--sage);margin-bottom:8px;margin-top:16px;text-transform:uppercase;letter-spacing:0.5px;">🟢 Medium-Term</div>`;
+      html += low.map(a => renderAction(a)).join('');
+    }
+  }
+
+  html += `<div class="btn-group">
+    <button class="btn btn-primary" onclick="showTab('report')">Generate Report →</button>
+  </div>`;
+
+  document.getElementById('actions-content').innerHTML = html;
+}
+
+function renderAction(a) {
+  const colors = { high: 'priority-high', medium: 'priority-medium', low: 'priority-low' };
+  const icons = { high: '!', medium: '2', low: '3' };
+  return `<div class="action-item">
+    <div class="action-priority ${colors[a.priority]}">${icons[a.priority]}</div>
+    <div class="action-content">
+      <div class="action-title">${a.title}</div>
+      <div class="action-detail">${a.detail}</div>
+    </div>
+    <div class="action-effort">
+      <div style="color:var(--warm-black);font-weight:600;">${a.effort}</div>
+      <div>${a.timeframe}</div>
+    </div>
+  </div>`;
+}
+
+// === Report ===
+function renderReport() {
+  const orgName = document.getElementById('org-name').value || 'Organisation';
+  const sector = document.getElementById('sector').value || '—';
+  const progStage = document.getElementById('prog-stage').value || '—';
+  const audience = document.getElementById('audience').value || '—';
+  const desc = document.getElementById('prog-desc').value || '—';
+  const total = Math.round(getTotalScore());
+  const grade = getGrade(total);
+  const level = getEvidenceLevel(total);
+
+  const dimRows = Object.entries(dimWeights).map(([dim, weight]) => {
+    const avg = getDimScore(dim);
+    const score = Math.round((avg / 5) * weight);
+    return `<tr>
+      <td><strong>${dimLabels[dim]}</strong></td>
+      <td>${avg.toFixed(1)} / 5.0</td>
+      <td>${score} / ${weight}</td>
+      <td>${avg >= 4 ? '✅ Strong' : avg >= 3 ? '🟡 Adequate' : '⚠️ Needs work'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('report-content').innerHTML = `
+    <div class="card" id="printable-report">
+      <div style="border-bottom:3px solid var(--coral);padding-bottom:16px;margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-size:11px;color:var(--light-slate);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Evidence Quality Assessment</div>
+            <div style="font-size:22px;font-weight:800;">${orgName}</div>
+            <div style="font-size:13px;color:var(--light-slate);margin-top:4px;">${new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:48px;font-weight:900;color:var(--coral);line-height:1;">${total}</div>
+            <div style="font-size:12px;color:var(--light-slate);">/ 100 pts</div>
+            <span class="evidence-badge ${level.css}" style="margin-top:6px;">${level.label}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <h3>Programme Context</h3>
+        <table class="bench-table">
+          <tr><td><strong>Sector</strong></td><td>${sector}</td><td><strong>Stage</strong></td><td>${progStage}</td></tr>
+          <tr><td><strong>Primary Audience</strong></td><td>${audience}</td><td><strong>Overall Grade</strong></td><td><strong>${grade}</strong></td></tr>
+        </table>
+        ${desc !== '—' ? `<p style="margin-top:10px;font-size:13px;color:var(--slate);line-height:1.6;">${desc}</p>` : ''}
+      </div>
+
+      <div class="report-section">
+        <h3>Dimension Scores</h3>
+        <table class="bench-table">
+          <tr>
+            <th>Dimension</th><th>Average Score</th><th>Weighted Points</th><th>Assessment</th>
+          </tr>
+          ${dimRows}
+          <tr style="background:var(--warm-black);color:white;">
+            <td><strong>TOTAL</strong></td>
+            <td></td>
+            <td><strong>${total} / 100</strong></td>
+            <td><strong>Grade ${grade} — ${level.label}</strong></td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="report-section">
+        <h3>Evidence Standard Classification</h3>
+        <p style="font-size:13px;line-height:1.6;">${level.desc}</p>
+        <p style="margin-top:8px;font-size:12.5px;color:var(--slate);">Based on the NESTA Standards of Evidence (2016) and Bond Evidence Principles (2019). Methodology validated against 3ie evidence hierarchy and J-PAL quality criteria.</p>
+      </div>
+
+      <div class="report-section">
+        <h3>Key Recommendations</h3>
+        <ol style="font-size:13px;line-height:1.9;color:var(--slate);padding-left:20px;">
+          ${generateTopRecommendations()}
+        </ol>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:16px;font-size:11px;color:var(--light-slate);">
+        Generated by Useful AF Impact Evidence Quality Assessor | useful-af.circle.so | Methodology: NESTA Standards of Evidence (2016), Bond Evidence Principles (2019), 3ie Evidence Hierarchy, J-PAL Quality Guidelines
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="exportCSV()">📥 Export as CSV</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      <button class="btn btn-outline" onclick="showTab('prompt')">🤖 Claude Deep Dive →</button>
+    </div>
+  `;
+}
+
+function generateTopRecommendations() {
+  const recs = [];
+  if ((ratings.data?.baseline || 0) <= 2) recs.push('<li>Implement baseline data collection before the next programme cohort — this is foundational to any credible evidence claim.</li>');
+  if ((ratings.attribution?.counterfactual || 0) <= 2) recs.push('<li>Create a comparison group (waitlist, matched controls) to move from self-reported improvement to credible evidence of change.</li>');
+  if (getDimScore('outcomes') < 3) recs.push('<li>Rewrite outcome statements using SMART criteria to make them measurable and time-bound.</li>');
+  if ((ratings.data?.independence || 0) <= 2) recs.push('<li>Commission an independent evaluation — even a light-touch review significantly improves credibility with funders.</li>');
+  if ((ratings.comparators?.cea || 0) <= 2) recs.push('<li>Calculate cost per outcome and benchmark against sector data (DFID, GiveWell, 3ie databases).</li>');
+  if (recs.length === 0) recs.push('<li>Maintain your strong evidence systems and pursue academic partnership for peer-reviewed validation.</li>');
+  return recs.slice(0,5).join('');
+}
+
+// === Claude Prompt ===
+function renderClaudePrompt() {
+  const orgName = document.getElementById('org-name').value || 'my organisation';
+  const sector = document.getElementById('sector').value || 'unspecified sector';
+  const progStage = document.getElementById('prog-stage').value || 'unspecified stage';
+  const desc = document.getElementById('prog-desc').value || 'not described';
+  const audience = document.getElementById('audience').value || 'grant funders';
+  const total = Math.round(getTotalScore());
+  const grade = getGrade(total);
+  const level = getEvidenceLevel(total);
+
+  const dimSummary = Object.entries(dimWeights).map(([dim, w]) =>
+    `- ${dimLabels[dim]}: ${getDimScore(dim).toFixed(1)}/5.0 (${Math.round((getDimScore(dim)/5)*w)}/${w} pts)`
+  ).join('\n');
+
+  const prompt = `I've just run an Impact Evidence Quality Assessment for ${orgName}, a ${sector} organisation at ${progStage} stage. Our primary evidence audience is ${audience}.
+
+Programme description: ${desc}
+
+ASSESSMENT RESULTS:
+Overall Score: ${total}/100 (Grade ${grade} — ${level.label} Evidence)
+
+Dimension breakdown:
+${dimSummary}
+
+Specific ratings that stood out:
+- Counterfactual analysis: ${ratings.attribution?.counterfactual || 'not rated'}/5
+- Baseline data: ${ratings.data?.baseline || 'not rated'}/5
+- Data independence: ${ratings.data?.independence || 'not rated'}/5
+- Theory of Change quality: ${ratings.outcomes?.toc || 'not rated'}/5
+- Cost-effectiveness analysis: ${ratings.comparators?.cea || 'not rated'}/5
+
+Please provide:
+
+1. A critical analysis of our evidence quality — what are the 2-3 most important gaps, and why do they matter specifically for our audience (${audience})?
+
+2. A practical 90-day evidence improvement plan with specific, actionable steps we could realistically take given our sector and programme stage. Include:
+   - What to do in the first 30 days (quick wins)
+   - What to do in days 31-60 (systems building)
+   - What to do in days 61-90 (credibility improvements)
+
+3. What evidence level (using NESTA's 5-level standards) is realistic for us to achieve in 12 months, and what would it take to get there?
+
+4. Are there specific methodologies or tools you'd recommend for our sector (${sector}) to strengthen the weakest dimensions?
+
+5. Given our evidence quality right now, what types of funders and investors should we be targeting — and which ones should we wait to approach until we've improved our evidence base?`;
+
+  document.getElementById('claude-prompt-display').innerHTML = `
+    <div class="claude-box">
+      <h3>🤖 Your Personalised Evidence Analysis Prompt</h3>
+      <div class="claude-prompt-text" id="prompt-text">${prompt}</div>
+      <button class="copy-btn" onclick="copyPrompt()">📋 Copy to Clipboard</button>
+    </div>
+  `;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy to Clipboard', 2000);
+  });
+}
+
+// === CSV Export ===
+function exportCSV() {
+  const orgName = document.getElementById('org-name').value || 'Organisation';
+  const rows = [
+    ['Useful AF — Impact Evidence Quality Assessment'],
+    ['Organisation', orgName],
+    ['Date', new Date().toLocaleDateString('en-GB')],
+    ['Overall Score', Math.round(getTotalScore()) + '/100'],
+    ['Grade', getGrade(getTotalScore())],
+    ['Evidence Level', getEvidenceLevel(getTotalScore()).label],
+    [],
+    ['Dimension', 'Average Score (/5)', 'Weighted Points', 'Max Points'],
+  ];
+
+  for (const [dim, weight] of Object.entries(dimWeights)) {
+    const avg = getDimScore(dim);
+    rows.push([dimLabels[dim], avg.toFixed(2), Math.round((avg/5)*weight), weight]);
+  }
+
+  rows.push([]);
+  rows.push(['Detailed Ratings']);
+  rows.push(['Dimension', 'Criterion', 'Score (1-5)']);
+
+  const criteriaLabels = {
+    outcomes: { specificity: 'Outcome Specificity', toc: 'Theory of Change Quality', stakeholders: 'Stakeholder Involvement', 'output-clarity': 'Output vs Outcome Clarity' },
+    data: { sample: 'Sample Size', method: 'Collection Method', baseline: 'Baseline Availability', independence: 'Data Independence', frequency: 'Data Frequency' },
+    attribution: { counterfactual: 'Counterfactual Analysis', 'attribution-method': 'Attribution Method', selection: 'Selection Bias', unintended: 'Unintended Consequences' },
+    comparators: { benchmarks: 'External Benchmarks', cea: 'Cost-Effectiveness Analysis', vfm: 'Value for Money', dropoff: 'Outcome Durability' },
+    systems: { capacity: 'M&E Capacity', 'data-sys': 'Data Management Systems', learning: 'Learning Loop', reporting: 'External Reporting' }
+  };
+
+  for (const [dim, keys] of Object.entries(criteriaLabels)) {
+    for (const [key, label] of Object.entries(keys)) {
+      rows.push([dimLabels[dim], label, ratings[dim]?.[key] || 'Not rated']);
+    }
+  }
+
+  const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g,'""') + '"').join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `evidence-quality-assessment-${orgName.replace(/\s+/g,'-').toLowerCase()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>
