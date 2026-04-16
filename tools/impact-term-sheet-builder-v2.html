@@ -34,6 +34,346 @@
             overflow: hidden;
         }
 
+        /* ── INSTRUMENT WIZARD OVERLAY ────────────────────────────── */
+        .wizard-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: linear-gradient(145deg, #1a2730 0%, #1a3a2a 50%, #1a2730 100%);
+            color: #ffffff;
+            overflow-y: auto;
+            transition: opacity 0.5s ease, transform 0.4s ease;
+        }
+
+        .wizard-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-20px);
+        }
+
+        .wizard-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem 3rem;
+        }
+
+        .wizard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .wizard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .wizard-header p {
+            font-size: 1.05rem;
+            color: rgba(255,255,255,0.7);
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .wizard-step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .wizard-step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            transition: all 0.3s;
+        }
+
+        .wizard-step-dot.active {
+            background: var(--gold);
+            width: 28px;
+            border-radius: 5px;
+        }
+
+        /* Step 1: Quick questions */
+        .wizard-step { display: none; }
+        .wizard-step.active { display: block; }
+
+        .wizard-question {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .wizard-question h2 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .wizard-question p {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .wizard-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+            max-width: 900px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .wizard-option {
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            text-align: left;
+        }
+
+        .wizard-option:hover {
+            border-color: var(--gold);
+            background: rgba(184,134,11,0.08);
+        }
+
+        .wizard-option.selected {
+            border-color: var(--gold);
+            background: rgba(184,134,11,0.15);
+        }
+
+        .wizard-option-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .wizard-option-desc {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            line-height: 1.4;
+        }
+
+        /* Step 2: Recommendations */
+        .wizard-recs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            max-width: 1000px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .wizard-rec-card {
+            background: rgba(255,255,255,0.06);
+            border: 2px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            padding: 1.25rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+        }
+
+        .wizard-rec-card:hover {
+            border-color: var(--gold);
+            background: rgba(184,134,11,0.08);
+            transform: translateY(-2px);
+        }
+
+        .wizard-rec-card.best {
+            border-color: var(--primary-green);
+            background: rgba(45,125,70,0.12);
+        }
+
+        .wizard-rec-badge {
+            position: absolute;
+            top: -10px;
+            right: 12px;
+            background: var(--primary-green);
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .wizard-rec-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .wizard-rec-subtitle {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.55);
+            margin-bottom: 0.75rem;
+        }
+
+        .wizard-rec-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 0.82rem;
+        }
+
+        .wizard-rec-row:last-child { border-bottom: none; }
+
+        .wizard-rec-label {
+            color: rgba(255,255,255,0.55);
+        }
+
+        .wizard-rec-value {
+            font-weight: 600;
+        }
+
+        .wizard-rec-value.good { color: #66bb6a; }
+        .wizard-rec-value.neutral { color: var(--gold); }
+        .wizard-rec-value.caution { color: #ef5350; }
+
+        .wizard-rec-pros {
+            margin-top: 0.75rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .wizard-pro, .wizard-con {
+            font-size: 0.78rem;
+            margin-bottom: 0.2rem;
+            line-height: 1.4;
+        }
+
+        .wizard-pro { color: #81c784; }
+        .wizard-con { color: #ef9a9a; }
+
+        .wizard-rec-use-btn {
+            display: block;
+            width: 100%;
+            margin-top: 0.75rem;
+            padding: 0.5rem;
+            background: var(--gold);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .wizard-rec-use-btn:hover {
+            background: #9a6f0a;
+        }
+
+        /* Wizard navigation */
+        .wizard-nav {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .wizard-nav-btn {
+            padding: 0.6rem 1.8rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .wizard-nav-btn.primary {
+            background: var(--gold);
+            color: #fff;
+        }
+
+        .wizard-nav-btn.primary:hover { background: #9a6f0a; }
+
+        .wizard-nav-btn.secondary {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.25);
+            color: rgba(255,255,255,0.7);
+        }
+
+        .wizard-nav-btn.secondary:hover {
+            border-color: rgba(255,255,255,0.5);
+            color: #fff;
+        }
+
+        .wizard-skip {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .wizard-skip a {
+            color: rgba(255,255,255,0.4);
+            text-decoration: none;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .wizard-skip a:hover {
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* All instruments comparison table */
+        .wizard-compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto 1.5rem;
+            max-width: 1000px;
+            font-size: 0.78rem;
+        }
+
+        .wizard-compare-table th {
+            background: rgba(255,255,255,0.08);
+            padding: 0.5rem 0.6rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.6);
+            border-bottom: 2px solid rgba(255,255,255,0.15);
+        }
+
+        .wizard-compare-table td {
+            padding: 0.55rem 0.6rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.85);
+        }
+
+        .wizard-compare-table tr:hover td {
+            background: rgba(255,255,255,0.03);
+        }
+
+        .wizard-compare-table .instrument-name {
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .wizard-toggle-compare {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .wizard-toggle-compare a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .wizard-toggle-compare a:hover { text-decoration: underline; }
+        /* ── END WIZARD ──────────────────────────────────────────── */
+
         header {
             background-color: var(--navy);
             color: var(--white);
@@ -625,6 +965,196 @@
     </style>
 </head>
 <body>
+
+    <!-- ═══ INSTRUMENT GUIDANCE WIZARD ═══════════════════════════════════════ -->
+    <div class="wizard-overlay" id="wizardOverlay">
+        <div class="wizard-inner">
+            <div class="wizard-header">
+                <h1>What kind of deal are you structuring?</h1>
+                <p>Answer two quick questions and we'll recommend the right instrument — with plain-English pros and cons. No jargon.</p>
+            </div>
+
+            <div class="wizard-step-indicator">
+                <div class="wizard-step-dot active" id="dot1"></div>
+                <div class="wizard-step-dot" id="dot2"></div>
+                <div class="wizard-step-dot" id="dot3"></div>
+            </div>
+
+            <!-- ── STEP 1: What's your situation? ── -->
+            <div class="wizard-step active" id="wizStep1">
+                <div class="wizard-question">
+                    <h2>What best describes your situation?</h2>
+                    <p>Pick the closest match — this helps narrow down which instruments make sense.</p>
+                </div>
+
+                <div class="wizard-options" id="q1Options">
+                    <div class="wizard-option" data-val="early_equity" onclick="selectWizardOption(this, 'q1')">
+                        <div class="wizard-option-title">Early-stage startup raising capital</div>
+                        <div class="wizard-option-desc">Pre-revenue or early revenue. Need funding to grow. Investors want equity upside.</div>
+                    </div>
+                    <div class="wizard-option" data-val="revenue_stage" onclick="selectWizardOption(this, 'q1')">
+                        <div class="wizard-option-title">Revenue-stage business needing growth capital</div>
+                        <div class="wizard-option-desc">Generating revenue. Don't want to give up equity. Need working capital or expansion funds.</div>
+                    </div>
+                    <div class="wizard-option" data-val="social_program" onclick="selectWizardOption(this, 'q1')">
+                        <div class="wizard-option-title">Social program needing outcomes-based funding</div>
+                        <div class="wizard-option-desc">NGO, government, or nonprofit. Funders pay based on results achieved, not activities.</div>
+                    </div>
+                    <div class="wizard-option" data-val="grant_seeking" onclick="selectWizardOption(this, 'q1')">
+                        <div class="wizard-option-title">Seeking grant or concessional capital</div>
+                        <div class="wizard-option-desc">Need low-cost or no-cost capital. Willing to accept some reporting obligations.</div>
+                    </div>
+                </div>
+
+                <div class="wizard-nav">
+                    <button class="wizard-nav-btn primary" onclick="goToWizStep(2)" id="q1Next" disabled>Show me my options</button>
+                </div>
+
+                <div class="wizard-skip">
+                    <a onclick="closeWizard()">Skip — I already know which instrument I need</a>
+                </div>
+            </div>
+
+            <!-- ── STEP 2: What matters most? ── -->
+            <div class="wizard-step" id="wizStep2">
+                <div class="wizard-question">
+                    <h2>What matters most to you?</h2>
+                    <p>This shapes whether the deal is more founder-friendly or investor-friendly.</p>
+                </div>
+
+                <div class="wizard-options" id="q2Options">
+                    <div class="wizard-option" data-val="keep_control" onclick="selectWizardOption(this, 'q2')">
+                        <div class="wizard-option-title">Keep maximum control</div>
+                        <div class="wizard-option-desc">Don't want board seats, voting rights, or equity dilution. Willing to pay higher cost of capital.</div>
+                    </div>
+                    <div class="wizard-option" data-val="lowest_cost" onclick="selectWizardOption(this, 'q2')">
+                        <div class="wizard-option-title">Lowest cost of capital</div>
+                        <div class="wizard-option-desc">Willing to give up some control in exchange for cheaper money. Patient about timelines.</div>
+                    </div>
+                    <div class="wizard-option" data-val="speed" onclick="selectWizardOption(this, 'q2')">
+                        <div class="wizard-option-title">Speed and simplicity</div>
+                        <div class="wizard-option-desc">Need funding fast. Don't want months of negotiation. Simple docs preferred.</div>
+                    </div>
+                    <div class="wizard-option" data-val="impact_aligned" onclick="selectWizardOption(this, 'q2')">
+                        <div class="wizard-option-title">Impact-aligned returns</div>
+                        <div class="wizard-option-desc">Want the financial structure to reward impact, not just profit. Mission matters.</div>
+                    </div>
+                </div>
+
+                <div class="wizard-nav">
+                    <button class="wizard-nav-btn secondary" onclick="goToWizStep(1)">Back</button>
+                    <button class="wizard-nav-btn primary" onclick="goToWizStep(3)" id="q2Next" disabled>Show recommendations</button>
+                </div>
+            </div>
+
+            <!-- ── STEP 3: Recommendations ── -->
+            <div class="wizard-step" id="wizStep3">
+                <div class="wizard-question">
+                    <h2>Here's what we recommend</h2>
+                    <p>Based on your answers, these instruments fit your situation. Click any card to start building your term sheet.</p>
+                </div>
+
+                <div id="wizardRecs" class="wizard-recs">
+                    <!-- Populated by JS -->
+                </div>
+
+                <div class="wizard-toggle-compare">
+                    <a onclick="toggleCompareTable()">See all 8 instruments side-by-side</a>
+                </div>
+
+                <div id="compareTableWrap" style="display:none;">
+                    <table class="wizard-compare-table">
+                        <thead>
+                            <tr>
+                                <th>Instrument</th>
+                                <th>In Plain English</th>
+                                <th>Founder Gives Up</th>
+                                <th>Typical Cost</th>
+                                <th>Speed</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="instrument-name">SAFE</td>
+                                <td>You get money now. Investor gets equity later when you raise a bigger round.</td>
+                                <td>Future equity (unknown %)</td>
+                                <td>15-20% discount</td>
+                                <td>Very fast</td>
+                                <td>Pre-seed / seed startups</td>
+                            </tr>
+                            <tr>
+                                <td class="instrument-name">Conv. Note</td>
+                                <td>A loan that turns into equity. Pays interest until it converts.</td>
+                                <td>Future equity + interest</td>
+                                <td>5-8% interest + 15-20% discount</td>
+                                <td>Fast</td>
+                                <td>Bridge rounds, angel investing</td>
+                            </tr>
+                            <tr>
+                                <td class="instrument-name">RBF</td>
+                                <td>Investor gets a % of your monthly revenue until they've been repaid (e.g. 1.5x).</td>
+                                <td>Nothing — no equity. Just cashflow.</td>
+                                <td>1.3-2.0x of investment back</td>
+                                <td>Fast</td>
+                                <td>Revenue-stage, e-commerce, SaaS</td>
+                            </tr>
+                            <tr>
+                                <td class="instrument-name">Priced Equity</td>
+                                <td>You agree on a valuation today. Investor buys shares at that price.</td>
+                                <td>Equity (known % now)</td>
+                                <td>Ownership dilution</td>
+                                <td>Slow (legal fees)</td>
+                                <td>Series A+, growth stage</td>
+                            </tr>
+                            <tr>
+                                <td class="instrument-name">Impact Loan</td>
+                                <td>A loan — you pay it back over time with interest.</td>
+                                <td>Nothing — no equity. Just repayment.</td>
+                                <td>2-12% annual interest</td>
+                                <td>Medium</td>
+                                <td>Established businesses, asset-backed</td>
+                            </tr>
+                            <tr>
+                                <td class="instrument-name">Recoverable Grant</td>
+                                <td>Like a grant, but if you succeed you pay some or all back.</td>
+                                <td>Conditional repayment only</td>
+                                <td>0% (if impact fails, keep it)</td>
+                                <td>Slow</td>
+                                <td>Early-stage impact, R&D</td>
+                            </tr>
+                            <tr>
+                                <td class="instrument-name">Social Impact Bond</td>
+                                <td>Investors fund a program. Government pays back only if outcomes are achieved.</td>
+                                <td>Nothing — outcome payor pays</td>
+                                <td>Depends on outcomes</td>
+                                <td>Very slow</td>
+                                <td>Government programs, health, education</td>
+                            </tr>
+                            <tr>
+                                <td class="instrument-name">SAFI</td>
+                                <td>Like a SAFE, but conversion is triggered by impact milestones, not just a funding round.</td>
+                                <td>Future equity (tied to impact)</td>
+                                <td>10-20% discount</td>
+                                <td>Medium</td>
+                                <td>Impact-first startups with measurable outcomes</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="wizard-nav">
+                    <button class="wizard-nav-btn secondary" onclick="goToWizStep(2)">Back</button>
+                </div>
+
+                <div class="wizard-skip" style="margin-top: 0.75rem;">
+                    <a onclick="closeWizard()">Skip to builder without a template</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ═══ END WIZARD ═══════════════════════════════════════════════════════ -->
+
     <header>
         <h1>Impact Term Sheet Builder v2</h1>
         <div class="deal-type-selector" id="dealTypeSelector">
@@ -2532,6 +3062,208 @@
                 alert('Term sheet copied to clipboard!');
             });
         }
+
+        // ─── INSTRUMENT GUIDANCE WIZARD ──────────────────────────────────────────
+        let wizardAnswers = { q1: null, q2: null };
+
+        function selectWizardOption(el, question) {
+            el.parentElement.querySelectorAll('.wizard-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            wizardAnswers[question] = el.dataset.val;
+            if (question === 'q1') document.getElementById('q1Next').disabled = false;
+            if (question === 'q2') document.getElementById('q2Next').disabled = false;
+        }
+
+        function goToWizStep(step) {
+            document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+            document.getElementById('wizStep' + step).classList.add('active');
+            document.querySelectorAll('.wizard-step-dot').forEach((d,i) => {
+                d.classList.toggle('active', i === step - 1);
+            });
+            if (step === 3) buildRecommendations();
+            document.querySelector('.wizard-inner').scrollTop = 0;
+            document.getElementById('wizardOverlay').scrollTop = 0;
+        }
+
+        function closeWizard() {
+            const overlay = document.getElementById('wizardOverlay');
+            overlay.classList.add('hidden');
+            setTimeout(() => overlay.style.display = 'none', 500);
+        }
+
+        function selectInstrumentFromWizard(dealType) {
+            // Set dealType in the main tool
+            appState.dealType = dealType;
+            document.querySelectorAll('.deal-type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === dealType);
+            });
+            updateDealTypeSections();
+            renderTermSheet();
+            renderFlags();
+            renderCalculations();
+            renderBenchmarks();
+            closeWizard();
+        }
+
+        function toggleCompareTable() {
+            const wrap = document.getElementById('compareTableWrap');
+            wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Recommendation engine — maps wizard answers to ranked instruments
+        const INSTRUMENT_KB = {
+            safe: {
+                name: 'SAFE',
+                subtitle: 'Simple Agreement for Future Equity',
+                plain: 'You get money now, investor gets shares later when you raise a bigger round.',
+                pros: ['Dead simple — 5-page document', 'No valuation negotiation needed now', 'No interest payments or repayments', 'Fastest way to close a deal'],
+                cons: ['Unknown dilution until next round', 'Uncapped SAFEs can be painful at exit', 'No investor obligations before conversion'],
+                founderGivesUp: 'Future equity (% unknown until next round)',
+                typicalCost: '15-20% discount on next round price',
+                speed: 'Days to weeks',
+                bestFor: 'Pre-seed and seed startups',
+                situations: ['early_equity'],
+                priorities: ['speed'],
+            },
+            convertible: {
+                name: 'Convertible Note',
+                subtitle: 'Loan that converts to equity',
+                plain: 'A loan that turns into shares later. You pay interest until it converts.',
+                pros: ['Simple compared to priced equity', 'Well-understood by lawyers globally', 'Valuation cap protects both sides', 'Interest accrual adds investor incentive'],
+                cons: ['Interest accrues — gets expensive over time', 'Maturity date creates pressure', 'Still dilutes at conversion'],
+                founderGivesUp: 'Future equity + interest on the loan',
+                typicalCost: '5-8% annual interest + 15-20% conversion discount',
+                speed: 'Weeks',
+                bestFor: 'Bridge rounds, angel investing',
+                situations: ['early_equity'],
+                priorities: ['lowest_cost'],
+            },
+            rbf: {
+                name: 'Revenue-Based Finance (RBF)',
+                subtitle: 'Pay back from your revenue — no equity given up',
+                plain: 'Investor gets a % of your monthly revenue until they get back e.g. 1.5x what they put in. Then it stops.',
+                pros: ['Zero equity dilution — keep 100% ownership', 'Payments flex with your revenue (good and bad months)', 'No board seats, no voting rights', 'Faster than equity rounds'],
+                cons: ['Reduces monthly cashflow', 'Not suitable if pre-revenue', 'Cap multiple means you pay back more than you borrowed'],
+                founderGivesUp: 'Nothing permanent — just a share of revenue for a while',
+                typicalCost: '1.3-2.0x of what you received (impact market)',
+                speed: 'Weeks',
+                bestFor: 'Revenue-stage businesses that want to keep equity',
+                situations: ['revenue_stage'],
+                priorities: ['keep_control', 'speed'],
+            },
+            equity: {
+                name: 'Priced Equity',
+                subtitle: 'Sell shares at an agreed valuation today',
+                plain: 'You and the investor agree on what the company is worth today. They buy shares at that price.',
+                pros: ['Everyone knows exactly what they own', 'Clean cap table — no conversion confusion', 'Best for large rounds (Series A+)', 'Investors are fully committed partners'],
+                cons: ['Expensive legal fees ($15K-$50K+)', 'Slow — months of negotiation', 'Valuation disagreements are common', 'Board seats and voting rights come standard'],
+                founderGivesUp: 'Equity (known %) + usually board seats + voting rights',
+                typicalCost: 'Ownership dilution (15-40% per round typical)',
+                speed: 'Months',
+                bestFor: 'Series A+, growth stage, institutional investors',
+                situations: ['early_equity', 'revenue_stage'],
+                priorities: ['lowest_cost'],
+            },
+            loan: {
+                name: 'Impact Loan',
+                subtitle: 'Borrow money, pay it back with interest',
+                plain: 'A loan. You get money, pay it back over time with interest. Impact lenders sometimes offer lower rates.',
+                pros: ['No equity dilution at all', 'Predictable repayment schedule', 'Interest rates can be below market (2-4% for concessional)', 'No board seats or voting rights'],
+                cons: ['Must repay regardless of business performance', 'Requires creditworthiness or collateral', 'Monthly payments reduce cashflow', 'Grace periods help but interest still accrues'],
+                founderGivesUp: 'Nothing — just interest and repayment obligation',
+                typicalCost: '2-12% annual interest depending on risk',
+                speed: 'Weeks to months',
+                bestFor: 'Established businesses, asset-backed deals',
+                situations: ['revenue_stage', 'grant_seeking'],
+                priorities: ['keep_control'],
+            },
+            grant: {
+                name: 'Recoverable Grant',
+                subtitle: 'Free money (unless you succeed, then maybe pay some back)',
+                plain: 'Like a grant, but with a twist: if you hit certain milestones (revenue, exit), you pay some or all back.',
+                pros: ['Cheapest capital available (often 0% cost if targets missed)', 'No equity dilution', 'Aligned with impact — you keep it if impact is achieved', 'Minimal governance requirements'],
+                cons: ['Rare — few funders offer these', 'Usually small amounts ($50K-$500K)', 'Can have complex reporting requirements', 'Repayment triggers need careful negotiation'],
+                founderGivesUp: 'Conditional repayment only — no equity, no control',
+                typicalCost: '0% if targets not met; 50-100% repayment if successful',
+                speed: 'Slow (months of applications)',
+                bestFor: 'Early-stage impact, R&D, proof-of-concept',
+                situations: ['grant_seeking', 'social_program'],
+                priorities: ['lowest_cost', 'keep_control'],
+            },
+            sib: {
+                name: 'Social Impact Bond (SIB)',
+                subtitle: 'Investors fund a program; government pays if outcomes achieved',
+                plain: 'Private investors put up money for a social program. If the program works (measured independently), a government or donor pays them back with a return.',
+                pros: ['Aligns funding with actual outcomes', 'Shifts risk from government to investors', 'Creates rigorous evidence base', 'Can unlock new funding for proven programs'],
+                cons: ['Extremely complex to set up', 'Takes 1-2 years to structure', 'Requires willing government outcome payor', 'High transaction costs'],
+                founderGivesUp: 'Nothing — but must deliver measurable outcomes',
+                typicalCost: 'Outcome payments (variable)',
+                speed: 'Very slow (12-24 months to structure)',
+                bestFor: 'Government programs, health, education, employment',
+                situations: ['social_program'],
+                priorities: ['impact_aligned'],
+            },
+            safi: {
+                name: 'SAFI',
+                subtitle: 'Simple Agreement for Future Impact',
+                plain: 'Like a SAFE, but the conversion trigger is an impact milestone instead of (or in addition to) a funding round. Financial returns are linked to real-world impact.',
+                pros: ['Directly links money to impact outcomes', 'Simple document (like a SAFE)', 'If impact fails, can revert to SAFE terms (investor protected)', 'Signals genuine impact commitment'],
+                cons: ['Newer instrument — less legal precedent', 'Impact triggers must be very carefully defined', 'Requires independent verification', 'Not all lawyers know how to draft these'],
+                founderGivesUp: 'Future equity — but tied to achieving impact',
+                typicalCost: '10-20% discount (similar to SAFE)',
+                speed: 'Weeks to months',
+                bestFor: 'Impact-first startups with measurable outcomes',
+                situations: ['early_equity', 'social_program'],
+                priorities: ['impact_aligned'],
+            }
+        };
+
+        function buildRecommendations() {
+            const q1 = wizardAnswers.q1;
+            const q2 = wizardAnswers.q2;
+            if (!q1 || !q2) return;
+
+            // Score each instrument
+            const scored = Object.entries(INSTRUMENT_KB).map(([key, inst]) => {
+                let score = 0;
+                if (inst.situations.includes(q1)) score += 3;
+                if (inst.priorities.includes(q2)) score += 2;
+                return { key, score, ...inst };
+            });
+
+            scored.sort((a, b) => b.score - a.score);
+
+            // Show top 3 (or top 2 if tie-breaking is clear)
+            const topInstruments = scored.filter(s => s.score > 0).slice(0, 3);
+
+            const recsEl = document.getElementById('wizardRecs');
+            recsEl.innerHTML = topInstruments.map((inst, idx) => `
+                <div class="wizard-rec-card ${idx === 0 ? 'best' : ''}" onclick="selectInstrumentFromWizard('${inst.key}')">
+                    ${idx === 0 ? '<div class="wizard-rec-badge">Best Match</div>' : ''}
+                    <div class="wizard-rec-name">${inst.name}</div>
+                    <div class="wizard-rec-subtitle">${inst.subtitle}</div>
+                    <div style="font-size:0.85rem;line-height:1.5;margin-bottom:0.75rem;color:rgba(255,255,255,0.8);">${inst.plain}</div>
+                    <div class="wizard-rec-row">
+                        <span class="wizard-rec-label">You give up</span>
+                        <span class="wizard-rec-value">${inst.founderGivesUp.length > 40 ? inst.founderGivesUp.slice(0,37) + '...' : inst.founderGivesUp}</span>
+                    </div>
+                    <div class="wizard-rec-row">
+                        <span class="wizard-rec-label">Typical cost</span>
+                        <span class="wizard-rec-value">${inst.typicalCost}</span>
+                    </div>
+                    <div class="wizard-rec-row">
+                        <span class="wizard-rec-label">Speed</span>
+                        <span class="wizard-rec-value">${inst.speed}</span>
+                    </div>
+                    <div class="wizard-rec-pros">
+                        ${inst.pros.slice(0,2).map(p => '<div class="wizard-pro">+ ' + p + '</div>').join('')}
+                        ${inst.cons.slice(0,1).map(c => '<div class="wizard-con">- ' + c + '</div>').join('')}
+                    </div>
+                    <button class="wizard-rec-use-btn" onclick="event.stopPropagation(); selectInstrumentFromWizard('${inst.key}')">Use ${inst.name} &rarr;</button>
+                </div>
+            `).join('');
+        }
+        // ─── END INSTRUMENT GUIDANCE WIZARD ──────────────────────────────────────
 
         // ─── INVESTOR TEMPLATE LIBRARY ───────────────────────────────────────────
         // Each template pre-fills appState with known/public market terms for that
