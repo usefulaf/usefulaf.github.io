@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stakeholder Mapping & Power Analysis Tool — Useful AF</title>
+<style>
+:root {
+  --cream: #FDF6EE;
+  --warm-black: #1A1A1A;
+  --coral: #E8735A;
+  --coral-light: #F4A693;
+  --ochre: #D4973B;
+  --ochre-light: #F0D6A4;
+  --teal: #2A7B88;
+  --teal-light: #B8DDE3;
+  --green: #4A9B6E;
+  --green-light: #C4E4D2;
+  --purple: #7B5EA7;
+  --purple-light: #D4C4E8;
+  --gray-50: #FAFAF9;
+  --gray-100: #F5F4F2;
+  --gray-200: #E8E6E3;
+  --gray-300: #D1CEC9;
+  --gray-400: #A8A49E;
+  --gray-500: #7A766F;
+  --gray-600: #5C5852;
+  --gray-700: #3D3A36;
+  --shadow-sm: 0 1px 2px rgba(26,26,26,0.06);
+  --shadow-md: 0 4px 12px rgba(26,26,26,0.08);
+  --shadow-lg: 0 8px 24px rgba(26,26,26,0.12);
+  --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--warm-black); line-height:1.6; }
+.header { background: var(--warm-black); color: var(--cream); padding: 20px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.header h1 { font-size:1.4rem; font-weight:700; letter-spacing:-0.02em; }
+.header .brand { font-size:0.85rem; opacity:0.7; }
+.header .brand a { color: var(--coral-light); text-decoration:none; }
+
+.tabs { display:flex; background: var(--gray-100); border-bottom:1px solid var(--gray-200); overflow-x:auto; }
+.tab { padding:12px 20px; cursor:pointer; font-size:0.9rem; font-weight:500; color:var(--gray-500); border-bottom:3px solid transparent; white-space:nowrap; transition:all 0.2s; }
+.tab:hover { color:var(--warm-black); background:var(--gray-50); }
+.tab.active { color:var(--coral); border-bottom-color:var(--coral); background:white; }
+
+.container { max-width:1200px; margin:0 auto; padding:24px; }
+.panel { display:none; }
+.panel.active { display:block; }
+
+.card { background:white; border-radius:var(--radius); padding:24px; margin-bottom:20px; box-shadow:var(--shadow-sm); border:1px solid var(--gray-200); }
+.card h2 { font-size:1.15rem; margin-bottom:12px; color:var(--warm-black); }
+.card h3 { font-size:1rem; margin-bottom:8px; color:var(--gray-700); }
+.card p { color:var(--gray-600); font-size:0.9rem; margin-bottom:12px; }
+
+.info-box { background:var(--teal-light); border-left:4px solid var(--teal); padding:14px 16px; border-radius:0 var(--radius) var(--radius) 0; margin-bottom:16px; font-size:0.85rem; color:var(--gray-700); }
+.info-box strong { color:var(--teal); }
+
+.warn-box { background:#FFF3E0; border-left:4px solid var(--ochre); padding:14px 16px; border-radius:0 var(--radius) var(--radius) 0; margin-bottom:16px; font-size:0.85rem; color:var(--gray-700); }
+
+.form-group { margin-bottom:16px; }
+.form-group label { display:block; font-weight:600; font-size:0.85rem; margin-bottom:4px; color:var(--gray-700); }
+.form-group .hint { font-size:0.78rem; color:var(--gray-400); margin-bottom:4px; }
+input[type="text"], input[type="number"], select, textarea {
+  width:100%; padding:10px 12px; border:1px solid var(--gray-200); border-radius:6px;
+  font-size:0.9rem; font-family:inherit; background:white; transition:border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus { outline:none; border-color:var(--coral); box-shadow:0 0 0 3px rgba(232,115,90,0.12); }
+textarea { resize:vertical; min-height:60px; }
+
+.btn { padding:10px 20px; border:none; border-radius:6px; font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.btn-primary { background:var(--coral); color:white; }
+.btn-primary:hover { background:#D4613E; }
+.btn-secondary { background:var(--gray-200); color:var(--gray-700); }
+.btn-secondary:hover { background:var(--gray-300); }
+.btn-teal { background:var(--teal); color:white; }
+.btn-teal:hover { background:#1F6570; }
+.btn-green { background:var(--green); color:white; }
+.btn-green:hover { background:#3A7F58; }
+.btn-sm { padding:6px 14px; font-size:0.82rem; }
+.btn-group { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+@media(max-width:768px) {
+  .grid-2, .grid-3 { grid-template-columns:1fr; }
+  .container { padding:16px; }
+}
+
+/* Stakeholder table */
+.sh-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+.sh-table th { background:var(--gray-100); padding:10px 12px; text-align:left; font-weight:600; color:var(--gray-700); border-bottom:2px solid var(--gray-200); }
+.sh-table td { padding:10px 12px; border-bottom:1px solid var(--gray-200); vertical-align:top; }
+.sh-table tr:hover { background:var(--gray-50); }
+.sh-table .actions { display:flex; gap:4px; }
+.sh-table .actions button { padding:4px 8px; font-size:0.75rem; border:1px solid var(--gray-200); background:white; border-radius:4px; cursor:pointer; }
+.sh-table .actions button:hover { background:var(--gray-100); }
+.sh-table .actions .del:hover { background:#FEE2E2; color:#B91C1C; border-color:#FECACA; }
+
+.badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:0.75rem; font-weight:600; }
+.badge-high { background:#FEE2E2; color:#B91C1C; }
+.badge-medium { background:#FEF3C7; color:#92400E; }
+.badge-low { background:#D1FAE5; color:#065F46; }
+.badge-keep { background:var(--teal-light); color:var(--teal); }
+.badge-manage { background:#FEE2E2; color:#B91C1C; }
+.badge-inform { background:var(--green-light); color:var(--green); }
+.badge-monitor { background:var(--gray-200); color:var(--gray-600); }
+
+/* Power-Interest Matrix Canvas */
+.matrix-container { position:relative; width:100%; max-width:600px; margin:20px auto; }
+.matrix-grid { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; width:100%; aspect-ratio:1; border:2px solid var(--gray-300); border-radius:var(--radius); overflow:hidden; }
+.matrix-quad { padding:16px; min-height:140px; position:relative; }
+.matrix-quad h4 { font-size:0.8rem; font-weight:700; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.04em; }
+.quad-keep { background:#E0F2F1; }
+.quad-keep h4 { color:var(--teal); }
+.quad-manage { background:#FFEBEE; }
+.quad-manage h4 { color:#C62828; }
+.quad-inform { background:#E8F5E9; }
+.quad-inform h4 { color:var(--green); }
+.quad-monitor { background:var(--gray-100); }
+.quad-monitor h4 { color:var(--gray-500); }
+
+.matrix-dot { display:inline-block; padding:3px 8px; margin:2px; border-radius:12px; font-size:0.72rem; font-weight:600; background:rgba(255,255,255,0.85); box-shadow:var(--shadow-sm); cursor:default; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.matrix-labels { position:absolute; font-size:0.75rem; color:var(--gray-400); font-weight:600; }
+.x-label { bottom:-24px; left:50%; transform:translateX(-50%); }
+.y-label { left:-32px; top:50%; transform:translateY(-50%) rotate(-90deg); }
+
+/* Salience Model */
+.salience-section { margin-top:16px; }
+.salience-tag { display:inline-block; padding:4px 10px; margin:2px 4px; border-radius:6px; font-size:0.78rem; font-weight:600; }
+.sal-definitive { background:var(--coral); color:white; }
+.sal-dominant { background:var(--ochre); color:white; }
+.sal-dangerous { background:#B91C1C; color:white; }
+.sal-dependent { background:var(--purple); color:white; }
+.sal-dormant { background:var(--gray-300); color:var(--gray-700); }
+.sal-discretionary { background:var(--green-light); color:var(--green); }
+.sal-demanding { background:var(--ochre-light); color:#92400E; }
+.sal-non { background:var(--gray-100); color:var(--gray-400); }
+
+/* Engagement Plan */
+.eng-card { background:white; border:1px solid var(--gray-200); border-radius:var(--radius); padding:16px; margin-bottom:12px; }
+.eng-card .eng-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.eng-card .eng-name { font-weight:700; font-size:0.95rem; }
+.eng-card .eng-detail { font-size:0.82rem; color:var(--gray-600); margin-bottom:4px; }
+.eng-card .eng-actions { font-size:0.82rem; color:var(--gray-700); margin-top:8px; padding-top:8px; border-top:1px dashed var(--gray-200); }
+
+.tooltip-trigger { position:relative; cursor:help; border-bottom:1px dotted var(--gray-400); }
+.tooltip-trigger:hover::after {
+  content:attr(data-tip);
+  position:absolute; bottom:110%; left:50%; transform:translateX(-50%);
+  background:var(--warm-black); color:white; padding:6px 10px; border-radius:6px;
+  font-size:0.75rem; font-weight:400; width:220px; text-align:center; z-index:10;
+  line-height:1.4; white-space:normal;
+}
+
+.empty-state { text-align:center; padding:40px 20px; color:var(--gray-400); }
+.empty-state p { font-size:0.95rem; }
+
+.counter { display:inline-block; background:var(--coral); color:white; font-size:0.7rem; font-weight:700; padding:1px 6px; border-radius:10px; margin-left:4px; vertical-align:middle; }
+
+/* Print styles */
+@media print {
+  .tabs, .header, .btn, .actions, #addForm, .no-print { display:none !important; }
+  .panel { display:block !important; page-break-inside:avoid; }
+  .card { box-shadow:none; border:1px solid #ccc; }
+  body { background:white; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Stakeholder Mapping & Power Analysis Tool</h1>
+    <div class="brand">Built by <a href="https://useful-af.circle.so" target="_blank">UsefulAF</a> — AI tools for impact practitioners</div>
+  </div>
+  <div class="btn-group no-print">
+    <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Export CSV</button>
+    <button class="btn btn-teal btn-sm" onclick="window.print()">Print / PDF</button>
+    <button class="btn btn-green btn-sm" onclick="generateClaudePrompt()">Claude Prompt</button>
+  </div>
+</div>
+
+<div class="tabs" id="tabBar">
+  <div class="tab active" onclick="showTab(0)">1. Add Stakeholders</div>
+  <div class="tab" onclick="showTab(1)">2. Power-Interest Matrix</div>
+  <div class="tab" onclick="showTab(2)">3. Salience Analysis</div>
+  <div class="tab" onclick="showTab(3)">4. Engagement Plan</div>
+  <div class="tab" onclick="showTab(4)">5. Risk & Conflict Map</div>
+  <div class="tab" onclick="showTab(5)">6. Claude Prompt</div>
+</div>
+
+<div class="container">
+<!-- TAB 0: Add Stakeholders -->
+<div class="panel active" id="panel0">
+  <div class="card">
+    <h2>Project Context</h2>
+    <p>Set the context for your stakeholder analysis. This information shapes the engagement recommendations.</p>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Project / Initiative Name</label>
+        <input type="text" id="projName" placeholder="e.g. Youth Employment Programme — Kenya" onchange="saveContext()">
+      </div>
+      <div class="form-group">
+        <label>Sector</label>
+        <select id="projSector" onchange="saveContext()">
+          <option value="">Select sector…</option>
+          <option>Education</option>
+          <option>Health</option>
+          <option>Livelihoods & Employment</option>
+          <option>Agriculture & Food Security</option>
+          <option>Environment & Climate</option>
+          <option>Financial Inclusion</option>
+          <option>WASH</option>
+          <option>Housing & Urban Development</option>
+          <option>Gender & Inclusion</option>
+          <option>Governance & Civic Engagement</option>
+          <option>Energy Access</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Organisation Stage</label>
+        <select id="projStage" onchange="saveContext()">
+          <option value="">Select…</option>
+          <option>Concept / Design</option>
+          <option>Pilot / Early Stage</option>
+          <option>Growth / Scale-up</option>
+          <option>Mature / Established</option>
+          <option>Evaluation / Exit</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Primary Funder Type</label>
+        <select id="projFunder" onchange="saveContext()">
+          <option value="">Select…</option>
+          <option>Grant / Philanthropy</option>
+          <option>DFI / Development Bank</option>
+          <option>Impact VC / PE</option>
+          <option>Government / Public Sector</option>
+          <option>Corporate / CSR</option>
+          <option>Blended Finance</option>
+          <option>Self-funded / Earned Income</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="addForm">
+    <h2>Add a Stakeholder</h2>
+    <div class="info-box">
+      <strong>Methodology:</strong> This tool combines Mendelow's Power-Interest Matrix (1991), the Mitchell-Agle-Wood Salience Model (1997), and the AA1000 Stakeholder Engagement Standard (AccountAbility, 2015 rev.) to produce a comprehensive mapping. Stakeholders are classified on Power (ability to influence your project), Interest (degree of concern about your project), Legitimacy (moral or legal claim), and Urgency (time-sensitivity of their claim).
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Stakeholder Name</label>
+        <input type="text" id="shName" placeholder="e.g. County Health Department">
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="shCategory">
+          <option value="Primary Beneficiary">Primary Beneficiary</option>
+          <option value="Secondary Beneficiary">Secondary Beneficiary</option>
+          <option value="Funder / Investor">Funder / Investor</option>
+          <option value="Government / Regulator">Government / Regulator</option>
+          <option value="Implementing Partner">Implementing Partner</option>
+          <option value="Community Leader">Community Leader</option>
+          <option value="Board / Governance">Board / Governance</option>
+          <option value="Staff / Team">Staff / Team</option>
+          <option value="Supplier / Vendor">Supplier / Vendor</option>
+          <option value="Media / Public">Media / Public</option>
+          <option value="Peer Organisation">Peer Organisation</option>
+          <option value="Academic / Research">Academic / Research</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="form-group">
+        <label><span class="tooltip-trigger" data-tip="Ability to affect your project's direction, resources, or outcomes. High = can block or enable your project (e.g. a government regulator). Low = limited influence.">Power</span> (1-5)</label>
+        <select id="shPower">
+          <option value="1">1 — Very low</option>
+          <option value="2">2 — Low</option>
+          <option value="3" selected>3 — Moderate</option>
+          <option value="4">4 — High</option>
+          <option value="5">5 — Very high</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><span class="tooltip-trigger" data-tip="How much this stakeholder cares about your project's activities and outcomes. High = actively engaged or affected. Low = peripheral awareness only.">Interest</span> (1-5)</label>
+        <select id="shInterest">
+          <option value="1">1 — Very low</option>
+          <option value="2">2 — Low</option>
+          <option value="3" selected>3 — Moderate</option>
+          <option value="4">4 — High</option>
+          <option value="5">5 — Very high</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><span class="tooltip-trigger" data-tip="Does this stakeholder have a legitimate moral, legal, or contractual claim on your project? Per Mitchell et al. (1997), legitimacy affects stakeholder salience classification.">Legitimacy</span> (1-5)</label>
+        <select id="shLegitimacy">
+          <option value="1">1 — Very low</option>
+          <option value="2">2 — Low</option>
+          <option value="3" selected>3 — Moderate</option>
+          <option value="4">4 — High</option>
+          <option value="5">5 — Very high</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="form-group">
+        <label><span class="tooltip-trigger" data-tip="How time-sensitive is this stakeholder's claim? High urgency = needs immediate attention or has time-bound demands.">Urgency</span> (1-5)</label>
+        <select id="shUrgency">
+          <option value="1">1 — Very low</option>
+          <option value="2">2 — Low</option>
+          <option value="3" selected>3 — Moderate</option>
+          <option value="4">4 — High</option>
+          <option value="5">5 — Very high</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><span class="tooltip-trigger" data-tip="Per AA1000 SES: Supportive = actively helps your mission. Neutral = no strong position. Resistant = opposes or blocks. Mixed = varies by issue.">Current Stance</span></label>
+        <select id="shStance">
+          <option value="Supportive">Supportive</option>
+          <option value="Neutral" selected>Neutral</option>
+          <option value="Resistant">Resistant</option>
+          <option value="Mixed">Mixed</option>
+          <option value="Unknown">Unknown</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><span class="tooltip-trigger" data-tip="AA1000 SES defines 5 levels: Inform (one-way), Consult (two-way limited), Involve (two-way ongoing), Collaborate (joint decisions), Empower (delegate authority).">Current Engagement Level</span></label>
+        <select id="shEngagement">
+          <option value="None">None</option>
+          <option value="Inform" selected>Inform</option>
+          <option value="Consult">Consult</option>
+          <option value="Involve">Involve</option>
+          <option value="Collaborate">Collaborate</option>
+          <option value="Empower">Empower</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Key Interests / Expectations</label>
+      <textarea id="shInterests" rows="2" placeholder="What does this stakeholder want from or expect of your project?"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Potential Risks / Conflicts</label>
+      <textarea id="shRisks" rows="2" placeholder="What could go wrong with this stakeholder? Conflicts with other stakeholders?"></textarea>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="addStakeholder()">Add Stakeholder</button>
+      <button class="btn btn-secondary" onclick="loadExample()">Load Example (Education Programme)</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Stakeholder Register <span id="shCount" class="counter">0</span></h2>
+    <div id="shTableWrap">
+      <div class="empty-state" id="emptyState"><p>No stakeholders added yet. Add your first stakeholder above, or load the example to see how it works.</p></div>
+      <table class="sh-table" id="shTable" style="display:none">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Power</th>
+            <th>Interest</th>
+            <th>Legitimacy</th>
+            <th>Urgency</th>
+            <th>Quadrant</th>
+            <th>Stance</th>
+            <th class="actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="shBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 1: Power-Interest Matrix -->
+<div class="panel" id="panel1">
+  <div class="card">
+    <h2>Power-Interest Matrix (Mendelow, 1991)</h2>
+    <div class="info-box">
+      <strong>Framework:</strong> Mendelow's matrix classifies stakeholders into four quadrants based on their power to influence and interest in your project. Originally published by Aubrey Mendelow at the Strategic Management Society Conference (1991). It remains the most widely used stakeholder prioritisation tool in development practice, cited in DFID (now FCDO) and World Bank guidance.
+    </div>
+    <div class="matrix-container">
+      <div style="text-align:center;font-size:0.8rem;font-weight:700;color:var(--gray-500);margin-bottom:4px;">HIGH POWER</div>
+      <div style="display:flex;">
+        <div style="writing-mode:vertical-lr;transform:rotate(180deg);font-size:0.8rem;font-weight:700;color:var(--gray-500);padding-right:8px;display:flex;align-items:center;">LOW INTEREST ← → HIGH INTEREST</div>
+        <div class="matrix-grid" style="flex:1;">
+          <div class="matrix-quad quad-keep" id="quadKeep">
+            <h4>Keep Satisfied</h4>
+            <p style="font-size:0.72rem;color:var(--teal);margin-bottom:6px;">High power, low interest — keep informed, don't bore</p>
+            <div id="dotsKeep"></div>
+          </div>
+          <div class="matrix-quad quad-manage" id="quadManage">
+            <h4>Manage Closely</h4>
+            <p style="font-size:0.72rem;color:#C62828;margin-bottom:6px;">High power, high interest — engage deeply, co-create</p>
+            <div id="dotsManage"></div>
+          </div>
+          <div class="matrix-quad quad-monitor" id="quadMonitor">
+            <h4>Monitor</h4>
+            <p style="font-size:0.72rem;color:var(--gray-500);margin-bottom:6px;">Low power, low interest — minimal effort, watch for change</p>
+            <div id="dotsMonitor"></div>
+          </div>
+          <div class="matrix-quad quad-inform" id="quadInform">
+            <h4>Keep Informed</h4>
+            <p style="font-size:0.72rem;color:var(--green);margin-bottom:6px;">Low power, high interest — regular updates, potential allies</p>
+            <div id="dotsInform"></div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:0.8rem;font-weight:700;color:var(--gray-500);margin-top:4px;">LOW POWER</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Quadrant Summary</h2>
+    <div id="quadSummary"><div class="empty-state"><p>Add stakeholders to see the matrix analysis.</p></div></div>
+  </div>
+</div>
+
+<!-- TAB 2: Salience Analysis -->
+<div class="panel" id="panel2">
+  <div class="card">
+    <h2>Mitchell-Agle-Wood Salience Model (1997)</h2>
+    <div class="info-box">
+      <strong>Framework:</strong> Mitchell, Agle & Wood (1997) "Toward a Theory of Stakeholder Identification and Salience" in <em>Academy of Management Review</em> 22(4), 853-886. This model classifies stakeholders based on three attributes — Power, Legitimacy, and Urgency — into seven categories of decreasing salience. Stakeholders with all three attributes are "definitive" and demand immediate management attention.
+    </div>
+    <div id="salienceResults"><div class="empty-state"><p>Add stakeholders to see the salience classification.</p></div></div>
+  </div>
+</div>
+
+<!-- TAB 3: Engagement Plan -->
+<div class="panel" id="panel3">
+  <div class="card">
+    <h2>Stakeholder Engagement Plan</h2>
+    <div class="info-box">
+      <strong>Based on:</strong> AA1000 Stakeholder Engagement Standard (AccountAbility, 2015 revision). The AA1000 SES defines five engagement levels — Inform, Consult, Involve, Collaborate, Empower — each with specific methods, resource requirements, and expected outcomes. The recommended level is derived from each stakeholder's matrix quadrant and salience classification. The World Bank's 2018 Environmental & Social Framework (ESS10) uses a compatible engagement hierarchy.
+    </div>
+    <div id="engagementPlan"><div class="empty-state"><p>Add stakeholders to generate the engagement plan.</p></div></div>
+  </div>
+</div>
+
+<!-- TAB 4: Risk & Conflict Map -->
+<div class="panel" id="panel4">
+  <div class="card">
+    <h2>Risk & Conflict Analysis</h2>
+    <div class="info-box">
+      <strong>Why this matters:</strong> DFID (2003) "Tools for Development" identifies stakeholder conflicts as a top-5 project risk. Mapping potential conflicts between stakeholders — and between stakeholders and the project — helps design mitigation strategies before crises emerge. The IFC Performance Standard 1 (PS1) requires stakeholder risk assessment for all Category A and B projects.
+    </div>
+    <div id="riskMap"><div class="empty-state"><p>Add stakeholders (with risk notes) to see the conflict analysis.</p></div></div>
+  </div>
+  <div class="card">
+    <h2>Engagement Gaps</h2>
+    <p>Stakeholders whose current engagement level is lower than recommended.</p>
+    <div id="gapAnalysis"><div class="empty-state"><p>Add stakeholders to see engagement gaps.</p></div></div>
+  </div>
+</div>
+
+<!-- TAB 5: Claude Prompt -->
+<div class="panel" id="panel5">
+  <div class="card">
+    <h2>Custom Claude Analysis Prompt</h2>
+    <p>Copy this prompt and paste it into Claude for a deeper stakeholder strategy analysis tailored to your specific context.</p>
+    <textarea id="claudePrompt" rows="24" style="font-family:monospace;font-size:0.82rem;line-height:1.5;" readonly></textarea>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="copyClaudePrompt()">Copy to Clipboard</button>
+      <button class="btn btn-secondary" onclick="generateClaudePrompt()">Regenerate</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// Data store
+let stakeholders = [];
+let context = { name:'', sector:'', stage:'', funder:'' };
+
+function saveContext() {
+  context.name = document.getElementById('projName').value;
+  context.sector = document.getElementById('projSector').value;
+  context.stage = document.getElementById('projStage').value;
+  context.funder = document.getElementById('projFunder').value;
+}
+
+// Quadrant logic (Mendelow)
+function getQuadrant(power, interest) {
+  const highP = power >= 4;
+  const highI = interest >= 4;
+  if (highP && highI) return 'Manage Closely';
+  if (highP && !highI) return 'Keep Satisfied';
+  if (!highP && highI) return 'Keep Informed';
+  return 'Monitor';
+}
+
+// Salience (Mitchell-Agle-Wood)
+function getSalience(power, legitimacy, urgency) {
+  const p = power >= 4, l = legitimacy >= 4, u = urgency >= 4;
+  if (p && l && u) return 'Definitive';
+  if (p && l) return 'Dominant';
+  if (p && u) return 'Dangerous';
+  if (l && u) return 'Dependent';
+  if (p) return 'Dormant';
+  if (l) return 'Discretionary';
+  if (u) return 'Demanding';
+  return 'Non-stakeholder';
+}
+
+function getSalienceClass(sal) {
+  return 'sal-' + sal.toLowerCase().replace('-','');
+}
+
+// Recommended engagement (AA1000 SES aligned)
+function getRecommendedEngagement(quadrant, salience) {
+  if (salience === 'Definitive') return 'Collaborate';
+  if (quadrant === 'Manage Closely') return 'Collaborate';
+  if (salience === 'Dominant') return 'Involve';
+  if (quadrant === 'Keep Satisfied') return 'Consult';
+  if (salience === 'Dangerous') return 'Consult';
+  if (salience === 'Dependent') return 'Involve';
+  if (quadrant === 'Keep Informed') return 'Inform';
+  if (salience === 'Demanding') return 'Consult';
+  if (salience === 'Discretionary') return 'Inform';
+  return 'Inform';
+}
+
+// Engagement methods by level (AA1000)
+const engagementMethods = {
+  'Empower': { methods: 'Delegated decision-making, participatory budgeting, community-led design', frequency: 'Ongoing / embedded in governance', resources: 'High — dedicated staff, shared authority', aa1000: 'Level 5: Stakeholders set the agenda and make binding decisions' },
+  'Collaborate': { methods: 'Joint working groups, co-design workshops, advisory committees, partnership agreements', frequency: 'Monthly or more', resources: 'High — dedicated relationship manager, joint planning time', aa1000: 'Level 4: Two-way, joint learning and decision-making' },
+  'Involve': { methods: 'Focus groups, multi-stakeholder forums, participatory M&E, feedback mechanisms', frequency: 'Quarterly', resources: 'Medium — staff time for facilitation, feedback loops', aa1000: 'Level 3: Two-way engagement, stakeholders can influence decisions' },
+  'Consult': { methods: 'Surveys, public comment periods, one-on-one meetings, town halls', frequency: 'Bi-annually', resources: 'Medium — design and analysis of consultations', aa1000: 'Level 2: Two-way limited, organisation retains decision rights' },
+  'Inform': { methods: 'Newsletters, reports, websites, social media, fact sheets', frequency: 'Quarterly updates', resources: 'Low — communications effort', aa1000: 'Level 1: One-way, no formal mechanism for feedback' },
+  'None': { methods: 'No active engagement', frequency: 'N/A', resources: 'None', aa1000: 'No engagement' }
+};
+
+function addStakeholder() {
+  const name = document.getElementById('shName').value.trim();
+  if (!name) { alert('Please enter a stakeholder name.'); return; }
+
+  const sh = {
+    id: Date.now(),
+    name: name,
+    category: document.getElementById('shCategory').value,
+    power: parseInt(document.getElementById('shPower').value),
+    interest: parseInt(document.getElementById('shInterest').value),
+    legitimacy: parseInt(document.getElementById('shLegitimacy').value),
+    urgency: parseInt(document.getElementById('shUrgency').value),
+    stance: document.getElementById('shStance').value,
+    engagement: document.getElementById('shEngagement').value,
+    interests: document.getElementById('shInterests').value.trim(),
+    risks: document.getElementById('shRisks').value.trim()
+  };
+  sh.quadrant = getQuadrant(sh.power, sh.interest);
+  sh.salience = getSalience(sh.power, sh.legitimacy, sh.urgency);
+  sh.recommended = getRecommendedEngagement(sh.quadrant, sh.salience);
+
+  stakeholders.push(sh);
+  clearForm();
+  renderAll();
+}
+
+function clearForm() {
+  document.getElementById('shName').value = '';
+  document.getElementById('shPower').value = '3';
+  document.getElementById('shInterest').value = '3';
+  document.getElementById('shLegitimacy').value = '3';
+  document.getElementById('shUrgency').value = '3';
+  document.getElementById('shStance').value = 'Neutral';
+  document.getElementById('shEngagement').value = 'Inform';
+  document.getElementById('shInterests').value = '';
+  document.getElementById('shRisks').value = '';
+  document.getElementById('shName').focus();
+}
+
+function removeStakeholder(id) {
+  stakeholders = stakeholders.filter(s => s.id !== id);
+  renderAll();
+}
+
+function renderAll() {
+  renderTable();
+  renderMatrix();
+  renderSalience();
+  renderEngagement();
+  renderRisks();
+  generateClaudePrompt();
+}
+
+function renderTable() {
+  const tbody = document.getElementById('shBody');
+  const table = document.getElementById('shTable');
+  const empty = document.getElementById('emptyState');
+  document.getElementById('shCount').textContent = stakeholders.length;
+
+  if (stakeholders.length === 0) {
+    table.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+  table.style.display = 'table';
+  empty.style.display = 'none';
+
+  tbody.innerHTML = stakeholders.map(s => `
+    <tr>
+      <td><strong>${esc(s.name)}</strong></td>
+      <td>${esc(s.category)}</td>
+      <td>${s.power}</td>
+      <td>${s.interest}</td>
+      <td>${s.legitimacy}</td>
+      <td>${s.urgency}</td>
+      <td><span class="badge badge-${s.quadrant==='Manage Closely'?'manage':s.quadrant==='Keep Satisfied'?'keep':s.quadrant==='Keep Informed'?'inform':'monitor'}">${s.quadrant}</span></td>
+      <td>${stanceBadge(s.stance)}</td>
+      <td class="actions"><button class="del" onclick="removeStakeholder(${s.id})">Remove</button></td>
+    </tr>
+  `).join('');
+}
+
+function stanceBadge(stance) {
+  const colors = { 'Supportive':'low', 'Neutral':'medium', 'Resistant':'high', 'Mixed':'medium', 'Unknown':'monitor' };
+  return `<span class="badge badge-${colors[stance]||'medium'}">${stance}</span>`;
+}
+
+function renderMatrix() {
+  ['Keep','Manage','Monitor','Inform'].forEach(q => {
+    document.getElementById('dots'+q).innerHTML = '';
+  });
+
+  stakeholders.forEach(s => {
+    const qMap = { 'Keep Satisfied':'Keep', 'Manage Closely':'Manage', 'Monitor':'Monitor', 'Keep Informed':'Inform' };
+    const container = document.getElementById('dots' + qMap[s.quadrant]);
+    const dot = document.createElement('span');
+    dot.className = 'matrix-dot';
+    dot.textContent = s.name;
+    dot.title = `${s.name} — P:${s.power} I:${s.interest} | ${s.salience}`;
+    container.appendChild(dot);
+  });
+
+  // Quadrant summary
+  const summary = document.getElementById('quadSummary');
+  if (stakeholders.length === 0) {
+    summary.innerHTML = '<div class="empty-state"><p>Add stakeholders to see the matrix analysis.</p></div>';
+    return;
+  }
+
+  const quads = { 'Manage Closely':[], 'Keep Satisfied':[], 'Keep Informed':[], 'Monitor':[] };
+  stakeholders.forEach(s => quads[s.quadrant].push(s));
+
+  const quadInfo = {
+    'Manage Closely': { color:'#C62828', bg:'#FFEBEE', strategy:'These stakeholders have high power AND high interest. They are your most critical relationships. Per Mendelow (1991) and AA1000 SES, they require collaborative engagement — joint decision-making, regular bilateral meetings, and shared ownership of outcomes.' },
+    'Keep Satisfied': { color:  'var(--teal)', bg:'#E0F2F1', strategy:'High power but low interest. Dangerous if alienated. Keep them satisfied with targeted updates on issues they care about. Do not overload with information. Per DFID guidance, monitor for shifts in interest that could move them to "Manage Closely".' },
+    'Keep Informed': { color:'var(--green)', bg:'#E8F5E9', strategy:'Low power but high interest. Often beneficiaries, community groups, or advocacy organisations. They can become powerful allies if organised, or vocal critics if neglected. Regular communication and feedback channels are essential.' },
+    'Monitor': { color:'var(--gray-500)', bg:'var(--gray-100)', strategy:'Low power and low interest. Minimal active engagement needed, but monitor periodically — stakeholder positions can shift. A monitor-category stakeholder gaining power (e.g. through new regulation) can rapidly become critical.' }
+  };
+
+  summary.innerHTML = Object.entries(quads).map(([q, shs]) => `
+    <div style="background:${quadInfo[q].bg};border-left:4px solid ${quadInfo[q].color};padding:14px 16px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:12px;">
+      <strong style="color:${quadInfo[q].color};">${q} (${shs.length})</strong>
+      ${shs.length > 0 ? '<span style="font-size:0.82rem;color:var(--gray-600);"> — ' + shs.map(s=>s.name).join(', ') + '</span>' : ''}
+      <p style="font-size:0.82rem;color:var(--gray-600);margin-top:6px;">${quadInfo[q].strategy}</p>
+    </div>
+  `).join('');
+}
+
+function renderSalience() {
+  const container = document.getElementById('salienceResults');
+  if (stakeholders.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>Add stakeholders to see the salience classification.</p></div>';
+    return;
+  }
+
+  const salienceInfo = {
+    'Definitive': { desc:'Has power, legitimacy, AND urgency. Highest priority — demands immediate management attention. Per Mitchell et al. (1997), these stakeholders will and should receive priority.', priority:1 },
+    'Dominant': { desc:'Has power and legitimacy but low urgency. Formally influential (e.g. board members, major funders). Their expectations should be built into governance structures.', priority:2 },
+    'Dangerous': { desc:'Has power and urgency but lacks legitimacy. Can be coercive — may use force, political pressure, or media to achieve goals. Requires careful risk management.', priority:3 },
+    'Dependent': { desc:'Has legitimacy and urgency but lacks power. Depends on others (or the project) to act on their behalf. Often includes beneficiaries and vulnerable groups. Ethically important to serve.', priority:4 },
+    'Dormant': { desc:'Has power only. Currently disengaged but could activate if triggered. Monitor for changes — a dormant stakeholder gaining interest becomes dominant or definitive.', priority:5 },
+    'Discretionary': { desc:'Has legitimacy only. No power or urgency. Includes community members with a moral claim but limited influence. Engage through corporate social responsibility or voluntary measures.', priority:6 },
+    'Demanding': { desc:'Has urgency only. May be vocal or persistent but lacks power and legitimacy. Manage expectations but do not let them divert resources from higher-salience stakeholders.', priority:7 },
+    'Non-stakeholder': { desc:'No attributes above threshold. Peripheral to the project. Minimal engagement needed unless circumstances change.', priority:8 }
+  };
+
+  const groups = {};
+  stakeholders.forEach(s => {
+    if (!groups[s.salience]) groups[s.salience] = [];
+    groups[s.salience].push(s);
+  });
+
+  const sorted = Object.entries(groups).sort((a,b) => salienceInfo[a[0]].priority - salienceInfo[b[0]].priority);
+
+  container.innerHTML = `
+    <div class="warn-box" style="margin-bottom:16px;">
+      <strong>Interpretation guide:</strong> Thresholds are set at ≥4 on the 1-5 scale for each attribute. Stakeholders near the boundary (score of 3) may shift categories — review these annually or when project context changes significantly.
+    </div>
+    ${sorted.map(([sal, shs]) => `
+      <div style="margin-bottom:16px;">
+        <h3><span class="salience-tag ${getSalienceClass(sal)}">${sal}</span> <span style="font-size:0.85rem;color:var(--gray-400);">(${shs.length} stakeholder${shs.length>1?'s':''})</span></h3>
+        <p style="font-size:0.82rem;color:var(--gray-600);margin:6px 0;">${salienceInfo[sal].desc}</p>
+        <div style="margin-top:6px;">
+          ${shs.map(s => `<span class="matrix-dot" style="background:var(--gray-100);">${esc(s.name)} <span style="color:var(--gray-400);">P${s.power} L${s.legitimacy} U${s.urgency}</span></span>`).join(' ')}
+        </div>
+      </div>
+    `).join('')}
+  `;
+}
+
+function renderEngagement() {
+  const container = document.getElementById('engagementPlan');
+  if (stakeholders.length === 0) {
+    container.innerHTML = '<div class="empty-state"><p>Add stakeholders to generate the engagement plan.</p></div>';
+    return;
+  }
+
+  // Sort by priority: Manage Closely first, then Keep Satisfied, Keep Informed, Monitor
+  const priority = { 'Manage Closely':1, 'Keep Satisfied':2, 'Keep Informed':3, 'Monitor':4 };
+  const sorted = [...stakeholders].sort((a,b) => priority[a.quadrant] - priority[b.quadrant]);
+
+  const engLevels = ['None','Inform','Consult','Involve','Collaborate','Empower'];
+
+  container.innerHTML = sorted.map(s => {
+    const rec = engagementMethods[s.recommended];
+    const currentIdx = engLevels.indexOf(s.engagement);
+    const recIdx = engLevels.indexOf(s.recommended);
+    const gap = recIdx > currentIdx;
+
+    return `
+      <div class="eng-card" style="${gap ? 'border-left:4px solid var(--coral);' : ''}">
+        <div class="eng-header">
+          <span class="eng-name">${esc(s.name)}</span>
+          <span class="badge badge-${s.quadrant==='Manage Closely'?'manage':s.quadrant==='Keep Satisfied'?'keep':s.quadrant==='Keep Informed'?'inform':'monitor'}">${s.quadrant}</span>
+        </div>
+        <div class="eng-detail"><strong>Category:</strong> ${s.category} | <strong>Stance:</strong> ${s.stance} | <strong>Salience:</strong> <span class="salience-tag ${getSalienceClass(s.salience)}" style="font-size:0.72rem;">${s.salience}</span></div>
+        <div class="eng-detail"><strong>Current engagement:</strong> ${s.engagement} → <strong>Recommended:</strong> ${s.recommended} ${gap ? '<span style="color:var(--coral);font-weight:700;"> ⬆ Gap</span>' : '<span style="color:var(--green);">✓ Adequate</span>'}</div>
+        <div class="eng-detail"><strong>Methods (AA1000):</strong> ${rec.methods}</div>
+        <div class="eng-detail"><strong>Frequency:</strong> ${rec.frequency} | <strong>Resources:</strong> ${rec.resources}</div>
+        ${s.interests ? `<div class="eng-detail"><strong>Key interests:</strong> ${esc(s.interests)}</div>` : ''}
+        <div class="eng-actions"><strong>AA1000 Level:</strong> ${rec.aa1000}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderRisks() {
+  const riskContainer = document.getElementById('riskMap');
+  const gapContainer = document.getElementById('gapAnalysis');
+
+  // Risks
+  const riskyOnes = stakeholders.filter(s => s.risks || s.stance === 'Resistant' || s.salience === 'Dangerous');
+  if (riskyOnes.length === 0) {
+    riskContainer.innerHTML = '<div class="empty-state"><p>No risks identified. Add risk notes to stakeholders or add resistant/dangerous stakeholders.</p></div>';
+  } else {
+    riskContainer.innerHTML = riskyOnes.map(s => `
+      <div class="eng-card" style="border-left:4px solid ${s.salience==='Dangerous'?'#B91C1C':s.stance==='Resistant'?'var(--ochre)':'var(--gray-300)'};">
+        <div class="eng-header">
+          <span class="eng-name">${esc(s.name)}</span>
+          <div>
+            ${s.stance === 'Resistant' ? '<span class="badge badge-high">Resistant</span> ' : ''}
+            ${s.salience === 'Dangerous' ? '<span class="salience-tag sal-dangerous" style="font-size:0.72rem;">Dangerous</span>' : ''}
+          </div>
+        </div>
+        <div class="eng-detail"><strong>Power:</strong> ${s.power}/5 | <strong>Category:</strong> ${s.category}</div>
+        ${s.risks ? `<div class="eng-detail"><strong>Risk notes:</strong> ${esc(s.risks)}</div>` : ''}
+        <div class="eng-actions">
+          <strong>Mitigation strategy:</strong> ${getMitigation(s)}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Gaps
+  const engLevels = ['None','Inform','Consult','Involve','Collaborate','Empower'];
+  const gapped = stakeholders.filter(s => engLevels.indexOf(s.recommended) > engLevels.indexOf(s.engagement));
+
+  if (gapped.length === 0) {
+    gapContainer.innerHTML = '<div style="padding:16px;color:var(--green);font-size:0.9rem;">✓ All stakeholders are engaged at or above the recommended level.</div>';
+  } else {
+    gapContainer.innerHTML = `
+      <table class="sh-table">
+        <thead><tr><th>Stakeholder</th><th>Current Level</th><th>Recommended</th><th>Gap Size</th><th>Priority</th></tr></thead>
+        <tbody>
+          ${gapped.sort((a,b) => {
+            const gA = engLevels.indexOf(a.recommended) - engLevels.indexOf(a.engagement);
+            const gB = engLevels.indexOf(b.recommended) - engLevels.indexOf(b.engagement);
+            return gB - gA;
+          }).map(s => {
+            const gapSize = engLevels.indexOf(s.recommended) - engLevels.indexOf(s.engagement);
+            return `<tr>
+              <td><strong>${esc(s.name)}</strong></td>
+              <td>${s.engagement}</td>
+              <td>${s.recommended}</td>
+              <td><span class="badge badge-${gapSize>=3?'high':gapSize>=2?'medium':'low'}">${gapSize} level${gapSize>1?'s':''}</span></td>
+              <td>${s.quadrant === 'Manage Closely' ? '<span class="badge badge-high">Urgent</span>' : s.quadrant === 'Keep Satisfied' ? '<span class="badge badge-medium">High</span>' : '<span class="badge badge-low">Normal</span>'}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+}
+
+function getMitigation(s) {
+  if (s.salience === 'Dangerous' && s.stance === 'Resistant') {
+    return 'CRITICAL: High-power resistant stakeholder without legitimacy. Engage directly to understand grievances. Consider formal negotiation or mediation. Do not ignore — they can cause significant disruption. Assign a senior relationship manager.';
+  }
+  if (s.salience === 'Dangerous') {
+    return 'Powerful and urgent but lacking legitimacy. May bypass formal channels. Establish clear communication protocols. Monitor closely and engage proactively to prevent adversarial escalation.';
+  }
+  if (s.stance === 'Resistant' && s.power >= 4) {
+    return 'High-power resistant stakeholder. Priority: understand root cause of resistance. Schedule bilateral meeting at senior level. Identify shared interests. Consider what concessions would shift stance to neutral.';
+  }
+  if (s.stance === 'Resistant') {
+    return 'Resistant but lower power. Monitor for coalition-building with other resistant stakeholders. Address concerns through targeted communication. Consider involving them in consultation to increase buy-in.';
+  }
+  return 'Monitor regularly. Document concerns and develop contingency responses. Ensure engagement plan addresses identified risks.';
+}
+
+function generateClaudePrompt() {
+  saveContext();
+  const prompt = `You are an expert stakeholder management consultant with deep experience in the international development and impact investing sectors. I need your help developing a comprehensive stakeholder engagement strategy.
+
+## Project Context
+- Project: ${context.name || '[Not specified]'}
+- Sector: ${context.sector || '[Not specified]'}
+- Stage: ${context.stage || '[Not specified]'}
+- Primary Funder Type: ${context.funder || '[Not specified]'}
+
+## Stakeholder Register (${stakeholders.length} stakeholders mapped)
+
+${stakeholders.length === 0 ? '[No stakeholders added yet]' : stakeholders.map(s => `### ${s.name}
+- Category: ${s.category}
+- Power: ${s.power}/5 | Interest: ${s.interest}/5 | Legitimacy: ${s.legitimacy}/5 | Urgency: ${s.urgency}/5
+- Mendelow Quadrant: ${s.quadrant}
+- Salience (Mitchell-Agle-Wood): ${s.salience}
+- Current Stance: ${s.stance} | Current Engagement: ${s.engagement} | Recommended: ${s.recommended}
+- Key Interests: ${s.interests || 'Not specified'}
+- Risks: ${s.risks || 'Not specified'}`).join('\n\n')}
+
+## Please provide:
+
+1. **Strategic Assessment**: Are there critical stakeholders missing from this map? Based on the sector (${context.sector || 'unspecified'}) and stage (${context.stage || 'unspecified'}), who else should I be mapping?
+
+2. **Power Dynamics Analysis**: Identify potential coalitions (supportive and opposing). Which stakeholders might align to amplify or block the project? Map the informal influence networks.
+
+3. **Engagement Sequencing**: In what order should I engage these stakeholders? Who do I need onboard before approaching others? Identify gatekeepers and potential champions.
+
+4. **Risk Mitigation**: For each resistant or dangerous stakeholder, provide a specific de-escalation strategy with concrete steps and timeline.
+
+5. **Quick Wins**: What are 3-5 immediate actions (next 2 weeks) that would strengthen my stakeholder position?
+
+6. **Monitoring Plan**: What signals should I watch for that indicate stakeholder positions are shifting? What early warning indicators matter most?
+
+Please be specific and actionable — I need concrete steps, not general principles.`;
+
+  document.getElementById('claudePrompt').value = prompt;
+}
+
+function copyClaudePrompt() {
+  const ta = document.getElementById('claudePrompt');
+  ta.select();
+  document.execCommand('copy');
+  alert('Prompt copied to clipboard!');
+}
+
+function exportCSV() {
+  if (stakeholders.length === 0) { alert('No stakeholders to export.'); return; }
+  const headers = ['Name','Category','Power','Interest','Legitimacy','Urgency','Quadrant','Salience','Stance','Current Engagement','Recommended Engagement','Key Interests','Risks'];
+  const rows = stakeholders.map(s => [
+    s.name, s.category, s.power, s.interest, s.legitimacy, s.urgency,
+    s.quadrant, s.salience, s.stance, s.engagement, s.recommended,
+    s.interests, s.risks
+  ]);
+
+  let csv = headers.join(',') + '\n';
+  rows.forEach(r => {
+    csv += r.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(',') + '\n';
+  });
+
+  const blob = new Blob([csv], { type:'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'stakeholder-mapping-' + (context.name || 'export').replace(/[^a-z0-9]/gi,'-').toLowerCase() + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function loadExample() {
+  if (stakeholders.length > 0 && !confirm('This will replace your current stakeholders. Continue?')) return;
+
+  stakeholders = [];
+  context.name = 'Youth Employment Programme — Nairobi County';
+  context.sector = 'Livelihoods & Employment';
+  context.stage = 'Pilot / Early Stage';
+  context.funder = 'Blended Finance';
+
+  document.getElementById('projName').value = context.name;
+  document.getElementById('projSector').value = context.sector;
+  document.getElementById('projStage').value = context.stage;
+  document.getElementById('projFunder').value = context.funder;
+
+  const examples = [
+    { name:'Ministry of Youth Affairs', category:'Government / Regulator', power:5, interest:4, legitimacy:5, urgency:3, stance:'Supportive', engagement:'Consult', interests:'Youth unemployment reduction targets; political visibility; alignment with Big 4 Agenda', risks:'Staff turnover could lose institutional memory; competing priorities may reduce attention' },
+    { name:'USAID Kenya', category:'Funder / Investor', power:5, interest:5, legitimacy:5, urgency:4, stance:'Supportive', engagement:'Collaborate', interests:'Measurable job placements; value for money; GESI compliance; learning agenda', risks:'Reporting burden; may redirect funding if political context shifts' },
+    { name:'Youth Participants (18-24)', category:'Primary Beneficiary', power:1, interest:5, legitimacy:5, urgency:5, stance:'Supportive', engagement:'Inform', interests:'Marketable skills; job placement; stipend during training; certificate recognised by employers', risks:'Drop-out if opportunity costs too high; disillusionment if jobs don\'t materialise' },
+    { name:'Local Employers Association', category:'Implementing Partner', power:4, interest:3, legitimacy:4, urgency:2, stance:'Neutral', engagement:'Inform', interests:'Skilled workforce pipeline; reduced hiring costs; tax incentives for youth employment', risks:'May resist if programme graduates are under-skilled; see it as government overreach' },
+    { name:'County Commissioner — Nairobi', category:'Government / Regulator', power:5, interest:2, legitimacy:4, urgency:1, stance:'Neutral', engagement:'None', interests:'Security and stability; orderly programming; no political embarrassment', risks:'Could block activities if not properly briefed; controls venue permissions' },
+    { name:'Community Elders — Informal Settlements', category:'Community Leader', power:3, interest:4, legitimacy:5, urgency:4, stance:'Mixed', engagement:'Inform', interests:'Benefits reaching their community; respect for local structures; youth staying out of crime', risks:'May resist if programme bypasses local authority structures; can mobilise against the project' },
+    { name:'Impact Investor (Acumen-type)', category:'Funder / Investor', power:4, interest:5, legitimacy:4, urgency:3, stance:'Supportive', engagement:'Consult', interests:'Proven model for replication; IRR > 8%; social return data; exit pathway', risks:'May push for premature scaling; different risk tolerance than grant funders' },
+    { name:'Competing NGO (Youth Alive Kenya)', category:'Peer Organisation', power:2, interest:4, legitimacy:3, urgency:2, stance:'Resistant', engagement:'None', interests:'Protecting their territory; donor relationships; programmatic overlap', risks:'May undermine programme publicly; compete for same beneficiaries and donors' },
+    { name:'National Youth Council', category:'Board / Governance', power:3, interest:3, legitimacy:4, urgency:2, stance:'Neutral', engagement:'Inform', interests:'Mandate fulfilment; youth voice representation; policy influence', risks:'Slow decision-making; may impose bureaucratic requirements' },
+    { name:'Private TVET Colleges', category:'Implementing Partner', power:3, interest:5, legitimacy:3, urgency:3, stance:'Supportive', engagement:'Involve', interests:'Student enrolment; revenue from training contracts; reputation building', risks:'Variable quality of training; may prioritise revenue over outcomes' }
+  ];
+
+  examples.forEach(e => {
+    const sh = { ...e, id: Date.now() + Math.random() * 1000 };
+    sh.quadrant = getQuadrant(sh.power, sh.interest);
+    sh.salience = getSalience(sh.power, sh.legitimacy, sh.urgency);
+    sh.recommended = getRecommendedEngagement(sh.quadrant, sh.salience);
+    stakeholders.push(sh);
+  });
+
+  renderAll();
+}
+
+function showTab(idx) {
+  document.querySelectorAll('.panel').forEach((p,i) => p.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+// Initialize
+renderAll();
+</script>
+</body>
+</html>
