@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impact Measurement Framework Selector — Useful AF</title>
+<style>
+:root {
+  --cream: #FDF6EE;
+  --warm-black: #1A1A1A;
+  --coral: #E8735A;
+  --coral-light: #F4A693;
+  --ochre: #D4973B;
+  --ochre-light: #F0D6A4;
+  --teal: #2A7B88;
+  --teal-light: #B8DDE3;
+  --green: #4A9B6E;
+  --green-light: #C4E4D2;
+  --purple: #7B5EA7;
+  --purple-light: #D4C4E8;
+  --gray-50: #FAFAF9;
+  --gray-100: #F5F4F2;
+  --gray-200: #E8E6E3;
+  --gray-300: #D1CEC9;
+  --gray-400: #A8A49E;
+  --gray-500: #7A766F;
+  --gray-600: #5C5852;
+  --gray-700: #3D3A36;
+  --shadow-sm: 0 1px 2px rgba(26,26,26,0.06);
+  --shadow-md: 0 4px 12px rgba(26,26,26,0.08);
+  --shadow-lg: 0 8px 24px rgba(26,26,26,0.12);
+  --radius: 10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--cream); color: var(--warm-black); line-height:1.6; }
+.header { background: var(--warm-black); color: var(--cream); padding: 20px 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+.header h1 { font-size:1.4rem; font-weight:700; letter-spacing:-0.02em; }
+.header .brand { font-size:0.85rem; opacity:0.7; }
+.header .brand a { color: var(--coral-light); text-decoration:none; }
+
+.tabs { display:flex; background: var(--gray-100); border-bottom:1px solid var(--gray-200); overflow-x:auto; }
+.tab { padding:12px 20px; cursor:pointer; font-size:0.9rem; font-weight:500; color:var(--gray-500); border-bottom:3px solid transparent; white-space:nowrap; transition:all 0.2s; }
+.tab:hover { color:var(--warm-black); background:var(--gray-50); }
+.tab.active { color:var(--coral); border-bottom-color:var(--coral); background:white; }
+
+.container { max-width:1200px; margin:0 auto; padding:24px; }
+.panel { display:none; }
+.panel.active { display:block; }
+
+.card { background:white; border-radius:var(--radius); padding:24px; margin-bottom:20px; box-shadow:var(--shadow-sm); border:1px solid var(--gray-200); }
+.card h2 { font-size:1.15rem; margin-bottom:12px; color:var(--warm-black); }
+.card h3 { font-size:1rem; margin-bottom:8px; color:var(--gray-700); }
+.card p { color:var(--gray-600); font-size:0.9rem; margin-bottom:12px; }
+
+.info-box { background:var(--teal-light); border-left:4px solid var(--teal); padding:14px 16px; border-radius:0 var(--radius) var(--radius) 0; margin-bottom:16px; font-size:0.85rem; color:var(--gray-700); }
+.info-box strong { color:var(--teal); }
+.warn-box { background:#FFF3E0; border-left:4px solid var(--ochre); padding:14px 16px; border-radius:0 var(--radius) var(--radius) 0; margin-bottom:16px; font-size:0.85rem; color:var(--gray-700); }
+.success-box { background:var(--green-light); border-left:4px solid var(--green); padding:14px 16px; border-radius:0 var(--radius) var(--radius) 0; margin-bottom:16px; font-size:0.85rem; color:var(--gray-700); }
+
+.form-group { margin-bottom:16px; }
+.form-group label { display:block; font-weight:600; font-size:0.85rem; margin-bottom:6px; color:var(--gray-700); }
+.form-group .hint { font-size:0.78rem; color:var(--gray-500); margin-bottom:6px; font-style:italic; }
+input[type="text"], input[type="number"], select, textarea {
+  width:100%; padding:10px 12px; border:1px solid var(--gray-200); border-radius:6px;
+  font-size:0.9rem; font-family:inherit; background:white; transition:border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus { outline:none; border-color:var(--coral); box-shadow:0 0 0 3px rgba(232,115,90,0.12); }
+textarea { resize:vertical; min-height:60px; }
+
+.btn { padding:10px 20px; border:none; border-radius:6px; font-size:0.9rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.btn-primary { background:var(--coral); color:white; }
+.btn-primary:hover { background:#D4613E; }
+.btn-secondary { background:var(--gray-200); color:var(--gray-700); }
+.btn-secondary:hover { background:var(--gray-300); }
+.btn-teal { background:var(--teal); color:white; }
+.btn-teal:hover { background:#1F6570; }
+.btn-green { background:var(--green); color:white; }
+.btn-green:hover { background:#3A7F58; }
+.btn-sm { padding:6px 14px; font-size:0.82rem; }
+.btn-group { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+.grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+@media(max-width:768px) {
+  .grid-2, .grid-3 { grid-template-columns:1fr; }
+  .container { padding:16px; }
+}
+
+/* Multi-select chip picker */
+.chip-group { display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
+.chip { padding:7px 14px; background:white; border:1.5px solid var(--gray-200); border-radius:18px; font-size:0.82rem; font-weight:500; cursor:pointer; transition:all 0.15s; user-select:none; }
+.chip:hover { border-color:var(--coral-light); background:#FFF7F4; }
+.chip.active { background:var(--coral); color:white; border-color:var(--coral); }
+.chip.active:hover { background:#D4613E; border-color:#D4613E; }
+
+.maturity-scale { display:flex; gap:8px; margin-top:8px; }
+.maturity-btn { flex:1; padding:14px 8px; background:white; border:1.5px solid var(--gray-200); border-radius:8px; cursor:pointer; font-size:0.8rem; text-align:center; transition:all 0.15s; }
+.maturity-btn:hover { border-color:var(--coral-light); }
+.maturity-btn.active { background:var(--coral); color:white; border-color:var(--coral); }
+.maturity-btn .num { display:block; font-size:1.1rem; font-weight:700; }
+.maturity-btn .lbl { display:block; font-size:0.72rem; margin-top:2px; }
+
+/* Framework cards */
+.fw-card { background:white; border:1.5px solid var(--gray-200); border-radius:var(--radius); padding:18px; margin-bottom:14px; transition:all 0.2s; position:relative; }
+.fw-card:hover { border-color:var(--coral-light); box-shadow:var(--shadow-sm); }
+.fw-card .fw-header { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:10px; }
+.fw-card .fw-name { font-size:1.05rem; font-weight:700; color:var(--warm-black); }
+.fw-card .fw-owner { font-size:0.78rem; color:var(--gray-500); margin-top:2px; }
+.fw-card .fw-desc { font-size:0.88rem; color:var(--gray-700); margin-bottom:10px; }
+.fw-card .fw-meta { display:flex; gap:12px; flex-wrap:wrap; margin-top:10px; padding-top:10px; border-top:1px dashed var(--gray-200); font-size:0.78rem; color:var(--gray-600); }
+.fw-card .fw-meta span { background:var(--gray-100); padding:3px 10px; border-radius:10px; }
+.fw-card .fw-score { font-size:1.4rem; font-weight:800; color:var(--coral); }
+.fw-card .fw-score-label { font-size:0.7rem; color:var(--gray-500); text-align:right; }
+.fw-card.rec-primary { border-left:5px solid var(--coral); background:linear-gradient(to right, #FFF7F4, white 80px); }
+.fw-card.rec-secondary { border-left:5px solid var(--ochre); }
+.fw-card.rec-complement { border-left:5px solid var(--teal); }
+
+.fw-ref { font-size:0.75rem; color:var(--gray-500); margin-top:6px; }
+.fw-ref a { color:var(--teal); text-decoration:none; }
+.fw-ref a:hover { text-decoration:underline; }
+
+.badge { display:inline-block; padding:2px 10px; border-radius:10px; font-size:0.72rem; font-weight:600; }
+.badge-primary { background:var(--coral); color:white; }
+.badge-secondary { background:var(--ochre); color:white; }
+.badge-complement { background:var(--teal); color:white; }
+.badge-cost-low { background:var(--green-light); color:var(--green); }
+.badge-cost-mid { background:#FEF3C7; color:#92400E; }
+.badge-cost-high { background:#FEE2E2; color:#B91C1C; }
+
+.rationale { background:var(--gray-50); border-radius:8px; padding:12px; margin-top:10px; font-size:0.85rem; color:var(--gray-700); }
+.rationale strong { color:var(--warm-black); }
+.rationale ul { margin:6px 0 0 18px; padding:0; }
+.rationale li { margin-bottom:4px; }
+
+/* Roadmap */
+.roadmap { position:relative; padding-left:28px; margin-top:16px; }
+.roadmap::before { content:''; position:absolute; left:10px; top:8px; bottom:8px; width:2px; background:var(--gray-200); }
+.roadmap-phase { margin-bottom:20px; position:relative; }
+.roadmap-phase::before { content:''; position:absolute; left:-24px; top:4px; width:14px; height:14px; border-radius:50%; background:var(--coral); border:3px solid white; box-shadow:0 0 0 2px var(--coral); }
+.roadmap-phase h4 { font-size:0.95rem; font-weight:700; color:var(--warm-black); margin-bottom:6px; }
+.roadmap-phase .ph-time { font-size:0.75rem; color:var(--coral); font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px; }
+.roadmap-phase ul { margin:8px 0 0 18px; font-size:0.85rem; color:var(--gray-700); }
+.roadmap-phase li { margin-bottom:6px; }
+
+/* Comparison table */
+.cmp-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+.cmp-table th { background:var(--warm-black); color:var(--cream); padding:10px 12px; text-align:left; font-weight:600; position:sticky; top:0; }
+.cmp-table th:first-child { background:var(--warm-black); }
+.cmp-table td { padding:10px 12px; border-bottom:1px solid var(--gray-200); vertical-align:top; }
+.cmp-table tr:nth-child(even) td { background:var(--gray-50); }
+.cmp-table .fw-label { font-weight:700; color:var(--warm-black); }
+.cmp-wrap { overflow-x:auto; border-radius:var(--radius); border:1px solid var(--gray-200); }
+
+.dot-score { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:1px; }
+.dot-on { background:var(--coral); }
+.dot-off { background:var(--gray-200); }
+
+.tooltip-trigger { position:relative; cursor:help; border-bottom:1px dotted var(--gray-400); }
+.tooltip-trigger:hover::after {
+  content:attr(data-tip);
+  position:absolute; bottom:125%; left:50%; transform:translateX(-50%);
+  background:var(--warm-black); color:white; padding:8px 12px; border-radius:6px;
+  font-size:0.75rem; font-weight:400; width:260px; text-align:left; z-index:10;
+  line-height:1.4; white-space:normal; box-shadow:var(--shadow-lg);
+}
+
+.empty-state { text-align:center; padding:40px 20px; color:var(--gray-400); }
+.empty-state p { font-size:0.95rem; }
+
+.match-pill { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:600; }
+.match-excellent { background:#D1FAE5; color:#065F46; }
+.match-strong { background:#DBEAFE; color:#1E40AF; }
+.match-moderate { background:#FEF3C7; color:#92400E; }
+.match-weak { background:var(--gray-100); color:var(--gray-500); }
+
+.prompt-output { background:var(--warm-black); color:var(--cream); padding:20px; border-radius:var(--radius); font-family:'SF Mono', 'Monaco', Consolas, monospace; font-size:0.82rem; line-height:1.6; white-space:pre-wrap; word-wrap:break-word; max-height:500px; overflow-y:auto; }
+
+/* Print styles */
+@media print {
+  .tabs, .header .btn-group, .btn, .no-print { display:none !important; }
+  .panel { display:block !important; page-break-inside:avoid; }
+  .card { box-shadow:none; border:1px solid #ccc; page-break-inside:avoid; }
+  body { background:white; }
+  .header { background:white; color:black; border-bottom:2px solid #333; }
+}
+
+.stage-label { display:inline-block; padding:3px 10px; border-radius:10px; font-size:0.74rem; font-weight:600; margin-right:6px; }
+.stage-1 { background:#FEE2E2; color:#B91C1C; }
+.stage-2 { background:#FED7AA; color:#9A3412; }
+.stage-3 { background:#FEF3C7; color:#92400E; }
+.stage-4 { background:var(--teal-light); color:var(--teal); }
+.stage-5 { background:var(--green-light); color:var(--green); }
+
+.kpi-strip { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-bottom:20px; }
+.kpi { background:white; border:1px solid var(--gray-200); border-radius:var(--radius); padding:14px; text-align:center; }
+.kpi .v { font-size:1.4rem; font-weight:800; color:var(--coral); display:block; }
+.kpi .l { font-size:0.75rem; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>Impact Measurement Framework Selector</h1>
+    <div class="brand">Built by <a href="https://useful-af.circle.so" target="_blank">UsefulAF</a> — AI tools for impact practitioners</div>
+  </div>
+  <div class="btn-group no-print">
+    <button class="btn btn-secondary btn-sm" onclick="exportCSV()">Export CSV</button>
+    <button class="btn btn-teal btn-sm" onclick="window.print()">Print / PDF</button>
+    <button class="btn btn-green btn-sm" onclick="generateClaudePrompt()">Claude Prompt</button>
+  </div>
+</div>
+
+<div class="tabs" id="tabBar">
+  <div class="tab active" onclick="showTab(0)">1. Assessment</div>
+  <div class="tab" onclick="showTab(1)">2. Recommendations</div>
+  <div class="tab" onclick="showTab(2)">3. Roadmap</div>
+  <div class="tab" onclick="showTab(3)">4. Comparison Matrix</div>
+  <div class="tab" onclick="showTab(4)">5. Framework Library</div>
+  <div class="tab" onclick="showTab(5)">6. Claude Prompt</div>
+</div>
+
+<div class="container">
+
+<!-- TAB 0: Assessment -->
+<div class="panel active" id="panel0">
+  <div class="card">
+    <h2>Why this tool exists</h2>
+    <div class="info-box">
+      <strong>There are 30+ impact measurement frameworks.</strong> Most are mutually compatible, a few overlap significantly, and each one is optimised for a specific purpose. Choosing wrong means wasted effort, poor reporting, and missed funding. This tool matches your organisation's context against 20 major frameworks and recommends the combination that fits. Based on GIIN's 2023 Annual Impact Investor Survey (N=308), IMM Practices Report 2020, UNDP SDG Impact Standards (2021), and the Bridgespan / Rockefeller Philanthropy Advisors Impact Management landscape review.
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Organisation Profile</h2>
+    <p>Tell us about your organisation. Every answer shapes the recommendation.</p>
+
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Organisation Name</label>
+        <input type="text" id="orgName" placeholder="e.g., Acme Impact Fund" value="">
+      </div>
+      <div class="form-group">
+        <label>Your Role</label>
+        <input type="text" id="orgRole" placeholder="e.g., Head of Impact" value="">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Organisation Type <span class="tooltip-trigger" data-tip="Pick the single best fit. The tool tailors recommendations heavily on this.">?</span></label>
+      <div class="chip-group" id="orgTypeChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Annual Budget / AUM</label>
+      <div class="chip-group" id="orgSizeChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Primary Headquarters / Listing</label>
+      <div class="hint">This drives regulatory-driven framework requirements (CSRD, IFRS S1/S2, SEC climate).</div>
+      <div class="chip-group" id="geoChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Primary Sectors (select all that apply)</label>
+      <div class="chip-group" id="sectorChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Measurement Purposes (select all that apply) <span class="tooltip-trigger" data-tip="What is the measurement FOR? This is the single most important input — different frameworks are optimised for different uses.">?</span></label>
+      <div class="chip-group" id="purposeChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Audiences for Impact Reports (select all that apply)</label>
+      <div class="chip-group" id="audienceChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Current Measurement Maturity <span class="tooltip-trigger" data-tip="From the IMM Practices Report 2020 (GIIN, N=278). Stage 1 = ad-hoc outputs tracking. Stage 5 = full IMM system integrated into capital allocation.">?</span></label>
+      <div class="maturity-scale" id="maturityScale"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Implementation Capacity</label>
+      <div class="hint">How much resource can you realistically commit to impact measurement?</div>
+      <div class="chip-group" id="capacityChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Frameworks Already in Use (if any)</label>
+      <div class="chip-group" id="currentChips"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Priority Outcomes / Themes (free text, optional)</label>
+      <textarea id="priorityThemes" placeholder="e.g., climate mitigation, gender equity, smallholder livelihoods in Sub-Saharan Africa"></textarea>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="runRecommendation()">Generate Recommendations →</button>
+      <button class="btn btn-secondary" onclick="loadExample()">Load Example (Impact Fund)</button>
+      <button class="btn btn-secondary" onclick="loadExampleNGO()">Load Example (NGO)</button>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 1: Recommendations -->
+<div class="panel" id="panel1">
+  <div id="recsEmpty" class="card">
+    <div class="empty-state">
+      <p>Complete the Assessment on Tab 1 and click <strong>Generate Recommendations</strong> to see framework matches.</p>
+    </div>
+  </div>
+  <div id="recsContent" style="display:none;">
+    <div class="card">
+      <h2>Recommended Framework Stack for <span id="recsOrgName">your organisation</span></h2>
+      <p id="recsOneLiner" style="font-size:0.95rem; color:var(--gray-700);"></p>
+      <div class="kpi-strip" id="recsKpis"></div>
+    </div>
+
+    <div class="card">
+      <h2>Primary Framework</h2>
+      <p>The single framework that should form the backbone of your measurement system. All other frameworks slot around it.</p>
+      <div id="recsPrimary"></div>
+    </div>
+
+    <div class="card">
+      <h2>Complementary Frameworks</h2>
+      <p>These add value <em>alongside</em> the primary framework — filling reporting gaps, sector-specific needs, or regulatory requirements.</p>
+      <div id="recsComplement"></div>
+    </div>
+
+    <div class="card">
+      <h2>Secondary Options (consider later)</h2>
+      <p>Not the right fit now, but worth revisiting as you mature or expand.</p>
+      <div id="recsSecondary"></div>
+    </div>
+
+    <div class="card">
+      <h2>Frameworks to Avoid (for now)</h2>
+      <p>Poor fit given your profile — implementing these first would waste resources.</p>
+      <div id="recsAvoid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: Roadmap -->
+<div class="panel" id="panel2">
+  <div id="roadmapEmpty" class="card">
+    <div class="empty-state">
+      <p>Generate recommendations first to see your implementation roadmap.</p>
+    </div>
+  </div>
+  <div id="roadmapContent" style="display:none;">
+    <div class="card">
+      <h2>Implementation Roadmap</h2>
+      <p>A phased 12-month plan to stand up your recommended framework stack. Tailored to your current maturity level and capacity.</p>
+      <div class="info-box">
+        <strong>Why phased:</strong> Organisations that try to implement multiple frameworks simultaneously typically fail within 18 months (GIIN IMM Practices Report 2020). The most successful approach is primary framework first (months 1-6), then layer complementary frameworks (months 7-12).
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Phase 1 · Foundation (Months 1-3)</h2>
+      <div class="roadmap" id="phase1"></div>
+    </div>
+
+    <div class="card">
+      <h2>Phase 2 · Build-out (Months 4-6)</h2>
+      <div class="roadmap" id="phase2"></div>
+    </div>
+
+    <div class="card">
+      <h2>Phase 3 · Layer complementary frameworks (Months 7-9)</h2>
+      <div class="roadmap" id="phase3"></div>
+    </div>
+
+    <div class="card">
+      <h2>Phase 4 · Integrate & report (Months 10-12)</h2>
+      <div class="roadmap" id="phase4"></div>
+    </div>
+
+    <div class="card">
+      <h2>Common Pitfalls to Avoid</h2>
+      <div id="pitfalls"></div>
+    </div>
+
+    <div class="card">
+      <h2>Estimated Effort & Cost</h2>
+      <div id="effortEstimate"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: Comparison Matrix -->
+<div class="panel" id="panel3">
+  <div class="card">
+    <h2>Framework Comparison Matrix</h2>
+    <p>Side-by-side on eight dimensions. Five-dot scales = very low (1 dot) to very high (5 dots).</p>
+    <div class="info-box">
+      <strong>How to read this:</strong> Credibility reflects weight with institutional LPs/regulators. Burden reflects implementation effort. Prescriptiveness reflects how strict the methodology is — higher prescriptiveness means less flexibility but easier defensibility.
+    </div>
+    <div class="cmp-wrap">
+      <table class="cmp-table" id="cmpTable"></table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: Framework Library -->
+<div class="panel" id="panel4">
+  <div class="card">
+    <h2>Framework Library</h2>
+    <p>20 impact measurement frameworks with purpose, cost, audience fit, evidence requirements, and official references.</p>
+  </div>
+  <div id="fwLibrary"></div>
+</div>
+
+<!-- TAB 5: Claude Prompt -->
+<div class="panel" id="panel5">
+  <div class="card">
+    <h2>AI Deep-Dive Prompt</h2>
+    <p>Paste the prompt below into Claude (or any advanced LLM) to get a customised strategic review of your framework choice. The prompt is pre-loaded with your specific context.</p>
+    <div class="info-box">
+      <strong>What Claude will do:</strong> Stress-test the recommended stack against your context, identify ways it could fail, suggest specific IRIS+ metrics / GRI disclosures / IMP questions to prioritise, draft a board-ready summary, and propose an evaluation cadence.
+    </div>
+    <button class="btn btn-primary" onclick="generateClaudePrompt()">Generate Prompt</button>
+    <button class="btn btn-secondary" onclick="copyPrompt()">Copy to Clipboard</button>
+    <div style="margin-top:16px;">
+      <div class="prompt-output" id="claudePrompt">Click "Generate Prompt" after completing the Assessment tab.</div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<script>
+// ============================================================
+// FRAMEWORK DATABASE
+// 20 impact measurement frameworks with full metadata
+// ============================================================
+const FRAMEWORKS = [
+  {
+    id: 'iris', name: 'IRIS+', owner: 'GIIN (Global Impact Investing Network)',
+    desc: 'Generally accepted system of metrics for impact investors. 730+ metrics across 16 impact categories + 5 IMP dimensions. The de facto metric vocabulary for impact capital.',
+    ref: 'iris.thegiin.org',
+    refUrl: 'https://iris.thegiin.org',
+    cost: 'low', costNote: 'Free; no licence fee. Effort: 1–3 months to set up metric framework.',
+    purpose: ['investor_reporting', 'internal_learning', 'compliance', 'portfolio_mgmt'],
+    bestFor: ['impact_fund', 'family_office', 'foundation', 'dfi', 'social_enterprise'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 2,
+    maxMaturity: 5,
+    credibility: 5, burden: 3, prescriptiveness: 3, flexibility: 4, sectorCoverage: 5, stakeholderFit: 4,
+    evidence: 'Output/outcome indicators. Standardised definitions. Not method-prescriptive on data collection.',
+    whenYes: 'You are deploying capital, need a shared metric vocabulary with LPs, or want to aggregate across portfolio.',
+    whenNo: 'You are a single operating NGO with no investment function and only need outcome narratives.',
+    pairsWith: ['imp', 'sdg_impact', 'hipso', '2x']
+  },
+  {
+    id: 'imp', name: 'IMP / IMM 5 Dimensions', owner: 'Impact Management Platform (convened by 18+ standards bodies inc. GRI, GIIN, UN)',
+    desc: 'Normative framework on WHAT, WHO, HOW MUCH, CONTRIBUTION, RISK. The "grammar" of impact — it structures thinking rather than prescribing metrics.',
+    ref: 'impactmanagementplatform.org',
+    refUrl: 'https://impactmanagementplatform.org',
+    cost: 'low', costNote: 'Free framework. Effort: workshop-based rollout, ~2 weeks per investment/programme.',
+    purpose: ['internal_learning', 'investor_reporting', 'portfolio_mgmt', 'strategic_decisions'],
+    bestFor: ['impact_fund', 'family_office', 'social_enterprise', 'foundation', 'dfi'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 1,
+    maxMaturity: 5,
+    credibility: 5, burden: 2, prescriptiveness: 3, flexibility: 5, sectorCoverage: 5, stakeholderFit: 4,
+    evidence: 'Qualitative + quantitative. Requires counterfactual (contribution) analysis and risk register.',
+    whenYes: 'You need a shared analytical structure for making impact decisions. Works at any maturity level.',
+    whenNo: 'You need prescriptive metrics for regulatory filings — IMP structures thinking, doesn\'t prescribe disclosures.',
+    pairsWith: ['iris', 'sroi', 'sdg_impact', 'gri']
+  },
+  {
+    id: 'sroi', name: 'SROI (Social Return on Investment)', owner: 'Social Value International',
+    desc: 'Monetised net social value of an intervention vs cost. Produces a ratio (e.g. "£3.50 of social value per £1 invested"). Gold standard for single-programme evaluation.',
+    ref: 'socialvalueuk.org — The Seven Principles of Social Value',
+    refUrl: 'https://socialvalueuk.org',
+    cost: 'high', costNote: 'Full SROI: £15-60k per study with consultants; 3-9 months. Simplified forms cheaper.',
+    purpose: ['grant_reporting', 'internal_learning', 'marketing_comms', 'commissioner_reporting'],
+    bestFor: ['ngo', 'social_enterprise', 'public_sector', 'foundation'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 3,
+    maxMaturity: 5,
+    credibility: 4, burden: 5, prescriptiveness: 5, flexibility: 2, sectorCoverage: 4, stakeholderFit: 4,
+    evidence: 'Stakeholder-defined outcomes, financial proxies, counterfactual (deadweight), attribution, drop-off, displacement.',
+    whenYes: 'Single programme/intervention needs defensible monetary value — often for commissioners or major grants.',
+    whenNo: 'Multi-programme portfolio (use IRIS+/IMP). Early stage (data won\'t support the methodology).',
+    pairsWith: ['imp', 'toc', 'gri']
+  },
+  {
+    id: 'bia', name: 'B Impact Assessment', owner: 'B Lab',
+    desc: 'Free 200-question assessment measuring impact on workers, community, environment, customers, governance. Gateway to B Corp certification (80+ score required).',
+    ref: 'bimpactassessment.net — B Lab',
+    refUrl: 'https://bimpactassessment.net',
+    cost: 'mid', costNote: 'Tool is free. Certification fee: $1,000-$50,000 by revenue. Effort: 40-80 hrs first completion.',
+    purpose: ['certification', 'marketing_comms', 'internal_learning', 'product_development'],
+    bestFor: ['social_enterprise', 'corporate'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 1,
+    maxMaturity: 5,
+    credibility: 4, burden: 3, prescriptiveness: 4, flexibility: 3, sectorCoverage: 4, stakeholderFit: 4,
+    evidence: 'Verified documentation required for certification (policies, procedures, outcomes).',
+    whenYes: 'Mission-driven company; B Corp certification will unlock customers, investors, talent, or legitimacy.',
+    whenNo: 'NGO/nonprofit (not eligible). Pure financial investor. Very early startup (wait until year 2-3 of operations).',
+    pairsWith: ['giirs', 'gri', 'sdg_impact']
+  },
+  {
+    id: 'gri', name: 'GRI Standards', owner: 'Global Reporting Initiative',
+    desc: 'The world\'s most widely used sustainability reporting standards (~10,000 organisations). GRI 1 Foundation + GRI 2 Disclosures + GRI 3 Material Topics + 31 topic-specific standards.',
+    ref: 'globalreporting.org',
+    refUrl: 'https://www.globalreporting.org',
+    cost: 'mid', costNote: 'Standards free. External assurance: $15-100k+. Effort: 4-9 months first report.',
+    purpose: ['compliance', 'investor_reporting', 'public_reporting', 'stakeholder_reporting'],
+    bestFor: ['corporate', 'social_enterprise', 'large_ngo'],
+    sectors: ['all'],
+    geo: ['all', 'eu'],
+    minMaturity: 2,
+    maxMaturity: 5,
+    credibility: 5, burden: 4, prescriptiveness: 4, flexibility: 3, sectorCoverage: 5, stakeholderFit: 4,
+    evidence: 'Double materiality assessment, stakeholder engagement, management approach disclosures, quantitative KPIs.',
+    whenYes: 'Corporate or large social enterprise, public-facing stakeholders (NGOs, regulators, retail customers).',
+    whenNo: 'Small organisation (<50 staff), pure-play investor, single-programme NGO.',
+    pairsWith: ['sasb', 'tcfd', 'csrd', 'sdg_compass']
+  },
+  {
+    id: 'sasb', name: 'SASB / IFRS ISSB S1 & S2', owner: 'IFRS Foundation (consolidated SASB + TCFD + VRF)',
+    desc: 'Financially material sustainability standards for investors. 77 industry-specific standards. S1 = general sustainability, S2 = climate-specific. Basis for mandatory disclosure in UK, Japan, Singapore, Australia.',
+    ref: 'ifrs.org — IFRS S1 & S2 effective 1 Jan 2024',
+    refUrl: 'https://www.ifrs.org/issued-standards/ifrs-sustainability-standards-navigator/',
+    cost: 'high', costNote: 'Standards free. Implementation: $100k-$2M. Audit readiness 12-24 months.',
+    purpose: ['compliance', 'investor_reporting', 'regulatory'],
+    bestFor: ['corporate', 'impact_fund'],
+    sectors: ['all'],
+    geo: ['us', 'uk', 'global_listed'],
+    minMaturity: 3,
+    maxMaturity: 5,
+    credibility: 5, burden: 5, prescriptiveness: 5, flexibility: 2, sectorCoverage: 5, stakeholderFit: 3,
+    evidence: 'Financially material to enterprise value. Scope 1-3 emissions, scenario analysis, governance, risk management.',
+    whenYes: 'Listed company (or subsidiary of one) in a jurisdiction that has mandated ISSB disclosure.',
+    whenNo: 'Private NGO, foundation, small social enterprise — overkill and expensive.',
+    pairsWith: ['tcfd', 'csrd', 'gri']
+  },
+  {
+    id: 'tcfd', name: 'TCFD', owner: 'Task Force on Climate-related Financial Disclosures (now absorbed by IFRS/ISSB S2)',
+    desc: 'Governance, strategy, risk management, metrics & targets disclosures for climate-related financial risk. Foundation of mandatory climate disclosure in UK/EU/US.',
+    ref: 'fsb-tcfd.org — superseded by IFRS S2, but framework structure preserved',
+    refUrl: 'https://www.fsb-tcfd.org/',
+    cost: 'high', costNote: '$50-500k first year for scenario analysis; mid-range ongoing.',
+    purpose: ['compliance', 'investor_reporting', 'regulatory'],
+    bestFor: ['corporate', 'impact_fund', 'dfi'],
+    sectors: ['climate', 'energy', 'financial_services', 'all'],
+    geo: ['us', 'uk', 'eu', 'global_listed'],
+    minMaturity: 3,
+    maxMaturity: 5,
+    credibility: 5, burden: 5, prescriptiveness: 4, flexibility: 3, sectorCoverage: 4, stakeholderFit: 3,
+    evidence: 'Scenario analysis (≥2 scenarios inc. 1.5°C or 2°C), Scope 1-2-3 GHG inventory, transition plan.',
+    whenYes: 'Climate is material to your business, you have investors requiring it, or you\'re in a jurisdiction that mandates it.',
+    whenNo: 'Climate is not material to your work and no investor has asked for it.',
+    pairsWith: ['sasb', 'cdp', 'sbti']
+  },
+  {
+    id: 'sdg_impact', name: 'SDG Impact Standards', owner: 'UNDP',
+    desc: 'Three investor-facing standards: Enterprise Standards, Bond Standards, Private Equity Fund Standards. Embed SDG contribution into strategy, management, governance, disclosure.',
+    ref: 'sdgimpact.undp.org — launched 2021',
+    refUrl: 'https://sdgimpact.undp.org',
+    cost: 'mid', costNote: 'Standards free. Implementation: ~$25-150k. Third-party assurance available 2024+.',
+    purpose: ['investor_reporting', 'marketing_comms', 'regulatory', 'stakeholder_reporting'],
+    bestFor: ['impact_fund', 'social_enterprise', 'corporate', 'dfi', 'foundation'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 2,
+    maxMaturity: 5,
+    credibility: 4, burden: 3, prescriptiveness: 3, flexibility: 4, sectorCoverage: 5, stakeholderFit: 4,
+    evidence: 'SDG contribution map, decision-useful targets tied to SDG indicators, management practices.',
+    whenYes: 'You want to credibly claim SDG alignment beyond the "SDG-washing" 17-circle logo.',
+    whenNo: 'You only need traditional ESG — SDG lens adds layer you may not need.',
+    pairsWith: ['iris', 'imp', 'gri', 'hipso']
+  },
+  {
+    id: 'giirs', name: 'GIIRS Ratings', owner: 'B Lab (B Analytics platform)',
+    desc: 'Ratings for funds and companies based on B Impact Assessment. Produces fund-level and portfolio-level impact ratings. Used by LPs to assess impact fund performance.',
+    ref: 'bimpactassessment.net — GIIRS by B Lab',
+    refUrl: 'https://bimpactassessment.net/',
+    cost: 'mid', costNote: '$5-25k/year + $1-5k per portfolio company. Effort: 60-100 hrs/year for fund GP.',
+    purpose: ['investor_reporting', 'portfolio_mgmt', 'marketing_comms'],
+    bestFor: ['impact_fund', 'family_office'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 3,
+    maxMaturity: 5,
+    credibility: 4, burden: 3, prescriptiveness: 4, flexibility: 3, sectorCoverage: 4, stakeholderFit: 4,
+    evidence: 'Portfolio company BIAs, fund-level impact policies, third-party verification.',
+    whenYes: 'Impact fund with 5+ portfolio companies and LPs who want a fund-level impact rating.',
+    whenNo: 'Pre-investment or just 1-2 portfolio companies. Single operating company.',
+    pairsWith: ['bia', 'iris', 'imp', '2x']
+  },
+  {
+    id: 'lbg', name: 'B4SI (formerly LBG)', owner: 'Corporate Citizenship (BITC)',
+    desc: 'Business for Societal Impact (was London Benchmarking Group) framework for measuring corporate community investment (cash, time, in-kind, management costs).',
+    ref: 'b4si.net',
+    refUrl: 'https://www.b4si.net',
+    cost: 'mid', costNote: '£5-30k membership. Effort: 40-100 hrs/year.',
+    purpose: ['compliance', 'public_reporting', 'internal_learning', 'stakeholder_reporting'],
+    bestFor: ['corporate'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 2,
+    maxMaturity: 5,
+    credibility: 4, burden: 3, prescriptiveness: 4, flexibility: 3, sectorCoverage: 3, stakeholderFit: 3,
+    evidence: 'Input (contributions), output (activities), impact (outcomes) across community programmes.',
+    whenYes: 'Corporate with meaningful community investment programme; need defensible CSR reporting.',
+    whenNo: 'Small organisation, non-corporate entity, purely financial investor.',
+    pairsWith: ['gri', 'sdg_compass']
+  },
+  {
+    id: 'csrd', name: 'EU CSRD / ESRS', owner: 'European Financial Reporting Advisory Group (EFRAG)',
+    desc: 'Corporate Sustainability Reporting Directive. Mandatory double-materiality reporting for ~50,000 EU companies (phased 2024-2028). 12 ESRS standards covering E, S, G topics.',
+    ref: 'efrag.org — CSRD in force from 2024 reporting year',
+    refUrl: 'https://www.efrag.org',
+    cost: 'high', costNote: '€250k-€5M first year; 18-36 month readiness project.',
+    purpose: ['compliance', 'regulatory'],
+    bestFor: ['corporate', 'social_enterprise', 'large_ngo'],
+    sectors: ['all'],
+    geo: ['eu'],
+    minMaturity: 3,
+    maxMaturity: 5,
+    credibility: 5, burden: 5, prescriptiveness: 5, flexibility: 1, sectorCoverage: 5, stakeholderFit: 3,
+    evidence: 'Double-materiality assessment, 1000+ data points, third-party assurance (limited from 2024, reasonable by 2028).',
+    whenYes: 'You are an EU-listed or large EU company — it is mandatory. No choice.',
+    whenNo: 'Non-EU, no EU subsidiary of material size.',
+    pairsWith: ['gri', 'sasb', 'tcfd']
+  },
+  {
+    id: 'hipso', name: 'HIPSO / Joint Impact Indicators', owner: 'IFI coalition (IFC + EDFI + DFIs)',
+    desc: 'Harmonised Indicators for Private Sector Operations. 38 harmonised metrics across employment, SMEs, energy, health, agriculture — the core DFI reporting language.',
+    ref: 'indicators.ifipartnership.org',
+    refUrl: 'https://indicators.ifipartnership.org',
+    cost: 'low', costNote: 'Free standards. Effort: modest — aligns to existing DFI reporting.',
+    purpose: ['investor_reporting', 'portfolio_mgmt', 'compliance'],
+    bestFor: ['dfi', 'impact_fund', 'social_enterprise'],
+    sectors: ['financial_inclusion', 'energy', 'agriculture', 'health', 'all'],
+    geo: ['developing_markets', 'global_listed'],
+    minMaturity: 2,
+    maxMaturity: 5,
+    credibility: 5, burden: 2, prescriptiveness: 4, flexibility: 3, sectorCoverage: 4, stakeholderFit: 4,
+    evidence: 'Standardised output metrics; minimal attribution analysis required.',
+    whenYes: 'Taking DFI capital or aggregating investments across multiple DFI relationships.',
+    whenNo: 'No DFI investor exposure. Purely domestic / developed-market focus.',
+    pairsWith: ['iris', 'imp', 'sdg_impact', 'ifc_ps']
+  },
+  {
+    id: '2x', name: '2X Criteria', owner: '2X Global (formerly 2X Collaborative)',
+    desc: 'Global gender-lens investing standard. 5 criteria: ownership, leadership, employment, consumption, investment. Used to certify investments as 2X-qualified.',
+    ref: '2xglobal.org — 2X Criteria v2 (2024)',
+    refUrl: 'https://www.2xglobal.org',
+    cost: 'low', costNote: 'Free framework. Third-party verification: $5-20k per investment.',
+    purpose: ['investor_reporting', 'marketing_comms', 'compliance'],
+    bestFor: ['impact_fund', 'dfi', 'family_office'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 2,
+    maxMaturity: 5,
+    credibility: 4, burden: 2, prescriptiveness: 5, flexibility: 2, sectorCoverage: 4, stakeholderFit: 3,
+    evidence: 'Documented % thresholds on leadership, employment, supply chain, product reach.',
+    whenYes: 'Gender lens is a stated part of the mandate or material to LPs.',
+    whenNo: 'No gender mandate; no audience for gender-specific metrics.',
+    pairsWith: ['iris', 'hipso', 'sdg_impact', 'imp']
+  },
+  {
+    id: 'ifc_ps', name: 'IFC Performance Standards', owner: 'International Finance Corporation',
+    desc: 'Eight performance standards covering E&S risk management (labour, pollution, community, biodiversity, indigenous peoples, cultural heritage, resettlement). Global gold standard for project-finance E&S.',
+    ref: 'ifc.org — IFC PS 2012 (under review for 2026 update)',
+    refUrl: 'https://www.ifc.org/en/what-we-do/sector-expertise/sustainability/performance-standards',
+    cost: 'high', costNote: 'Free standards. Independent E&S consultant: $50-300k per project.',
+    purpose: ['compliance', 'investor_reporting', 'regulatory', 'risk_management'],
+    bestFor: ['dfi', 'impact_fund', 'corporate'],
+    sectors: ['infrastructure', 'energy', 'agriculture', 'extractives', 'financial_services'],
+    geo: ['developing_markets', 'all'],
+    minMaturity: 3,
+    maxMaturity: 5,
+    credibility: 5, burden: 5, prescriptiveness: 5, flexibility: 2, sectorCoverage: 4, stakeholderFit: 3,
+    evidence: 'ESIA, ESMP, stakeholder engagement, grievance mechanism, periodic monitoring reports.',
+    whenYes: 'Project finance, physical-asset investments, or taking capital from DFI / Equator Principles banks.',
+    whenNo: 'Pure software/services, philanthropy, no physical or community footprint.',
+    pairsWith: ['hipso', 'gri', '2x', 'ungp']
+  },
+  {
+    id: 'toc', name: 'Theory of Change / Logframe', owner: 'ActKnowledge / Rockefeller Foundation / DFID',
+    desc: 'Causal map: long-term goal → outcomes → outputs → activities → inputs, with assumptions explicit. Foundational for all impact measurement — most other frameworks build on a ToC.',
+    ref: 'theoryofchange.org — Taplin & Clark (2012); Aspen Institute Roundtable (1995)',
+    refUrl: 'https://www.theoryofchange.org',
+    cost: 'low', costNote: 'Workshop-driven: 2-5 days of facilitated sessions. Can be done in-house.',
+    purpose: ['internal_learning', 'grant_reporting', 'strategic_decisions', 'investor_reporting'],
+    bestFor: ['ngo', 'social_enterprise', 'foundation', 'public_sector', 'impact_fund'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 1,
+    maxMaturity: 5,
+    credibility: 4, burden: 2, prescriptiveness: 2, flexibility: 5, sectorCoverage: 5, stakeholderFit: 5,
+    evidence: 'Assumptions, indicators at each level (input/output/outcome/impact), means of verification.',
+    whenYes: 'Always — a ToC is almost always the first step before implementing any metric framework.',
+    whenNo: 'Never. If you don\'t have one, start here.',
+    pairsWith: ['iris', 'sroi', 'imp', 'gri']
+  },
+  {
+    id: 'sdg_compass', name: 'SDG Compass', owner: 'GRI + UN Global Compact + WBCSD',
+    desc: 'Five-step guide for companies to align with SDGs: Understand → Define Priorities → Set Goals → Integrate → Report. Lightweight, most useful as on-ramp.',
+    ref: 'sdgcompass.org',
+    refUrl: 'https://sdgcompass.org',
+    cost: 'low', costNote: 'Free guide. Lightweight implementation: 2-8 weeks for SDG mapping.',
+    purpose: ['marketing_comms', 'strategic_decisions', 'public_reporting'],
+    bestFor: ['corporate', 'social_enterprise', 'large_ngo'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 1,
+    maxMaturity: 3,
+    credibility: 3, burden: 1, prescriptiveness: 2, flexibility: 5, sectorCoverage: 5, stakeholderFit: 3,
+    evidence: 'Qualitative SDG mapping + a few priority KPIs. Not a rigorous disclosure framework.',
+    whenYes: 'Just starting SDG journey; need a lightweight way to map and prioritise.',
+    whenNo: 'Investors or regulators need disclosure-grade data (use SDG Impact Standards instead).',
+    pairsWith: ['gri', 'sdg_impact', 'iris']
+  },
+  {
+    id: 'ungc', name: 'UN Global Compact + Communication on Progress', owner: 'United Nations',
+    desc: 'Ten principles across human rights, labour, environment, anti-corruption. Annual Communication on Progress (CoP) required. 20,000+ company signatories.',
+    ref: 'unglobalcompact.org — CoP revamped 2023',
+    refUrl: 'https://www.unglobalcompact.org',
+    cost: 'low', costNote: 'Signatory fee: tiered by revenue ($250-$50k/year). CoP effort: 20-60 hrs/year.',
+    purpose: ['marketing_comms', 'compliance', 'stakeholder_reporting'],
+    bestFor: ['corporate', 'social_enterprise'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 1,
+    maxMaturity: 4,
+    credibility: 3, burden: 1, prescriptiveness: 2, flexibility: 4, sectorCoverage: 3, stakeholderFit: 3,
+    evidence: 'Annual CoP questionnaire (digitised 2023+); governance, labour, environment, human rights, anti-corruption policies.',
+    whenYes: 'Want a low-cost public commitment signal aligned with UN.',
+    whenNo: 'Core audience is sophisticated investors — they want deeper disclosure than UNGC alone.',
+    pairsWith: ['gri', 'sdg_compass', 'ungp']
+  },
+  {
+    id: 'ungp', name: 'UN Guiding Principles on Business and Human Rights (UNGPs)', owner: 'UN / Office of the High Commissioner for Human Rights',
+    desc: 'Global authoritative standard on preventing and addressing business-related human rights harms. Three pillars: Protect (state), Respect (business), Remedy (both). UNGP Reporting Framework adds disclosure structure.',
+    ref: 'ohchr.org — UNGPs 2011; Reporting Framework 2015',
+    refUrl: 'https://www.ohchr.org/en/publications/reference-publications/guiding-principles-business-and-human-rights',
+    cost: 'high', costNote: 'HRDD programme: $50k-$1M+. Embedded in mandatory HRDD laws (France 2017, Germany 2023, EU CSDDD 2024).',
+    purpose: ['compliance', 'regulatory', 'risk_management', 'stakeholder_reporting'],
+    bestFor: ['corporate', 'large_ngo'],
+    sectors: ['extractives', 'apparel', 'agriculture', 'tech', 'all'],
+    geo: ['eu', 'global_listed', 'all'],
+    minMaturity: 3,
+    maxMaturity: 5,
+    credibility: 5, burden: 4, prescriptiveness: 4, flexibility: 3, sectorCoverage: 5, stakeholderFit: 4,
+    evidence: 'Human rights impact assessment (HRIA), salient human rights risks, grievance mechanisms, remediation.',
+    whenYes: 'Physical supply chain, high-risk operating contexts, or exposure to mandatory HRDD laws.',
+    whenNo: 'Small digital-only service provider in low-risk geography.',
+    pairsWith: ['ifc_ps', 'gri', 'ilo', 'csrd']
+  },
+  {
+    id: 'pri', name: 'PRI Reporting Framework', owner: 'Principles for Responsible Investment (UN-supported)',
+    desc: 'Mandatory annual reporting for PRI signatories (~5,400 signatories, $121T AUM). Assesses ESG integration, stewardship, policy advocacy. Produces public transparency report + private assessment.',
+    ref: 'unpri.org — reformed reporting framework 2023-24',
+    refUrl: 'https://www.unpri.org',
+    cost: 'mid', costNote: 'Signatory fee: tiered by AUM ($500-$20k+/year). Reporting effort: 80-250 hrs/year.',
+    purpose: ['investor_reporting', 'compliance', 'public_reporting'],
+    bestFor: ['impact_fund', 'family_office', 'foundation'],
+    sectors: ['all'],
+    geo: ['all'],
+    minMaturity: 3,
+    maxMaturity: 5,
+    credibility: 5, burden: 4, prescriptiveness: 4, flexibility: 3, sectorCoverage: 4, stakeholderFit: 3,
+    evidence: 'ESG integration evidence across asset classes, stewardship activities, climate practices.',
+    whenYes: 'Investment manager or asset owner who wants (or is required) to signal responsible investing practices.',
+    whenNo: 'Operating company, NGO, or family office with no external LPs.',
+    pairsWith: ['tcfd', 'iris', 'imp', 'sdg_impact']
+  },
+  {
+    id: 'cdp', name: 'CDP (Climate, Water, Forests)', owner: 'CDP (formerly Carbon Disclosure Project)',
+    desc: 'Annual disclosure platform for climate, water security, and forests. 23,000+ companies disclosed in 2023. Used by investors with $136T AUM for screening.',
+    ref: 'cdp.net — CDP 2024 questionnaire aligned with IFRS S2',
+    refUrl: 'https://www.cdp.net',
+    cost: 'mid', costNote: 'Free for non-disclosers. Reporter membership $1-15k. Effort: 40-200 hrs/year.',
+    purpose: ['investor_reporting', 'public_reporting', 'compliance'],
+    bestFor: ['corporate', 'large_ngo'],
+    sectors: ['climate', 'energy', 'agriculture', 'manufacturing', 'all'],
+    geo: ['all'],
+    minMaturity: 2,
+    maxMaturity: 5,
+    credibility: 4, burden: 3, prescriptiveness: 4, flexibility: 3, sectorCoverage: 3, stakeholderFit: 3,
+    evidence: 'Scope 1-2-3 emissions, climate risk, targets, water/forest stewardship.',
+    whenYes: 'Climate is material, investors ask for CDP scores, or you operate in water- or forest-intensive sectors.',
+    whenNo: 'Climate not material, no investor pressure, under 50 staff.',
+    pairsWith: ['tcfd', 'sbti', 'sasb']
+  }
+];
+
+// ============================================================
+// PICKLISTS
+// ============================================================
+const ORG_TYPES = [
+  { id:'ngo', label:'NGO / Nonprofit' },
+  { id:'social_enterprise', label:'Social Enterprise' },
+  { id:'impact_fund', label:'Impact Fund / Investor' },
+  { id:'family_office', label:'Family Office' },
+  { id:'corporate', label:'Corporate / Listed Company' },
+  { id:'foundation', label:'Foundation / Philanthropy' },
+  { id:'dfi', label:'DFI / MDB' },
+  { id:'public_sector', label:'Public Sector / Government' },
+  { id:'large_ngo', label:'Large INGO (>$50M)' }
+];
+
+const ORG_SIZES = [
+  { id:'xs', label:'Under $500k' },
+  { id:'s', label:'$500k – $2M' },
+  { id:'m', label:'$2M – $20M' },
+  { id:'l', label:'$20M – $100M' },
+  { id:'xl', label:'$100M+' }
+];
+
+const GEOS = [
+  { id:'us', label:'United States' },
+  { id:'uk', label:'United Kingdom' },
+  { id:'eu', label:'European Union' },
+  { id:'global_listed', label:'Other OECD / Listed' },
+  { id:'developing_markets', label:'Developing / Emerging Markets' },
+  { id:'all', label:'Multi-region / Global' }
+];
+
+const SECTORS = [
+  { id:'health', label:'Health' },
+  { id:'education', label:'Education' },
+  { id:'financial_inclusion', label:'Financial Inclusion' },
+  { id:'climate', label:'Climate / Environment' },
+  { id:'energy', label:'Energy / Clean Tech' },
+  { id:'agriculture', label:'Agriculture / Food' },
+  { id:'gender', label:'Gender / Women\'s Economic Empowerment' },
+  { id:'livelihoods', label:'Livelihoods / Jobs' },
+  { id:'affordable_housing', label:'Affordable Housing' },
+  { id:'infrastructure', label:'Infrastructure' },
+  { id:'tech', label:'Tech for Good' },
+  { id:'extractives', label:'Extractives' },
+  { id:'apparel', label:'Apparel / Consumer Goods' },
+  { id:'manufacturing', label:'Manufacturing' },
+  { id:'financial_services', label:'Financial Services' },
+  { id:'all', label:'Multi-sector' }
+];
+
+const PURPOSES = [
+  { id:'investor_reporting', label:'Report to LPs / Investors' },
+  { id:'grant_reporting', label:'Report to Grantmakers' },
+  { id:'commissioner_reporting', label:'Report to Public Commissioners' },
+  { id:'compliance', label:'Mandatory Compliance' },
+  { id:'regulatory', label:'Regulatory Filing' },
+  { id:'certification', label:'Earn Certification (B Corp etc.)' },
+  { id:'internal_learning', label:'Internal Learning / Decision-making' },
+  { id:'marketing_comms', label:'Marketing / Brand / PR' },
+  { id:'product_development', label:'Product / Programme Design' },
+  { id:'portfolio_mgmt', label:'Portfolio Management' },
+  { id:'strategic_decisions', label:'Strategic Planning' },
+  { id:'stakeholder_reporting', label:'Stakeholder / Community Reporting' },
+  { id:'public_reporting', label:'Public Sustainability Report' },
+  { id:'risk_management', label:'E&S Risk Management' }
+];
+
+const AUDIENCES = [
+  { id:'lps', label:'Institutional LPs' },
+  { id:'donors', label:'Donors / Grantmakers' },
+  { id:'regulators', label:'Regulators' },
+  { id:'board', label:'Board / Trustees' },
+  { id:'staff', label:'Staff / Team' },
+  { id:'public', label:'General Public / Media' },
+  { id:'beneficiaries', label:'Beneficiaries / Clients' },
+  { id:'commissioners', label:'Public Commissioners' },
+  { id:'customers', label:'B2B Customers' }
+];
+
+const MATURITY_LEVELS = [
+  { id:1, label:'Ad-hoc', desc:'Outputs tracked inconsistently' },
+  { id:2, label:'Emerging', desc:'Some regular metrics; no framework' },
+  { id:3, label:'Structured', desc:'Framework in place; data collected' },
+  { id:4, label:'Integrated', desc:'Data drives decisions' },
+  { id:5, label:'Optimising', desc:'Full IMM system; externally assured' }
+];
+
+const CAPACITIES = [
+  { id:'low', label:'Low (< 0.5 FTE / <$50k/yr)' },
+  { id:'mid', label:'Moderate (0.5–2 FTE / $50–250k/yr)' },
+  { id:'high', label:'High (2+ FTE / $250k+/yr)' }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  orgName: '', orgRole: '',
+  orgType: null,
+  orgSize: null,
+  geo: [],
+  sectors: [],
+  purposes: [],
+  audiences: [],
+  maturity: null,
+  capacity: null,
+  current: [],
+  priorityThemes: '',
+  recommendations: null
+};
+
+// ============================================================
+// UI SETUP
+// ============================================================
+function makeChips(containerId, items, multi, key) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  items.forEach(it => {
+    const c = document.createElement('div');
+    c.className = 'chip';
+    c.textContent = it.label;
+    c.dataset.id = it.id;
+    c.onclick = () => {
+      if (multi) {
+        if (!Array.isArray(state[key])) state[key] = [];
+        const idx = state[key].indexOf(it.id);
+        if (idx >= 0) state[key].splice(idx, 1);
+        else state[key].push(it.id);
+        c.classList.toggle('active');
+      } else {
+        state[key] = it.id;
+        [...el.children].forEach(ch => ch.classList.remove('active'));
+        c.classList.add('active');
+      }
+    };
+    el.appendChild(c);
+  });
+}
+
+function makeMaturityScale() {
+  const el = document.getElementById('maturityScale');
+  el.innerHTML = '';
+  MATURITY_LEVELS.forEach(m => {
+    const b = document.createElement('div');
+    b.className = 'maturity-btn';
+    b.innerHTML = `<span class="num">${m.id}</span><span class="lbl">${m.label}</span>`;
+    b.title = m.desc;
+    b.onclick = () => {
+      state.maturity = m.id;
+      [...el.children].forEach(ch => ch.classList.remove('active'));
+      b.classList.add('active');
+    };
+    el.appendChild(b);
+  });
+}
+
+function initUI() {
+  makeChips('orgTypeChips', ORG_TYPES, false, 'orgType');
+  makeChips('orgSizeChips', ORG_SIZES, false, 'orgSize');
+  makeChips('geoChips', GEOS, true, 'geo');
+  makeChips('sectorChips', SECTORS, true, 'sectors');
+  makeChips('purposeChips', PURPOSES, true, 'purposes');
+  makeChips('audienceChips', AUDIENCES, true, 'audiences');
+  makeMaturityScale();
+  makeChips('capacityChips', CAPACITIES, false, 'capacity');
+  makeChips('currentChips', FRAMEWORKS.map(f => ({ id:f.id, label:f.name })), true, 'current');
+
+  document.getElementById('orgName').addEventListener('input', e => state.orgName = e.target.value);
+  document.getElementById('orgRole').addEventListener('input', e => state.orgRole = e.target.value);
+  document.getElementById('priorityThemes').addEventListener('input', e => state.priorityThemes = e.target.value);
+
+  renderLibrary();
+  renderComparison();
+}
+
+// ============================================================
+// SCORING ENGINE
+// ============================================================
+function scoreFramework(fw) {
+  let score = 0;
+  let reasons = [];
+  let negatives = [];
+
+  // 1. Org type fit (heavy weight)
+  if (fw.bestFor.includes(state.orgType)) {
+    score += 30;
+    reasons.push(`Designed for ${labelOf(ORG_TYPES, state.orgType)}s`);
+  } else {
+    score -= 10;
+    negatives.push(`Not primarily designed for ${labelOf(ORG_TYPES, state.orgType)}s`);
+  }
+
+  // 2. Purpose alignment
+  const purposeMatches = state.purposes.filter(p => fw.purpose.includes(p));
+  if (purposeMatches.length > 0) {
+    score += purposeMatches.length * 10;
+    reasons.push(`Supports: ${purposeMatches.map(p => labelOf(PURPOSES, p)).join(', ')}`);
+  }
+
+  // 3. Geography / regulatory match
+  if (fw.geo.includes('all') || state.geo.some(g => fw.geo.includes(g))) {
+    score += 8;
+    if (fw.id === 'csrd' && state.geo.includes('eu')) { score += 25; reasons.push('Mandatory for EU-listed organisations from 2024'); }
+    if (fw.id === 'sasb' && (state.geo.includes('us') || state.geo.includes('uk') || state.geo.includes('global_listed'))) { score += 12; reasons.push('Aligned with ISSB-mandated jurisdictions'); }
+  } else {
+    score -= 5;
+    negatives.push('Not optimised for your jurisdiction');
+  }
+
+  // 4. Sector fit
+  if (fw.sectors.includes('all') || state.sectors.some(s => fw.sectors.includes(s))) {
+    score += 6;
+    const sectorMatches = state.sectors.filter(s => fw.sectors.includes(s));
+    if (sectorMatches.length > 0 && !fw.sectors.includes('all')) {
+      reasons.push(`Strong sector coverage for: ${sectorMatches.map(s => labelOf(SECTORS, s)).join(', ')}`);
+    }
+  }
+
+  // 5. Maturity fit
+  const mat = state.maturity || 1;
+  if (mat >= fw.minMaturity && mat <= fw.maxMaturity) {
+    score += 10;
+  } else if (mat < fw.minMaturity) {
+    score -= (fw.minMaturity - mat) * 8;
+    negatives.push(`Typically requires maturity level ${fw.minMaturity}+ (you are at ${mat})`);
+  }
+
+  // 6. Capacity / cost fit
+  const cap = state.capacity;
+  if (cap === 'low' && fw.cost === 'high') { score -= 15; negatives.push('High cost vs low capacity is a red flag'); }
+  if (cap === 'high' && fw.cost === 'low') score += 3;
+  if (cap === 'mid' && fw.cost === 'mid') score += 3;
+
+  // 7. Bonus: already in use = integration value
+  if (state.current.includes(fw.id)) {
+    score += 8;
+    reasons.push('Already in use — keep building on it');
+  }
+
+  // 8. Special-case logic
+  if (fw.id === 'toc') {
+    score += 15; // ToC is almost always a good idea
+    if (mat === 1) { score += 10; reasons.push('Essential foundation at stage 1 — build before any other framework'); }
+  }
+  if (fw.id === 'imp' && mat <= 3) {
+    score += 12; reasons.push('Highly effective at early stages — builds common language');
+  }
+  if (fw.id === 'sroi' && mat < 3) {
+    score -= 15; negatives.push('SROI requires structured data collection; premature at your maturity');
+  }
+  if (fw.id === 'csrd' && !state.geo.includes('eu')) {
+    score -= 25; negatives.push('Not mandatory for non-EU organisations');
+  }
+  if (fw.id === 'bia' && (state.orgType === 'ngo' || state.orgType === 'foundation' || state.orgType === 'public_sector' || state.orgType === 'dfi' || state.orgType === 'impact_fund')) {
+    score -= 20; negatives.push('B Impact Assessment is for operating companies only');
+  }
+  if (fw.id === 'giirs' && state.orgType !== 'impact_fund' && state.orgType !== 'family_office') {
+    score -= 15; negatives.push('GIIRS is a fund-level rating — not a fit for operating entities');
+  }
+  if (fw.id === 'pri' && state.orgType !== 'impact_fund' && state.orgType !== 'family_office' && state.orgType !== 'foundation') {
+    score -= 20; negatives.push('PRI is for asset owners / managers only');
+  }
+  if (fw.id === '2x' && !state.sectors.includes('gender') && !state.purposes.includes('marketing_comms')) {
+    score -= 5;
+  }
+  if (fw.id === 'ifc_ps' && state.orgType !== 'dfi' && state.orgType !== 'impact_fund' && state.orgType !== 'corporate') {
+    score -= 10;
+  }
+  if (fw.id === 'hipso' && !state.geo.includes('developing_markets') && state.orgType !== 'dfi') {
+    score -= 8;
+  }
+
+  // 9. Audience weighting
+  if (state.audiences.includes('regulators') && ['csrd','sasb','tcfd','ungp','ifc_ps'].includes(fw.id)) score += 8;
+  if (state.audiences.includes('lps') && ['iris','imp','giirs','pri','sdg_impact','hipso'].includes(fw.id)) score += 6;
+  if (state.audiences.includes('donors') && ['sroi','toc','gri','sdg_compass'].includes(fw.id)) score += 6;
+  if (state.audiences.includes('public') && ['gri','sdg_compass','ungc','cdp','b4si'].includes(fw.id)) score += 4;
+
+  return { score, reasons, negatives };
+}
+
+function labelOf(list, id) {
+  const x = list.find(i => i.id === id);
+  return x ? x.label : id;
+}
+
+function runRecommendation() {
+  if (!state.orgType) { alert('Please select an Organisation Type.'); return; }
+  if (!state.maturity) { alert('Please select a Measurement Maturity level.'); return; }
+  if (state.purposes.length === 0) { alert('Please select at least one Measurement Purpose.'); return; }
+
+  const scored = FRAMEWORKS.map(fw => {
+    const { score, reasons, negatives } = scoreFramework(fw);
+    return { ...fw, _score: score, _reasons: reasons, _negatives: negatives };
+  }).sort((a,b) => b._score - a._score);
+
+  // Primary: top 1 (excluding ToC if another top is available)
+  let primary = scored[0];
+  // If top is ToC and user is already at maturity 3+, promote the next one
+  if (primary.id === 'toc' && state.maturity >= 3 && scored[1]._score > 0) {
+    // Keep ToC as complement instead
+    primary = scored[1];
+  }
+
+  const primaryId = primary.id;
+  const complement = scored.filter(f => f.id !== primaryId && f._score >= 30).slice(0, 4);
+  const complementIds = complement.map(f => f.id);
+  const secondary = scored.filter(f => f.id !== primaryId && !complementIds.includes(f.id) && f._score >= 10 && f._score < 30).slice(0, 3);
+  const avoid = scored.filter(f => f._score < 0).slice(0, 3);
+
+  state.recommendations = { primary, complement, secondary, avoid, scored };
+
+  renderRecommendations();
+  renderRoadmap();
+  showTab(1);
+}
+
+// ============================================================
+// RENDER: RECOMMENDATIONS
+// ============================================================
+function renderRecommendations() {
+  const r = state.recommendations;
+  if (!r) return;
+  document.getElementById('recsEmpty').style.display = 'none';
+  document.getElementById('recsContent').style.display = 'block';
+  document.getElementById('recsOrgName').textContent = state.orgName || 'your organisation';
+
+  // One-liner
+  const oneLiner = buildOneLiner(r);
+  document.getElementById('recsOneLiner').innerHTML = oneLiner;
+
+  // KPIs
+  const kpis = [
+    { v: r.primary.name, l: 'Primary' },
+    { v: r.complement.length, l: 'Complementary Frameworks' },
+    { v: r.avoid.length, l: 'Frameworks to Skip' },
+    { v: estimateTotalCost(r), l: 'Est. Annual Cost (Year 1)' }
+  ];
+  document.getElementById('recsKpis').innerHTML = kpis.map(k => `<div class="kpi"><span class="v">${k.v}</span><span class="l">${k.l}</span></div>`).join('');
+
+  document.getElementById('recsPrimary').innerHTML = renderFwCard(r.primary, 'primary', true);
+  document.getElementById('recsComplement').innerHTML = r.complement.length ? r.complement.map(f => renderFwCard(f, 'complement', true)).join('') : '<div class="empty-state"><p>No strong complementary options at your current stage — focus on the primary first.</p></div>';
+  document.getElementById('recsSecondary').innerHTML = r.secondary.length ? r.secondary.map(f => renderFwCard(f, 'secondary', false)).join('') : '<div class="empty-state"><p>No obvious secondary candidates — the primary + complementary stack is sufficient.</p></div>';
+  document.getElementById('recsAvoid').innerHTML = r.avoid.length ? r.avoid.map(f => renderFwCard(f, 'avoid', false)).join('') : '<div class="empty-state"><p>No specific anti-recommendations — most frameworks could work for you at some point.</p></div>';
+}
+
+function buildOneLiner(r) {
+  const orgLabel = labelOf(ORG_TYPES, state.orgType);
+  const mat = MATURITY_LEVELS.find(m => m.id === state.maturity).label.toLowerCase();
+  const compNames = r.complement.slice(0,3).map(f => f.name).join(', ');
+  return `For a <strong>${orgLabel.toLowerCase()}</strong> at <strong>${mat}</strong> measurement maturity, we recommend <strong>${r.primary.name}</strong> as the backbone${compNames ? `, layered with <strong>${compNames}</strong>` : ''}. This mix balances credibility with your current capacity and avoids the common trap of implementing disclosure frameworks before you have a clear theory of change.`;
+}
+
+function estimateTotalCost(r) {
+  const costMap = { low: 15, mid: 75, high: 300 };
+  let total = costMap[r.primary.cost] || 50;
+  r.complement.forEach(f => { total += (costMap[f.cost] || 50) * 0.6; });
+  if (total < 50) return `~$${Math.round(total)}k`;
+  if (total < 200) return `$${Math.round(total/10)*10}k`;
+  return `$${Math.round(total/50)*50}k+`;
+}
+
+function renderFwCard(fw, kind, showDetail) {
+  const badge = kind === 'primary' ? '<span class="badge badge-primary">PRIMARY</span>' :
+                kind === 'complement' ? '<span class="badge badge-complement">COMPLEMENTARY</span>' :
+                kind === 'secondary' ? '<span class="badge badge-secondary">SECONDARY</span>' : '';
+  const matchClass = fw._score >= 60 ? 'match-excellent' : fw._score >= 30 ? 'match-strong' : fw._score >= 10 ? 'match-moderate' : 'match-weak';
+  const matchLabel = fw._score >= 60 ? 'Excellent match' : fw._score >= 30 ? 'Strong match' : fw._score >= 10 ? 'Moderate match' : 'Weak match';
+
+  const costBadge = fw.cost === 'low' ? '<span class="badge badge-cost-low">Low cost</span>' : fw.cost === 'mid' ? '<span class="badge badge-cost-mid">Medium cost</span>' : '<span class="badge badge-cost-high">High cost</span>';
+
+  let detail = '';
+  if (showDetail && fw._reasons && fw._reasons.length > 0) {
+    detail += `<div class="rationale"><strong>Why this fits you:</strong><ul>${fw._reasons.map(r => `<li>${r}</li>`).join('')}</ul></div>`;
+  }
+  if (kind === 'avoid' && fw._negatives && fw._negatives.length > 0) {
+    detail += `<div class="rationale" style="background:#FEF2F2;"><strong>Why to skip for now:</strong><ul>${fw._negatives.map(n => `<li>${n}</li>`).join('')}</ul></div>`;
+  }
+  if (kind === 'secondary' && fw._reasons && fw._reasons.length > 0) {
+    detail += `<div class="rationale"><strong>Revisit when:</strong> your maturity reaches level ${fw.minMaturity}+ and these purposes become priority: ${fw.purpose.slice(0,2).map(p => labelOf(PURPOSES, p)).join(', ')}</div>`;
+  }
+
+  return `
+    <div class="fw-card rec-${kind === 'primary' ? 'primary' : kind === 'complement' ? 'complement' : kind === 'secondary' ? 'secondary' : ''}">
+      <div class="fw-header">
+        <div>
+          <div class="fw-name">${fw.name} ${badge}</div>
+          <div class="fw-owner">Owned by: ${fw.owner}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="match-pill ${matchClass}">${matchLabel}</div>
+          <div style="margin-top:4px;"><span class="fw-score">${Math.max(0, fw._score)}</span><span class="fw-score-label">/100</span></div>
+        </div>
+      </div>
+      <div class="fw-desc">${fw.desc}</div>
+      <div class="fw-meta">${costBadge} <span>Cred: ${dots(fw.credibility)}</span> <span>Burden: ${dots(fw.burden)}</span> <span>${fw.costNote}</span></div>
+      <div class="fw-ref">Reference: <a href="${fw.refUrl}" target="_blank" rel="noopener">${fw.ref}</a></div>
+      ${detail}
+    </div>`;
+}
+
+function dots(n) {
+  let s = '';
+  for (let i=1; i<=5; i++) s += `<span class="dot-score ${i<=n?'dot-on':'dot-off'}"></span>`;
+  return s;
+}
+
+// ============================================================
+// RENDER: ROADMAP
+// ============================================================
+function renderRoadmap() {
+  const r = state.recommendations;
+  if (!r) return;
+  document.getElementById('roadmapEmpty').style.display = 'none';
+  document.getElementById('roadmapContent').style.display = 'block';
+
+  const phase1 = buildPhase1(r);
+  const phase2 = buildPhase2(r);
+  const phase3 = buildPhase3(r);
+  const phase4 = buildPhase4(r);
+
+  document.getElementById('phase1').innerHTML = phaseHTML(phase1);
+  document.getElementById('phase2').innerHTML = phaseHTML(phase2);
+  document.getElementById('phase3').innerHTML = phaseHTML(phase3);
+  document.getElementById('phase4').innerHTML = phaseHTML(phase4);
+
+  document.getElementById('pitfalls').innerHTML = buildPitfalls(r);
+  document.getElementById('effortEstimate').innerHTML = buildEffortEstimate(r);
+}
+
+function phaseHTML(phase) {
+  return phase.map(p => `
+    <div class="roadmap-phase">
+      <div class="ph-time">${p.time}</div>
+      <h4>${p.title}</h4>
+      <ul>${p.items.map(i => `<li>${i}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+
+function buildPhase1(r) {
+  const mat = state.maturity || 1;
+  const items = [];
+  if (mat <= 2) {
+    items.push({
+      time: 'Month 1',
+      title: 'Write your Theory of Change',
+      items: [
+        'Run a 1-day ToC workshop (include programme, finance, comms, 2-3 stakeholder reps)',
+        'Define: long-term goal, outcomes, outputs, activities, inputs',
+        'Make assumptions explicit; flag risks',
+        'Document in a single visual one-pager + 5-page narrative'
+      ]
+    });
+  } else {
+    items.push({
+      time: 'Month 1',
+      title: 'Refresh your Theory of Change',
+      items: [
+        'Review existing ToC with key stakeholders for accuracy and currency',
+        'Validate outcomes against recent evidence',
+        'Update assumption register with current risks'
+      ]
+    });
+  }
+  items.push({
+    time: 'Month 2',
+    title: `Scope ${r.primary.name} implementation`,
+    items: [
+      `Read ${r.primary.name} primary documentation: ${r.primary.ref}`,
+      'Identify required data points — what do you already collect?',
+      'Conduct gap analysis: what new data will you need?',
+      'Draft internal governance: who owns the framework? Who signs off?',
+      `Estimated effort: ${r.primary.costNote.split('.')[1] || '2–4 months'}`
+    ]
+  });
+  items.push({
+    time: 'Month 3',
+    title: `Pilot ${r.primary.name} on one programme / investment`,
+    items: [
+      'Pick the most mature programme or investment',
+      'Collect one cycle of data against the framework',
+      'Identify friction: what was easy, what broke',
+      'Refine templates before scaling'
+    ]
+  });
+  return items;
+}
+
+function buildPhase2(r) {
+  return [{
+    time: 'Months 4-5',
+    title: `Scale ${r.primary.name} across portfolio / programmes`,
+    items: [
+      'Train all programme leads / investment managers (half-day workshop)',
+      'Deploy shared data collection templates (Airtable / Salesforce / Excel)',
+      'Run first full data cycle — expect 20-40% data quality issues on first pass',
+      'Set up monthly review cadence with programme teams'
+    ]
+  }, {
+    time: 'Month 6',
+    title: 'Build the first internal report',
+    items: [
+      'Produce board / LP / donor draft using real data',
+      'Check: is the data good enough to make decisions? If not, where are the gaps?',
+      'Document learnings — what questions did the data raise that you couldn\'t answer?',
+      'Iterate framework configuration based on what you learned'
+    ]
+  }];
+}
+
+function buildPhase3(r) {
+  if (r.complement.length === 0) {
+    return [{
+      time: 'Months 7-9',
+      title: 'Deepen primary framework',
+      items: [
+        'Add sector-specific metrics to the primary framework',
+        'Begin external benchmarking against peer organisations',
+        'Explore third-party verification / assurance options'
+      ]
+    }];
+  }
+  return r.complement.slice(0, 3).map((f, i) => ({
+    time: `Month ${7+i}`,
+    title: `Layer in ${f.name}`,
+    items: [
+      `Read framework documentation: ${f.ref}`,
+      `Map to your primary framework — identify overlaps and unique additions`,
+      `Identify incremental data collection required (aim to piggy-back on existing)`,
+      `Effort estimate: ${f.costNote.split('.')[1] || '1–3 months part-time'}`,
+      `Integration checkpoint: does this give you real decision value, or just a new deliverable?`
+    ]
+  }));
+}
+
+function buildPhase4(r) {
+  const purposes = state.purposes || [];
+  const items = [];
+  items.push({
+    time: 'Month 10',
+    title: 'Integrate framework into decision-making',
+    items: [
+      'Ensure every major capital / programme decision has a framework-grounded impact input',
+      'Embed impact metrics in performance management / incentives',
+      'Set up quarterly impact review as a standing board / IC agenda item'
+    ]
+  });
+  if (purposes.includes('investor_reporting') || purposes.includes('grant_reporting') || purposes.includes('public_reporting')) {
+    items.push({
+      time: 'Month 11',
+      title: 'Produce first full external impact report',
+      items: [
+        'Draft report structure aligned to primary framework',
+        `Include: ${r.complement.slice(0,3).map(f => f.name).join(', ') || 'primary framework disclosures'}`,
+        'Internal review — does this report tell the truth? Would you stake your reputation on every number?',
+        'Design + publish (PDF + executive summary + data appendix)'
+      ]
+    });
+  }
+  items.push({
+    time: 'Month 12',
+    title: 'Audit, learn, plan next cycle',
+    items: [
+      'Post-mortem on the year — what delivered value? What was overhead?',
+      'Interview 3-5 report readers — what actually moved their decisions?',
+      'Decide: continue, deepen, or retire each framework element',
+      'Set Year 2 priorities and budget'
+    ]
+  });
+  return items;
+}
+
+function buildPitfalls(r) {
+  const pitfalls = [
+    { t: 'Implementing frameworks before you have a Theory of Change', d: 'Without a ToC, you measure what is easy rather than what matters. Build ToC first.' },
+    { t: 'Over-scoping year one', d: `You selected ${1 + r.complement.length} frameworks. Deploy only the primary (${r.primary.name}) in months 1-6 — adding complementary frameworks in parallel is the single largest cause of implementation failure (GIIN IMM Practices 2020, p.34).` },
+    { t: 'Metric-hunting without decision use', d: 'For every metric, answer: "What decision changes if this number moves?" If nothing changes, cut the metric.' },
+    { t: 'Confusing inputs / outputs / outcomes', d: 'Outputs = what you did. Outcomes = what changed. Funders increasingly require outcomes + attribution, not just outputs.' },
+    { t: 'Failing to update annually', d: 'Impact frameworks decay — 18-month gaps between reports are common. Set a non-negotiable annual cadence.' },
+    { t: 'Forgetting stakeholders in the process', d: 'If beneficiaries / programme participants can\'t recognise themselves in your impact story, the framework is serving your organisation, not them.' }
+  ];
+  return pitfalls.map(p => `<div style="margin-bottom:12px; padding:12px; background:#FFF7F4; border-left:3px solid var(--coral); border-radius:6px;"><strong>${p.t}</strong><br><span style="font-size:0.85rem; color:var(--gray-600);">${p.d}</span></div>`).join('');
+}
+
+function buildEffortEstimate(r) {
+  const costMap = { low: 15, mid: 75, high: 300 };
+  const effortMap = { low: '0.25 FTE', mid: '0.5–1 FTE', high: '1–3 FTE' };
+  const rows = [r.primary, ...r.complement.slice(0,3)].map(f => {
+    return `<tr>
+      <td class="fw-label">${f.name}</td>
+      <td>${f.cost === 'low' ? '<span class="badge badge-cost-low">Low</span>' : f.cost === 'mid' ? '<span class="badge badge-cost-mid">Mid</span>' : '<span class="badge badge-cost-high">High</span>'}</td>
+      <td>~$${costMap[f.cost]}k/year</td>
+      <td>${effortMap[f.cost]}</td>
+      <td>${f.costNote}</td>
+    </tr>`;
+  }).join('');
+  return `<div class="cmp-wrap"><table class="cmp-table">
+    <thead><tr><th>Framework</th><th>Cost tier</th><th>Year 1 budget</th><th>Ongoing FTE</th><th>Notes</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+// ============================================================
+// RENDER: COMPARISON MATRIX
+// ============================================================
+function renderComparison() {
+  const headers = ['Framework', 'Owner', 'Best for', 'Credibility', 'Burden', 'Prescriptive', 'Flexibility', 'Sector coverage', 'Cost'];
+  const t = document.getElementById('cmpTable');
+  t.innerHTML = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+  <tbody>${FRAMEWORKS.map(f => `
+    <tr>
+      <td class="fw-label">${f.name}</td>
+      <td style="font-size:0.75rem; color:var(--gray-500);">${f.owner.split('(')[0].trim()}</td>
+      <td style="font-size:0.8rem;">${f.bestFor.slice(0,2).map(b => labelOf(ORG_TYPES, b)).join(', ')}</td>
+      <td>${dots(f.credibility)}</td>
+      <td>${dots(f.burden)}</td>
+      <td>${dots(f.prescriptiveness)}</td>
+      <td>${dots(f.flexibility)}</td>
+      <td>${dots(f.sectorCoverage)}</td>
+      <td>${f.cost === 'low' ? '<span class="badge badge-cost-low">Low</span>' : f.cost === 'mid' ? '<span class="badge badge-cost-mid">Mid</span>' : '<span class="badge badge-cost-high">High</span>'}</td>
+    </tr>
+  `).join('')}</tbody>`;
+}
+
+// ============================================================
+// RENDER: FRAMEWORK LIBRARY
+// ============================================================
+function renderLibrary() {
+  const el = document.getElementById('fwLibrary');
+  el.innerHTML = FRAMEWORKS.map(f => `
+    <div class="fw-card">
+      <div class="fw-header">
+        <div>
+          <div class="fw-name">${f.name}</div>
+          <div class="fw-owner">Owned by: ${f.owner}</div>
+        </div>
+        <div>${f.cost === 'low' ? '<span class="badge badge-cost-low">Low cost</span>' : f.cost === 'mid' ? '<span class="badge badge-cost-mid">Mid cost</span>' : '<span class="badge badge-cost-high">High cost</span>'}</div>
+      </div>
+      <div class="fw-desc">${f.desc}</div>
+      <div class="rationale"><strong>When to use:</strong> ${f.whenYes}<br><strong>When not to:</strong> ${f.whenNo}</div>
+      <div class="fw-meta">
+        <span>Best for: ${f.bestFor.slice(0,3).map(b => labelOf(ORG_TYPES, b)).join(', ')}</span>
+        <span>Credibility: ${dots(f.credibility)}</span>
+        <span>Burden: ${dots(f.burden)}</span>
+      </div>
+      <div class="fw-ref"><strong>Evidence required:</strong> ${f.evidence}</div>
+      <div class="fw-ref"><strong>Pairs well with:</strong> ${f.pairsWith.map(id => FRAMEWORKS.find(ff => ff.id===id)?.name).filter(Boolean).join(', ')}</div>
+      <div class="fw-ref">Reference: <a href="${f.refUrl}" target="_blank" rel="noopener">${f.ref}</a></div>
+    </div>`).join('');
+}
+
+// ============================================================
+// CLAUDE PROMPT
+// ============================================================
+function generateClaudePrompt() {
+  if (!state.recommendations) {
+    if (!state.orgType || !state.maturity || state.purposes.length === 0) {
+      alert('Please complete the Assessment tab first, then click Generate Recommendations.');
+      return;
+    }
+    runRecommendation();
+  }
+  const r = state.recommendations;
+  const orgType = labelOf(ORG_TYPES, state.orgType);
+  const size = state.orgSize ? labelOf(ORG_SIZES, state.orgSize) : 'unspecified size';
+  const mat = MATURITY_LEVELS.find(m => m.id === state.maturity);
+  const sectors = state.sectors.map(s => labelOf(SECTORS, s)).join(', ') || 'multi-sector';
+  const geos = state.geo.map(g => labelOf(GEOS, g)).join(', ') || 'unspecified';
+  const purposes = state.purposes.map(p => labelOf(PURPOSES, p)).join(', ');
+  const audiences = state.audiences.map(a => labelOf(AUDIENCES, a)).join(', ') || 'internal';
+  const capacity = state.capacity ? labelOf(CAPACITIES, state.capacity) : 'unspecified';
+  const current = state.current.map(c => FRAMEWORKS.find(f => f.id === c)?.name).filter(Boolean).join(', ') || 'none';
+
+  const prompt = `You are a senior impact measurement advisor with 15+ years of experience advising impact funds, DFIs, corporates, and INGOs. I am preparing to implement an impact measurement framework stack and need a critical stress-test of my choice.
+
+=== ORGANISATION CONTEXT ===
+Name: ${state.orgName || '[not specified]'}
+My role: ${state.orgRole || '[not specified]'}
+Organisation type: ${orgType}
+Size: ${size}
+Geography / listing: ${geos}
+Sectors: ${sectors}
+Current measurement maturity (1-5): ${mat.id} (${mat.label} — ${mat.desc})
+Implementation capacity: ${capacity}
+Frameworks already in use: ${current}
+Priority themes: ${state.priorityThemes || '[not specified]'}
+
+=== MEASUREMENT GOALS ===
+Primary purposes: ${purposes}
+Key audiences: ${audiences}
+
+=== RECOMMENDED FRAMEWORK STACK (from Useful AF selector) ===
+Primary: ${r.primary.name} (match score ${r.primary._score}/100)
+  - Rationale: ${r.primary._reasons.join('; ')}
+Complementary: ${r.complement.map(f => `${f.name} (${f._score}/100)`).join(', ') || 'none'}
+Secondary (deferred): ${r.secondary.map(f => f.name).join(', ') || 'none'}
+Frameworks to skip: ${r.avoid.map(f => f.name).join(', ') || 'none'}
+
+=== WHAT I NEED FROM YOU ===
+
+1. STRESS-TEST THE CHOICE
+   Review my selected stack. Is the primary framework the right backbone, or is there a stronger option I should be considering? Are there contradictions or redundancies in my complementary choices? Be specific and direct.
+
+2. WHAT CAN GO WRONG
+   For my primary framework (${r.primary.name}), identify the top 3 failure modes specific to a ${orgType.toLowerCase()} at maturity ${mat.id}. For each, say how to detect it early and how to mitigate.
+
+3. PRIORITY METRICS / DISCLOSURES
+   If I could only implement 10 metrics or disclosures in year one — drawn from the primary + complementary stack — which 10 would you prioritise, and why? Name them specifically (e.g., IRIS+ PI1234 "Jobs Created", GRI 2-1 "Organisational Details", IMP "How Much — Depth").
+
+4. BOARD / LP / DONOR COMMUNICATION
+   Draft a one-paragraph message I could send to my ${audiences.split(',')[0].trim().toLowerCase() || 'board'} explaining our framework choice and why we chose it. Make it credible but plain-language.
+
+5. CADENCE
+   Recommend an evaluation / reporting cadence for year 1 (monthly, quarterly, annual) for each framework — specifically designed to produce decision-useful insights rather than just disclosure.
+
+6. QUESTIONS FOR ME
+   What are the three most important questions I should answer before I kick off implementation? Don't assume I've answered them.
+
+Be rigorous and concrete. Cite specific framework documentation (e.g. IRIS+ v5.3, IFRS S1 §27-35, GRI 3 material topics) where it helps. If you think the recommended stack is wrong, say so clearly with your counter-recommendation.`;
+
+  document.getElementById('claudePrompt').textContent = prompt;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('claudePrompt').textContent;
+  if (!text || text.startsWith('Click')) { alert('Generate the prompt first.'); return; }
+  navigator.clipboard.writeText(text).then(() => {
+    alert('Prompt copied! Paste into Claude (or any LLM).');
+  }).catch(() => {
+    // Fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('Prompt copied!');
+  });
+}
+
+// ============================================================
+// CSV EXPORT
+// ============================================================
+function exportCSV() {
+  if (!state.recommendations) {
+    alert('Generate recommendations first.');
+    return;
+  }
+  const r = state.recommendations;
+  const rows = [];
+  rows.push(['Useful AF — Impact Measurement Framework Selector']);
+  rows.push(['Generated', new Date().toISOString().slice(0,10)]);
+  rows.push(['Organisation', state.orgName || 'Not specified']);
+  rows.push(['Org Type', labelOf(ORG_TYPES, state.orgType)]);
+  rows.push(['Maturity', MATURITY_LEVELS.find(m => m.id===state.maturity).label]);
+  rows.push(['Capacity', labelOf(CAPACITIES, state.capacity) || '']);
+  rows.push(['Sectors', state.sectors.map(s => labelOf(SECTORS,s)).join('; ')]);
+  rows.push(['Purposes', state.purposes.map(p => labelOf(PURPOSES,p)).join('; ')]);
+  rows.push(['Audiences', state.audiences.map(a => labelOf(AUDIENCES,a)).join('; ')]);
+  rows.push([]);
+  rows.push(['=== RECOMMENDATIONS ===']);
+  rows.push(['Tier', 'Framework', 'Owner', 'Score', 'Cost', 'Credibility', 'Burden', 'Why']);
+  rows.push(['Primary', r.primary.name, r.primary.owner, r.primary._score, r.primary.cost, r.primary.credibility, r.primary.burden, r.primary._reasons.join(' | ')]);
+  r.complement.forEach(f => rows.push(['Complementary', f.name, f.owner, f._score, f.cost, f.credibility, f.burden, f._reasons.join(' | ')]));
+  r.secondary.forEach(f => rows.push(['Secondary', f.name, f.owner, f._score, f.cost, f.credibility, f.burden, f._reasons.join(' | ')]));
+  r.avoid.forEach(f => rows.push(['Avoid', f.name, f.owner, f._score, f.cost, f.credibility, f.burden, f._negatives.join(' | ')]));
+  rows.push([]);
+  rows.push(['=== FULL COMPARISON MATRIX ===']);
+  rows.push(['Framework', 'Owner', 'Cost', 'Credibility', 'Burden', 'Prescriptive', 'Flexibility', 'Sector coverage', 'Best for', 'When to use', 'When not to', 'Reference']);
+  FRAMEWORKS.forEach(f => rows.push([
+    f.name, f.owner, f.cost, f.credibility, f.burden, f.prescriptiveness, f.flexibility, f.sectorCoverage,
+    f.bestFor.map(b => labelOf(ORG_TYPES,b)).join('; '),
+    f.whenYes, f.whenNo, f.ref
+  ]));
+
+  const csv = rows.map(r => r.map(c => `"${String(c||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `useful-af-framework-selector-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+// TABS
+// ============================================================
+function showTab(i) {
+  [...document.querySelectorAll('.tab')].forEach((t, idx) => t.classList.toggle('active', idx === i));
+  [...document.querySelectorAll('.panel')].forEach((p, idx) => p.classList.toggle('active', idx === i));
+  window.scrollTo(0, 0);
+}
+
+// ============================================================
+// EXAMPLES
+// ============================================================
+function loadExample() {
+  // Impact Fund example
+  state = {
+    orgName: 'Acme Impact Capital',
+    orgRole: 'Head of Impact',
+    orgType: 'impact_fund',
+    orgSize: 'l',
+    geo: ['uk', 'developing_markets'],
+    sectors: ['financial_inclusion', 'energy', 'gender'],
+    purposes: ['investor_reporting', 'portfolio_mgmt', 'compliance', 'marketing_comms'],
+    audiences: ['lps', 'regulators', 'board'],
+    maturity: 3,
+    capacity: 'mid',
+    current: ['iris'],
+    priorityThemes: 'Climate-aligned financial inclusion in Sub-Saharan Africa; 2X-qualifying investments',
+    recommendations: null
+  };
+  applyStateToUI();
+  runRecommendation();
+}
+
+function loadExampleNGO() {
+  state = {
+    orgName: 'Bright Futures NGO',
+    orgRole: 'Director of Programmes',
+    orgType: 'ngo',
+    orgSize: 's',
+    geo: ['uk', 'developing_markets'],
+    sectors: ['education', 'livelihoods'],
+    purposes: ['grant_reporting', 'internal_learning', 'commissioner_reporting'],
+    audiences: ['donors', 'commissioners', 'board'],
+    maturity: 2,
+    capacity: 'low',
+    current: [],
+    priorityThemes: 'Youth employment outcomes in East Africa; DFID-funded programmes requiring VfM',
+    recommendations: null
+  };
+  applyStateToUI();
+  runRecommendation();
+}
+
+function applyStateToUI() {
+  document.getElementById('orgName').value = state.orgName;
+  document.getElementById('orgRole').value = state.orgRole;
+  document.getElementById('priorityThemes').value = state.priorityThemes;
+
+  const setSingle = (containerId, id) => {
+    const el = document.getElementById(containerId);
+    [...el.children].forEach(c => c.classList.toggle('active', c.dataset.id === id));
+  };
+  const setMulti = (containerId, ids) => {
+    const el = document.getElementById(containerId);
+    [...el.children].forEach(c => c.classList.toggle('active', ids.includes(c.dataset.id)));
+  };
+  setSingle('orgTypeChips', state.orgType);
+  setSingle('orgSizeChips', state.orgSize);
+  setMulti('geoChips', state.geo);
+  setMulti('sectorChips', state.sectors);
+  setMulti('purposeChips', state.purposes);
+  setMulti('audienceChips', state.audiences);
+  setSingle('capacityChips', state.capacity);
+  setMulti('currentChips', state.current);
+
+  const mat = document.getElementById('maturityScale');
+  [...mat.children].forEach((c, i) => c.classList.toggle('active', i+1 === state.maturity));
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.addEventListener('DOMContentLoaded', initUI);
+</script>
+
+</body>
+</html>
