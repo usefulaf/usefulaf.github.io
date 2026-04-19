@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Carbon Credit Integrity Assessor — Useful AF</title>
+<style>
+  :root{
+    --cream:#F5EFE2;
+    --cream-2:#EFE7D3;
+    --black:#1C1A17;
+    --black-soft:#2B2722;
+    --coral:#E8715A;
+    --coral-dark:#C85A45;
+    --ochre:#D9A441;
+    --ochre-dark:#B8862A;
+    --ink:#3A342C;
+    --muted:#6E665A;
+    --line:#D6CDB8;
+    --ok:#2F7A3E;
+    --warn:#B8862A;
+    --bad:#B33A2C;
+    --info:#3C5A7A;
+    --shadow:0 2px 6px rgba(28,26,23,.06), 0 8px 24px rgba(28,26,23,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);font-family:'Inter','Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--coral-dark)}
+  header{background:var(--black);color:var(--cream);padding:28px 36px;border-bottom:3px solid var(--ochre)}
+  header .wordmark{font-family:'Georgia',serif;font-size:26px;letter-spacing:.5px;color:var(--cream)}
+  header .wordmark b{color:var(--coral)}
+  header h1{margin:6px 0 2px;font-size:32px;letter-spacing:-.3px;font-weight:700}
+  header p{margin:0;color:#D9CFB8;font-size:14px;max-width:820px}
+  .container{max-width:1200px;margin:0 auto;padding:28px 28px 60px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+  h2{font-size:20px;margin:0 0 8px;color:var(--black)}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--black-soft)}
+  h4{font-size:14px;margin:14px 0 6px;color:var(--black-soft);text-transform:uppercase;letter-spacing:.6px}
+  p{line-height:1.55}
+  small{color:var(--muted)}
+  .muted{color:var(--muted)}
+  .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;letter-spacing:.4px}
+  .tag-ok{background:#E4F0E1;color:var(--ok)}
+  .tag-warn{background:#F5E9C8;color:var(--warn)}
+  .tag-bad{background:#F3D6CF;color:var(--bad)}
+  .tag-info{background:#D8E3EE;color:var(--info)}
+  .tag-neutral{background:#EBE4D1;color:var(--muted)}
+
+  .tabbar{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+  .tabbtn{background:transparent;border:none;padding:10px 14px;font-size:14px;cursor:pointer;color:var(--muted);font-weight:600;border-bottom:3px solid transparent;font-family:inherit}
+  .tabbtn:hover{color:var(--black-soft)}
+  .tabbtn.active{color:var(--black);border-bottom-color:var(--coral)}
+  .tabpanel{display:none}
+  .tabpanel.active{display:block}
+
+  label{display:block;font-size:13px;font-weight:600;color:var(--black-soft);margin-bottom:5px}
+  input[type="text"],input[type="number"],input[type="date"],select,textarea{
+    width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:6px;background:#FCFAF5;font-size:14px;color:var(--ink);font-family:inherit
+  }
+  textarea{min-height:90px;resize:vertical}
+  .grid{display:grid;gap:14px}
+  .grid-2{grid-template-columns:1fr 1fr}
+  .grid-3{grid-template-columns:1fr 1fr 1fr}
+  .grid-4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:760px){
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  }
+
+  .btn{display:inline-block;padding:10px 16px;border:1px solid var(--black-soft);background:var(--black);color:var(--cream);border-radius:6px;cursor:pointer;font-weight:600;font-size:13px;font-family:inherit}
+  .btn:hover{background:var(--black-soft)}
+  .btn-alt{background:var(--coral);border-color:var(--coral-dark)}
+  .btn-alt:hover{background:var(--coral-dark)}
+  .btn-ghost{background:transparent;color:var(--black);border-color:var(--line)}
+  .btn-ghost:hover{background:var(--cream-2)}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+  .helpbox{background:var(--cream-2);border-left:3px solid var(--ochre);padding:10px 14px;border-radius:4px;font-size:13px;color:var(--ink);margin:10px 0}
+  .flagbox{border-left:3px solid var(--bad);background:#FCEEE9;padding:10px 14px;border-radius:4px;font-size:13px;margin:6px 0}
+  .warnbox{border-left:3px solid var(--warn);background:#FCF3D8;padding:10px 14px;border-radius:4px;font-size:13px;margin:6px 0}
+  .okbox{border-left:3px solid var(--ok);background:#E9F2E3;padding:10px 14px;border-radius:4px;font-size:13px;margin:6px 0}
+  .infobox{border-left:3px solid var(--info);background:#E3ECF5;padding:10px 14px;border-radius:4px;font-size:13px;margin:6px 0}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--cream-2);font-weight:700;color:var(--black);font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+  tr:last-child td{border-bottom:none}
+
+  .cpp-row{display:grid;grid-template-columns:28px 1fr 220px 90px;gap:10px;align-items:start;padding:14px;border:1px solid var(--line);border-radius:8px;margin-bottom:10px;background:#FCFAF5}
+  .cpp-num{background:var(--black);color:var(--cream);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .cpp-title{font-weight:700;color:var(--black);margin-bottom:4px;font-size:14px}
+  .cpp-body{font-size:13px;color:var(--ink);line-height:1.5}
+  .cpp-select select{width:100%}
+  .cpp-score{text-align:center;font-weight:700;font-size:18px;color:var(--coral-dark)}
+  @media(max-width:760px){.cpp-row{grid-template-columns:28px 1fr;gap:8px}.cpp-select,.cpp-score{grid-column:2}}
+
+  .score-big{font-size:64px;font-weight:700;line-height:1;color:var(--black);letter-spacing:-2px}
+  .grade-A{color:var(--ok)}
+  .grade-B{color:#4A8A3C}
+  .grade-C{color:var(--ochre-dark)}
+  .grade-D{color:#B8612A}
+  .grade-F{color:var(--bad)}
+
+  .meter{background:var(--cream-2);border-radius:6px;height:18px;overflow:hidden;position:relative}
+  .meter > div{height:100%;background:linear-gradient(90deg,var(--ochre),var(--coral));transition:width .3s}
+  .meter-label{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--black)}
+
+  .stat-card{background:var(--cream-2);border:1px solid var(--line);border-radius:8px;padding:14px}
+  .stat-card .v{font-size:24px;font-weight:700;color:var(--black);letter-spacing:-.3px}
+  .stat-card .l{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
+
+  .pill{display:inline-block;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;margin:2px 4px 2px 0;background:var(--cream-2);color:var(--black-soft)}
+  .pill-coral{background:var(--coral);color:#fff}
+  .pill-ochre{background:var(--ochre);color:var(--black)}
+  .pill-ok{background:#CFE4C6;color:var(--ok)}
+  .pill-bad{background:#F3D6CF;color:var(--bad)}
+
+  .checklist label{display:flex;align-items:flex-start;gap:8px;font-weight:400;font-size:13px;margin-bottom:8px;line-height:1.45;cursor:pointer}
+  .checklist input{margin-top:3px}
+
+  .prompt-box{background:var(--black);color:var(--cream);border-radius:8px;padding:18px;font-family:'Courier New',monospace;font-size:12.5px;white-space:pre-wrap;line-height:1.55;max-height:500px;overflow:auto}
+
+  .footer{text-align:center;color:var(--muted);font-size:12px;padding:18px 8px 0}
+
+  @media print{
+    header{background:#fff;color:#000}
+    .tabbar,.btn-row,.btn{display:none!important}
+    .tabpanel{display:block!important;page-break-before:always}
+    .tabpanel:first-of-type{page-break-before:auto}
+    .card{box-shadow:none;border-color:#999}
+    body{background:#fff}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wordmark">Useful<b>AF</b></div>
+  <h1>Carbon Credit Integrity Assessor</h1>
+  <p>A structured, evidence-based quality assessment for voluntary carbon market (VCM) credits. Embeds the <b>ICVCM Core Carbon Principles</b> (10 CCPs, 2023), the <b>VCMI Claims Code of Practice v2</b> (Nov 2023), and published standard/methodology-level rulings from the ICVCM CCP assessments (2024–2025). Built for buyers, issuers, auditors, intermediaries, and funders who need defensible reasoning — not marketing.</p>
+</header>
+
+<div class="container">
+
+<!-- TABS -->
+<div class="tabbar" id="tabbar">
+  <button class="tabbtn active" data-tab="t1">1. Project Setup</button>
+  <button class="tabbtn" data-tab="t2">2. ICVCM Core Carbon Principles</button>
+  <button class="tabbtn" data-tab="t3">3. VCMI Buyer Eligibility</button>
+  <button class="tabbtn" data-tab="t4">4. Standard &amp; Methodology Profile</button>
+  <button class="tabbtn" data-tab="t5">5. Risk Flags</button>
+  <button class="tabbtn" data-tab="t6">6. Quality Score &amp; Decision</button>
+  <button class="tabbtn" data-tab="t7">7. Claude Prompt</button>
+  <button class="tabbtn" data-tab="t8">8. Export</button>
+</div>
+
+<!-- PANEL 1: SETUP -->
+<section class="tabpanel active" id="t1">
+  <div class="card">
+    <h2>Project Setup</h2>
+    <p class="muted">Enter the credit lot you are assessing. All subsequent tabs react to these inputs.</p>
+
+    <div class="grid grid-3">
+      <div>
+        <label>Project / Lot name</label>
+        <input type="text" id="projectName" placeholder="e.g. Kariba REDD+ Phase III 2021 vintage"/>
+      </div>
+      <div>
+        <label>Your role</label>
+        <select id="userRole">
+          <option>Corporate buyer</option>
+          <option>Impact fund / investor</option>
+          <option>Project developer / issuer</option>
+          <option>Intermediary / broker / retailer</option>
+          <option>Auditor / VVB</option>
+          <option>Government / regulator</option>
+          <option>Researcher / NGO</option>
+        </select>
+      </div>
+      <div>
+        <label>Assessment date</label>
+        <input type="date" id="assessDate"/>
+      </div>
+    </div>
+
+    <div class="grid grid-3" style="margin-top:14px">
+      <div>
+        <label>Project type <small>(drives default risk profile)</small></label>
+        <select id="projectType">
+          <option value="ARR">ARR — Afforestation / Reforestation / Restoration</option>
+          <option value="REDD-project">REDD+ (project-scale, avoided unplanned deforestation)</option>
+          <option value="REDD-juris">REDD+ (jurisdictional / nested)</option>
+          <option value="IFM">Improved Forest Management (IFM)</option>
+          <option value="blue-carbon">Blue carbon (mangroves, seagrass, tidal marshes)</option>
+          <option value="peatland">Peatland rewetting &amp; conservation</option>
+          <option value="soil-carbon">Soil carbon (agricultural)</option>
+          <option value="biochar">Biochar</option>
+          <option value="DAC">Direct Air Capture + Storage (DAC+S)</option>
+          <option value="BECCS">BECCS</option>
+          <option value="eMR">Enhanced mineral / rock weathering</option>
+          <option value="ocean-alk">Ocean alkalinity enhancement</option>
+          <option value="cookstoves">Improved cookstoves</option>
+          <option value="water-filter">Household water filtration / purification</option>
+          <option value="renewable-ldc">Renewable energy (LDC / off-grid)</option>
+          <option value="renewable-grid">Renewable energy (grid, non-LDC)</option>
+          <option value="landfill-CH4">Landfill methane capture &amp; destruction</option>
+          <option value="HFC">HFC-23 / industrial gas destruction</option>
+          <option value="N2O">Adipic / nitric acid N₂O abatement</option>
+          <option value="livestock-CH4">Livestock methane reduction</option>
+          <option value="rice-CH4">Rice paddy methane reduction</option>
+          <option value="transport">Transport / EV / modal shift</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div>
+        <label>Standard / Registry</label>
+        <select id="standard">
+          <option value="Verra">Verra — Verified Carbon Standard (VCS)</option>
+          <option value="GS">Gold Standard for the Global Goals (GS4GG)</option>
+          <option value="ART-TREES">ART TREES v2.0 (jurisdictional REDD+)</option>
+          <option value="PlanVivo">Plan Vivo (PV Climate)</option>
+          <option value="ACR">American Carbon Registry (ACR)</option>
+          <option value="CAR">Climate Action Reserve (CAR)</option>
+          <option value="Puro">Puro.earth (removals)</option>
+          <option value="Isometric">Isometric (removals)</option>
+          <option value="Ecoregistry">EcoRegistry / BioCarbon (Colombia)</option>
+          <option value="CDM">UNFCCC CDM legacy</option>
+          <option value="other">Other / national registry</option>
+        </select>
+      </div>
+      <div>
+        <label>Methodology / Protocol</label>
+        <input type="text" id="methodology" placeholder="e.g. VM0048, ART TREES v2.0, VMR0006 cookstoves, AMS-I.E."/>
+      </div>
+    </div>
+
+    <div class="grid grid-4" style="margin-top:14px">
+      <div>
+        <label>Host country</label>
+        <input type="text" id="country" placeholder="e.g. Kenya"/>
+      </div>
+      <div>
+        <label>Vintage (issuance year)</label>
+        <input type="number" id="vintage" min="2000" max="2030" placeholder="2023"/>
+      </div>
+      <div>
+        <label>Volume (tCO₂e)</label>
+        <input type="number" id="volume" min="0" placeholder="100000"/>
+      </div>
+      <div>
+        <label>Price per credit (USD)</label>
+        <input type="number" id="price" min="0" step="0.01" placeholder="8.50"/>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top:14px">
+      <div>
+        <label>Credit category</label>
+        <select id="category">
+          <option value="avoidance">Avoidance / Reduction</option>
+          <option value="removal-short">Removal — short-lived (biological, &lt;100y permanence)</option>
+          <option value="removal-durable">Removal — durable (geological / mineral, &gt;1000y)</option>
+        </select>
+      </div>
+      <div>
+        <label>Corresponding adjustment (Article 6.2) applied?</label>
+        <select id="corrAdj">
+          <option value="unknown">Unknown / not stated</option>
+          <option value="yes">Yes — host country is authorising &amp; applying CA</option>
+          <option value="no">No — not authorised (buyer cannot claim NDC contribution)</option>
+          <option value="na">N/A — credit is for voluntary contribution claim only</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="helpbox">
+      <b>Why this matters.</b> Project type is the single biggest predictor of integrity risk. ICVCM's 2024–2025 assessments have so far given CCP-eligible labels to ART TREES v2.0 (jurisdictional REDD+ removals), certain landfill methane methodologies, and Gold Standard Metered &amp; Measured cookstoves — and have <i>rejected</i> all project-scale avoided-deforestation methodologies (VM0009, VM0015, VM0037) and most grid-connected renewable methodologies. Entering accurate setup data lets the tool apply these rulings automatically downstream.
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="loadExample()">Load worked example</button>
+      <button class="btn btn-ghost" onclick="clearAll()">Clear all</button>
+    </div>
+  </div>
+</section>
+
+<!-- PANEL 2: ICVCM CCPs -->
+<section class="tabpanel" id="t2">
+  <div class="card">
+    <h2>ICVCM Core Carbon Principles (CCPs) Scoring</h2>
+    <p class="muted">Score each of the 10 Core Carbon Principles on a 0–5 scale based on documentary evidence you have reviewed. Published in the ICVCM <i>Assessment Framework</i> (March 2024). CCPs are grouped in three categories: <b>Governance</b> (1–4), <b>Emissions Impact</b> (5–8), <b>Sustainable Development</b> (9–10).</p>
+
+    <div class="helpbox">
+      <b>Scoring convention.</b> 0 = Not met / not evidenced · 1 = Poor · 2 = Partial · 3 = Adequate (meets ICVCM threshold) · 4 = Good · 5 = Excellent / gold-standard evidence. A CCP-eligible label from ICVCM does <i>not</i> automatically mean a 5 — assess the specific project's implementation.
+    </div>
+
+    <h3>Category A — Governance</h3>
+    <div id="ccp-gov"></div>
+
+    <h3>Category B — Emissions Impact</h3>
+    <div id="ccp-emi"></div>
+
+    <h3>Category C — Sustainable Development</h3>
+    <div id="ccp-sd"></div>
+
+    <div style="margin-top:10px">
+      <button class="btn" onclick="recalc()">Recalculate</button>
+    </div>
+  </div>
+</section>
+
+<!-- PANEL 3: VCMI -->
+<section class="tabpanel" id="t3">
+  <div class="card">
+    <h2>VCMI Claims Code of Practice — Buyer Eligibility</h2>
+    <p class="muted">The VCMI Claims Code of Practice (v2, Nov 2023) is the <i>buyer-side</i> counterpart to ICVCM. Use this tab if you (or your client) intend to make a claim using these credits. Founded by the Voluntary Carbon Markets Integrity Initiative.</p>
+
+    <h3>Foundational Criteria (must be met for any VCMI claim)</h3>
+    <div class="checklist" id="vcmi-found"></div>
+
+    <h3>Claim tier being pursued</h3>
+    <div class="grid grid-2">
+      <div>
+        <label>Tier</label>
+        <select id="vcmi-tier">
+          <option value="none">None — not making a VCMI claim</option>
+          <option value="silver">Silver — ≥20% &lt;60% of residual emissions covered</option>
+          <option value="gold">Gold — ≥60% &lt;100% of residual emissions covered</option>
+          <option value="platinum">Platinum — ≥100% of residual emissions covered</option>
+        </select>
+      </div>
+      <div>
+        <label>% of residual emissions covered by CCP credits</label>
+        <input type="number" id="vcmi-pct" min="0" max="200" step="1" placeholder="e.g. 65"/>
+      </div>
+    </div>
+
+    <div class="infobox" id="vcmi-feedback"><i>Enter a tier and % coverage to see eligibility feedback.</i></div>
+
+    <h3>Scope 3 Flexibility Claim</h3>
+    <p class="muted">VCMI launched a <b>Scope 3 Flexibility Claim</b> pathway (Nov 2024) for companies that have SBTi-aligned targets but are struggling with Scope 3 reduction. Requires demonstrating action + disclosure, and using high-integrity (CCP) credits to close up to 50% of the near-term Scope 3 gap for a maximum of three reporting periods.</p>
+    <div class="checklist">
+      <label><input type="checkbox" id="s3-target"/> Buyer has an SBTi-validated near-term target that includes Scope 3 reduction</label>
+      <label><input type="checkbox" id="s3-progress"/> Buyer has demonstrated in-value-chain mitigation progress (transparent baseline + actions)</label>
+      <label><input type="checkbox" id="s3-gap"/> Claim closes ≤50% of the residual Scope 3 gap vs. target pathway</label>
+      <label><input type="checkbox" id="s3-ccp"/> Credits used are CCP-labelled (ICVCM) or equivalently vetted</label>
+    </div>
+  </div>
+</section>
+
+<!-- PANEL 4: STANDARD PROFILE -->
+<section class="tabpanel" id="t4">
+  <div class="card">
+    <h2>Standard &amp; Methodology Profile</h2>
+    <p class="muted">Auto-populated from the standard and project type you selected on Tab 1. Data drawn from the public ICVCM CCP Assessment decisions (2024–2025), Berkeley Carbon Trading Project <i>Voluntary Registry Offsets Database</i>, and standard-body publications.</p>
+    <div id="standard-profile"></div>
+
+    <h3>Documented over-crediting / integrity concerns (literature review)</h3>
+    <div id="lit-review"></div>
+
+    <h3>Price benchmark</h3>
+    <div id="price-bench"></div>
+  </div>
+</section>
+
+<!-- PANEL 5: RISK FLAGS -->
+<section class="tabpanel" id="t5">
+  <div class="card">
+    <h2>Risk Flags &amp; Mitigations</h2>
+    <p class="muted">Tick each flag that applies. Each flag adjusts the final score and produces a mitigation recommendation drawn from ICVCM CCP Assessment criteria and OECD/IEA VCM integrity guidance.</p>
+
+    <div class="checklist" id="riskflags"></div>
+
+    <div style="margin-top:10px">
+      <button class="btn" onclick="recalc()">Recalculate flags</button>
+    </div>
+
+    <div id="flag-output" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<!-- PANEL 6: QUALITY SCORE -->
+<section class="tabpanel" id="t6">
+  <div class="card">
+    <h2>Quality Score &amp; Buyer Decision</h2>
+    <p class="muted">Composite score from ICVCM CCP scores (60% weight), VCMI eligibility (10%), standard/methodology baseline (20%), and risk flags (10%). Recalculate after updating any tab.</p>
+
+    <div style="display:grid;grid-template-columns:220px 1fr;gap:24px;align-items:center" id="score-hero">
+      <div style="text-align:center">
+        <div class="score-big" id="score-num">—</div>
+        <div class="muted" style="margin-top:4px;font-size:12px">QUALITY SCORE · 0–100</div>
+        <div style="margin-top:14px"><span class="tag" id="score-grade">Grade —</span></div>
+      </div>
+      <div>
+        <div class="grid grid-3" style="gap:10px">
+          <div class="stat-card"><div class="v" id="stat-gov">—</div><div class="l">Governance (CCPs 1–4)</div></div>
+          <div class="stat-card"><div class="v" id="stat-emi">—</div><div class="l">Emissions impact (CCPs 5–8)</div></div>
+          <div class="stat-card"><div class="v" id="stat-sd">—</div><div class="l">Sustainable development (CCPs 9–10)</div></div>
+          <div class="stat-card"><div class="v" id="stat-std">—</div><div class="l">Standard baseline</div></div>
+          <div class="stat-card"><div class="v" id="stat-risk">—</div><div class="l">Risk flag deduction</div></div>
+          <div class="stat-card"><div class="v" id="stat-vcmi">—</div><div class="l">VCMI buyer alignment</div></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:22px">Decision recommendation</h3>
+    <div id="decision-box"></div>
+
+    <h3>Offtake / purchase guardrails</h3>
+    <div id="guardrails"></div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="recalc()">Recalculate</button>
+      <button class="btn btn-ghost" onclick="window.print()">Print / save as PDF</button>
+    </div>
+  </div>
+</section>
+
+<!-- PANEL 7: CLAUDE PROMPT -->
+<section class="tabpanel" id="t7">
+  <div class="card">
+    <h2>Claude Strategic Review Prompt</h2>
+    <p class="muted">A context-aware prompt you can paste into Claude (or any frontier LLM) to stress-test this assessment, surface counter-arguments, and draft a board-ready memo.</p>
+    <div class="btn-row">
+      <button class="btn" onclick="buildPrompt()">Generate prompt</button>
+      <button class="btn btn-ghost" onclick="copyPrompt()">Copy to clipboard</button>
+    </div>
+    <div id="promptOut" class="prompt-box" style="margin-top:12px">Click "Generate prompt" after completing Tabs 1–6.</div>
+  </div>
+</section>
+
+<!-- PANEL 8: EXPORT -->
+<section class="tabpanel" id="t8">
+  <div class="card">
+    <h2>Export &amp; Share</h2>
+    <p class="muted">Download a structured CSV of your assessment, or print the full dossier to PDF.</p>
+    <div class="btn-row">
+      <button class="btn" onclick="exportCSV()">Download CSV</button>
+      <button class="btn btn-ghost" onclick="window.print()">Print / save as PDF</button>
+    </div>
+    <h3 style="margin-top:22px">Sources embedded in this tool</h3>
+    <ul style="font-size:13px;line-height:1.7">
+      <li>ICVCM, <i>Core Carbon Principles &amp; Assessment Framework</i>, March 2024; CCP assessment decisions for Verra VCS, Gold Standard, ART TREES v2.0, ACR, CAR, Plan Vivo (2024–2025).</li>
+      <li>VCMI, <i>Claims Code of Practice v2</i>, Nov 2023; <i>Scope 3 Flexibility Claim guidance</i>, Nov 2024.</li>
+      <li>Berkeley Carbon Trading Project, <i>Voluntary Registry Offsets Database</i> (VROD), periodic release; standard-level issuance &amp; retirement counts.</li>
+      <li>West et al. (2023) <i>Science</i> 381:873–877 — over-crediting in REDD+ project-scale methodologies.</li>
+      <li>Gill-Wiehl, Kammen &amp; Haya (2024) <i>Nature Communications</i> 15:3273 — over-crediting in cookstoves (7× to 9× inflation on common methodologies).</li>
+      <li>Cames et al. (Öko-Institut, 2016) — CDM additionality and over-crediting meta-analysis.</li>
+      <li>IC-VCM Secretariat, <i>Assessment Procedure</i> (v1.2, 2024).</li>
+      <li>UNFCCC Article 6.2 / 6.4 — corresponding adjustments and ITMO authorisation rules.</li>
+      <li>OECD (2023), <i>Principles of Good Carbon Market Integrity</i>.</li>
+      <li>Ecosystem Marketplace, <i>State of the Voluntary Carbon Markets</i> 2024 — price benchmarks by category.</li>
+      <li>Trove Research / MSCI Carbon Markets price tracking (2024).</li>
+      <li>SBTi Corporate Net-Zero Standard v1.2 (2024) — residual emissions and Beyond Value Chain Mitigation (BVCM) guidance.</li>
+    </ul>
+  </div>
+</section>
+
+<div class="footer">Useful<b>AF</b> · Carbon Credit Integrity Assessor · Built for the Useful AF community (useful-af.circle.so). This tool does not constitute legal, financial, or compliance advice. Always review primary source decisions before transacting.</div>
+
+</div><!-- /container -->
+
+<script>
+/* =========================================================
+   DATA: ICVCM Core Carbon Principles
+   ========================================================= */
+const CCPS = [
+  {n:1, cat:"gov", title:"Effective governance",
+    body:"The carbon-crediting program shall have effective program governance — transparent rulemaking, independent board/committees, complaint-handling, and conflict-of-interest rules."},
+  {n:2, cat:"gov", title:"Tracking",
+    body:"The program shall operate or make use of a registry to uniquely identify, record and track credits. Every credit has a unique serial number and immutable history."},
+  {n:3, cat:"gov", title:"Transparency",
+    body:"The program shall provide comprehensive and transparent information on all credited activities — methodology, project documents, monitoring reports, validation/verification statements, issuance/retirement data — publicly accessible."},
+  {n:4, cat:"gov", title:"Robust independent third-party validation and verification",
+    body:"The program shall have robust requirements for independent third-party validation and verification (VVB accreditation, site visits, sampling, conflict-of-interest checks, quality assurance)."},
+  {n:5, cat:"emi", title:"Additionality",
+    body:"GHG reductions/removals shall be additional — they would not have occurred in the absence of the incentive from carbon credit revenues. Tested via regulatory, financial, and barrier tests + performance benchmarks."},
+  {n:6, cat:"emi", title:"Permanence",
+    body:"Reductions/removals shall be permanent, or have measures to compensate any reversal (buffer pool, insurance, replacement). For non-durable removals (biological), permanence addressed through 100+ year commitments and buffer pools sized to reversal risk."},
+  {n:7, cat:"emi", title:"Robust quantification of emission reductions and removals",
+    body:"Reductions/removals shall be robustly quantified based on conservative approaches, completeness, and scientific methods — including leakage, uncertainty discounts, and appropriate baselines."},
+  {n:8, cat:"emi", title:"No double counting",
+    body:"Reductions/removals shall not be counted more than once — no double issuance, no double use, and no double claiming (Article 6.2 corresponding adjustment applied where a sovereign claim exists)."},
+  {n:9, cat:"sd", title:"Sustainable development benefits and safeguards",
+    body:"Project shall have clear guidance, tools and compliance procedures to ensure activities conform to or go beyond widely established industry best practices on social and environmental safeguards, and deliver positive SDG impacts. FPIC, gender, human rights, biodiversity."},
+  {n:10, cat:"sd", title:"Contribution toward net zero transition",
+    body:"Activities shall avoid locking-in levels of GHG emissions, technologies or carbon-intensive practices that are incompatible with the objective of achieving net zero GHG emissions by mid-century."}
+];
+
+/* =========================================================
+   DATA: VCMI Foundational Criteria
+   ========================================================= */
+const VCMI_FOUND = [
+  "Buyer maintains and publicly discloses a GHG inventory (Scope 1, 2, 3) verified to ISO 14064-3 or equivalent",
+  "Buyer has set a public, SBTi-validated (or equivalent) near-term science-based target aligned with 1.5°C",
+  "Buyer has made a public commitment to reach net-zero GHG emissions no later than 2050",
+  "Buyer discloses annual progress against target via CDP, ISSB S2, or equivalent mandatory framework",
+  "Buyer is on track to achieve its near-term target (or has a credible corrective action plan)",
+  "Credits used are labelled as meeting the ICVCM Core Carbon Principles (or equivalent)",
+  "Buyer does not lobby against climate policy consistent with the Paris Agreement"
+];
+
+/* =========================================================
+   DATA: Standard Profiles
+   Summarises ICVCM CCP assessment outcomes and integrity signals
+   ========================================================= */
+const STANDARD_PROFILE = {
+  "Verra":{
+    launched:2007,
+    issued_mtco2:"~1,200 MtCO₂e cumulative (VROD, 2024)",
+    icvcm:"Program-level: CCP-approved (March 2024) for governance. Methodology-level: VM0007/VM0009/VM0015/VM0037 REDD+ project-scale methodologies REJECTED as not CCP-eligible (July–Aug 2024). VM0048 jurisdictional REDD+ framework approved (2023) but not yet CCP-assessed. Cookstove methodologies VMR0006 and VM0042 under review.",
+    strengths:"Largest registry, extensive methodology library, active revision program (VM0048 replacing legacy REDD+).",
+    concerns:"Historic over-crediting exposures in REDD+ (West et al. 2023 estimated 94% of avoided-deforestation credits were non-additional). Multiple high-profile project suspensions (Kariba, Southern Cardamom) 2023–2024."
+  },
+  "GS":{
+    launched:2003,
+    issued_mtco2:"~250 MtCO₂e cumulative",
+    icvcm:"Program-level: CCP-approved. Methodology-level: Gold Standard Metered & Measured cookstove methodology (TPDDTEC v3.1 / Metered) approved as CCP-eligible (2024). Legacy non-metered cookstove methodologies not yet CCP-eligible. Renewable energy methodologies generally not CCP-eligible for non-LDC grid-connected projects.",
+    strengths:"Strong SDG co-benefits framework, early mover on safeguards, high credibility in cookstove metered approaches.",
+    concerns:"Legacy cookstove methodologies suffered same over-crediting as other standards (Gill-Wiehl et al. 2024 — up to 9× over-issuance)."
+  },
+  "ART-TREES":{
+    launched:2021,
+    issued_mtco2:"~30 MtCO₂e (primarily Guyana, Ghana, pending Belize)",
+    icvcm:"ART TREES v2.0 APPROVED as CCP-eligible (May 2024) — the first methodology to receive CCP label at the jurisdictional REDD+ level. Covers avoidance + removals at the jurisdictional scale with high MRV rigour.",
+    strengths:"Jurisdictional scale (reduces leakage), high MRV bar (LEAF Coalition aligned), government host-country ownership, corresponding-adjustment-ready.",
+    concerns:"Narrow scope (only jurisdictional REDD+); limited supply to date; requires robust national forest reference emissions levels."
+  },
+  "PlanVivo":{
+    launched:1994,
+    issued_mtco2:"~2.5 MtCO₂e cumulative (small boutique standard)",
+    icvcm:"Program-level CCP submission under review. PV Climate 2022 standard emphasises community ownership and smallholder models.",
+    strengths:"Strong community benefit-sharing, smallholder / agroforestry focus, high SDG credibility.",
+    concerns:"Small volumes, less standardised MRV than Verra/GS, price premium."
+  },
+  "ACR":{
+    launched:1996,
+    issued_mtco2:"~180 MtCO₂e cumulative",
+    icvcm:"Program-level: CCP-approved. Methodology-level: Several IFM and landfill methane methodologies under assessment; some approved, some not.",
+    strengths:"US-focused, strong IFM and landfill methane track record, integrated with California compliance.",
+    concerns:"California IFM methodology has been subject to over-crediting critique (Badgley et al. 2022)."
+  },
+  "CAR":{
+    launched:2001,
+    issued_mtco2:"~180 MtCO₂e cumulative",
+    icvcm:"Program-level: CCP-approved. Methodology-level: U.S. Forest Protocol used in California compliance has known over-crediting concerns. Livestock, ozone-depleting substances (ODS), and mine methane protocols more robust.",
+    strengths:"Scientific rigour in protocol development, strong US domestic focus.",
+    concerns:"Same IFM over-crediting issues as ACR."
+  },
+  "Puro":{
+    launched:2019,
+    issued_mtco2:"~0.3 MtCO₂e (small, focused on durable removals)",
+    icvcm:"CCP assessment pending. Program focuses exclusively on engineered removals with >100y permanence (biochar, BECCS, enhanced weathering, some DAC).",
+    strengths:"Durable-removals focus, high permanence, rigorous LCA requirements.",
+    concerns:"Small volumes, high prices ($100–$400+/tCO₂), MRV maturing."
+  },
+  "Isometric":{
+    launched:2022,
+    issued_mtco2:"<0.1 MtCO₂e (new entrant)",
+    icvcm:"Pending assessment. Removals-only registry, open protocols, aggressive transparency.",
+    strengths:"Transparent data layer, scientific advisory rigour, removals-only.",
+    concerns:"Very new, limited track record, small supply."
+  },
+  "Ecoregistry":{
+    launched:2017,
+    issued_mtco2:"~60 MtCO₂e (mostly Colombia domestic carbon tax compliance)",
+    icvcm:"Not yet CCP-assessed. Concerns around over-issuance in Colombian domestic market (Trove Research 2023 analysis).",
+    strengths:"National registry aligned with Colombian carbon tax.",
+    concerns:"Governance and methodology rigour flagged by independent analysts; limited independent oversight."
+  },
+  "CDM":{
+    launched:2001,
+    issued_mtco2:"~2,100 MtCO₂e cumulative (now legacy)",
+    icvcm:"CDM methodologies not CCP-eligible as a block. Most additionality studies (Cames et al. 2016 Öko-Institut) found ~85% of CDM projects non-additional, especially industrial gas (HFC-23, N₂O) and large hydro. Transition to Article 6.4 underway.",
+    strengths:"Historical volume, standardised methodologies.",
+    concerns:"Pervasive over-crediting across most methodologies; do not use legacy CDM credits for net-zero claims."
+  },
+  "other":{
+    launched:null,
+    issued_mtco2:"Unknown — requires independent due diligence",
+    icvcm:"Not assessed. Treat as unvalidated.",
+    strengths:"Context-specific.",
+    concerns:"Without ICVCM or equivalent program-level vetting, apply a strong conservatism discount."
+  }
+};
+
+/* =========================================================
+   DATA: Project type profiles
+   ========================================================= */
+const TYPE_PROFILE = {
+  "ARR":{risk:"Medium",perm:"Non-durable",typical:"20–35 USD/tCO₂e (premium for community ARR)",notes:"Strong removals credentials where monitored; reversal risk from fire/pest; leakage from land-use displacement. Buffer pools mandatory."},
+  "REDD-project":{risk:"Very high",perm:"Non-durable",typical:"3–8 USD/tCO₂e",notes:"ICVCM rejected VM0007/VM0009/VM0015/VM0037. Systematic over-crediting documented (West et al. 2023 Science). Avoid project-scale avoided deforestation outside VM0048 framework."},
+  "REDD-juris":{risk:"Low–Medium",perm:"Non-durable",typical:"8–20 USD/tCO₂e (primary market, LEAF pricing reference $10+)",notes:"ART TREES v2.0 CCP-eligible. Jurisdictional scale reduces leakage. Requires host country ownership and robust national FREL."},
+  "IFM":{risk:"High",perm:"Non-durable",typical:"6–15 USD/tCO₂e",notes:"California/ACR IFM methodologies show over-crediting (Badgley et al. 2022). Structural risk from baseline inflation. ICVCM assessments ongoing."},
+  "blue-carbon":{risk:"Medium",perm:"Non-durable",typical:"15–40 USD/tCO₂e (high co-benefit premium)",notes:"High SDG credentials; MRV still maturing. Methodologies VM0033, VMD0051. Permanence buffer critical."},
+  "peatland":{risk:"Medium",perm:"Non-durable",typical:"15–30 USD/tCO₂e",notes:"Strong emissions reductions, hydrology-sensitive. Requires long-term rewetting commitment."},
+  "soil-carbon":{risk:"High",perm:"Non-durable",typical:"15–25 USD/tCO₂e",notes:"Measurement uncertainty high; saturation effects; reversal on tillage. Favour direct measurement over modelled approaches."},
+  "biochar":{risk:"Low",perm:"Durable (>100y to 1000y)",typical:"120–200 USD/tCO₂e",notes:"Durable removal with co-benefits. Requires feedstock sustainability, no woody feedstock from primary forest."},
+  "DAC":{risk:"Low",perm:"Durable (>1000y)",typical:"400–1000 USD/tCO₂e",notes:"Engineered removal, geologically stored. Highest permanence tier. Energy source must be additional renewable."},
+  "BECCS":{risk:"Medium",perm:"Durable (>1000y)",typical:"150–400 USD/tCO₂e",notes:"Sustainability of biomass supply is critical; BECCS without rigorous supply safeguards risks upstream emissions. IPCC AR6 cautions on scale."},
+  "eMR":{risk:"Medium",perm:"Durable (>10,000y)",typical:"200–500 USD/tCO₂e",notes:"MRV maturing; some concerns about heavy-metal leaching from some rock sources."},
+  "ocean-alk":{risk:"High",perm:"Durable (>10,000y)",typical:"100–400 USD/tCO₂e",notes:"Early-stage science; ecosystem impact uncertainty; experimental protocols."},
+  "cookstoves":{risk:"High (non-metered), Low-Medium (metered)",perm:"N/A (avoidance)",typical:"4–15 USD/tCO₂e",notes:"Gill-Wiehl et al. 2024 found ~7–9× over-crediting in non-metered methodologies. Only metered/measured (GS M&M) methodology is CCP-eligible."},
+  "water-filter":{risk:"High",perm:"N/A (avoidance)",typical:"4–12 USD/tCO₂e",notes:"Similar over-crediting concerns as cookstoves (suppressed demand, usage rates). Apply strong discounts."},
+  "renewable-ldc":{risk:"Medium",perm:"N/A (avoidance)",typical:"3–10 USD/tCO₂e",notes:"Off-grid or LDC grid additionality stronger. Check additionality case vs electrification finance."},
+  "renewable-grid":{risk:"Very high",perm:"N/A (avoidance)",typical:"1–4 USD/tCO₂e",notes:"Non-LDC grid renewables are generally NOT CCP-eligible — not additional where renewables are cheapest new generation. Avoid."},
+  "landfill-CH4":{risk:"Low",perm:"N/A (avoidance)",typical:"6–12 USD/tCO₂e",notes:"CCP-eligible in several methodologies. Check regulatory counterfactual (if mandated by law, not additional)."},
+  "HFC":{risk:"Very high",perm:"N/A (avoidance)",typical:"0.5–3 USD/tCO₂e",notes:"Major CDM-era over-crediting. Kigali Amendment substantially reduces additionality case. Avoid."},
+  "N2O":{risk:"High",perm:"N/A (avoidance)",typical:"1–5 USD/tCO₂e",notes:"Historic CDM over-crediting (Cames et al. 2016). Regulatory baselines often supersede credits."},
+  "livestock-CH4":{risk:"Medium",perm:"N/A (avoidance)",typical:"8–18 USD/tCO₂e",notes:"Emerging category; measurement uncertainty in enteric inhibitors, anaerobic digesters more robust."},
+  "rice-CH4":{risk:"Medium",perm:"N/A (avoidance)",typical:"10–20 USD/tCO₂e",notes:"Alternate wetting & drying protocols gaining rigour. Small-holder aggregation challenges."},
+  "transport":{risk:"High",perm:"N/A (avoidance)",typical:"3–10 USD/tCO₂e",notes:"Additionality challenging in markets with EV subsidies; rebound effects."},
+  "other":{risk:"Unknown",perm:"Unknown",typical:"Unknown",notes:"Requires bespoke assessment."}
+};
+
+/* =========================================================
+   DATA: Literature / integrity concerns keyed by project type
+   ========================================================= */
+const LIT_REVIEW = {
+  "REDD-project":[
+    "West et al. (2023) Science — 94% of VCS project-scale REDD+ credits (2,000+ projects analysed) found non-additional.",
+    "Guardian / Die Zeit / SourceMaterial (Jan 2023) investigation — 90%+ of VCS rainforest credits 'phantom credits'.",
+    "ICVCM (Aug 2024) — VM0007, VM0009, VM0015, VM0037 declared NOT CCP-eligible."
+  ],
+  "cookstoves":[
+    "Gill-Wiehl, Kammen & Haya (2024) Nature Communications — 7× to 9× over-crediting in Verra, GS, CDM cookstove methodologies (non-metered).",
+    "Berkeley Carbon Trading Project (2023) — only GS Metered & Measured methodology showed defensible integrity."
+  ],
+  "IFM":[
+    "Badgley, Freeman, Hamman et al. (2022) — California IFM protocol systematic over-crediting (~30M tCO₂e fictitious credits).",
+    "Stapp et al. (2023) — leakage under-counted in US IFM projects."
+  ],
+  "HFC":[
+    "Cames et al. (2016, Öko-Institut) — HFC-23 destruction CDM projects systematically over-credited; perverse incentive to continue production for credits.",
+    "Kigali Amendment (2016) — phase-down of HFCs reduces counterfactual emissions."
+  ],
+  "N2O":[
+    "Cames et al. (2016) — adipic acid N₂O projects largely non-additional where domestic regulation exists.",
+    "Schneider (2009) Climate Policy — additionality concerns in CDM N₂O."
+  ],
+  "renewable-grid":[
+    "Warnecke et al. (2019) Nature Climate Change — estimated <2% additionality in grid-connected renewables in emerging markets.",
+    "ICVCM — renewable energy methodologies generally not CCP-eligible for non-LDC grid-connected projects."
+  ],
+  "REDD-juris":[
+    "LEAF Coalition (2021–2024) — pricing reference $10+ for jurisdictional credits with ART TREES.",
+    "ICVCM (May 2024) — ART TREES v2.0 CCP-eligible; first methodology approved at the jurisdictional level."
+  ],
+  "DAC":[
+    "IPCC AR6 WGIII (2022) Ch.12 — durable removals essential for 1.5°C but require rigorous LCA.",
+    "Climeworks, Heirloom, Carbon Engineering — varying energy and LCA profiles; buyer should request full boundary LCA."
+  ],
+  "biochar":[
+    "Woolf et al. (2010) Nature Communications — biochar sustainable removal potential; sensitive to feedstock.",
+    "Puro.earth biochar methodology (2023) — 100-year permanence factor based on H:C ratio."
+  ],
+  "blue-carbon":[
+    "Macreadie et al. (2021) Nature Reviews Earth & Environment — blue carbon MRV challenges, high co-benefits.",
+    "VM0033 — mangrove restoration methodology; buffer pool critical."
+  ]
+};
+
+/* =========================================================
+   DATA: Risk flags
+   ========================================================= */
+const RISK_FLAGS = [
+  {id:"rf1",label:"Baseline inflation / counterfactual weakness (e.g., unrealistically high deforestation baseline)",weight:15,mitigation:"Require dynamic jurisdictional baseline or peer-reviewed remote-sensing counterfactual."},
+  {id:"rf2",label:"Additionality not demonstrated beyond standard checklist (project economically viable without credits)",weight:12,mitigation:"Request investment-test documentation; compare to comparator projects without credit revenue."},
+  {id:"rf3",label:"Legacy methodology — rejected or under ICVCM review",weight:15,mitigation:"Prefer CCP-labelled methodologies (ART TREES, VM0048, GS M&M, landfill methane)."},
+  {id:"rf4",label:"Vintage older than 5 years (pre-2020)",weight:7,mitigation:"Apply vintage discount; disclose vintage in claims; retire for contribution only."},
+  {id:"rf5",label:"No corresponding adjustment (Article 6.2) applied, yet credit used for sovereign-linked claim",weight:10,mitigation:"Use voluntary contribution claim framing only; avoid 'offset' language."},
+  {id:"rf6",label:"Reversal event / buffer pool drawdown in past 3 years",weight:12,mitigation:"Assess remaining buffer adequacy; consider insurance overlay (e.g., Kita, Oka)."},
+  {id:"rf7",label:"Community / Indigenous Peoples grievance(s) filed or FPIC concerns",weight:13,mitigation:"Independent grievance investigation; benefit-sharing verification; suspend until resolved."},
+  {id:"rf8",label:"Media / NGO investigation flagging integrity concerns",weight:6,mitigation:"Commission independent third-party review; cross-check with ICVCM and registry decisions."},
+  {id:"rf9",label:"Leakage risk not adequately quantified",weight:8,mitigation:"Require project-level leakage assessment; compare to jurisdictional leakage factors."},
+  {id:"rf10",label:"Permanence / durability under 100 years and buffer pool <20% of issuance",weight:10,mitigation:"Increase buffer contribution; retire only for contribution; consider durable removals overlay."},
+  {id:"rf11",label:"Developer has history of suspensions or material restatements",weight:8,mitigation:"Developer-level due diligence; third-party reference checks."},
+  {id:"rf12",label:"Double-counting risk (host country NDC + credit used for compensation claim)",weight:10,mitigation:"Verify Article 6.2 authorisation or reframe as voluntary contribution."},
+  {id:"rf13",label:"Weak safeguards documentation (FPIC, gender, biodiversity plans absent or shallow)",weight:8,mitigation:"Request SDG impact tool (e.g., GS SDG tool) outputs; conduct site-level verification."},
+  {id:"rf14",label:"Lock-in risk — project sustains carbon-intensive practice",weight:9,mitigation:"Reject if activity locks in fossil infrastructure or forest-displacing agriculture."}
+];
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+function $(id){return document.getElementById(id)}
+function el(tag,attrs={},...kids){const e=document.createElement(tag);for(const k in attrs){if(k==="class")e.className=attrs[k];else if(k==="html")e.innerHTML=attrs[k];else e.setAttribute(k,attrs[k])}for(const k of kids){if(k===null||k===undefined)continue;if(typeof k==="string")e.appendChild(document.createTextNode(k));else e.appendChild(k)}return e}
+function fmtPct(n){return (Math.round(n*10)/10).toFixed(1)+"%"}
+function fmtNum(n){if(isNaN(n)||n===null)return "—";return n.toLocaleString()}
+
+/* =========================================================
+   TABS
+   ========================================================= */
+document.querySelectorAll(".tabbtn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".tabbtn").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".tabpanel").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    $(b.dataset.tab).classList.add("active");
+    if(b.dataset.tab!=="t1")recalc();
+  });
+});
+
+/* =========================================================
+   BUILD CCP UI
+   ========================================================= */
+function buildCCPs(){
+  ["gov","emi","sd"].forEach(cat=>{
+    const root=$("ccp-"+cat);
+    CCPS.filter(c=>c.cat===cat).forEach(c=>{
+      const row=el("div",{class:"cpp-row"},
+        el("div",{class:"cpp-num"},String(c.n)),
+        el("div",{},el("div",{class:"cpp-title"},"CCP "+c.n+" — "+c.title),el("div",{class:"cpp-body"},c.body)),
+        el("div",{class:"cpp-select"},(function(){
+          const s=el("select",{id:"ccp-"+c.n});
+          ["— Not scored —","0 · Not met","1 · Poor","2 · Partial","3 · Adequate","4 · Good","5 · Excellent"].forEach((lbl,i)=>{
+            const o=el("option",{value: i===0?"":String(i-1)},lbl);
+            s.appendChild(o);
+          });
+          s.onchange=()=>{$("ccp-"+c.n+"-v").textContent=s.value===""?"—":s.value;recalc();};
+          return s;
+        })()),
+        el("div",{class:"cpp-score",id:"ccp-"+c.n+"-v"},"—")
+      );
+      root.appendChild(row);
+    });
+  });
+}
+buildCCPs();
+
+/* =========================================================
+   BUILD VCMI CHECKLIST
+   ========================================================= */
+function buildVCMI(){
+  const root=$("vcmi-found");
+  VCMI_FOUND.forEach((txt,i)=>{
+    const id="vcmi-"+i;
+    const lbl=el("label",{},el("input",{type:"checkbox",id:id}),document.createTextNode(" "+txt));
+    root.appendChild(lbl);
+    $(id).onchange=recalc;
+  });
+  $("vcmi-tier").onchange=recalc;
+  $("vcmi-pct").oninput=recalc;
+}
+buildVCMI();
+
+/* =========================================================
+   BUILD RISK FLAGS
+   ========================================================= */
+function buildFlags(){
+  const root=$("riskflags");
+  RISK_FLAGS.forEach(f=>{
+    const lbl=el("label",{},el("input",{type:"checkbox",id:f.id}),document.createTextNode(" "+f.label+" "),(function(){const s=el("small",{class:"muted"},"(weight −"+f.weight+")");return s})());
+    root.appendChild(lbl);
+    $(f.id).onchange=recalc;
+  });
+}
+buildFlags();
+
+/* =========================================================
+   RENDER STANDARD PROFILE
+   ========================================================= */
+function renderStandardProfile(){
+  const std=$("standard").value;
+  const p=STANDARD_PROFILE[std]||STANDARD_PROFILE["other"];
+  const type=$("projectType").value;
+  const tp=TYPE_PROFILE[type]||TYPE_PROFILE["other"];
+  const litList=LIT_REVIEW[type]||[];
+  const root=$("standard-profile");
+  root.innerHTML="";
+  const t=el("table",{},
+    el("thead",{},el("tr",{},el("th",{},"Attribute"),el("th",{},"Value"))),
+    el("tbody",{},
+      el("tr",{},el("td",{},"Program launched"),el("td",{},p.launched?String(p.launched):"—")),
+      el("tr",{},el("td",{},"Cumulative issuance"),el("td",{},p.issued_mtco2)),
+      el("tr",{},el("td",{},"ICVCM CCP status"),el("td",{html:p.icvcm})),
+      el("tr",{},el("td",{},"Strengths"),el("td",{},p.strengths)),
+      el("tr",{},el("td",{},"Known concerns"),el("td",{},p.concerns)),
+      el("tr",{},el("td",{},"Project-type risk band"),el("td",{html:'<span class="tag '+(tp.risk.includes("Low")?"tag-ok":tp.risk.includes("Very high")||tp.risk.includes("High")?"tag-bad":"tag-warn")+'">'+tp.risk+"</span>"})),
+      el("tr",{},el("td",{},"Permanence profile"),el("td",{},tp.perm)),
+      el("tr",{},el("td",{},"Typical price band (VCM, 2024)"),el("td",{},tp.typical)),
+      el("tr",{},el("td",{},"Project-type notes"),el("td",{},tp.notes))
+    )
+  );
+  root.appendChild(t);
+
+  const lit=$("lit-review");
+  lit.innerHTML="";
+  if(litList.length){
+    const ul=el("ul",{});
+    litList.forEach(x=>ul.appendChild(el("li",{style:"margin-bottom:6px"},x)));
+    lit.appendChild(ul);
+  }else{
+    lit.appendChild(el("div",{class:"infobox"},"No specific literature flags catalogued for this project type. Run a custom literature search in Google Scholar for the specific methodology."));
+  }
+
+  const pb=$("price-bench");
+  const price=parseFloat($("price").value);
+  const band=tp.typical||"";
+  pb.innerHTML="";
+  if(isNaN(price)){
+    pb.appendChild(el("div",{class:"infobox"},"Enter a price on Tab 1 to see a band comparison. Typical band for this project type: "+band));
+  }else{
+    let msg="Your price of US$"+price.toFixed(2)+"/tCO₂e sits within the typical band ("+band+").";
+    let cls="okbox";
+    const numbers=(band.match(/\d+/g)||[]).map(Number);
+    if(numbers.length>=2){
+      const lo=numbers[0],hi=numbers[1];
+      if(price<lo*0.75){msg="Your price of US$"+price.toFixed(2)+"/tCO₂e is notably BELOW typical band ("+band+"). Cheap credits in this category often correlate with low-integrity or legacy vintages. Verify vintage, standard, and CCP status.";cls="flagbox";}
+      else if(price>hi*1.25){msg="Your price of US$"+price.toFixed(2)+"/tCO₂e is ABOVE typical band ("+band+"). Check whether premium is justified by removals/durability, co-benefits, or third-party ratings.";cls="warnbox";}
+    }
+    pb.appendChild(el("div",{class:cls},msg));
+  }
+}
+
+/* Keep profile in sync with setup */
+["standard","projectType","price","vintage","volume","country","methodology","category","corrAdj"].forEach(id=>{
+  const e=$(id); if(e) e.addEventListener("change",recalc);
+});
+
+/* =========================================================
+   CORE: RECALC
+   ========================================================= */
+function recalc(){
+  // 1. CCP sub-scores
+  const govScores=CCPS.filter(c=>c.cat==="gov").map(c=>parseFloat($("ccp-"+c.n).value)).filter(v=>!isNaN(v));
+  const emiScores=CCPS.filter(c=>c.cat==="emi").map(c=>parseFloat($("ccp-"+c.n).value)).filter(v=>!isNaN(v));
+  const sdScores =CCPS.filter(c=>c.cat==="sd" ).map(c=>parseFloat($("ccp-"+c.n).value)).filter(v=>!isNaN(v));
+
+  const avg=a=>a.length?a.reduce((s,x)=>s+x,0)/a.length:0;
+  const govAvg=avg(govScores), emiAvg=avg(emiScores), sdAvg=avg(sdScores);
+  // Convert 0-5 to 0-100
+  const gov100=govAvg/5*100, emi100=emiAvg/5*100, sd100=sdAvg/5*100;
+
+  // 2. Standard baseline
+  const std=$("standard").value;
+  const stdBaseline={ "ART-TREES":85, "GS":70, "Verra":55, "PlanVivo":70, "ACR":62, "CAR":62, "Puro":78, "Isometric":75, "Ecoregistry":40, "CDM":25, "other":30 }[std] || 45;
+
+  // Adjust baseline for project type
+  const type=$("projectType").value;
+  const typeAdj={ "REDD-project":-25, "renewable-grid":-30, "HFC":-25, "cookstoves":-10, "water-filter":-10,
+                  "REDD-juris":+10, "landfill-CH4":+5, "DAC":+10, "biochar":+5, "ARR":0, "blue-carbon":+5,
+                  "peatland":+3, "IFM":-10, "soil-carbon":-5, "N2O":-15, "renewable-ldc":-3, "transport":-5,
+                  "livestock-CH4":0, "rice-CH4":0, "BECCS":-3, "eMR":0, "ocean-alk":-5, "other":-5 }[type] || 0;
+  const typeAdjusted = Math.max(0, Math.min(100, stdBaseline + typeAdj));
+
+  // 3. VCMI alignment
+  const vcmiBoxes=VCMI_FOUND.map((_,i)=>$("vcmi-"+i).checked);
+  const vcmiFoundPct = vcmiBoxes.filter(x=>x).length / VCMI_FOUND.length;
+  const vcmiTier=$("vcmi-tier").value;
+  const vcmiPct=parseFloat($("vcmi-pct").value)||0;
+  let vcmiTierScore=50;
+  if(vcmiTier==="none"){vcmiTierScore=50;}
+  else if(vcmiTier==="silver" && vcmiPct>=20){vcmiTierScore=60;}
+  else if(vcmiTier==="gold" && vcmiPct>=60){vcmiTierScore=80;}
+  else if(vcmiTier==="platinum" && vcmiPct>=100){vcmiTierScore=95;}
+  else {vcmiTierScore=25;}
+  const vcmiScore = Math.round((vcmiFoundPct*100)*0.6 + vcmiTierScore*0.4);
+
+  // 4. Risk flag deduction
+  let deduction=0;
+  RISK_FLAGS.forEach(f=>{if($(f.id).checked) deduction+=f.weight;});
+  // Cap deduction at 60
+  deduction=Math.min(60, deduction);
+
+  // 5. Vintage auto-flag
+  const vintage=parseInt($("vintage").value);
+  let vintageFlag=0;
+  if(!isNaN(vintage)){
+    const age=(new Date()).getFullYear()-vintage;
+    if(age>=8) vintageFlag=10;
+    else if(age>=5) vintageFlag=6;
+    else if(age>=3) vintageFlag=2;
+  }
+
+  // 6. Corresponding adjustment flag
+  const ca=$("corrAdj").value;
+  let caFlag=0;
+  if(ca==="no") caFlag=8;
+  else if(ca==="unknown") caFlag=4;
+
+  // 7. Composite: 60% ICVCM CCPs, 20% Standard baseline, 10% VCMI, 10% risk (100 - deductions)
+  const ccpComposite = (gov100*0.35 + emi100*0.45 + sd100*0.20); // weight governance/emissions/SD
+  const riskScore = Math.max(0, 100 - deduction - vintageFlag - caFlag);
+  const raw = ccpComposite*0.60 + typeAdjusted*0.20 + vcmiScore*0.10 + riskScore*0.10;
+
+  // If CCP scores missing, show partial
+  const anyCcp = govScores.length+emiScores.length+sdScores.length;
+  const score = Math.round(raw);
+
+  // Render
+  $("score-num").textContent = anyCcp ? score : "—";
+  const gradeEl=$("score-grade");
+  let grade="—",cls="tag-neutral";
+  if(anyCcp){
+    if(score>=85){grade="A — High integrity";cls="tag-ok";}
+    else if(score>=70){grade="B — Acceptable with caveats";cls="tag-ok";}
+    else if(score>=55){grade="C — Caution required";cls="tag-warn";}
+    else if(score>=40){grade="D — Major concerns";cls="tag-bad";}
+    else {grade="F — Do not transact";cls="tag-bad";}
+  }
+  gradeEl.className="tag "+cls;
+  gradeEl.textContent=grade;
+
+  $("stat-gov").textContent = govScores.length ? gov100.toFixed(0)+"/100" : "—";
+  $("stat-emi").textContent = emiScores.length ? emi100.toFixed(0)+"/100" : "—";
+  $("stat-sd" ).textContent = sdScores.length  ? sd100.toFixed(0)+"/100"  : "—";
+  $("stat-std").textContent = typeAdjusted+"/100";
+  $("stat-risk").textContent = "−"+(deduction+vintageFlag+caFlag);
+  $("stat-vcmi").textContent = vcmiScore+"/100";
+
+  // Decision box
+  const dec=$("decision-box");
+  dec.innerHTML="";
+  if(!anyCcp){
+    dec.appendChild(el("div",{class:"infobox"},"Score Tab 2 CCPs to generate a decision recommendation."));
+  }else if(score>=85){
+    dec.appendChild(el("div",{class:"okbox","html":"<b>BUY</b> — This credit lot meets or exceeds high-integrity thresholds. Defensible for corporate compensation claims (subject to VCMI Foundational Criteria). Proceed with contract finalisation."}));
+  }else if(score>=70){
+    dec.appendChild(el("div",{class:"okbox","html":"<b>BUY WITH CONDITIONS</b> — Acceptable integrity. Negotiate: (1) conservative side-letter on reversal risk, (2) commitment to disclose vintage and methodology in any claims, (3) right to swap credits if methodology is later rejected by ICVCM."}));
+  }else if(score>=55){
+    dec.appendChild(el("div",{class:"warnbox","html":"<b>CAUTION</b> — Integrity concerns material. Use only for voluntary contribution claims (not compensation). Obtain independent third-party rating (BeZero, Sylvera, Renoster, Calyx). Consider discounting volume 30–50% for conservatism."}));
+  }else if(score>=40){
+    dec.appendChild(el("div",{class:"flagbox","html":"<b>DO NOT BUY for net-zero claims</b> — Score below 55. If purchase proceeds for contribution-only claims, apply ≥50% conservatism discount and retire transparently with full vintage/methodology disclosure."}));
+  }else{
+    dec.appendChild(el("div",{class:"flagbox","html":"<b>AVOID</b> — Score below 40. Material risk to buyer reputation and compliance. Do not transact. Report to ICVCM if methodology warrants review."}));
+  }
+
+  // Guardrails
+  const g=$("guardrails");
+  g.innerHTML="";
+  const guardrails=[];
+  if(ca==="no"||ca==="unknown") guardrails.push("Require documented corresponding-adjustment position before making any sovereign-linked compensation claim.");
+  if(vintageFlag>0) guardrails.push("Vintage >3 years old — disclose vintage in all communications; do not apply \"carbon neutral\" framing without explicit vintage reference.");
+  if(typeAdj<0) guardrails.push("Project type carries structural over-crediting risk per published literature — apply conservatism discount of at least "+Math.abs(typeAdj)+"%.");
+  if(!vcmiBoxes.every(x=>x)) guardrails.push("VCMI Foundational Criteria not fully met — you should not make a VCMI-branded claim with these credits.");
+  if(std==="CDM") guardrails.push("CDM legacy credits are not appropriate for net-zero claims. Retire for voluntary contribution only.");
+  if(guardrails.length===0) guardrails.push("No additional guardrails triggered at current settings.");
+  const ul=el("ul",{});
+  guardrails.forEach(x=>ul.appendChild(el("li",{style:"margin-bottom:6px"},x)));
+  g.appendChild(ul);
+
+  // VCMI feedback
+  const vf=$("vcmi-feedback");
+  let vfMsg="";
+  if(vcmiTier==="none"){vfMsg="No VCMI claim selected — only Foundational Criteria assessment applies.";}
+  else if(vcmiTier==="silver" && vcmiPct<20){vfMsg="Silver tier requires ≥20% residual emissions coverage. Currently "+vcmiPct+"%.";vf.className="flagbox";}
+  else if(vcmiTier==="gold" && vcmiPct<60){vfMsg="Gold tier requires ≥60% residual emissions coverage. Currently "+vcmiPct+"%.";vf.className="flagbox";}
+  else if(vcmiTier==="platinum" && vcmiPct<100){vfMsg="Platinum tier requires 100% residual emissions coverage. Currently "+vcmiPct+"%.";vf.className="flagbox";}
+  else if(vcmiTier!=="none"){vfMsg="Coverage threshold met for "+vcmiTier+" tier. Additional requirements: foundational criteria (above) and use of CCP-labelled credits.";vf.className="okbox";}
+  else {vfMsg="Enter details to assess.";vf.className="infobox";}
+  vf.innerHTML=vfMsg;
+
+  // Flag output
+  const fo=$("flag-output");
+  fo.innerHTML="";
+  const active=RISK_FLAGS.filter(f=>$(f.id).checked);
+  if(active.length===0){
+    fo.appendChild(el("div",{class:"infobox"},"No risk flags ticked. Remember: absence of evidence is not evidence of absence — tick conservatively."));
+  }else{
+    const list=el("div",{});
+    list.appendChild(el("h4",{},"Active flags and recommended mitigations"));
+    active.forEach(f=>{
+      list.appendChild(el("div",{class:"flagbox","html":"<b>"+f.label+"</b><br/><i>Mitigation:</i> "+f.mitigation}));
+    });
+    fo.appendChild(list);
+  }
+
+  renderStandardProfile();
+}
+
+/* =========================================================
+   LOAD EXAMPLE
+   ========================================================= */
+function loadExample(){
+  $("projectName").value="Kasigau Corridor REDD+ Phase II – 2020 Vintage";
+  $("userRole").value="Corporate buyer";
+  $("assessDate").value=new Date().toISOString().split("T")[0];
+  $("projectType").value="REDD-project";
+  $("standard").value="Verra";
+  $("methodology").value="VM0009 Avoided Unplanned Deforestation";
+  $("country").value="Kenya";
+  $("vintage").value="2020";
+  $("volume").value="500000";
+  $("price").value="6.50";
+  $("category").value="avoidance";
+  $("corrAdj").value="no";
+  // CCP scores — worked example reflecting ICVCM assessment for rejected VM0009 methodology
+  [1,2,3,4].forEach(n=>{$("ccp-"+n).value="3";$("ccp-"+n+"-v").textContent="3"});
+  $("ccp-5").value="1";$("ccp-5-v").textContent="1"; // additionality poor
+  $("ccp-6").value="2";$("ccp-6-v").textContent="2"; // permanence partial
+  $("ccp-7").value="1";$("ccp-7-v").textContent="1"; // quantification over-credited
+  $("ccp-8").value="2";$("ccp-8-v").textContent="2"; // no double counting partial (no CA)
+  $("ccp-9").value="3";$("ccp-9-v").textContent="3"; // SD benefits ok
+  $("ccp-10").value="2";$("ccp-10-v").textContent="2";
+  // VCMI
+  [0,1,2,3].forEach(i=>{$("vcmi-"+i).checked=true});
+  $("vcmi-tier").value="gold";
+  $("vcmi-pct").value="65";
+  // Risk flags
+  ["rf1","rf3","rf5","rf7","rf8","rf9","rf12"].forEach(id=>{$(id).checked=true});
+  recalc();
+}
+function clearAll(){
+  document.querySelectorAll("input,select,textarea").forEach(i=>{
+    if(i.type==="checkbox") i.checked=false;
+    else i.value="";
+  });
+  CCPS.forEach(c=>{$("ccp-"+c.n+"-v").textContent="—"});
+  recalc();
+}
+
+/* =========================================================
+   CLAUDE PROMPT
+   ========================================================= */
+function buildPrompt(){
+  const p=$("promptOut");
+  const govAvg=(CCPS.filter(c=>c.cat==="gov").map(c=>parseFloat($("ccp-"+c.n).value)).filter(v=>!isNaN(v)));
+  const ccpText=CCPS.map(c=>{
+    const v=$("ccp-"+c.n).value;
+    return "CCP "+c.n+" "+c.title+": "+(v===""?"not scored":v+"/5");
+  }).join("\n");
+  const activeFlags=RISK_FLAGS.filter(f=>$(f.id).checked).map(f=>"- "+f.label).join("\n") || "(none)";
+  const vcmiBoxes=VCMI_FOUND.map((f,i)=>($("vcmi-"+i).checked?"[x] ":"[ ] ")+f).join("\n");
+
+  const txt = [
+"You are a senior voluntary-carbon-market integrity analyst advising an independent, Paris-aligned buyer. A colleague has completed a structured integrity assessment of a credit lot using the Useful AF Carbon Credit Integrity Assessor. Your job is to pressure-test the conclusion, surface counter-arguments, and draft a board-ready recommendation memo.",
+"",
+"=== PROJECT SETUP ===",
+"Project / lot: " + ($("projectName").value||"(unnamed)"),
+"User role: " + $("userRole").value,
+"Assessment date: " + ($("assessDate").value||"(n/a)"),
+"Project type: " + $("projectType").value,
+"Standard / registry: " + $("standard").value,
+"Methodology: " + ($("methodology").value||"(unspecified)"),
+"Country: " + ($("country").value||"(unspecified)"),
+"Vintage: " + ($("vintage").value||"(unspecified)"),
+"Volume (tCO2e): " + ($("volume").value||"(unspecified)"),
+"Price (USD/tCO2e): " + ($("price").value||"(unspecified)"),
+"Credit category: " + $("category").value,
+"Article 6.2 Corresponding Adjustment: " + $("corrAdj").value,
+"",
+"=== ICVCM CORE CARBON PRINCIPLE SCORES (0-5) ===",
+ccpText,
+"",
+"=== VCMI FOUNDATIONAL CRITERIA ===",
+vcmiBoxes,
+"VCMI claim tier pursued: " + $("vcmi-tier").value + " | % residual emissions covered: " + ($("vcmi-pct").value||"0"),
+"",
+"=== ACTIVE RISK FLAGS ===",
+activeFlags,
+"",
+"=== COMPUTED RESULTS ===",
+"Composite quality score: " + $("score-num").textContent + "/100",
+"Grade: " + $("score-grade").textContent,
+"Governance average: " + $("stat-gov").textContent,
+"Emissions impact average: " + $("stat-emi").textContent,
+"Sustainable development average: " + $("stat-sd").textContent,
+"Standard baseline (project-type adjusted): " + $("stat-std").textContent,
+"VCMI buyer alignment: " + $("stat-vcmi").textContent,
+"Risk flag deduction: " + $("stat-risk").textContent,
+"",
+"=== YOUR TASK ===",
+"1) Independent verdict (1 paragraph): Do you agree with the score and grade? Why or why not? Cite specific ICVCM or academic evidence.",
+"2) Top 3 steel-man counter-arguments: identify the strongest arguments FOR proceeding that a motivated buyer would make, and rebut each.",
+"3) Quantitative sensitivity: if any single risk flag were resolved with new evidence, how should the score change? Which flag is the highest-leverage resolve?",
+"4) Board memo draft (≈300 words): address (a) recommendation (BUY / BUY WITH CONDITIONS / DO NOT BUY), (b) financial exposure, (c) reputational exposure, (d) mitigations and conditions, (e) disclosure approach.",
+"5) Disclosure language: draft one approved-text sentence the CFO can use in the next annual report describing this purchase, honestly and defensibly, given the assessment.",
+"6) Red-team: write the single sharpest critique a climate-justice NGO (e.g., Carbon Market Watch, Survival International, Rainforest Foundation) might publish about this purchase — and how the company should be prepared to respond.",
+"",
+"Keep the tone rigorous, Paris-aligned, and free of industry-body talking points. Cite by authority (ICVCM, VCMI, IPCC, peer-reviewed literature) rather than vendor marketing. Where data is missing, flag it explicitly rather than speculating."
+  ].join("\n");
+  p.textContent=txt;
+}
+function copyPrompt(){
+  const txt=$("promptOut").textContent;
+  navigator.clipboard.writeText(txt).then(()=>{alert("Prompt copied.");},()=>{alert("Copy failed — select manually.");});
+}
+
+/* =========================================================
+   CSV EXPORT
+   ========================================================= */
+function csvEscape(s){if(s===null||s===undefined)return "";s=String(s);if(/[",\n]/.test(s))return '"'+s.replace(/"/g,'""')+'"';return s;}
+function exportCSV(){
+  const rows=[];
+  rows.push(["Section","Field","Value"]);
+  const setup=[
+    ["Setup","Project name",$("projectName").value],
+    ["Setup","User role",$("userRole").value],
+    ["Setup","Assessment date",$("assessDate").value],
+    ["Setup","Project type",$("projectType").value],
+    ["Setup","Standard",$("standard").value],
+    ["Setup","Methodology",$("methodology").value],
+    ["Setup","Country",$("country").value],
+    ["Setup","Vintage",$("vintage").value],
+    ["Setup","Volume (tCO2e)",$("volume").value],
+    ["Setup","Price (USD)",$("price").value],
+    ["Setup","Credit category",$("category").value],
+    ["Setup","Corresponding adjustment",$("corrAdj").value]
+  ];
+  setup.forEach(r=>rows.push(r));
+
+  CCPS.forEach(c=>{rows.push(["ICVCM","CCP "+c.n+" — "+c.title,$("ccp-"+c.n).value]);});
+
+  VCMI_FOUND.forEach((f,i)=>{rows.push(["VCMI Foundational",f,$("vcmi-"+i).checked?"Yes":"No"])});
+  rows.push(["VCMI","Claim tier",$("vcmi-tier").value]);
+  rows.push(["VCMI","% residual emissions covered",$("vcmi-pct").value]);
+  ["s3-target","s3-progress","s3-gap","s3-ccp"].forEach(id=>rows.push(["VCMI Scope 3",id,$(id).checked?"Yes":"No"]));
+
+  RISK_FLAGS.forEach(f=>{rows.push(["Risk flag",f.label,$(f.id).checked?"Yes":"No"])});
+
+  rows.push(["Score","Composite (0-100)",$("score-num").textContent]);
+  rows.push(["Score","Grade",$("score-grade").textContent]);
+  rows.push(["Score","Governance",$("stat-gov").textContent]);
+  rows.push(["Score","Emissions impact",$("stat-emi").textContent]);
+  rows.push(["Score","Sustainable development",$("stat-sd").textContent]);
+  rows.push(["Score","Standard baseline",$("stat-std").textContent]);
+  rows.push(["Score","VCMI buyer alignment",$("stat-vcmi").textContent]);
+  rows.push(["Score","Risk flag deduction",$("stat-risk").textContent]);
+
+  const csv=rows.map(r=>r.map(csvEscape).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=(($("projectName").value||"carbon-credit-assessment").replace(/[^a-z0-9\-]+/gi,"_"))+".csv";
+  document.body.appendChild(a);a.click();a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/* default date */
+$("assessDate").value=new Date().toISOString().split("T")[0];
+recalc();
+</script>
+</body>
+</html>
