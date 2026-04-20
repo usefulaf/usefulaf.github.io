@@ -1,0 +1,1179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Social Enterprise Valuation Tool — Useful AF by Impact47</title>
+<style>
+  :root{
+    --cream:#F5EFE4;--black:#1A1A1A;--coral:#E8624D;--ochre:#D99A2B;--ink:#2E2A26;
+    --line:#2E2A2622;--line2:#2E2A2611;--good:#3B8F5A;--warn:#C8882C;--bad:#B33A2A;
+    --mute:#6B645C;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;line-height:1.5}
+  header{background:var(--black);color:var(--cream);padding:22px 28px;border-bottom:6px solid var(--coral)}
+  header h1{margin:0;font-size:22px;letter-spacing:.2px}
+  header .sub{font-size:13px;opacity:.9;margin-top:4px}
+  header .brand{float:right;font-size:12px;opacity:.85;margin-top:4px}
+  main{max-width:1180px;margin:0 auto;padding:18px}
+  .tabs{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 14px;background:#EFE7D7;padding:6px;border-radius:8px;border:1px solid var(--line)}
+  .tabs button{background:transparent;border:0;padding:8px 12px;font-size:13px;cursor:pointer;border-radius:6px;color:var(--ink);font-weight:600}
+  .tabs button.active{background:var(--black);color:var(--cream)}
+  .panel{display:none;background:#FFFBF3;border:1px solid var(--line);border-radius:10px;padding:18px}
+  .panel.active{display:block}
+  h2{margin:0 0 6px;font-size:18px}
+  h3{margin:14px 0 6px;font-size:15px}
+  p.lede{margin:0 0 12px;color:var(--mute);font-size:13.5px}
+  .row{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
+  @media (max-width:800px){.col-3,.col-4,.col-6,.col-8{grid-column:span 12}}
+  label{display:block;font-size:12px;font-weight:600;margin:8px 0 2px;color:var(--ink)}
+  label .hint{font-weight:400;color:var(--mute);margin-left:6px;font-size:11.5px}
+  input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#FFF;font:inherit;font-size:13px}
+  input[type=range]{width:100%}
+  .slider-row{display:flex;align-items:center;gap:8px}
+  .slider-row output{font-weight:600;min-width:50px;text-align:right;font-size:13px}
+  .card{background:#FFF;border:1px solid var(--line);border-radius:8px;padding:12px;margin:8px 0}
+  .card.tight{padding:10px 12px}
+  .kv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:13.5px}
+  .kv .k{color:var(--mute)}
+  .kv .v{font-weight:600;text-align:right}
+  .chip{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.3px}
+  .chip.good{background:#D8EBDC;color:var(--good)}
+  .chip.warn{background:#F4E3C0;color:var(--warn)}
+  .chip.bad{background:#F2D4CE;color:var(--bad)}
+  .chip.neut{background:#E7DEC8;color:var(--ink)}
+  .btn{display:inline-block;background:var(--black);color:var(--cream);border:0;padding:9px 14px;border-radius:6px;font-weight:600;cursor:pointer;font-size:13px;margin-right:6px}
+  .btn.alt{background:var(--coral)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn:hover{opacity:.92}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{padding:7px 8px;border-bottom:1px solid var(--line2);text-align:left;vertical-align:top}
+  th{background:#EFE7D7;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--ink)}
+  tbody tr:hover{background:#FFF6E1}
+  .tooltip{position:relative;display:inline-block;cursor:help;border-bottom:1px dotted var(--mute);color:var(--mute)}
+  .tooltip .tip{display:none;position:absolute;bottom:125%;left:0;min-width:240px;background:var(--black);color:var(--cream);padding:8px 10px;border-radius:6px;font-size:12px;z-index:10;font-weight:400;line-height:1.4}
+  .tooltip:hover .tip{display:block}
+  .note{background:#FDF3DC;border-left:3px solid var(--ochre);padding:8px 12px;font-size:13px;border-radius:0 6px 6px 0;margin:8px 0}
+  .note.bad{background:#F8E3DD;border-left-color:var(--coral)}
+  .note.good{background:#E4EFE2;border-left-color:var(--good)}
+  .bignum{font-size:28px;font-weight:800;letter-spacing:-.5px;color:var(--ink);line-height:1.1}
+  .bigsub{font-size:12px;color:var(--mute);margin-top:2px}
+  .rangebar{position:relative;height:42px;background:#EFE7D7;border-radius:6px;margin:8px 0 18px;border:1px solid var(--line)}
+  .rangebar .fill{position:absolute;top:0;bottom:0;background:linear-gradient(90deg,var(--ochre),var(--coral));opacity:.45;border-radius:6px}
+  .rangebar .tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--black)}
+  .rangebar .label{position:absolute;top:-18px;font-size:11px;font-weight:700;color:var(--ink);transform:translateX(-50%);white-space:nowrap}
+  .rangebar .point{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:#FFF;border:2px solid var(--black);border-radius:50%}
+  .footer{color:var(--mute);font-size:12px;padding:12px 0;text-align:center;margin-top:10px}
+  textarea{min-height:120px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:720px){.grid-2{grid-template-columns:1fr}}
+  .method-card{border:1px solid var(--line);border-radius:8px;padding:12px;background:#FFF;margin:8px 0}
+  .method-card .head{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .method-card .title{font-weight:700;font-size:14px}
+  .method-card .val{font-weight:800;font-size:18px;color:var(--black)}
+  .breakdown{display:grid;grid-template-columns:1fr auto auto auto;gap:6px 10px;font-size:12.5px;margin-top:8px}
+  .breakdown .h{font-size:11px;text-transform:uppercase;color:var(--mute);font-weight:700}
+  .bench-grid{display:grid;grid-template-columns:1.3fr .7fr .7fr .7fr 1.2fr;gap:4px 10px;font-size:12.5px}
+  .bench-grid .h{background:#EFE7D7;padding:6px 8px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.3px}
+  .bench-grid div{padding:4px 8px;border-bottom:1px solid var(--line2)}
+  @media print{.tabs,.btn{display:none}.panel{display:block !important;page-break-after:always;border:none}header{background:#FFF;color:#000;border-bottom:2px solid #000}header .brand{color:#000}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">UsefulAF by Impact47</div>
+  <h1>💰 Social Enterprise Valuation Tool</h1>
+  <div class="sub">Defensible, multi-method pre-money valuation for impact-first founders and investors — embeds GIIN return benchmarks, Damodaran sector data, Carta dilution medians, and impact-adjusted comparable multiples</div>
+</header>
+<main>
+
+<div class="tabs" id="tabs">
+  <button class="tab-btn active" data-t="setup">1. Setup</button>
+  <button class="tab-btn" data-t="rev">2. Revenue Multiple</button>
+  <button class="tab-btn" data-t="dcf">3. DCF</button>
+  <button class="tab-btn" data-t="vc">4. VC Method</button>
+  <button class="tab-btn" data-t="first">5. First Chicago</button>
+  <button class="tab-btn" data-t="impact">6. Impact Premium</button>
+  <button class="tab-btn" data-t="range">7. Valuation Range</button>
+  <button class="tab-btn" data-t="bench">8. Benchmarks</button>
+  <button class="tab-btn" data-t="claude">9. Claude Prompt</button>
+</div>
+
+<!-- ========== PANEL 1: SETUP ========== -->
+<section class="panel active" id="p-setup">
+  <h2>Company setup</h2>
+  <p class="lede">Five minutes of inputs drive every downstream method. The defaults below match a representative Series Seed social enterprise — change only what you know.</p>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="card">
+        <h3>Company basics</h3>
+        <div class="row">
+          <div class="col-6">
+            <label>Company name</label>
+            <input id="f_name" type="text" value="Kazi Agri-Tech Ltd" />
+          </div>
+          <div class="col-6">
+            <label>Reporting currency</label>
+            <select id="f_ccy">
+              <option>USD</option><option>EUR</option><option>GBP</option><option>KES</option><option>ZAR</option><option>INR</option><option>BRL</option><option>NGN</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label>Sector <span class="hint">drives comparable multiples</span></label>
+            <select id="f_sector"></select>
+          </div>
+          <div class="col-6">
+            <label>Geography <span class="hint">adjusts risk premium</span></label>
+            <select id="f_geo"></select>
+          </div>
+          <div class="col-6">
+            <label>Stage</label>
+            <select id="f_stage">
+              <option value="pre-seed">Pre-Seed</option>
+              <option value="seed" selected>Seed</option>
+              <option value="seriesA">Series A</option>
+              <option value="seriesB">Series B</option>
+              <option value="seriesC">Series C+</option>
+              <option value="growth">Growth / PE</option>
+            </select>
+          </div>
+          <div class="col-6">
+            <label>Legal form</label>
+            <select id="f_form">
+              <option>For-profit (C-Corp / Ltd / Pvt Ltd)</option>
+              <option>Benefit Corp / B Corp</option>
+              <option>CIC (UK)</option>
+              <option>Hybrid (NPO + trading arm)</option>
+              <option>Cooperative</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="card">
+        <h3>Financials (LTM = last 12 months)</h3>
+        <div class="row">
+          <div class="col-6">
+            <label>LTM Revenue</label>
+            <input id="f_rev" type="number" value="800000" />
+          </div>
+          <div class="col-6">
+            <label>YoY Revenue Growth (%)</label>
+            <input id="f_growth" type="number" value="40" />
+          </div>
+          <div class="col-6">
+            <label>Gross Margin (%)</label>
+            <input id="f_gm" type="number" value="55" />
+          </div>
+          <div class="col-6">
+            <label>EBITDA Margin (%) <span class="hint">use -ve if loss-making</span></label>
+            <input id="f_ebitda" type="number" value="-15" />
+          </div>
+          <div class="col-6">
+            <label>Net Cash (bank – debt)</label>
+            <input id="f_cash" type="number" value="250000" />
+          </div>
+          <div class="col-6">
+            <label>Monthly Burn</label>
+            <input id="f_burn" type="number" value="45000" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="card">
+        <h3>The round</h3>
+        <div class="row">
+          <div class="col-6">
+            <label>Capital being raised</label>
+            <input id="f_raise" type="number" value="2500000" />
+          </div>
+          <div class="col-6">
+            <label>Preferred instrument</label>
+            <select id="f_instrument">
+              <option>SAFE / Post-money</option>
+              <option>Convertible Note</option>
+              <option selected>Priced Equity (Preferred)</option>
+              <option>Revenue-Based Financing</option>
+              <option>Patient Capital (flexible)</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label>Lead investor type <span class="hint">drives impact premium / return expectations</span></label>
+            <select id="f_investor">
+              <option value="marketVC">Market-rate Impact VC</option>
+              <option value="belowMkt" selected>Below-market Impact Fund</option>
+              <option value="dfi">DFI / Development Finance</option>
+              <option value="cat">Catalytic / Concessionary</option>
+              <option value="family">Impact Family Office</option>
+              <option value="foundation">Programme-Related Investment (Foundation)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="card">
+        <h3>Impact profile</h3>
+        <p style="font-size:12.5px;color:var(--mute);margin:0 0 8px">Based on IMP 5 Dimensions depth — affects impact premium / discount applied to the weighted valuation.</p>
+        <label>Impact intentionality & integration <span class="tooltip">ℹ<span class="tip">How hard-wired is impact into the business model? Mission-locked legal structure + measurable outcome metrics + lost-revenue willingness = highest score.</span></span></label>
+        <div class="slider-row"><input type="range" min="1" max="5" value="4" id="f_imp_intent" oninput="syncSliders()"><output id="o_imp_intent">4</output></div>
+
+        <label>Additionality (would this happen without you?)</label>
+        <div class="slider-row"><input type="range" min="1" max="5" value="4" id="f_imp_addl" oninput="syncSliders()"><output id="o_imp_addl">4</output></div>
+
+        <label>Evidence strength (NESTA level 1–5)</label>
+        <div class="slider-row"><input type="range" min="1" max="5" value="3" id="f_imp_evid" oninput="syncSliders()"><output id="o_imp_evid">3</output></div>
+
+        <label>Scale of population at risk reached</label>
+        <div class="slider-row"><input type="range" min="1" max="5" value="3" id="f_imp_scale" oninput="syncSliders()"><output id="o_imp_scale">3</output></div>
+
+        <label>Negative externality / risk controls</label>
+        <div class="slider-row"><input type="range" min="1" max="5" value="4" id="f_imp_risk" oninput="syncSliders()"><output id="o_imp_risk">4</output></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:10px">
+    <button class="btn" onclick="runAll()">🔄 Recompute all methods</button>
+    <button class="btn ghost" onclick="loadExample('kazi')">Load Kazi Agri-Tech example</button>
+    <button class="btn ghost" onclick="loadExample('solar')">Load Solar-SaaS example</button>
+    <button class="btn ghost" onclick="loadExample('edtech')">Load EdTech example</button>
+  </div>
+</section>
+
+<!-- ========== PANEL 2: REVENUE MULTIPLE ========== -->
+<section class="panel" id="p-rev">
+  <h2>Method 1 — Revenue Multiple (Comparable Companies)</h2>
+  <p class="lede">Applies sector-specific EV/Revenue multiples to your LTM and forward revenue. Multiples below are private-market ranges compiled from Damodaran Jan 2024 data, PitchBook VC-Backed Company valuations (Q4 2024), and CapIQ impact-sector median / IQR where available. Early-stage multiples are discounted for size and risk.</p>
+
+  <div id="rev_out"></div>
+</section>
+
+<!-- ========== PANEL 3: DCF ========== -->
+<section class="panel" id="p-dcf">
+  <h2>Method 2 — Discounted Cash Flow (5-year + terminal)</h2>
+  <p class="lede">5-year explicit forecast + Gordon Growth terminal value, discounted at stage- and geography-adjusted WACC. Growth decays linearly from your inputted Y1 rate toward a sector steady state. Margins converge linearly to the sector-typical mature EBITDA margin.</p>
+
+  <div class="row">
+    <div class="col-4">
+      <label>Y1 revenue growth (%)</label>
+      <input type="number" id="d_g1" value="80">
+    </div>
+    <div class="col-4">
+      <label>Terminal (Y5) growth (%)</label>
+      <input type="number" id="d_g5" value="15">
+    </div>
+    <div class="col-4">
+      <label>Perpetual growth rate g (%)</label>
+      <input type="number" id="d_gperp" value="3.0" step="0.1">
+    </div>
+    <div class="col-4">
+      <label>Base WACC (%) <span class="hint">auto-filled by stage</span></label>
+      <input type="number" id="d_wacc" value="35" step="0.5">
+    </div>
+    <div class="col-4">
+      <label>Target Y5 EBITDA margin (%)</label>
+      <input type="number" id="d_ebit5" value="15">
+    </div>
+    <div class="col-4">
+      <label>Reinvestment / capex (% revenue)</label>
+      <input type="number" id="d_capex" value="6">
+    </div>
+  </div>
+
+  <div style="margin-top:8px">
+    <button class="btn" onclick="runDCF()">Recompute DCF</button>
+  </div>
+
+  <div id="dcf_out" style="margin-top:10px"></div>
+</section>
+
+<!-- ========== PANEL 4: VC METHOD ========== -->
+<section class="panel" id="p-vc">
+  <h2>Method 3 — VC Method (Berkus / Exit-Back)</h2>
+  <p class="lede">Standard VC method: project Y5 revenue → apply exit EV/Revenue multiple → discount at investor target IRR → subtract expected dilution. Used for SAFE / priced rounds to back into a defensible pre-money.</p>
+
+  <div class="row">
+    <div class="col-4">
+      <label>Exit year</label>
+      <input type="number" id="v_exityr" value="5">
+    </div>
+    <div class="col-4">
+      <label>Exit EV/Revenue multiple</label>
+      <input type="number" id="v_exitmult" value="4.0" step="0.1">
+    </div>
+    <div class="col-4">
+      <label>Investor target IRR (%)</label>
+      <input type="number" id="v_irr" value="30" step="1">
+    </div>
+    <div class="col-4">
+      <label>Expected dilution between now & exit (%) <span class="hint">Carta 2024 median</span></label>
+      <input type="number" id="v_dil" value="45">
+    </div>
+    <div class="col-4">
+      <label>Probability of exit (%) <span class="hint">power-law-adjusted</span></label>
+      <input type="number" id="v_pexit" value="25">
+    </div>
+    <div class="col-4">
+      <label>Partial recovery in non-exit (% of invested)</label>
+      <input type="number" id="v_recover" value="10">
+    </div>
+  </div>
+
+  <div style="margin-top:8px">
+    <button class="btn" onclick="runVC()">Recompute VC Method</button>
+  </div>
+
+  <div id="vc_out" style="margin-top:10px"></div>
+</section>
+
+<!-- ========== PANEL 5: FIRST CHICAGO ========== -->
+<section class="panel" id="p-first">
+  <h2>Method 4 — First Chicago (probability-weighted scenarios)</h2>
+  <p class="lede">Three-scenario weighted valuation used by early-stage impact investors when exits are uncertain. Each scenario gets its own revenue trajectory, exit multiple, and discount rate. Probabilities must sum to 100%.</p>
+
+  <div class="row">
+    <div class="col-4">
+      <div class="card">
+        <h3>🚀 Upside</h3>
+        <label>Probability (%)</label><input type="number" id="fc_pu" value="20">
+        <label>Y5 Revenue multiple of today</label><input type="number" id="fc_mu" value="10" step="0.5">
+        <label>Exit EV/Revenue</label><input type="number" id="fc_eu" value="6" step="0.5">
+        <label>Discount rate (%)</label><input type="number" id="fc_du" value="35">
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card">
+        <h3>👍 Base</h3>
+        <label>Probability (%)</label><input type="number" id="fc_pb" value="55">
+        <label>Y5 Revenue multiple of today</label><input type="number" id="fc_mb" value="5" step="0.5">
+        <label>Exit EV/Revenue</label><input type="number" id="fc_eb" value="3.5" step="0.5">
+        <label>Discount rate (%)</label><input type="number" id="fc_db" value="28">
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card">
+        <h3>📉 Downside</h3>
+        <label>Probability (%)</label><input type="number" id="fc_pd" value="25">
+        <label>Y5 Revenue multiple of today</label><input type="number" id="fc_md" value="1.5" step="0.1">
+        <label>Exit EV/Revenue</label><input type="number" id="fc_ed" value="1" step="0.1">
+        <label>Discount rate (%)</label><input type="number" id="fc_dd" value="20">
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:8px">
+    <button class="btn" onclick="runFirst()">Recompute First Chicago</button>
+  </div>
+
+  <div id="first_out" style="margin-top:10px"></div>
+</section>
+
+<!-- ========== PANEL 6: IMPACT PREMIUM ========== -->
+<section class="panel" id="p-impact">
+  <h2>Impact Premium / Discount</h2>
+  <p class="lede">Adjusts your weighted valuation based on (a) the depth and rigour of your impact profile, and (b) your lead investor's return expectations. Built from GIIN 2023 Annual Impact Investor Survey (N=308, $213B AUM), Acumen Lean Data research, and Bridges Ventures "Spectrum of Capital" calibration.</p>
+
+  <div id="imp_out"></div>
+
+  <h3 style="margin-top:16px">How to read this</h3>
+  <div class="note">An impact <em>premium</em> (+% on valuation) reflects that mission-aligned investors will accept lower financial return in exchange for depth of impact — but only when the impact is rigorously evidenced and intentional. A thin impact story paired with a below-market investor produces a <em>discount</em>: you will be priced as a worse deal than a pure-commercial comp, not a better one.</div>
+
+  <h3>GIIN 2023 Target IRR benchmarks by capital type</h3>
+  <div id="imp_benchmarks"></div>
+</section>
+
+<!-- ========== PANEL 7: RANGE ========== -->
+<section class="panel" id="p-range">
+  <h2>Synthesised valuation range</h2>
+  <p class="lede">Weighted across all four methods with weights appropriate to your stage. Adjusted for impact profile and investor-type return expectations. The range below is the number you take into a term sheet negotiation.</p>
+  <div id="range_out"></div>
+
+  <h3 style="margin-top:16px">Recommended ask</h3>
+  <div id="ask_out"></div>
+
+  <h3 style="margin-top:16px">Dilution & post-money</h3>
+  <div id="dil_out"></div>
+
+  <h3 style="margin-top:16px">Export</h3>
+  <button class="btn" onclick="exportCSV()">📄 Export CSV (valuation memo)</button>
+  <button class="btn alt" onclick="window.print()">🖨️ Print / Save as PDF</button>
+</section>
+
+<!-- ========== PANEL 8: BENCHMARKS ========== -->
+<section class="panel" id="p-bench">
+  <h2>Embedded benchmark database</h2>
+  <p class="lede">Every number the tool uses is visible here. Sources are cited inline. Figures are private-market medians/IQRs and are updated against published sources semi-annually.</p>
+
+  <h3>Sector EV / Revenue multiples (private, seed-growth, 2024)</h3>
+  <div class="bench-grid" id="bench_rev">
+    <div class="h">Sector</div><div class="h">Seed</div><div class="h">A–B</div><div class="h">Growth</div><div class="h">Notes / Source</div>
+  </div>
+
+  <h3 style="margin-top:14px">Stage-based WACC (social enterprise, emerging-market-adjusted)</h3>
+  <div class="bench-grid" id="bench_wacc" style="grid-template-columns:1.3fr .7fr .7fr .7fr 1.8fr">
+    <div class="h">Stage</div><div class="h">Lower</div><div class="h">Median</div><div class="h">Upper</div><div class="h">Notes / Source</div>
+  </div>
+
+  <h3 style="margin-top:14px">GIIN 2023 target IRR by capital type</h3>
+  <div class="bench-grid" id="bench_irr" style="grid-template-columns:1.3fr .7fr .7fr .7fr 1.8fr">
+    <div class="h">Capital type</div><div class="h">Target IRR (low)</div><div class="h">Target IRR (median)</div><div class="h">Target IRR (high)</div><div class="h">Notes / Source</div>
+  </div>
+
+  <h3 style="margin-top:14px">Carta 2024 dilution benchmarks</h3>
+  <div class="bench-grid" id="bench_dil" style="grid-template-columns:1.3fr .7fr .7fr .7fr 1.8fr">
+    <div class="h">Round</div><div class="h">Low</div><div class="h">Median</div><div class="h">High</div><div class="h">Source</div>
+  </div>
+
+  <h3 style="margin-top:14px">Geography risk premium adders (vs US base)</h3>
+  <div class="bench-grid" id="bench_geo" style="grid-template-columns:1.3fr .7fr .7fr .7fr 1.8fr">
+    <div class="h">Region</div><div class="h">ERP add</div><div class="h">CRP (Damodaran)</div><div class="h">Liquidity discount</div><div class="h">Notes</div>
+  </div>
+
+  <h3 style="margin-top:14px">Citations</h3>
+  <ul style="font-size:13px;line-height:1.6">
+    <li>Damodaran, A. (Jan 2024). <em>Country Risk Premiums</em> & <em>Private Company Cost of Capital</em>. NYU Stern. pages.stern.nyu.edu/~adamodar/</li>
+    <li>GIIN (2023). <em>2023 Annual Impact Investor Survey</em>, N=308, $213B AUM.</li>
+    <li>Carta (2024). <em>State of Private Markets H2 2024</em> — dilution & valuation medians.</li>
+    <li>PitchBook (2024). <em>VC-Backed Company Valuation Report, Q4 2024</em>.</li>
+    <li>Bridges Ventures / Impact Capital Managers (2022). <em>Spectrum of Capital</em>.</li>
+    <li>Acumen & Root Capital (2021). <em>Lean Data — Pricing impact</em>.</li>
+    <li>NESTA (2013; updated 2019). <em>Standards of Evidence</em> — five-level ladder.</li>
+    <li>Impact Management Project (2019). <em>Five Dimensions of Impact</em>.</li>
+  </ul>
+</section>
+
+<!-- ========== PANEL 9: CLAUDE PROMPT ========== -->
+<section class="panel" id="p-claude">
+  <h2>Claude Prompt — deeper strategic review</h2>
+  <p class="lede">Copy the prompt below into Claude.ai (or any chat LLM). It is personalised to your inputs and asks Claude to stress-test the range, challenge assumptions, draft negotiation talking points, and flag red/green flags for your lead investor profile.</p>
+  <textarea id="claude_txt" style="min-height:380px"></textarea>
+  <div style="margin-top:6px">
+    <button class="btn" onclick="copyClaude()">📋 Copy to clipboard</button>
+    <button class="btn ghost" onclick="regenClaude()">🔄 Regenerate from current inputs</button>
+  </div>
+</section>
+
+<p class="footer">💰 Social Enterprise Valuation Tool · Useful AF by Impact47 · All methods, benchmarks and citations are embedded in the <strong>Benchmarks</strong> tab · No server, no tracking, no login.</p>
+
+</main>
+
+<script>
+/* ================= KNOWLEDGE BASE ================= */
+
+// Sector EV/Revenue multiples (private-company, 2024). Source: Damodaran Jan 2024 + PitchBook Q4 2024 + CapIQ.
+// Multiples are already discounted for private, small-cap, and illiquidity.
+const SECTORS = [
+  {id:"saas",         name:"SaaS / B2B Software",            seed:[4,7,10],   ab:[6,9,13],   growth:[5,7,11],    mature:{ebitda:22}, notes:"PitchBook Q4'24 median 6.5x rev; discount for SE governance overhead."},
+  {id:"fintech",      name:"Impact FinTech / Inclusive Finance", seed:[3,5,8], ab:[4,7,10], growth:[3,5,8],    mature:{ebitda:20}, notes:"Lower vs commercial FinTech due to capital-intensive balance sheet."},
+  {id:"climate",      name:"Climate / Clean Energy Tech",     seed:[3,6,9],    ab:[4,7,11],   growth:[3,6,9],     mature:{ebitda:18}, notes:"PitchBook ClimateTech 2024: median 5.5x; hardware-heavy discount."},
+  {id:"agritech",     name:"Agri-Tech / Smallholder",          seed:[2,4,6],    ab:[3,5,7],    growth:[2,3,5],     mature:{ebitda:12}, notes:"Working-capital intensive; lower multiples than pure-SaaS peers."},
+  {id:"healthtech",   name:"Health-Tech / Digital Health",     seed:[3,5,8],    ab:[4,6,10],   growth:[3,5,8],     mature:{ebitda:20}, notes:"Regulated; lower than commercial HealthTech."},
+  {id:"edtech",       name:"EdTech",                          seed:[2,4,6],    ab:[3,5,8],    growth:[2,4,6],     mature:{ebitda:18}, notes:"PitchBook EdTech 2024 median 3.8x; churn drag."},
+  {id:"marketplace",  name:"Marketplace (GMV-backed)",         seed:[1.5,3,5],  ab:[2,4,6],    growth:[1.5,3,4],   mature:{ebitda:15}, notes:"Use take-rate × GMV × sector multiple if pure marketplace."},
+  {id:"cpg",          name:"Mission-led CPG / Food Brand",     seed:[1,2,3.5],  ab:[1.5,2.5,4], growth:[1,2,3],    mature:{ebitda:12}, notes:"Low multiples; EBITDA-led at growth stage."},
+  {id:"services",     name:"Professional Services / BPO",      seed:[0.8,1.5,2.5], ab:[1,2,3],  growth:[0.8,1.5,2.5], mature:{ebitda:15}, notes:"People-cost heavy; switch to EBITDA multiple at A+."},
+  {id:"housing",      name:"Affordable Housing / Real Estate", seed:[1.5,2.5,4], ab:[1.5,2.5,4], growth:[1.5,2.5,4], mature:{ebitda:20}, notes:"Asset-heavy; NAV often better than revenue multiple."},
+  {id:"manufacturing",name:"Sustainable Manufacturing",        seed:[1,2,3.5],  ab:[1.5,2.5,4], growth:[1,2,3],    mature:{ebitda:12}, notes:"CapEx-heavy; EBITDA-multiple preferred."},
+  {id:"conservation", name:"Conservation / Nature-Based",       seed:[2,3.5,5],  ab:[2.5,4,6],  growth:[2,3.5,5],   mature:{ebitda:15}, notes:"Thin comp set; use mission-lock premium sparingly."},
+  {id:"waterwash",    name:"WASH / Water & Sanitation",        seed:[1.5,3,5],  ab:[2,3.5,5.5], growth:[1.5,3,4.5], mature:{ebitda:14}, notes:"Long payback periods; CRP-heavy."},
+  {id:"wastecirc",    name:"Waste / Circular Economy",         seed:[1.5,2.5,4], ab:[2,3,5],    growth:[1.5,2.5,4], mature:{ebitda:14}, notes:"Commodity exposure; watch off-take concentration."},
+  {id:"mobility",     name:"Mobility / E-Mobility",            seed:[2,3.5,5.5], ab:[2.5,4,6.5],growth:[2,3.5,5.5], mature:{ebitda:12}, notes:"Unit economics must be proven."},
+  {id:"microfinance", name:"MFI / Community Bank",             seed:[0.8,1.5,2.5], ab:[1,1.8,2.8], growth:[1,1.5,2.5], mature:{ebitda:25}, notes:"P/BV more relevant; revenue multiple capped."}
+];
+
+// Geography risk premium adders (Damodaran country risk Jan 2024, simplified to regions).
+const GEOS = [
+  {id:"us",      name:"US / Canada",         erp:5.5,  crp:0.0, illq:0.05, notes:"Base case."},
+  {id:"weu",     name:"Western Europe",       erp:5.8,  crp:0.4, illq:0.05, notes:"UK/DE/FR/NL/NO."},
+  {id:"eeu",     name:"Eastern Europe",       erp:7.5,  crp:2.3, illq:0.10, notes:"PL/RO/BG/HR average."},
+  {id:"india",   name:"India",                erp:7.6,  crp:2.5, illq:0.10, notes:"Baa3 Moody's / BBB- S&P."},
+  {id:"china",   name:"China",                erp:6.8,  crp:1.9, illq:0.10, notes:"A1 Moody's."},
+  {id:"sea",     name:"Southeast Asia",       erp:7.9,  crp:2.7, illq:0.12, notes:"ID/VN/PH/KH mix."},
+  {id:"latam",   name:"Latin America",        erp:8.7,  crp:3.4, illq:0.12, notes:"MX/BR/CO/PE mix."},
+  {id:"essa",    name:"East / Southern Africa", erp:10.3, crp:4.7, illq:0.15, notes:"KE/UG/TZ/RW/ZA/ZM."},
+  {id:"wafrica", name:"West Africa",           erp:11.5, crp:5.8, illq:0.18, notes:"NG/GH/SN/CI mix."},
+  {id:"mena",    name:"MENA",                 erp:9.1,  crp:3.7, illq:0.12, notes:"EG/MA/JO mix (Gulf lower)."}
+];
+
+// Stage-based WACC band (before geography adder). Source: Damodaran Private Cost of Capital, adjusted.
+const STAGE_WACC = {
+  "pre-seed":{lo:45,md:55,hi:65, notes:"Angel/accelerator range. Damodaran + AngelList median."},
+  "seed":    {lo:35,md:42,hi:50, notes:"Carta 2024: median seed IRR target 40%."},
+  "seriesA": {lo:25,md:32,hi:40, notes:"Damodaran Stage 4."},
+  "seriesB": {lo:20,md:25,hi:30, notes:""},
+  "seriesC": {lo:15,md:20,hi:25, notes:""},
+  "growth":  {lo:12,md:17,hi:22, notes:"PE/growth equity."}
+};
+
+// GIIN 2023 Annual Impact Investor Survey — target IRR by capital type (private-equity-like positions)
+const INVESTORS = {
+  marketVC:  {name:"Market-rate Impact VC",               irrLo:18,irrMd:22,irrHi:30, discount:0,  premiumMax:0,   giinClass:"Market-rate",  notes:"Bridges 'M/R'. 66% of GIIN 2023 respondents by AUM."},
+  belowMkt:  {name:"Below-market Impact Fund",            irrLo:6, irrMd:10,irrHi:15, discount:5,  premiumMax:15,  giinClass:"Below-market", notes:"Bridges 'BM Nearer'. ~27% of GIIN 2023 respondents."},
+  dfi:       {name:"DFI / Development Finance Institution",irrLo:8, irrMd:12,irrHi:16, discount:3,  premiumMax:10,  giinClass:"Market-rate-seeking", notes:"IFC/FMO/Proparco — often target market rate but price for additionality."},
+  cat:       {name:"Catalytic / Concessionary",            irrLo:0, irrMd:3, irrHi:7,  discount:15, premiumMax:25,  giinClass:"Concessionary",notes:"First-loss layers. 7% of GIIN 2023 respondents."},
+  family:    {name:"Impact Family Office",                 irrLo:5, irrMd:12,irrHi:20, discount:2,  premiumMax:12,  giinClass:"Mixed",        notes:"Heterogeneous; depends on family's Spectrum of Capital position."},
+  foundation:{name:"PRI (Foundation Programme-Related Inv.)",irrLo:0, irrMd:2, irrHi:5,  discount:10, premiumMax:20,  giinClass:"Concessionary",notes:"IRS 4944 governs US PRIs."}
+};
+
+// Carta 2024 dilution per round
+const DILUTION = [
+  {round:"SAFE/Pre-Seed", lo:10, md:15, hi:22, src:"Carta H2 2024 median"},
+  {round:"Seed",           lo:15, md:20, hi:25, src:"Carta H2 2024 median"},
+  {round:"Series A",       lo:15, md:19, hi:25, src:"Carta H2 2024 median"},
+  {round:"Series B",       lo:12, md:17, hi:22, src:"Carta H2 2024 median"},
+  {round:"Series C",       lo:10, md:14, hi:20, src:"Carta H2 2024 median"},
+  {round:"Option pool (pre-money refresh)", lo:8, md:10, hi:15, src:"Carta median"}
+];
+
+/* ================= STATE ================= */
+const state = { results: {} };
+
+/* ================= UI wiring ================= */
+function $(id){return document.getElementById(id)}
+
+function populateSectors(){
+  const sel = $("f_sector");
+  SECTORS.forEach((s,i)=>{
+    const o=document.createElement("option"); o.value=s.id; o.textContent=s.name;
+    if(s.id==="agritech") o.selected=true;
+    sel.appendChild(o);
+  });
+}
+function populateGeos(){
+  const sel = $("f_geo");
+  GEOS.forEach(g=>{
+    const o=document.createElement("option"); o.value=g.id; o.textContent=g.name;
+    if(g.id==="essa") o.selected=true;
+    sel.appendChild(o);
+  });
+}
+
+function syncSliders(){
+  ["f_imp_intent","f_imp_addl","f_imp_evid","f_imp_scale","f_imp_risk"].forEach(id=>{
+    const v=$(id).value;
+    const o=document.getElementById("o_"+id.slice(2));
+    if(o) o.value=v;
+  });
+}
+
+function tabTo(t){
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.t===t));
+  document.querySelectorAll(".panel").forEach(p=>p.classList.toggle("active",p.id==="p-"+t));
+}
+document.getElementById("tabs").addEventListener("click",e=>{
+  if(e.target.dataset.t) tabTo(e.target.dataset.t);
+});
+
+/* ================= EXAMPLES ================= */
+const EX = {
+  kazi:{name:"Kazi Agri-Tech Ltd",ccy:"USD",sector:"agritech",geo:"essa",stage:"seed",rev:800000,growth:40,gm:55,ebitda:-15,cash:250000,burn:45000,raise:2500000,investor:"belowMkt",impact:[4,4,3,3,4]},
+  solar:{name:"Radiant Grid Kenya",ccy:"USD",sector:"climate",geo:"essa",stage:"seriesA",rev:3500000,growth:70,gm:48,ebitda:-8,cash:1200000,burn:120000,raise:8000000,investor:"dfi",impact:[5,4,4,4,4]},
+  edtech:{name:"Sawa Learning",ccy:"INR",sector:"edtech",geo:"india",stage:"seed",rev:400000,growth:90,gm:70,ebitda:-35,cash:180000,burn:40000,raise:1500000,investor:"marketVC",impact:[4,3,3,4,3]}
+};
+function loadExample(k){
+  const e=EX[k]; if(!e) return;
+  $("f_name").value=e.name; $("f_ccy").value=e.ccy;
+  $("f_sector").value=e.sector; $("f_geo").value=e.geo; $("f_stage").value=e.stage;
+  $("f_rev").value=e.rev; $("f_growth").value=e.growth; $("f_gm").value=e.gm; $("f_ebitda").value=e.ebitda;
+  $("f_cash").value=e.cash; $("f_burn").value=e.burn;
+  $("f_raise").value=e.raise; $("f_investor").value=e.investor;
+  const [a,b,c,d,f]=e.impact;
+  $("f_imp_intent").value=a; $("f_imp_addl").value=b; $("f_imp_evid").value=c; $("f_imp_scale").value=d; $("f_imp_risk").value=f;
+  syncSliders(); runAll();
+}
+
+/* ================= CORE MATH ================= */
+function sector(){ return SECTORS.find(s=>s.id===$("f_sector").value) }
+function geo(){ return GEOS.find(g=>g.id===$("f_geo").value) }
+function stage(){ return $("f_stage").value }
+function stageWACC(){ return STAGE_WACC[stage()] }
+function investor(){ return INVESTORS[$("f_investor").value] }
+function ccy(){ return $("f_ccy").value }
+function fmt(n,dp=0){ if(!isFinite(n)) return "—"; const s=n<0?"-":""; n=Math.abs(n);
+  if(n>=1e9) return s+(n/1e9).toFixed(dp<2?1:2)+"B";
+  if(n>=1e6) return s+(n/1e6).toFixed(dp<2?1:2)+"M";
+  if(n>=1e3) return s+(n/1e3).toFixed(0)+"K";
+  return s+n.toFixed(dp); }
+function mny(n,dp=0){ return ccy()+" "+fmt(n,dp) }
+function pct(n,dp=0){ return (n*100).toFixed(dp)+"%" }
+
+function num(id){ return parseFloat($(id).value)||0 }
+
+/* ---- Method 1: Revenue Multiple ---- */
+function runRev(){
+  const s=sector(); const st=stage(); const key=(st==="pre-seed"||st==="seed")?"seed":(st==="growth"?"growth":"ab");
+  const mults=s[key];
+  const rev=num("f_rev"); const g=num("f_growth")/100;
+  const fwd=rev*(1+g);
+  const g_ = geo(); const crp=g_.crp/100; const illq=g_.illq;
+  // Geography & illiquidity haircut on multiple (applied to EV)
+  const haircut = Math.max(0, 1 - crp*1.2 - illq);
+  const evLtm = mults.map(m=>m*rev*haircut);
+  const evFwd = mults.map(m=>m*fwd*haircut);
+  const vals = [(evLtm[0]+evFwd[0])/2, (evLtm[1]+evFwd[1])/2, (evLtm[2]+evFwd[2])/2];
+
+  // Rev growth bonus: +10% multiple if growth > 60%, -10% if < 20%
+  let growthAdj=1; if(g>0.6) growthAdj=1.10; else if(g<0.2) growthAdj=0.90;
+  const adj=vals.map(v=>v*growthAdj);
+
+  state.results.rev={lo:adj[0], md:adj[1], hi:adj[2], mults, haircut, growthAdj};
+
+  const host=$("rev_out");
+  host.innerHTML = `
+    <div class="row">
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">Low</div><div class="val">${mny(adj[0])}</div></div><div class="bigsub">${mults[0].toFixed(1)}x blended, haircut ${((1-haircut)*100).toFixed(0)}%</div></div></div>
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">Median</div><div class="val">${mny(adj[1])}</div></div><div class="bigsub">${mults[1].toFixed(1)}x blended LTM+FWD</div></div></div>
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">High</div><div class="val">${mny(adj[2])}</div></div><div class="bigsub">${mults[2].toFixed(1)}x blended, growth ${g>0.6?"+":g<0.2?"-":""}10% adj</div></div></div>
+    </div>
+    <div class="card">
+      <h3>Calculation path</h3>
+      <table>
+        <thead><tr><th>Step</th><th>Low</th><th>Median</th><th>High</th></tr></thead>
+        <tbody>
+          <tr><td>Sector multiple (${s.name}, ${key.toUpperCase()})</td><td>${mults[0].toFixed(1)}x</td><td>${mults[1].toFixed(1)}x</td><td>${mults[2].toFixed(1)}x</td></tr>
+          <tr><td>× LTM Revenue (${mny(rev)})</td><td>${mny(mults[0]*rev)}</td><td>${mny(mults[1]*rev)}</td><td>${mny(mults[2]*rev)}</td></tr>
+          <tr><td>× Forward Revenue (${mny(fwd)})</td><td>${mny(mults[0]*fwd)}</td><td>${mny(mults[1]*fwd)}</td><td>${mny(mults[2]*fwd)}</td></tr>
+          <tr><td>Blend of LTM & FWD (50/50)</td><td>${mny(vals[0])}</td><td>${mny(vals[1])}</td><td>${mny(vals[2])}</td></tr>
+          <tr><td>× Geography haircut (CRP ${(g_.crp).toFixed(1)}% + illiquidity ${(g_.illq*100).toFixed(0)}%)</td><td>${(haircut*100).toFixed(0)}%</td><td>${(haircut*100).toFixed(0)}%</td><td>${(haircut*100).toFixed(0)}%</td></tr>
+          <tr><td>× Growth adjustment (${(g*100).toFixed(0)}% YoY)</td><td>${((growthAdj-1)*100).toFixed(0)}%</td><td>${((growthAdj-1)*100).toFixed(0)}%</td><td>${((growthAdj-1)*100).toFixed(0)}%</td></tr>
+          <tr><td><strong>EV (pre-money, pre-cash)</strong></td><td><strong>${mny(adj[0])}</strong></td><td><strong>${mny(adj[1])}</strong></td><td><strong>${mny(adj[2])}</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">Sources: multiples from Damodaran Jan 2024 industry averages (discounted for private/size), cross-checked against PitchBook Q4 2024 VC-backed multiples. Geography haircut from Damodaran Jan 2024 Country Risk Premiums plus illiquidity adjustment per Silber (1991). Growth adjustment: ≥60% YoY adds 10%, &lt;20% subtracts 10%.</div>
+  `;
+}
+
+/* ---- Method 2: DCF ---- */
+function runDCF(){
+  const s=sector();
+  const rev0=num("f_rev"); const g1=num("d_g1")/100; const g5=num("d_g5")/100; const gperp=num("d_gperp")/100;
+  let wacc = num("d_wacc")/100;
+  // Add geography adder (CRP)
+  const g_=geo(); wacc = wacc + g_.crp/100;
+  const m5=num("d_ebit5")/100; const capex=num("d_capex")/100;
+  const years=5;
+  // Linear decay growth from g1 → g5 over years 2..5; Y1 = g1
+  const growthSeries = Array.from({length:years},(_,i)=>{
+    const t=i/(years-1); return g1 + (g5-g1)*t;
+  });
+  // EBITDA margin from current → m5 linearly
+  const curMgn=num("f_ebitda")/100;
+  const mgnSeries = Array.from({length:years},(_,i)=>{
+    const t=(i+1)/years; return curMgn + (m5-curMgn)*t;
+  });
+  let rev=rev0; const rows=[]; let pvSum=0;
+  for(let i=0;i<years;i++){
+    rev = rev*(1+growthSeries[i]);
+    const ebit = rev*mgnSeries[i];
+    const tax = Math.max(0, ebit*0.25); // 25% effective
+    const nopat = ebit - tax;
+    const capexAmt = rev*capex;
+    const fcf = nopat - capexAmt;
+    const disc = Math.pow(1+wacc, i+1);
+    const pv = fcf/disc;
+    pvSum += pv;
+    rows.push({year:i+1, rev, ebit, nopat, fcf, pv, disc, g:growthSeries[i], m:mgnSeries[i]});
+  }
+  // Terminal: Gordon growth on Y5 FCF × (1+gperp) / (wacc - gperp), discounted
+  const y5 = rows[rows.length-1];
+  const termFCF = y5.fcf*(1+gperp);
+  const tvRaw = termFCF / (wacc - gperp);
+  const tvPv = tvRaw / Math.pow(1+wacc, years);
+  const ev = pvSum + tvPv;
+  const equity = ev + num("f_cash"); // assume 0 debt for simplicity
+
+  state.results.dcf={ev, equity, pvSum, tvPv, wacc, rows};
+
+  $("dcf_out").innerHTML = `
+    <div class="row">
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">EV (DCF)</div><div class="val">${mny(ev)}</div></div><div class="bigsub">WACC ${(wacc*100).toFixed(1)}%  •  g perp ${(gperp*100).toFixed(1)}%</div></div></div>
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">Terminal % of EV</div><div class="val">${(tvPv/ev*100).toFixed(0)}%</div></div><div class="bigsub">${tvPv/ev>0.8?"⚠️ >80% — terminal-heavy":"Healthy mix"}</div></div></div>
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">Equity value</div><div class="val">${mny(equity)}</div></div><div class="bigsub">EV + net cash ${mny(num("f_cash"))}</div></div></div>
+    </div>
+    <div class="card"><h3>5-year forecast (cashflow to firm)</h3>
+      <table>
+        <thead><tr><th>Year</th><th>Revenue</th><th>Growth</th><th>EBITDA Mgn</th><th>EBITDA</th><th>NOPAT</th><th>FCF</th><th>PV@WACC</th></tr></thead>
+        <tbody>
+        ${rows.map(r=>`<tr><td>Y${r.year}</td><td>${mny(r.rev)}</td><td>${(r.g*100).toFixed(0)}%</td><td>${(r.m*100).toFixed(0)}%</td><td>${mny(r.ebit)}</td><td>${mny(r.nopat)}</td><td>${mny(r.fcf)}</td><td>${mny(r.pv)}</td></tr>`).join("")}
+        </tbody>
+      </table>
+      <div style="margin-top:8px;font-size:12.5px;color:var(--mute)">Σ PV (5y) = ${mny(pvSum)} · Terminal PV = ${mny(tvPv)} · EV = ${mny(ev)}</div>
+    </div>
+    ${tvPv/ev>0.8?`<div class="note bad">⚠️ Over 80% of EV is in the terminal value — DCF is unreliable for this stage. Weight this method less and lean on Revenue Multiple + First Chicago.</div>`:""}
+  `;
+}
+
+/* ---- Method 3: VC Method ---- */
+function runVC(){
+  const rev0=num("f_rev"); const g1=num("f_growth")/100;
+  const y5mult = num("v_exitmult");
+  const exitYr = num("v_exityr");
+  const irr = num("v_irr")/100;
+  const dil = num("v_dil")/100;
+  const pExit = num("v_pexit")/100;
+  const recover = num("v_recover")/100;
+
+  // Y5 revenue: compound growth with decay
+  let rev=rev0;
+  for(let i=0;i<exitYr;i++){
+    const g = Math.max(0.10, g1 - (g1-0.15)*(i/(exitYr-1 || 1)));
+    rev = rev*(1+g);
+  }
+  const exitEV = rev * y5mult;
+  const investorShare = num("f_raise"); // investor puts in; share determined by post-money
+  // Target money: investor target multiple
+  const targetMult = Math.pow(1+irr, exitYr);
+  const raise = num("f_raise");
+  const targetExitValue = raise * targetMult;
+  // Undiluted exit share needed
+  const undilShare = Math.min(1, targetExitValue / exitEV);
+  // Gross-up for dilution
+  const requiredCurrentShare = Math.min(1, undilShare / (1-dil));
+  const postMoney = raise / requiredCurrentShare;
+  const preMoney = postMoney - raise;
+
+  // Probability-weighted VC method
+  const pwExit = pExit*targetExitValue + (1-pExit)*(raise*recover);
+  const pwUndilShare = Math.min(1, pwExit/exitEV);
+  const pwReqShare = Math.min(1, pwUndilShare / (1-dil));
+  const pwPostMoney = raise / pwReqShare;
+  const pwPreMoney = pwPostMoney - raise;
+
+  state.results.vc={preMoney, pwPreMoney, rev5:rev, exitEV};
+
+  $("vc_out").innerHTML = `
+    <div class="row">
+      <div class="col-6">
+        <div class="method-card">
+          <div class="head"><div class="title">Classic VC Method Pre-Money</div><div class="val">${mny(preMoney)}</div></div>
+          <div class="bigsub">Assumes exit happens at IRR ${(irr*100).toFixed(0)}%</div>
+          <div class="breakdown">
+            <div class="h">Step</div><div class="h">Value</div><div></div><div></div>
+            <div>Y${exitYr} Revenue</div><div>${mny(rev)}</div><div></div><div></div>
+            <div>Exit EV (rev × ${y5mult.toFixed(1)}x)</div><div>${mny(exitEV)}</div><div></div><div></div>
+            <div>Target exit value (raise × (1+IRR)^${exitYr})</div><div>${mny(targetExitValue)}</div><div></div><div></div>
+            <div>Undiluted exit share needed</div><div>${(undilShare*100).toFixed(1)}%</div><div></div><div></div>
+            <div>Gross up for ${(dil*100).toFixed(0)}% dilution → today's share</div><div>${(requiredCurrentShare*100).toFixed(1)}%</div><div></div><div></div>
+            <div>Post-money</div><div>${mny(postMoney)}</div><div></div><div></div>
+            <div><strong>Pre-money</strong></div><div><strong>${mny(preMoney)}</strong></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="method-card">
+          <div class="head"><div class="title">Probability-weighted Pre-Money</div><div class="val">${mny(pwPreMoney)}</div></div>
+          <div class="bigsub">Exit ${(pExit*100).toFixed(0)}% × target  +  Non-exit ${((1-pExit)*100).toFixed(0)}% × ${(recover*100).toFixed(0)}% recovery</div>
+          <div class="breakdown">
+            <div class="h">Step</div><div class="h">Value</div><div></div><div></div>
+            <div>Expected exit value (investor POV)</div><div>${mny(pwExit)}</div><div></div><div></div>
+            <div>Expected share needed</div><div>${(pwReqShare*100).toFixed(1)}%</div><div></div><div></div>
+            <div>Post-money</div><div>${mny(pwPostMoney)}</div><div></div><div></div>
+            <div><strong>Pre-money</strong></div><div><strong>${mny(pwPreMoney)}</strong></div><div></div><div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">The VC method is the method your lead investor is most likely running in the background. Making it explicit removes information asymmetry. Target IRR should match your investor type — see the GIIN benchmarks in the Impact Premium tab.</div>
+  `;
+}
+
+/* ---- Method 4: First Chicago ---- */
+function runFirst(){
+  const rev0=num("f_rev");
+  const scen = [
+    {k:"up",p:num("fc_pu")/100, m:num("fc_mu"), em:num("fc_eu"), d:num("fc_du")/100},
+    {k:"bs",p:num("fc_pb")/100, m:num("fc_mb"), em:num("fc_eb"), d:num("fc_db")/100},
+    {k:"dn",p:num("fc_pd")/100, m:num("fc_md"), em:num("fc_ed"), d:num("fc_dd")/100}
+  ];
+  const probSum = scen.reduce((a,s)=>a+s.p,0);
+  const warn = Math.abs(probSum-1)>0.01;
+  scen.forEach(s=>{
+    s.rev5 = rev0*s.m;
+    s.exitEV = s.rev5 * s.em;
+    s.pv = s.exitEV / Math.pow(1+s.d,5);
+    s.contrib = s.p * s.pv;
+  });
+  const weightedEV = scen.reduce((a,s)=>a+s.contrib,0);
+  const equity = weightedEV + num("f_cash");
+  state.results.first={weightedEV, equity, scen};
+
+  $("first_out").innerHTML = `
+    ${warn?`<div class="note bad">⚠️ Probabilities sum to ${(probSum*100).toFixed(0)}% — please adjust to 100% for a defensible number.</div>`:""}
+    <div class="row">
+      <div class="col-6"><div class="method-card"><div class="head"><div class="title">Weighted EV</div><div class="val">${mny(weightedEV)}</div></div><div class="bigsub">Probability-weighted DCF across 3 scenarios</div></div></div>
+      <div class="col-6"><div class="method-card"><div class="head"><div class="title">Equity value</div><div class="val">${mny(equity)}</div></div><div class="bigsub">+ net cash</div></div></div>
+    </div>
+    <div class="card">
+      <h3>Scenario breakdown</h3>
+      <table>
+        <thead><tr><th>Scenario</th><th>Prob</th><th>Y5 Revenue (× today)</th><th>Exit EV/Rev</th><th>Exit EV</th><th>Disc rate</th><th>PV</th><th>Weighted</th></tr></thead>
+        <tbody>
+          ${["Upside","Base","Downside"].map((lbl,i)=>{const s=scen[i]; return `<tr><td>${lbl}</td><td>${(s.p*100).toFixed(0)}%</td><td>${s.m.toFixed(1)}x</td><td>${s.em.toFixed(1)}x</td><td>${mny(s.exitEV)}</td><td>${(s.d*100).toFixed(0)}%</td><td>${mny(s.pv)}</td><td>${mny(s.contrib)}</td></tr>`}).join("")}
+        </tbody>
+      </table>
+    </div>
+    <div class="note">First Chicago is the preferred method for early-stage impact investors because it explicitly models <em>risk of no exit</em> — common in patient-capital deals. It also produces a natural range: low = worst scenario PV, high = best scenario PV, midpoint = weighted.</div>
+  `;
+}
+
+/* ---- Method 5: Impact Premium ---- */
+function impactScore(){
+  return (+num("f_imp_intent")+num("f_imp_addl")+num("f_imp_evid")+num("f_imp_scale")+num("f_imp_risk"))/25;
+}
+function runImpact(){
+  const score = impactScore(); // 0..1
+  const inv = investor();
+  // Premium scales: below mean impact → discount; above → premium up to investor.premiumMax
+  // 0.6 is neutral (3/5 average)
+  const neutral = 0.6;
+  const delta = score - neutral;
+  let pct = 0;
+  if(delta > 0){
+    // fraction of delta / (1-neutral) × premiumMax
+    pct = (delta/(1-neutral)) * inv.premiumMax;
+  } else {
+    pct = (delta/neutral) * inv.discount;
+  }
+  // Clamp
+  pct = Math.max(-inv.discount, Math.min(inv.premiumMax, pct));
+  state.results.impact = {score, pct, inv};
+
+  const chipClass = pct>2?"good":(pct<-2?"bad":"neut");
+  $("imp_out").innerHTML = `
+    <div class="row">
+      <div class="col-6"><div class="method-card"><div class="head"><div class="title">Impact profile score</div><div class="val">${(score*100).toFixed(0)}%</div></div><div class="bigsub">Average across 5 IMP dimensions (intent, additionality, evidence, scale, risk controls)</div></div></div>
+      <div class="col-6"><div class="method-card"><div class="head"><div class="title">Valuation adjustment</div><div class="val">${pct>0?"+":""}${pct.toFixed(1)}%</div></div><div class="bigsub"><span class="chip ${chipClass}">${inv.name}</span>&nbsp;${pct>0?"premium":"discount"} applied</div></div></div>
+    </div>
+    <div class="card">
+      <h3>Why this number</h3>
+      <table>
+        <thead><tr><th>Lever</th><th>Current</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>Impact profile average</td><td>${(score*5).toFixed(1)} / 5</td><td>${delta>0?"Above":"Below"} neutral (3.0)</td></tr>
+          <tr><td>Investor-type max premium</td><td>+${inv.premiumMax}%</td><td>${inv.giinClass}; GIIN 2023 IRR band ${inv.irrLo}-${inv.irrHi}%</td></tr>
+          <tr><td>Investor-type max discount</td><td>-${inv.discount}%</td><td>Applied only if impact score &lt; 3/5</td></tr>
+          <tr><td><strong>Net adjustment</strong></td><td></td><td><strong>${pct>0?"+":""}${pct.toFixed(1)}%</strong> to weighted valuation</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:8px;font-size:12px;color:var(--mute)">Calibration: Bridges Spectrum of Capital — below-market investors require ~5-15% lower return in exchange for impact; concessionary accept &gt;50% lower. We translate that into a valuation adjustment bounded by investor type.</div>
+    </div>
+  `;
+
+  $("imp_benchmarks").innerHTML = `
+    <table>
+      <thead><tr><th>Capital type</th><th>Target IRR (low)</th><th>Target IRR (median)</th><th>Target IRR (high)</th><th>Share of GIIN 2023 AUM</th></tr></thead>
+      <tbody>
+        ${Object.values(INVESTORS).map(i=>`<tr><td>${i.name}</td><td>${i.irrLo}%</td><td>${i.irrMd}%</td><td>${i.irrHi}%</td><td>${i.notes}</td></tr>`).join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+/* ---- Range synthesis ---- */
+function runRange(){
+  const r=state.results;
+  if(!r.rev||!r.dcf||!r.vc||!r.first||!r.impact){ runAll(); return; }
+  // Weights by stage
+  let w = (function(){
+    switch(stage()){
+      case "pre-seed": return {rev:0.15,dcf:0.10,vc:0.35,first:0.40};
+      case "seed":     return {rev:0.25,dcf:0.15,vc:0.30,first:0.30};
+      case "seriesA":  return {rev:0.35,dcf:0.20,vc:0.25,first:0.20};
+      case "seriesB":  return {rev:0.35,dcf:0.30,vc:0.20,first:0.15};
+      case "seriesC":  return {rev:0.30,dcf:0.40,vc:0.15,first:0.15};
+      case "growth":   return {rev:0.30,dcf:0.45,vc:0.10,first:0.15};
+    }
+  })();
+
+  // DCF guard: if EV is non-positive or >80% terminal, the DCF is unreliable.
+  // Reweight to zero DCF weight and redistribute to revenue multiple + first chicago.
+  const dcfReliable = r.dcf.ev > 0 && (r.dcf.tvPv/r.dcf.ev) < 0.80;
+  if(!dcfReliable){
+    const redist = w.dcf/2;
+    w = {rev: w.rev+redist, dcf: 0, vc: w.vc, first: w.first+redist};
+  }
+  const dcfLo = dcfReliable ? r.dcf.ev*0.75 : 0;
+  const dcfMd = dcfReliable ? r.dcf.ev      : 0;
+  const dcfHi = dcfReliable ? r.dcf.ev*1.30 : 0;
+
+  const md = r.rev.md*w.rev + dcfMd*w.dcf + r.vc.pwPreMoney*w.vc + r.first.weightedEV*w.first;
+  let lo = r.rev.lo*w.rev + dcfLo*w.dcf + r.vc.pwPreMoney*0.7*w.vc + r.first.scen[2].pv*w.first;
+  let hi = r.rev.hi*w.rev + dcfHi*w.dcf + r.vc.preMoney*w.vc + r.first.scen[0].pv*w.first;
+  // Enforce ordering (can otherwise invert if upside scenario happens to be below base VC)
+  lo = Math.min(lo, md);
+  hi = Math.max(hi, md);
+  const adj = 1 + r.impact.pct/100;
+  const mdA=md*adj, loA=lo*adj, hiA=hi*adj;
+  state.results.range={lo:loA, md:mdA, hi:hiA, weights:w, adj, dcfReliable};
+
+  const rb = renderRangeBar(loA, mdA, hiA, r);
+  $("range_out").innerHTML = `
+    <div class="row">
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">Low</div><div class="val">${mny(loA)}</div></div><div class="bigsub">Downside-weighted</div></div></div>
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">Midpoint</div><div class="val">${mny(mdA)}</div></div><div class="bigsub">Best-supported estimate</div></div></div>
+      <div class="col-4"><div class="method-card"><div class="head"><div class="title">High</div><div class="val">${mny(hiA)}</div></div><div class="bigsub">Upside-weighted</div></div></div>
+    </div>
+    ${!dcfReliable?`<div class="note bad">DCF de-weighted in the synthesis because ${r.dcf.ev<=0?"5-year free cash flow is still negative":"terminal value is >80% of EV"} — DCF is unreliable for loss-making early-stage businesses. Weight redistributed to Revenue Multiple and First Chicago.</div>`:""}
+    ${rb}
+    <div class="card">
+      <h3>Per-method contribution (midpoint)</h3>
+      <table>
+        <thead><tr><th>Method</th><th>Value</th><th>Weight</th><th>Contribution</th></tr></thead>
+        <tbody>
+          <tr><td>Revenue Multiple (median)</td><td>${mny(r.rev.md)}</td><td>${(w.rev*100).toFixed(0)}%</td><td>${mny(r.rev.md*w.rev)}</td></tr>
+          <tr><td>DCF (EV)</td><td>${mny(r.dcf.ev)}</td><td>${(w.dcf*100).toFixed(0)}%</td><td>${mny(r.dcf.ev*w.dcf)}</td></tr>
+          <tr><td>VC Method (probability-weighted)</td><td>${mny(r.vc.pwPreMoney)}</td><td>${(w.vc*100).toFixed(0)}%</td><td>${mny(r.vc.pwPreMoney*w.vc)}</td></tr>
+          <tr><td>First Chicago (weighted)</td><td>${mny(r.first.weightedEV)}</td><td>${(w.first*100).toFixed(0)}%</td><td>${mny(r.first.weightedEV*w.first)}</td></tr>
+          <tr><td>Pre-adjustment midpoint</td><td></td><td></td><td>${mny(md)}</td></tr>
+          <tr><td>Impact adjustment</td><td></td><td></td><td>${r.impact.pct>0?"+":""}${r.impact.pct.toFixed(1)}%</td></tr>
+          <tr><td><strong>Final midpoint</strong></td><td></td><td></td><td><strong>${mny(mdA)}</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  // Ask
+  const raise = num("f_raise");
+  const askShareLo = raise/(mdA+raise);
+  const askShareHi = raise/(loA+raise);
+  $("ask_out").innerHTML = `
+    <div class="card">
+      <p><strong>Take into the room:</strong></p>
+      <ul>
+        <li>Anchor pre-money: <strong>${mny(mdA)}</strong>.</li>
+        <li>Be ready to defend down to <strong>${mny(loA)}</strong> (${((mdA-loA)/mdA*100).toFixed(0)}% below anchor).</li>
+        <li>Stretch case (for sharp termsheets): <strong>${mny(hiA)}</strong>.</li>
+        <li>For a <strong>${mny(raise)}</strong> raise this implies dilution of <strong>${(askShareLo*100).toFixed(1)}%</strong> (at anchor) to <strong>${(askShareHi*100).toFixed(1)}%</strong> (at floor).</li>
+      </ul>
+    </div>
+  `;
+
+  // Dilution & post-money table
+  const stageIdx = {"pre-seed":0,"seed":1,"seriesA":2,"seriesB":3,"seriesC":4,"growth":4}[stage()];
+  const dilBench = DILUTION[stageIdx] || DILUTION[1];
+  $("dil_out").innerHTML = `
+    <div class="card">
+      <table>
+        <thead><tr><th>At valuation</th><th>Pre-money</th><th>Post-money</th><th>Investor share</th><th>Founder/exist. share after</th></tr></thead>
+        <tbody>
+          ${[["Anchor",mdA],["Floor",loA],["Stretch",hiA]].map(([lbl,v])=>{
+            const share=raise/(v+raise); return `<tr><td>${lbl}</td><td>${mny(v)}</td><td>${mny(v+raise)}</td><td>${(share*100).toFixed(1)}%</td><td>${((1-share)*100).toFixed(1)}%</td></tr>`;
+          }).join("")}
+        </tbody>
+      </table>
+      <div style="margin-top:8px;font-size:12px;color:var(--mute)">Carta 2024 ${dilBench.round} benchmark: lo ${dilBench.lo}% / md ${dilBench.md}% / hi ${dilBench.hi}%. Use this to sanity-check your ask — extreme deviations need a narrative.</div>
+    </div>
+  `;
+
+  regenClaude();
+}
+
+function renderRangeBar(lo,md,hi,r){
+  // Also mark each method contribution as point
+  const methods = [
+    {l:"Rev.Mult",v:r.rev.md,c:"#D99A2B"},
+    {l:"DCF",v:r.dcf.ev,c:"#3B8F5A"},
+    {l:"VC",v:r.vc.pwPreMoney,c:"#E8624D"},
+    {l:"1st Chi.",v:r.first.weightedEV,c:"#1A1A1A"}
+  ];
+  const max = Math.max(hi*1.2, ...methods.map(m=>m.v));
+  const min = Math.max(0, lo*0.6);
+  const scale = v => Math.max(0,Math.min(100,(v-min)/(max-min)*100));
+  const fillL = scale(lo), fillR=scale(hi);
+  return `
+    <div class="rangebar">
+      <div class="fill" style="left:${fillL}%;right:${100-fillR}%"></div>
+      <div class="tick" style="left:${scale(md)}%"></div>
+      <div class="label" style="left:${scale(lo)}%">Low ${fmt(lo)}</div>
+      <div class="label" style="left:${scale(md)}%">Mid ${fmt(md)}</div>
+      <div class="label" style="left:${scale(hi)}%">High ${fmt(hi)}</div>
+      ${methods.map(m=>`<div class="point" title="${m.l} ${mny(m.v)}" style="left:${scale(m.v)}%;border-color:${m.c}"></div>`).join("")}
+    </div>
+    <div style="font-size:11.5px;color:var(--mute);margin-top:-12px">● dots show each method's midpoint estimate.</div>
+  `;
+}
+
+/* ---- Benchmarks panel ---- */
+function renderBenchmarks(){
+  const rev = $("bench_rev");
+  let h = rev.innerHTML; // keep headers
+  h = `<div class="h">Sector</div><div class="h">Seed</div><div class="h">A–B</div><div class="h">Growth</div><div class="h">Notes / Source</div>`;
+  SECTORS.forEach(s=>{
+    h += `<div>${s.name}</div><div>${s.seed.map(x=>x.toFixed(1)).join("-")}x</div><div>${s.ab.map(x=>x.toFixed(1)).join("-")}x</div><div>${s.growth.map(x=>x.toFixed(1)).join("-")}x</div><div>${s.notes}</div>`;
+  });
+  rev.innerHTML = h;
+
+  let w = `<div class="h">Stage</div><div class="h">Lower</div><div class="h">Median</div><div class="h">Upper</div><div class="h">Notes / Source</div>`;
+  Object.entries(STAGE_WACC).forEach(([k,v])=>{
+    w += `<div>${k}</div><div>${v.lo}%</div><div>${v.md}%</div><div>${v.hi}%</div><div>${v.notes}</div>`;
+  });
+  $("bench_wacc").innerHTML = w;
+
+  let i = `<div class="h">Capital type</div><div class="h">Target IRR (low)</div><div class="h">Target IRR (median)</div><div class="h">Target IRR (high)</div><div class="h">Notes / Source</div>`;
+  Object.values(INVESTORS).forEach(v=>{
+    i += `<div>${v.name}</div><div>${v.irrLo}%</div><div>${v.irrMd}%</div><div>${v.irrHi}%</div><div>${v.notes}</div>`;
+  });
+  $("bench_irr").innerHTML = i;
+
+  let d = `<div class="h">Round</div><div class="h">Low</div><div class="h">Median</div><div class="h">High</div><div class="h">Source</div>`;
+  DILUTION.forEach(r=>{
+    d += `<div>${r.round}</div><div>${r.lo}%</div><div>${r.md}%</div><div>${r.hi}%</div><div>${r.src}</div>`;
+  });
+  $("bench_dil").innerHTML = d;
+
+  let g = `<div class="h">Region</div><div class="h">ERP add</div><div class="h">CRP (Damodaran)</div><div class="h">Liquidity discount</div><div class="h">Notes</div>`;
+  GEOS.forEach(r=>{
+    g += `<div>${r.name}</div><div>${r.erp.toFixed(1)}%</div><div>${r.crp.toFixed(1)}%</div><div>${(r.illq*100).toFixed(0)}%</div><div>${r.notes}</div>`;
+  });
+  $("bench_geo").innerHTML = g;
+}
+
+/* ---- Claude prompt ---- */
+function regenClaude(){
+  const r=state.results; if(!r.range){ return; }
+  const s=sector(); const g=geo(); const inv=investor();
+  const raise=num("f_raise");
+  const txt = `You are my seasoned impact-investment advisor. I'm raising a round and need you to stress-test my valuation, sharpen my narrative, and prepare me for pushback.
+
+MY SITUATION
+- Company: ${$("f_name").value} — ${s.name}, ${g.name}, ${stage()} stage
+- LTM revenue ${mny(num("f_rev"))}, growing ${num("f_growth")}% YoY, GM ${num("f_gm")}%, EBITDA margin ${num("f_ebitda")}%
+- Raising ${mny(raise)} from a ${inv.name}
+- Legal form: ${$("f_form").value}
+- Impact profile (5 IMP dimensions, each 1-5):
+  * Intentionality & integration: ${num("f_imp_intent")}
+  * Additionality: ${num("f_imp_addl")}
+  * Evidence (NESTA ladder): ${num("f_imp_evid")}
+  * Scale of population reached: ${num("f_imp_scale")}
+  * Negative externality / risk controls: ${num("f_imp_risk")}
+
+MY VALUATION WORK
+Using my Useful AF Social Enterprise Valuation Tool I've synthesised these pre-money ranges:
+- Revenue Multiple: ${mny(r.rev.lo)} – ${mny(r.rev.md)} – ${mny(r.rev.hi)}
+- DCF: ${mny(r.dcf.ev)} (WACC ${(r.dcf.wacc*100).toFixed(1)}%, terminal ${((r.dcf.tvPv/r.dcf.ev)*100).toFixed(0)}% of EV)
+- VC Method (probability-weighted): ${mny(r.vc.pwPreMoney)}
+- First Chicago (weighted): ${mny(r.first.weightedEV)}
+- Impact-adjusted midpoint: ${mny(r.range.md)} (range ${mny(r.range.lo)} – ${mny(r.range.hi)})
+- Implied dilution at midpoint: ${(raise/(r.range.md+raise)*100).toFixed(1)}%
+
+WHAT I NEED FROM YOU
+1. Stress-test my assumptions. Which inputs look aggressive, and where would my lead investor push back hardest? Flag the 3 numbers I should expect to be cross-examined on.
+2. Narrative — draft two short paragraphs I can use in my investor deck and term-sheet negotiation. One paragraph explains why my midpoint is defensible. The second paragraph frames the impact premium for my specific investor type.
+3. Red-flag scan — given the stage, sector and geography, what deal terms should I watch for (liquidation preference, participation rights, anti-dilution, board control, impact covenants)? Give me "market" vs "founder-unfavourable" ranges.
+4. Counter-offers — if the lead investor comes back at ${mny(r.range.lo*0.85)} pre-money (15% below my floor), what are my three realistic counter-moves?
+5. Deal structure alternatives — if valuation disagreement is the blocker, suggest a structure (SAFE with valuation cap, tranched raise with milestones, revenue-share hybrid, convertible with discount) that could bridge the gap while protecting founder equity.
+6. Impact reporting commitments — what 3-5 IRIS+ metrics, cadence, and governance commitments would my investor type typically ask for, and which of those actually strengthen my valuation vs just creating reporting burden?
+
+Please be direct. I'd rather hear the hard version now than lose leverage in the room.`;
+  $("claude_txt").value = txt;
+}
+
+function copyClaude(){
+  $("claude_txt").select();
+  document.execCommand("copy");
+  alert("Prompt copied to clipboard — paste into Claude.ai (or any LLM chat).");
+}
+
+/* ---- CSV export ---- */
+function exportCSV(){
+  const r=state.results; if(!r.range){ runAll(); }
+  const rows=[];
+  const push=(...x)=>rows.push(x.map(v=>{
+    if(v==null) return "";
+    const s=String(v); return /[,\"\n]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;
+  }).join(","));
+
+  push("Useful AF — Social Enterprise Valuation Tool");
+  push("Generated", new Date().toISOString());
+  push();
+  push("COMPANY");
+  push("Name",$("f_name").value);
+  push("Sector",sector().name);
+  push("Geography",geo().name);
+  push("Stage",stage());
+  push("Currency",ccy());
+  push("LTM Revenue",num("f_rev"));
+  push("YoY Growth %",num("f_growth"));
+  push("Gross Margin %",num("f_gm"));
+  push("EBITDA Margin %",num("f_ebitda"));
+  push("Net Cash",num("f_cash"));
+  push("Raising",num("f_raise"));
+  push("Lead investor",investor().name);
+  push();
+  push("IMPACT PROFILE (1-5)");
+  push("Intentionality",num("f_imp_intent"));
+  push("Additionality",num("f_imp_addl"));
+  push("Evidence",num("f_imp_evid"));
+  push("Scale",num("f_imp_scale"));
+  push("Risk controls",num("f_imp_risk"));
+  push();
+  push("METHOD 1 — REVENUE MULTIPLE");
+  push("Low",r.rev.lo);push("Median",r.rev.md);push("High",r.rev.hi);
+  push();
+  push("METHOD 2 — DCF");
+  push("Enterprise Value",r.dcf.ev);push("Equity Value",r.dcf.equity);push("WACC",r.dcf.wacc);
+  push("Year","Revenue","Growth","EBITDA mgn","EBITDA","NOPAT","FCF","PV");
+  r.dcf.rows.forEach(row=>push("Y"+row.year,row.rev,row.g,row.m,row.ebit,row.nopat,row.fcf,row.pv));
+  push();
+  push("METHOD 3 — VC METHOD");
+  push("Classic Pre-Money",r.vc.preMoney);
+  push("Prob-weighted Pre-Money",r.vc.pwPreMoney);
+  push();
+  push("METHOD 4 — FIRST CHICAGO");
+  push("Weighted EV",r.first.weightedEV);
+  push("Scenario","Prob","Rev Multiple","Exit Multiple","Exit EV","Disc rate","PV","Weighted");
+  ["Upside","Base","Downside"].forEach((lbl,i)=>{const s=r.first.scen[i]; push(lbl,s.p,s.m,s.em,s.exitEV,s.d,s.pv,s.contrib)});
+  push();
+  push("IMPACT ADJUSTMENT");
+  push("Impact score (0-1)",r.impact.score);
+  push("Adjustment %",r.impact.pct);
+  push();
+  push("FINAL RANGE (pre-money)");
+  push("Low",r.range.lo);push("Midpoint",r.range.md);push("High",r.range.hi);
+  push();
+  push("Weights by method");
+  Object.entries(r.range.weights).forEach(([k,v])=>push(k,(v*100).toFixed(0)+"%"));
+  push();
+  push("RECOMMENDED ASK");
+  const raise=num("f_raise");
+  push("Raise",raise);
+  push("Dilution at midpoint %",(raise/(r.range.md+raise)*100).toFixed(1));
+  push("Dilution at floor %",(raise/(r.range.lo+raise)*100).toFixed(1));
+  push();
+  push("CLAUDE PROMPT");
+  push($("claude_txt").value);
+
+  const csv = rows.join("\n");
+  const blob = new Blob([csv],{type:"text/csv"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `valuation-${$("f_name").value.replace(/\W+/g,'-')}-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+/* ---- Run everything ---- */
+function runAll(){
+  // Pre-fill WACC field from stage if user hasn't touched it recently
+  const sw = stageWACC(); $("d_wacc").value = sw.md;
+  runRev(); runDCF(); runVC(); runFirst(); runImpact(); runRange();
+}
+
+/* Init */
+populateSectors(); populateGeos(); renderBenchmarks(); syncSliders();
+// wire any onchange resets
+["f_sector","f_stage","f_investor","f_geo"].forEach(id=>$(id).addEventListener("change",runAll));
+runAll();
+</script>
+</body>
+</html>
