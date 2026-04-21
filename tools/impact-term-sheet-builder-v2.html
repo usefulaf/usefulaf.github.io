@@ -922,6 +922,219 @@
             border-radius: 6px;
         }
 
+        /* ── NEGOTIATION TRACKER ──────────────────────────────────── */
+        .tracker-intro {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin-bottom: 0.6rem;
+        }
+        .tracker-controls {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 0.7rem;
+            flex-wrap: wrap;
+        }
+        .tracker-controls button {
+            flex: 1 1 auto;
+            padding: 0.45rem 0.6rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            background: #fff;
+            color: var(--text-dark);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .tracker-controls button:hover {
+            border-color: var(--primary-green);
+            color: var(--primary-green);
+        }
+        .tracker-controls .tracker-btn-primary {
+            background: var(--primary-green);
+            color: #fff;
+            border-color: var(--primary-green);
+        }
+        .tracker-controls .tracker-btn-primary:hover {
+            background: #1e5a33;
+            color: #fff;
+        }
+        .tracker-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.35rem;
+            margin-bottom: 0.7rem;
+        }
+        .tracker-stat {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.45rem 0.4rem;
+            text-align: center;
+        }
+        .tracker-stat-value {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            line-height: 1.2;
+        }
+        .tracker-stat-label {
+            font-size: 0.6rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-top: 2px;
+        }
+        .tracker-stat.accepted .tracker-stat-value { color: var(--green); }
+        .tracker-stat.pending .tracker-stat-value { color: var(--amber); }
+        .tracker-stat.rejected .tracker-stat-value { color: var(--red); }
+        .tracker-baseline-info {
+            background: #f0f6fa;
+            border-left: 3px solid var(--teal);
+            padding: 0.55rem 0.7rem;
+            margin-bottom: 0.7rem;
+            font-size: 0.72rem;
+            color: var(--text-dark);
+            border-radius: 0 4px 4px 0;
+        }
+        .tracker-baseline-info strong { color: var(--teal); }
+        .tracker-category {
+            margin-bottom: 0.7rem;
+        }
+        .tracker-category-title {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary-green);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 0.4rem 0.55rem;
+            background: #edf4ef;
+            border-radius: 3px 3px 0 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .tracker-row {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-top: none;
+            padding: 0.55rem 0.65rem;
+            font-size: 0.75rem;
+        }
+        .tracker-row:last-child {
+            border-radius: 0 0 3px 3px;
+        }
+        .tracker-row.unchanged { opacity: 0.55; }
+        .tracker-row.deviation { border-left: 3px solid var(--amber); }
+        .tracker-row.accepted { border-left: 3px solid var(--green); background: #f4fbf5; }
+        .tracker-row.rejected { border-left: 3px solid var(--red); background: #fdf5f4; opacity: 0.75; }
+        .tracker-row-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+        }
+        .tracker-field-name {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.78rem;
+        }
+        .tracker-change-pill {
+            font-size: 0.62rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            border-radius: 3px;
+            letter-spacing: 0.3px;
+        }
+        .tracker-change-pill.unchanged { background: #eee; color: #666; }
+        .tracker-change-pill.deviation { background: #fff3e0; color: #a65e00; }
+        .tracker-change-pill.accepted { background: #e6f3ea; color: var(--green); }
+        .tracker-change-pill.rejected { background: #fceceb; color: var(--red); }
+        .tracker-values {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 0.4rem;
+            align-items: center;
+            font-size: 0.7rem;
+            margin-bottom: 0.4rem;
+        }
+        .tracker-value-box {
+            background: #f8faf9;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 0.3rem 0.45rem;
+        }
+        .tracker-value-box .tracker-value-label {
+            font-size: 0.6rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+        .tracker-value-box .tracker-value-data {
+            color: var(--text-dark);
+            font-weight: 500;
+            word-break: break-word;
+        }
+        .tracker-value-arrow {
+            color: var(--amber);
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        .tracker-row.deviation .tracker-value-box.current {
+            background: #fff8ed;
+            border-color: #e8b66a;
+        }
+        .tracker-row.accepted .tracker-value-box.current {
+            background: #effaf1;
+            border-color: var(--green);
+        }
+        .tracker-notes-wrap {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.35rem;
+            margin-top: 0.35rem;
+        }
+        .tracker-notes-wrap textarea, .tracker-notes-wrap select, .tracker-notes-wrap input {
+            width: 100%;
+            padding: 0.3rem 0.4rem;
+            font-size: 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            font-family: inherit;
+            color: var(--text-dark);
+            background: #fff;
+            resize: vertical;
+        }
+        .tracker-notes-wrap textarea { min-height: 38px; }
+        .tracker-notes-wrap label {
+            font-size: 0.6rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: block;
+            margin-bottom: 2px;
+        }
+        .tracker-empty {
+            text-align: center;
+            padding: 1.5rem 1rem;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            background: #f8faf9;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+        }
+        .tracker-show-unchanged {
+            font-size: 0.7rem;
+            color: var(--teal);
+            cursor: pointer;
+            margin-top: 0.4rem;
+            display: inline-block;
+            user-select: none;
+        }
+        .tracker-show-unchanged:hover { text-decoration: underline; }
+
         .action-buttons {
             display: flex;
             gap: 0.5rem;
@@ -1923,6 +2136,7 @@
                     <button class="tab-btn" onclick="switchTab('calculations')">Returns</button>
                     <button class="tab-btn" onclick="switchTab('benchmarks')">Benchmarks</button>
                     <button class="tab-btn" onclick="switchTab('precedents')">Precedents</button>
+                    <button class="tab-btn" onclick="switchTab('tracker')">Tracker</button>
                 </div>
 
                 <!-- Flags Tab -->
@@ -2007,6 +2221,24 @@
                         <!-- Generated dynamically -->
                     </div>
                 </div>
+
+                <!-- Negotiation Tracker Tab -->
+                <div id="tracker" class="tab-content">
+                    <h4 style="margin-bottom: 0.4rem; color: var(--primary-green); font-weight: 600;">Negotiation Tracker</h4>
+                    <p class="tracker-intro">
+                        Lock a baseline (typically the investor's opening template or their proposed term sheet), then track every deviation as negotiation progresses. Record each party's position, the rationale, and status. Exportable negotiation log keeps a clean audit trail for your lawyer, board, or IC.
+                    </p>
+                    <div class="tracker-controls">
+                        <button class="tracker-btn-primary" onclick="setTrackerBaseline()">📌 Lock current terms as baseline</button>
+                        <button onclick="clearTrackerBaseline()">Reset</button>
+                        <button onclick="exportTrackerLog()">📄 Export log</button>
+                    </div>
+                    <div id="trackerBaselineInfo" class="tracker-baseline-info" style="display:none;"></div>
+                    <div id="trackerSummary" class="tracker-summary" style="display:none;"></div>
+                    <div id="trackerContainer">
+                        <!-- Generated dynamically -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -2072,7 +2304,12 @@
             irisMetrics: false,
             impactBoardSeat: false,
             communityBenefit: false,
-            envCovenant: false
+            envCovenant: false,
+            // Negotiation tracker
+            baseline: null,              // snapshot of appState at baseline-lock time
+            baselineMeta: null,          // { date: 'YYYY-MM-DD', source: 'template name' }
+            trackerNotes: {},            // { fieldKey: { counterparty, rationale, status } }
+            trackerShowUnchanged: false
         };
 
         // Initialize
@@ -2083,6 +2320,7 @@
             renderCalculations();
             renderBenchmarks();
             renderPrecedents();
+            renderTracker();
         });
 
         function setupEventListeners() {
@@ -2098,6 +2336,7 @@
                     renderCalculations();
                     renderBenchmarks();
                     renderPrecedents();
+                    renderTracker();
                 });
             });
 
@@ -3796,6 +4035,7 @@
             renderCalculations();
             renderBenchmarks();
             renderPrecedents();
+            renderTracker();
 
             // Show a brief confirmation
             const btns = document.querySelectorAll('.precedent-apply-btn');
@@ -3965,6 +4205,7 @@
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
+            if (tabName === 'tracker') renderTracker();
         }
 
         function printTermSheet() {
@@ -4685,11 +4926,22 @@
                 appState.reportingFrequency = s.reportingFrequency || 'annual';
             }
 
+            // Auto-seed baseline if none set yet — user can override later
+            if (!appState.baseline) {
+                appState.baseline = captureTrackerSnapshot();
+                appState.baselineMeta = {
+                    date: new Date().toISOString().split('T')[0],
+                    source: tmpl.label + ' template'
+                };
+                appState.trackerNotes = {};
+            }
+
             // Re-render all panels
             renderTermSheet();
             renderFlags();
             renderCalculations();
             renderBenchmarks();
+            renderTracker();
 
             // Scroll to top of left panel
             document.querySelector('#leftPanel .panel-content').scrollTop = 0;
@@ -4702,6 +4954,391 @@
             setTimeout(() => { btn.textContent = origText; btn.style.background = ''; }, 2000);
         }
         // ─────────────────────────────────────────────────────────────────────────
+
+        // ─── NEGOTIATION TRACKER ─────────────────────────────────────────────────
+        // Tracks deviations from a locked baseline (typically the investor's opening
+        // template or initial term sheet) as negotiation progresses. Each deviation
+        // can have a status, counterparty position, and rationale — exportable as
+        // a clean negotiation log for lawyers, board reviews, or IC memos.
+
+        // Field registry: label, formatter, category, applicable dealTypes ('all' or array)
+        const TERM_FIELDS = [
+            // Core — always shown regardless of dealType
+            { key: 'dealType',          label: 'Instrument Type',        cat: 'Core',       fmt: v => ({safe:'SAFE',safi:'SAFI',convertible:'Convertible Note',rbf:'Revenue-Based Finance',equity:'Priced Equity',loan:'Impact Loan',grant:'Recoverable Grant',sib:'Social Impact Bond'}[v] || v) },
+            { key: 'investorName',      label: 'Investor',               cat: 'Core',       fmt: v => v || '—' },
+            { key: 'companyName',       label: 'Company',                cat: 'Core',       fmt: v => v || '—' },
+            { key: 'investmentAmount',  label: 'Investment Amount',      cat: 'Core',       fmt: v => v ? formatCurrency(v) : '—' },
+
+            // SAFE
+            { key: 'safeCap',           label: 'Valuation Cap',          cat: 'SAFE',       deals: ['safe'],            fmt: v => v ? formatCurrency(v) : 'Uncapped' },
+            { key: 'safeDiscount',      label: 'Discount Rate',          cat: 'SAFE',       deals: ['safe'],            fmt: v => (v || 0) + '%' },
+            { key: 'safeMFN',           label: 'MFN Clause',             cat: 'SAFE',       deals: ['safe'],            fmt: v => v ? 'Included' : 'Not included' },
+
+            // Convertible Note
+            { key: 'convInterest',      label: 'Interest Rate',          cat: 'Convertible',deals: ['convertible'],     fmt: v => (v || 0) + '% p.a.' },
+            { key: 'convMaturity',      label: 'Maturity',               cat: 'Convertible',deals: ['convertible'],     fmt: v => (v || 0) + ' months' },
+            { key: 'convDiscount',      label: 'Conversion Discount',    cat: 'Convertible',deals: ['convertible'],     fmt: v => (v || 0) + '%' },
+            { key: 'convQualified',     label: 'Qualified Financing',    cat: 'Convertible',deals: ['convertible'],     fmt: v => v ? formatCurrency(v) : '—' },
+
+            // RBF
+            { key: 'rbfShare',          label: 'Revenue Share %',        cat: 'RBF',        deals: ['rbf'],             fmt: v => (v || 0) + '%' },
+            { key: 'rbfCap',            label: 'Repayment Cap Multiple', cat: 'RBF',        deals: ['rbf'],             fmt: v => (v || 0) + 'x' },
+            { key: 'rbfHoliday',        label: 'Payment Holiday',        cat: 'RBF',        deals: ['rbf'],             fmt: v => (v || 0) + ' months' },
+
+            // Equity
+            { key: 'equityPreMoney',    label: 'Pre-Money Valuation',    cat: 'Equity',     deals: ['equity'],          fmt: v => v ? formatCurrency(v) : '—' },
+            { key: 'equityLiqPref',     label: 'Liquidation Preference', cat: 'Equity',     deals: ['equity'],          fmt: v => getLiqPrefLabel(v) },
+            { key: 'equityAntiDilution',label: 'Anti-Dilution',          cat: 'Equity',     deals: ['equity'],          fmt: v => getAntiDilutionLabel(v) },
+            { key: 'equityBoardSeats',  label: 'Investor Board Seats',   cat: 'Equity',     deals: ['equity'],          fmt: v => (v || 0) === 0 ? 'None' : (v + (v === 1 ? ' seat' : ' seats')) },
+
+            // Loan
+            { key: 'loanRate',          label: 'Interest Rate',          cat: 'Loan',       deals: ['loan'],            fmt: v => (v || 0) + '% p.a.' },
+            { key: 'loanTerm',          label: 'Loan Term',              cat: 'Loan',       deals: ['loan'],            fmt: v => (v || 0) + ' years' },
+            { key: 'loanGrace',         label: 'Grace Period',           cat: 'Loan',       deals: ['loan'],            fmt: v => (v || 0) + ' months' },
+
+            // Grant
+            { key: 'grantTrigger',      label: 'Repayment Trigger',      cat: 'Grant',      deals: ['grant'],           fmt: v => v || '—' },
+            { key: 'grantRepayment',    label: 'Repayment %',            cat: 'Grant',      deals: ['grant'],           fmt: v => (v || 0) + '%' },
+            { key: 'grantMaxRepay',     label: 'Max Repayment Multiple', cat: 'Grant',      deals: ['grant'],           fmt: v => (v || 0) + 'x' },
+
+            // SIB
+            { key: 'sibOutcome',        label: 'Outcome Metric',         cat: 'SIB',        deals: ['sib'],             fmt: v => v || '—' },
+            { key: 'sibPaymentPerUnit', label: 'Payment per Unit',       cat: 'SIB',        deals: ['sib'],             fmt: v => v ? formatCurrency(v) : '—' },
+            { key: 'sibDuration',       label: 'Program Duration',       cat: 'SIB',        deals: ['sib'],             fmt: v => (v || 0) + ' years' },
+            { key: 'sibMinAchievement', label: 'Minimum Achievement',    cat: 'SIB',        deals: ['sib'],             fmt: v => (v || 0) + '%' },
+
+            // SAFI
+            { key: 'safiImpactCap',     label: 'Impact Cap',             cat: 'SAFI',       deals: ['safi'],            fmt: v => v || '—' },
+            { key: 'safiImpactMetric',  label: 'Impact Metric',          cat: 'SAFI',       deals: ['safi'],            fmt: v => v || '—' },
+            { key: 'safiConversionTrigger', label: 'Conversion Trigger', cat: 'SAFI',       deals: ['safi'],            fmt: v => v || '—' },
+            { key: 'safiValuationCap',  label: 'Valuation Cap',          cat: 'SAFI',       deals: ['safi'],            fmt: v => v ? formatCurrency(v) : 'Uncapped' },
+            { key: 'safiDiscount',      label: 'Discount Rate',          cat: 'SAFI',       deals: ['safi'],            fmt: v => (v || 0) + '%' },
+            { key: 'safiImpactDefault', label: 'Impact Default → SAFE',  cat: 'SAFI',       deals: ['safi'],            fmt: v => v ? 'Yes (auto-convert)' : 'No (negotiate)' },
+            { key: 'safiMFN',           label: 'MFN Clause',             cat: 'SAFI',       deals: ['safi'],            fmt: v => v ? 'Included' : 'Not included' },
+
+            // Governance — always shown (applicable across most deal types)
+            { key: 'voteRights',        label: 'Voting Rights',          cat: 'Governance', fmt: v => ({none:'Standard shareholder only',major:'Major-decision consent',all:'All-decision consent'}[v] || v) },
+            { key: 'dragAlong',         label: 'Drag-Along Threshold',   cat: 'Governance', fmt: v => (v || 0) + '%' },
+
+            // Impact Covenants
+            { key: 'missionLock',         label: 'Mission Lock',              cat: 'Impact Covenants', fmt: v => v ? 'Required' : 'Not required' },
+            { key: 'impactReporting',     label: 'Impact Reporting',          cat: 'Impact Covenants', fmt: v => v ? 'Required' : 'Not required' },
+            { key: 'reportingFrequency',  label: 'Reporting Frequency',       cat: 'Impact Covenants', fmt: v => ({monthly:'Monthly',quarterly:'Quarterly',semiannual:'Semi-annual',annual:'Annual'}[v] || v) },
+            { key: 'thirdPartyVerif',     label: 'Third-Party Verification',  cat: 'Impact Covenants', fmt: v => v ? 'Required' : 'Not required' },
+            { key: 'impactDefault',       label: 'Impact Event of Default',   cat: 'Impact Covenants', fmt: v => v ? 'Included' : 'Not included' },
+            { key: 'bCorpStatus',         label: 'B Corp Certification',      cat: 'Impact Covenants', fmt: v => v ? 'Required' : 'Not required' },
+            { key: 'sdgAlignment',        label: 'SDG Alignment',             cat: 'Impact Covenants', fmt: v => v ? 'Required' : 'Not required' },
+            { key: 'irisMetrics',         label: 'IRIS+ Metrics',             cat: 'Impact Covenants', fmt: v => v ? 'Required' : 'Not required' },
+            { key: 'impactBoardSeat',     label: 'Impact Board Seat/Observer',cat: 'Impact Covenants', fmt: v => v ? 'Included' : 'Not included' },
+            { key: 'communityBenefit',    label: 'Community Benefit Covenant',cat: 'Impact Covenants', fmt: v => v ? 'Required' : 'Not required' },
+            { key: 'envCovenant',         label: 'Environmental Covenant',    cat: 'Impact Covenants', fmt: v => v ? 'Required' : 'Not required' }
+        ];
+
+        const STATUS_OPTIONS = [
+            { value: 'proposed',  label: 'Proposed by us' },
+            { value: 'countered', label: 'Counter-offered' },
+            { value: 'discussing',label: 'Under discussion' },
+            { value: 'accepted',  label: 'Accepted' },
+            { value: 'rejected',  label: 'Rejected / reverted' }
+        ];
+
+        function captureTrackerSnapshot() {
+            const snap = {};
+            TERM_FIELDS.forEach(f => { snap[f.key] = appState[f.key]; });
+            return snap;
+        }
+
+        function isFieldApplicable(field) {
+            if (!field.deals) return true;
+            return field.deals.includes(appState.dealType);
+        }
+
+        function setTrackerBaseline() {
+            if (appState.baseline && !confirm('A baseline is already locked. Replace it with the current terms? This clears existing negotiation notes.')) {
+                return;
+            }
+            appState.baseline = captureTrackerSnapshot();
+            appState.baselineMeta = {
+                date: new Date().toISOString().split('T')[0],
+                source: 'Manual lock'
+            };
+            appState.trackerNotes = {};
+            renderTracker();
+        }
+
+        function clearTrackerBaseline() {
+            if (!appState.baseline) return;
+            if (!confirm('Reset the baseline and clear all negotiation notes?')) return;
+            appState.baseline = null;
+            appState.baselineMeta = null;
+            appState.trackerNotes = {};
+            renderTracker();
+        }
+
+        function valuesDiffer(a, b) {
+            if (a === undefined || a === null || a === '') a = '';
+            if (b === undefined || b === null || b === '') b = '';
+            if (typeof a === 'boolean' || typeof b === 'boolean') return !!a !== !!b;
+            if (typeof a === 'number' || typeof b === 'number') return (parseFloat(a) || 0) !== (parseFloat(b) || 0);
+            return String(a) !== String(b);
+        }
+
+        function updateTrackerNote(fieldKey, attr, value) {
+            if (!appState.trackerNotes[fieldKey]) {
+                appState.trackerNotes[fieldKey] = { counterparty: '', rationale: '', status: 'proposed' };
+            }
+            appState.trackerNotes[fieldKey][attr] = value;
+            if (attr === 'status') renderTracker(); // re-render so row styling updates
+        }
+
+        function toggleShowUnchanged() {
+            appState.trackerShowUnchanged = !appState.trackerShowUnchanged;
+            renderTracker();
+        }
+
+        function renderTracker() {
+            const container = document.getElementById('trackerContainer');
+            const infoEl = document.getElementById('trackerBaselineInfo');
+            const summaryEl = document.getElementById('trackerSummary');
+            if (!container) return;
+
+            if (!appState.baseline) {
+                infoEl.style.display = 'none';
+                summaryEl.style.display = 'none';
+                container.innerHTML = `
+                    <div class="tracker-empty">
+                        <p style="margin-bottom:0.5rem;"><strong>No baseline locked yet.</strong></p>
+                        <p style="font-size:0.75rem;line-height:1.5;">Load an investor template (top-left) to auto-seed a baseline, or click <strong>Lock current terms as baseline</strong> above after entering the counterparty's opening position. Every subsequent change is then logged as a deviation.</p>
+                    </div>`;
+                return;
+            }
+
+            // Baseline info bar
+            infoEl.style.display = 'block';
+            infoEl.innerHTML = `<strong>Baseline locked:</strong> ${appState.baselineMeta.date} · Source: ${appState.baselineMeta.source}`;
+
+            // Compute stats
+            const applicable = TERM_FIELDS.filter(isFieldApplicable);
+            let deviations = 0, accepted = 0, rejected = 0, pending = 0;
+            const rowData = applicable.map(f => {
+                const baseVal = appState.baseline[f.key];
+                const currVal = appState[f.key];
+                const differs = valuesDiffer(baseVal, currVal);
+                const note = appState.trackerNotes[f.key] || { counterparty: '', rationale: '', status: 'proposed' };
+                let statusClass = 'unchanged';
+                if (differs) {
+                    deviations++;
+                    if (note.status === 'accepted') { accepted++; statusClass = 'accepted'; }
+                    else if (note.status === 'rejected') { rejected++; statusClass = 'rejected'; }
+                    else { pending++; statusClass = 'deviation'; }
+                }
+                return { f, baseVal, currVal, differs, note, statusClass };
+            });
+
+            // Summary stats
+            summaryEl.style.display = 'grid';
+            summaryEl.innerHTML = `
+                <div class="tracker-stat"><div class="tracker-stat-value">${deviations}</div><div class="tracker-stat-label">Deviations</div></div>
+                <div class="tracker-stat pending"><div class="tracker-stat-value">${pending}</div><div class="tracker-stat-label">Pending</div></div>
+                <div class="tracker-stat accepted"><div class="tracker-stat-value">${accepted}</div><div class="tracker-stat-label">Accepted</div></div>
+                <div class="tracker-stat rejected"><div class="tracker-stat-value">${rejected}</div><div class="tracker-stat-label">Rejected</div></div>
+            `;
+
+            // Filter unchanged if toggle off
+            const filtered = appState.trackerShowUnchanged ? rowData : rowData.filter(r => r.differs);
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="tracker-empty">
+                        <p style="margin-bottom:0.4rem;"><strong>No deviations from baseline.</strong></p>
+                        <p style="font-size:0.75rem;">Current terms exactly match what you locked in. Edit a field in the builder to log a deviation.</p>
+                        <span class="tracker-show-unchanged" onclick="toggleShowUnchanged()">${appState.trackerShowUnchanged ? 'Hide' : 'Show all'} ${applicable.length} tracked fields</span>
+                    </div>`;
+                return;
+            }
+
+            // Group by category
+            const byCat = {};
+            filtered.forEach(r => {
+                if (!byCat[r.f.cat]) byCat[r.f.cat] = [];
+                byCat[r.f.cat].push(r);
+            });
+
+            let html = '';
+            Object.keys(byCat).forEach(cat => {
+                html += `<div class="tracker-category">`;
+                html += `<div class="tracker-category-title">${cat}</div>`;
+                byCat[cat].forEach(r => {
+                    const pillText = !r.differs ? 'Unchanged' : (r.note.status === 'accepted' ? 'Accepted' : r.note.status === 'rejected' ? 'Rejected' : r.note.status === 'countered' ? 'Counter' : r.note.status === 'discussing' ? 'Discussing' : 'Proposed');
+                    const safeKey = r.f.key.replace(/[^a-z0-9]/gi, '');
+                    const counterVal = (r.note.counterparty || '').replace(/"/g, '&quot;');
+                    const rationaleVal = (r.note.rationale || '').replace(/"/g, '&quot;');
+                    html += `
+                        <div class="tracker-row ${r.statusClass}">
+                            <div class="tracker-row-head">
+                                <span class="tracker-field-name">${r.f.label}</span>
+                                <span class="tracker-change-pill ${r.statusClass}">${pillText}</span>
+                            </div>
+                            <div class="tracker-values">
+                                <div class="tracker-value-box baseline">
+                                    <div class="tracker-value-label">Baseline</div>
+                                    <div class="tracker-value-data">${r.f.fmt(r.baseVal)}</div>
+                                </div>
+                                <div class="tracker-value-arrow">${r.differs ? '→' : '='}</div>
+                                <div class="tracker-value-box current">
+                                    <div class="tracker-value-label">Current</div>
+                                    <div class="tracker-value-data">${r.f.fmt(r.currVal)}</div>
+                                </div>
+                            </div>
+                            ${r.differs ? `
+                            <div class="tracker-notes-wrap">
+                                <div>
+                                    <label>Counterparty position</label>
+                                    <input type="text" value="${counterVal}" placeholder="e.g. 'Investor holding at original cap'" oninput="updateTrackerNote('${r.f.key}','counterparty',this.value)">
+                                </div>
+                                <div>
+                                    <label>Status</label>
+                                    <select onchange="updateTrackerNote('${r.f.key}','status',this.value)">
+                                        ${STATUS_OPTIONS.map(s => `<option value="${s.value}" ${s.value === (r.note.status || 'proposed') ? 'selected' : ''}>${s.label}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div style="grid-column:1 / -1;">
+                                    <label>Rationale / notes</label>
+                                    <textarea placeholder="Why are we asking for this? What's our walk-away?" oninput="updateTrackerNote('${r.f.key}','rationale',this.value)">${rationaleVal}</textarea>
+                                </div>
+                            </div>` : ''}
+                        </div>`;
+                });
+                html += `</div>`;
+            });
+
+            html += `<span class="tracker-show-unchanged" onclick="toggleShowUnchanged()">${appState.trackerShowUnchanged ? 'Hide unchanged fields' : 'Show all ' + applicable.length + ' tracked fields (incl. unchanged)'}</span>`;
+
+            container.innerHTML = html;
+        }
+
+        function exportTrackerLog() {
+            if (!appState.baseline) {
+                alert('Lock a baseline first — there is nothing to export yet.');
+                return;
+            }
+
+            const applicable = TERM_FIELDS.filter(isFieldApplicable);
+            const deviations = applicable.filter(f => valuesDiffer(appState.baseline[f.key], appState[f.key]));
+
+            const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const company = appState.companyName || '[Company]';
+            const investor = appState.investorName || '[Investor]';
+
+            const counts = { proposed: 0, countered: 0, discussing: 0, accepted: 0, rejected: 0 };
+            deviations.forEach(f => {
+                const s = (appState.trackerNotes[f.key] && appState.trackerNotes[f.key].status) || 'proposed';
+                counts[s] = (counts[s] || 0) + 1;
+            });
+
+            const categoryGroups = {};
+            deviations.forEach(f => {
+                if (!categoryGroups[f.cat]) categoryGroups[f.cat] = [];
+                categoryGroups[f.cat].push(f);
+            });
+
+            let tableRows = '';
+            Object.keys(categoryGroups).forEach(cat => {
+                tableRows += `<tr><td colspan="5" style="background:#edf4ef;color:#2d7d46;font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:0.4px;padding:8px 10px;">${cat}</td></tr>`;
+                categoryGroups[cat].forEach(f => {
+                    const note = appState.trackerNotes[f.key] || {};
+                    const statusLabel = (STATUS_OPTIONS.find(s => s.value === (note.status || 'proposed')) || {}).label || 'Proposed';
+                    tableRows += `
+                        <tr>
+                            <td>${f.label}</td>
+                            <td>${f.fmt(appState.baseline[f.key])}</td>
+                            <td><strong>${f.fmt(appState[f.key])}</strong></td>
+                            <td>${statusLabel}</td>
+                            <td>${(note.counterparty || '—')}<br><em style="color:#666;font-size:11px;">${(note.rationale || '').replace(/\n/g,'<br>') || ''}</em></td>
+                        </tr>`;
+                });
+            });
+
+            if (!tableRows) {
+                tableRows = `<tr><td colspan="5" style="text-align:center;padding:2rem;color:#666;">No deviations from baseline.</td></tr>`;
+            }
+
+            const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Negotiation Log — ${company} / ${investor}</title>
+<style>
+@page { margin: 0.7in; }
+body { font-family: 'Calibri', 'Segoe UI', Arial, sans-serif; color: #2c3e50; max-width: 900px; margin: 0 auto; padding: 1rem; }
+h1 { color: #1a2730; border-bottom: 3px solid #2d7d46; padding-bottom: 0.4rem; font-size: 22px; }
+h2 { color: #2d7d46; margin-top: 1.5rem; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
+.meta { background: #f8faf9; padding: 0.8rem 1rem; border-left: 4px solid #1a6b6b; margin: 1rem 0; font-size: 13px; line-height: 1.7; }
+.meta strong { color: #1a6b6b; }
+.summary-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin: 1rem 0; }
+.summary-box { background: #fff; border: 1px solid #d0d0d0; border-radius: 4px; padding: 0.6rem; text-align: center; }
+.summary-box .n { font-size: 20px; font-weight: 700; color: #2d7d46; }
+.summary-box .l { font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; color: #666; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 0.5rem; }
+th { background: #1a2730; color: #fff; text-align: left; padding: 8px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+td { border: 1px solid #d0d0d0; padding: 7px 10px; vertical-align: top; }
+.footer { margin-top: 2rem; font-size: 11px; color: #888; border-top: 1px solid #d0d0d0; padding-top: 0.8rem; }
+.controls { text-align: right; margin-bottom: 1rem; }
+.controls button { background: #2d7d46; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 4px; font-size: 13px; cursor: pointer; font-weight: 600; }
+@media print { .controls { display: none; } }
+</style>
+</head>
+<body>
+<div class="controls"><button onclick="window.print()">🖨️ Print / Save as PDF</button></div>
+<h1>Negotiation Log</h1>
+<div class="meta">
+    <strong>Company:</strong> ${company}<br>
+    <strong>Investor:</strong> ${investor}<br>
+    <strong>Instrument:</strong> ${(TERM_FIELDS.find(f => f.key==='dealType').fmt(appState.dealType))}<br>
+    <strong>Investment size:</strong> ${appState.investmentAmount ? formatCurrency(appState.investmentAmount) : '—'}<br>
+    <strong>Baseline locked:</strong> ${appState.baselineMeta.date} · ${appState.baselineMeta.source}<br>
+    <strong>Log generated:</strong> ${today}
+</div>
+
+<h2>Summary</h2>
+<div class="summary-grid">
+    <div class="summary-box"><div class="n">${deviations.length}</div><div class="l">Total deviations</div></div>
+    <div class="summary-box"><div class="n">${counts.proposed || 0}</div><div class="l">Proposed</div></div>
+    <div class="summary-box"><div class="n">${counts.countered || 0}</div><div class="l">Counter-offered</div></div>
+    <div class="summary-box"><div class="n" style="color:#388e3c;">${counts.accepted || 0}</div><div class="l">Accepted</div></div>
+    <div class="summary-box"><div class="n" style="color:#d32f2f;">${counts.rejected || 0}</div><div class="l">Rejected</div></div>
+</div>
+
+<h2>Deviations from Baseline</h2>
+<table>
+    <thead>
+        <tr><th>Term</th><th>Baseline</th><th>Current position</th><th>Status</th><th>Counterparty / Rationale</th></tr>
+    </thead>
+    <tbody>${tableRows}</tbody>
+</table>
+
+<div class="footer">
+    Generated by Impact Term Sheet Builder v2 · UsefulAF · ${today}<br>
+    This log is a negotiation record, not a binding legal document. Retain for counsel review and IC documentation.
+</div>
+</body>
+</html>`;
+
+            const blob = new Blob([html], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const win = window.open(url, '_blank');
+            if (!win) {
+                // Pop-up blocked — fall back to download
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `negotiation-log-${company.replace(/[^a-z0-9]/gi,'_')}-${new Date().toISOString().split('T')[0]}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        }
+        // ─── END NEGOTIATION TRACKER ─────────────────────────────────────────────
     </script>
 </body>
 </html>
