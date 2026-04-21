@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>TNFD Nature-Related Risk & Opportunity Assessor — Useful AF</title>
+<style>
+  :root{
+    --cream:#F5EFE2;
+    --cream-2:#EFE7D3;
+    --black:#1C1A17;
+    --black-soft:#2B2722;
+    --coral:#E8715A;
+    --coral-dark:#C85A45;
+    --ochre:#D9A441;
+    --ochre-dark:#B8862A;
+    --ink:#3A342C;
+    --muted:#6E665A;
+    --line:#D6CDB8;
+    --ok:#2F7A3E;
+    --warn:#B8862A;
+    --bad:#B33A2C;
+    --info:#3C5A7A;
+    --shadow:0 2px 6px rgba(28,26,23,.06), 0 8px 24px rgba(28,26,23,.07);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);font-family:'Inter','Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--coral-dark)}
+  header{background:var(--black);color:var(--cream);padding:28px 36px;border-bottom:3px solid var(--ochre)}
+  header .wordmark{font-family:'Georgia',serif;font-size:26px;letter-spacing:.5px;color:var(--cream)}
+  header .wordmark b{color:var(--coral)}
+  header h1{margin:6px 0 2px;font-size:30px;letter-spacing:-.3px;font-weight:700}
+  header p{margin:0;color:#D9CFB8;font-size:14px;max-width:860px}
+  .container{max-width:1220px;margin:0 auto;padding:28px 28px 60px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px 24px;margin-bottom:18px;box-shadow:var(--shadow)}
+  h2{font-size:20px;margin:0 0 8px;color:var(--black)}
+  h3{font-size:16px;margin:18px 0 8px;color:var(--black-soft)}
+  h4{font-size:13px;margin:14px 0 6px;color:var(--black-soft);text-transform:uppercase;letter-spacing:.7px}
+  p{line-height:1.55}
+  small{color:var(--muted)}
+  .tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:2px solid var(--line);margin-bottom:20px}
+  .tab{padding:10px 16px;border:1px solid var(--line);border-bottom:none;background:var(--cream-2);color:var(--ink);cursor:pointer;border-radius:8px 8px 0 0;font-size:13px;font-weight:600;letter-spacing:.2px}
+  .tab.active{background:#fff;color:var(--coral-dark);border-color:var(--ochre);border-bottom:2px solid #fff;margin-bottom:-2px}
+  .tab .step{display:inline-block;background:var(--coral);color:#fff;border-radius:50%;width:18px;height:18px;font-size:10px;text-align:center;line-height:18px;margin-right:6px;font-weight:700}
+  .tabpane{display:none}
+  .tabpane.active{display:block}
+  label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px;font-weight:600}
+  input[type=text],input[type=number],select,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:6px;background:#FCFAF5;font-family:inherit;font-size:14px;color:var(--ink)}
+  textarea{min-height:72px;resize:vertical}
+  .row{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:14px}
+  .row3{display:grid;gap:14px;grid-template-columns:1fr 1fr 1fr;margin-bottom:14px}
+  .row2{display:grid;gap:14px;grid-template-columns:1fr 1fr;margin-bottom:14px}
+  @media (max-width:720px){.row3,.row2{grid-template-columns:1fr}}
+  .btn{background:var(--coral);color:#fff;border:none;padding:11px 22px;border-radius:7px;font-weight:700;cursor:pointer;font-size:14px;letter-spacing:.3px}
+  .btn:hover{background:var(--coral-dark)}
+  .btn.alt{background:var(--black);color:var(--cream)}
+  .btn.alt:hover{background:var(--black-soft)}
+  .btn.ghost{background:transparent;color:var(--coral-dark);border:1px solid var(--coral)}
+  .btn.ghost:hover{background:var(--cream-2)}
+  .pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+  .pill.ok{background:#E2EFDB;color:var(--ok)}
+  .pill.warn{background:#F3E6C5;color:var(--warn)}
+  .pill.bad{background:#F3D7D1;color:var(--bad)}
+  .pill.info{background:#D8E2F0;color:var(--info)}
+  .pill.neutral{background:var(--cream-2);color:var(--muted)}
+  table{width:100%;border-collapse:collapse;margin:10px 0 6px;font-size:13px}
+  th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--cream-2);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.5px;color:var(--black-soft)}
+  .box{background:var(--cream-2);border:1px solid var(--line);border-radius:8px;padding:14px 16px;margin:10px 0}
+  .box.sub{background:#FCFAF5}
+  .box.flag{border-left:4px solid var(--coral);background:#FDF4F0}
+  .box.info{border-left:4px solid var(--info);background:#F0F3F8}
+  .box.ok{border-left:4px solid var(--ok);background:#F0F5EC}
+  .score-big{font-size:54px;font-weight:800;color:var(--coral-dark);line-height:1;margin:6px 0}
+  .grade{display:inline-block;padding:8px 18px;border-radius:8px;font-weight:800;font-size:22px;letter-spacing:1px;color:#fff;background:var(--coral)}
+  .kv{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed var(--line);padding:6px 0;font-size:13px}
+  .kv b{font-weight:700;color:var(--black)}
+  .tt{position:relative;display:inline-block;cursor:help;border-bottom:1px dotted var(--muted);color:var(--info)}
+  .tt .tip{visibility:hidden;background:var(--black);color:#fff;padding:7px 10px;border-radius:6px;position:absolute;z-index:9;bottom:125%;left:50%;transform:translateX(-50%);width:260px;font-size:12px;line-height:1.4;letter-spacing:normal;text-transform:none}
+  .tt:hover .tip{visibility:visible}
+  .sector-tag{display:inline-block;background:var(--ochre);color:var(--black);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:4px}
+  .dep{display:grid;grid-template-columns:1fr 80px;gap:10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:13px}
+  .heat-h{background:#F3D7D1;color:var(--bad);padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;text-align:center;display:inline-block;width:70px}
+  .heat-m{background:#F3E6C5;color:var(--warn);padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;text-align:center;display:inline-block;width:70px}
+  .heat-l{background:#E2EFDB;color:var(--ok);padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;text-align:center;display:inline-block;width:70px}
+  .heat-vl{background:#EAE6DA;color:var(--muted);padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;text-align:center;display:inline-block;width:70px}
+  .risk-chip{display:inline-block;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;margin:3px}
+  .progressbar{background:var(--cream-2);height:10px;border-radius:6px;overflow:hidden;margin:4px 0}
+  .progressbar>div{height:100%;background:linear-gradient(90deg,var(--coral),var(--ochre));transition:width .4s}
+  .prompt{background:var(--black);color:#F2E9D4;padding:18px;border-radius:8px;font-family:ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',monospace;font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;max-height:520px;overflow:auto}
+  .leap-step{background:var(--cream-2);border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:8px 0}
+  .leap-step h4{margin:0 0 4px;color:var(--coral-dark)}
+  .discl{display:grid;grid-template-columns:38px 1fr 110px;gap:10px;padding:10px;border-bottom:1px solid var(--line);align-items:start;font-size:13px}
+  .discl:hover{background:var(--cream-2)}
+  .discl .code{font-weight:700;color:var(--coral-dark);font-family:ui-monospace,monospace}
+  .checkcol{text-align:center}
+  .checkcol select{font-size:12px;padding:4px}
+  .alert{padding:10px 14px;border-radius:6px;margin:10px 0;font-size:13px}
+  .alert.red{background:#F3D7D1;color:var(--bad);border-left:3px solid var(--bad)}
+  .alert.amber{background:#F3E6C5;color:var(--warn);border-left:3px solid var(--warn)}
+  .alert.green{background:#E2EFDB;color:var(--ok);border-left:3px solid var(--ok)}
+  .footer{margin-top:30px;padding:16px 0;border-top:1px solid var(--line);color:var(--muted);font-size:12px;text-align:center}
+  @media print{
+    .tabs,.btn,.print-hide{display:none!important}
+    .tabpane{display:block!important;page-break-inside:avoid}
+    header{background:#fff!important;color:var(--black)!important;border-bottom:2px solid var(--black)!important}
+    header .wordmark,header h1,header p{color:var(--black)!important}
+    .prompt{background:#f6f2e8;color:#000}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">Useful<b>AF</b></div>
+  <h1>TNFD Nature-Related Risk & Opportunity Assessor</h1>
+  <p>LEAP-approach assessment of nature-related dependencies, impacts, risks and opportunities. Aligned to the TNFD v1.0 Recommendations (Sept 2023), Science Based Targets Network (SBTN) methodology, and published ENCORE dependency ratings. Outputs a TNFD-ready disclosure scorecard against all 14 Recommended Disclosures.</p>
+</header>
+
+<div class="container">
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-p="p-setup">1. Setup</div>
+  <div class="tab" data-p="p-locate"><span class="step">L</span>Locate</div>
+  <div class="tab" data-p="p-evaluate"><span class="step">E</span>Evaluate</div>
+  <div class="tab" data-p="p-assess"><span class="step">A</span>Assess</div>
+  <div class="tab" data-p="p-prepare"><span class="step">P</span>Prepare</div>
+  <div class="tab" data-p="p-disclose">Disclosure Scorecard</div>
+  <div class="tab" data-p="p-result">Results</div>
+  <div class="tab" data-p="p-claude">Claude Prompt</div>
+</div>
+
+<!-- ======================= SETUP ======================= -->
+<div class="tabpane active" id="p-setup">
+<div class="card">
+  <h2>1. Entity & scope</h2>
+  <p><small>TNFD requires disclosure by entity and, where material, at the value-chain level (TNFD Rec. Strategy.C). Start with the reporting boundary.</small></p>
+  <div class="row">
+    <div>
+      <label>Organisation name</label>
+      <input type="text" id="org_name" value="Savanna Harvest Foods" />
+    </div>
+    <div>
+      <label>Sector <span class="tt">ⓘ<span class="tip">TNFD identifies priority sectors in its Sector Guidance — these face higher nature-related materiality and should assess first.</span></span></label>
+      <select id="sector">
+        <option value="food_ag">Food & Agriculture *priority</option>
+        <option value="aquaculture">Aquaculture *priority</option>
+        <option value="forestry">Forestry *priority</option>
+        <option value="metals_mining">Metals & Mining *priority</option>
+        <option value="oil_gas">Oil & Gas *priority</option>
+        <option value="chemicals">Chemicals *priority</option>
+        <option value="pharma_biotech">Pharma & Biotech *priority</option>
+        <option value="electric_utilities">Electric Utilities & Power *priority</option>
+        <option value="water_utilities">Water Utilities *priority</option>
+        <option value="apparel">Apparel, Accessories & Footwear *priority</option>
+        <option value="building_products">Building Products & Furnishings *priority</option>
+        <option value="finance_bank">Financial Institutions — Bank</option>
+        <option value="finance_invest">Financial Institutions — Asset Manager / PE / VC</option>
+        <option value="real_estate">Real Estate</option>
+        <option value="infrastructure">Infrastructure / Construction</option>
+        <option value="transport">Transportation & Logistics</option>
+        <option value="consumer_goods">Consumer Goods (non-food)</option>
+        <option value="tech">Technology / Software</option>
+      </select>
+    </div>
+    <div>
+      <label>Organisation type</label>
+      <select id="org_type">
+        <option value="corp">Operating company (producer / processor)</option>
+        <option value="investor">Investor / Asset manager</option>
+        <option value="bank">Bank / Lender</option>
+        <option value="dfi">DFI / Development finance</option>
+        <option value="foundation">Foundation / Grantmaker</option>
+        <option value="ngo">NGO / Implementer</option>
+      </select>
+    </div>
+    <div>
+      <label>Annual revenue / AUM (USD million)</label>
+      <input type="number" id="size" value="85" />
+    </div>
+  </div>
+  <div class="row3">
+    <div>
+      <label>Primary geography of operations</label>
+      <select id="geography">
+        <option value="africa_east">East & Southern Africa</option>
+        <option value="africa_west">West Africa</option>
+        <option value="sa_south">South Asia</option>
+        <option value="sa_se">Southeast Asia</option>
+        <option value="latam">Latin America & Caribbean</option>
+        <option value="mena">MENA</option>
+        <option value="eu">Europe</option>
+        <option value="na">North America</option>
+        <option value="global">Multi-regional / global</option>
+      </select>
+    </div>
+    <div>
+      <label>Value chain scope assessed</label>
+      <select id="value_chain">
+        <option value="direct">Direct operations only</option>
+        <option value="upstream" selected>Direct + upstream (Tier 1 suppliers)</option>
+        <option value="full">Direct + full upstream + downstream</option>
+      </select>
+    </div>
+    <div>
+      <label>Maturity with TCFD / ESG reporting</label>
+      <select id="maturity">
+        <option value="1">Starting — no prior ESG reporting</option>
+        <option value="2" selected>Basic — GRI or voluntary ESG</option>
+        <option value="3">Intermediate — TCFD or SFDR live</option>
+        <option value="4">Advanced — Integrated CSRD / ISSB reporting</option>
+      </select>
+    </div>
+  </div>
+  <div class="row2">
+    <div>
+      <label>Reporting driver (primary)</label>
+      <select id="driver">
+        <option value="regulatory">Regulatory (CSRD, SFDR, Kunming-Montreal Target 15)</option>
+        <option value="investor_pressure">Investor / lender pressure</option>
+        <option value="voluntary" selected>Voluntary — strategic risk management</option>
+        <option value="supply_chain">Customer / supply-chain demand</option>
+      </select>
+    </div>
+    <div>
+      <label>Countries with ≥1 material site in KBA / protected area overlap</label>
+      <input type="text" id="kba_countries" value="Kenya, Tanzania" />
+    </div>
+  </div>
+  <div class="box info">
+    <b>About the LEAP approach:</b> TNFD's integrated assessment process. <b>L</b>ocate interfaces with nature → <b>E</b>valuate dependencies & impacts → <b>A</b>ssess risks & opportunities → <b>P</b>repare to respond and disclose. Every tab is one step.
+    <br/><small>Source: TNFD (2023), <i>Guidance on the identification and assessment of nature-related issues: The LEAP approach</i>, v1.1.</small>
+  </div>
+</div>
+</div>
+
+<!-- ======================= LOCATE ======================= -->
+<div class="tabpane" id="p-locate">
+<div class="card">
+  <h2><span class="step" style="background:var(--coral);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-block;text-align:center;line-height:22px;font-size:12px;margin-right:6px">L</span> Locate your interface with nature</h2>
+  <p><small>Identify where direct operations and value-chain activities interact with ecosystems. The TNFD priority triggers are: (1) sensitive location overlap (Key Biodiversity Areas, protected areas, indigenous lands), (2) water-scarce regions, (3) degraded ecosystems. Source: TNFD LEAP Guidance §L1–L4.</small></p>
+
+  <h3>L1 — Span of the business & value chain</h3>
+  <div class="row3">
+    <div>
+      <label>Number of material direct operating sites</label>
+      <input type="number" id="l_sites" value="4" />
+    </div>
+    <div>
+      <label>Tier-1 suppliers contributing ≥80% of spend</label>
+      <input type="number" id="l_suppliers" value="18" />
+    </div>
+    <div>
+      <label>Hectares under direct land-use control</label>
+      <input type="number" id="l_hectares" value="4200" />
+    </div>
+  </div>
+
+  <h3>L2 — Biome & ecosystem interface</h3>
+  <p><small>Select the biomes your operations and value chain touch. Uses IUCN Global Ecosystem Typology v2.0 functional biomes.</small></p>
+  <div class="row">
+    <div><label><input type="checkbox" id="b_trop_forest" checked/> Tropical/subtropical forests</label></div>
+    <div><label><input type="checkbox" id="b_temp_forest"/> Temperate forests</label></div>
+    <div><label><input type="checkbox" id="b_savanna" checked/> Savannas & shrublands</label></div>
+    <div><label><input type="checkbox" id="b_grassland"/> Grasslands</label></div>
+    <div><label><input type="checkbox" id="b_wetland" checked/> Wetlands & inland waters</label></div>
+    <div><label><input type="checkbox" id="b_marine"/> Marine / coastal</label></div>
+    <div><label><input type="checkbox" id="b_mangrove"/> Mangrove / estuary</label></div>
+    <div><label><input type="checkbox" id="b_desert"/> Deserts / semi-arid</label></div>
+  </div>
+
+  <h3>L3 — Sensitive-location overlap (TNFD priority filter)</h3>
+  <div class="row">
+    <div>
+      <label># sites in Key Biodiversity Areas (KBA)</label>
+      <input type="number" id="l_kba" value="1" />
+    </div>
+    <div>
+      <label># sites in IUCN Protected Areas (I–VI)</label>
+      <input type="number" id="l_pa" value="0" />
+    </div>
+    <div>
+      <label># sites on indigenous / community lands</label>
+      <input type="number" id="l_indigenous" value="2" />
+    </div>
+    <div>
+      <label># sites in WRI Aqueduct High/Extremely-High water-stress regions</label>
+      <input type="number" id="l_water_stress" value="3" />
+    </div>
+    <div>
+      <label># sites in IUCN Red List "threatened ecosystems"</label>
+      <input type="number" id="l_red_eco" value="1" />
+    </div>
+    <div>
+      <label># sites in degraded / converted post-2020 landscapes</label>
+      <input type="number" id="l_degraded" value="0" />
+    </div>
+  </div>
+
+  <div class="box flag">
+    <b>Why this matters:</b> TNFD's Guidance for the Identification and Assessment of Nature-related Issues names sensitive-location overlap as the single strongest materiality trigger. A site in a KBA, protected area, or water-stressed basin almost always crosses the materiality threshold for disclosure, even at low revenue weight.
+  </div>
+
+  <h3>L4 — Upstream commodity sourcing</h3>
+  <p><small>For food, ag, forestry, apparel: trace exposure to high-deforestation-risk commodities under EU Deforestation Regulation (EUDR, effective 30 Dec 2025 for large operators).</small></p>
+  <div class="row">
+    <div><label># EUDR-regulated commodities sourced <span class="tt">ⓘ<span class="tip">Cattle, cocoa, coffee, oil palm, rubber, soya, wood — plus derivatives (leather, chocolate, beef, paper etc.).</span></span></label>
+      <input type="number" id="l_eudr_count" value="2" /></div>
+    <div><label>% sourced volume with geolocation traceability</label>
+      <input type="number" id="l_trace_pct" value="45" /></div>
+    <div><label>% sourced from certified-sustainable suppliers (RSPO, FSC, RTRS, Rainforest Alliance)</label>
+      <input type="number" id="l_cert_pct" value="30" /></div>
+  </div>
+</div>
+</div>
+
+<!-- ======================= EVALUATE ======================= -->
+<div class="tabpane" id="p-evaluate">
+<div class="card">
+  <h2><span class="step" style="background:var(--coral);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-block;text-align:center;line-height:22px;font-size:12px;margin-right:6px">E</span> Evaluate dependencies & impacts</h2>
+  <p><small>TNFD LEAP Guidance §E1–E4. Dependency ratings (High/Med/Low/Very Low) below are drawn from the ENCORE tool (Natural Capital Finance Alliance / UNEP-FI / Global Canopy) v0.3, which scores the materiality of 21 ecosystem services for 136 sub-industries. We prefill by sector; adjust based on your actual processes.</small></p>
+
+  <h3>E1 — Dependencies on ecosystem services (pre-filled by sector)</h3>
+  <p><small>Each ecosystem service is rated for how much your business <i>depends</i> on it. A disrupted service = operational or supply disruption.</small></p>
+  <div id="deps_container"></div>
+
+  <h3>E2 — Impact drivers (your pressure on nature)</h3>
+  <p><small>TNFD uses the IPBES five direct drivers of nature loss. Score severity across your value chain (1 = negligible, 5 = severe).</small></p>
+  <table>
+    <thead><tr><th>IPBES driver</th><th style="width:180px">Your severity (1–5)</th><th>Typical metric (GRI 304 / SBTN)</th></tr></thead>
+    <tbody>
+      <tr><td><b>Land & sea-use change</b><br/><small>Conversion of natural habitat, deforestation, sealing, dredging</small></td><td><input type="number" id="imp_land" min="1" max="5" value="3"/></td><td>ha converted post-2020; % land footprint in natural habitat</td></tr>
+      <tr><td><b>Resource use / exploitation</b><br/><small>Overextraction: water withdrawal, wild harvest, fisheries, minerals</small></td><td><input type="number" id="imp_resource" min="1" max="5" value="4"/></td><td>m³ water withdrawn; tonnes extracted vs. sustainable yield</td></tr>
+      <tr><td><b>Climate change</b><br/><small>GHG emissions driving biome shift</small></td><td><input type="number" id="imp_climate" min="1" max="5" value="3"/></td><td>tCO₂e scope 1+2+3</td></tr>
+      <tr><td><b>Pollution</b><br/><small>Nutrients, pesticides, plastics, effluent, noise, light</small></td><td><input type="number" id="imp_pollution" min="1" max="5" value="3"/></td><td>kg N / P runoff; kg active pesticide ingredient</td></tr>
+      <tr><td><b>Invasive species & other</b><br/><small>Introduction / spread of alien species; pathogens; other</small></td><td><input type="number" id="imp_invasive" min="1" max="5" value="1"/></td><td># alien species introduced; # biosecurity incidents</td></tr>
+    </tbody>
+  </table>
+
+  <h3>E3 — State of nature indicators (actual or estimated)</h3>
+  <div class="row">
+    <div>
+      <label>MSA loss in value chain (mean species abundance, % vs. pristine) <span class="tt">ⓘ<span class="tip">GLOBIO/PBL indicator. 0 = lost, 100 = pristine. Most ag landscapes: 10–40 MSA.</span></span></label>
+      <input type="number" id="s_msa" value="28" />
+    </div>
+    <div>
+      <label>STAR-T score (threatened-species threat abatement potential, 0–100)</label>
+      <input type="number" id="s_star" value="15" />
+    </div>
+    <div>
+      <label>% natural habitat in operational footprint</label>
+      <input type="number" id="s_nathab" value="35" />
+    </div>
+  </div>
+
+  <h3>E4 — Materiality filter</h3>
+  <div class="row2">
+    <div>
+      <label>Use CSRD / ESRS double-materiality lens? <span class="tt">ⓘ<span class="tip">EU CSRD mandates double materiality: both financial materiality to the company AND the company's material impacts on people and nature. TNFD is compatible with both.</span></span></label>
+      <select id="materiality_lens">
+        <option value="single_fin">Single financial materiality only</option>
+        <option value="single_impact">Single impact materiality only</option>
+        <option value="double" selected>Double materiality (CSRD / ESRS)</option>
+      </select>
+    </div>
+    <div>
+      <label>Have you engaged affected stakeholders / rights-holders? <span class="tt">ⓘ<span class="tip">TNFD Principle 4: apply a human-rights based approach. Indigenous peoples and local communities are named rights-holders under TNFD.</span></span></label>
+      <select id="stakeholder_eng">
+        <option value="none">Not yet</option>
+        <option value="planned">Planned but not started</option>
+        <option value="partial" selected>Partial (some groups engaged)</option>
+        <option value="full">Full FPIC-compliant engagement</option>
+      </select>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ======================= ASSESS ======================= -->
+<div class="tabpane" id="p-assess">
+<div class="card">
+  <h2><span class="step" style="background:var(--coral);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-block;text-align:center;line-height:22px;font-size:12px;margin-right:6px">A</span> Assess risks & opportunities</h2>
+  <p><small>TNFD LEAP Guidance §A1–A4. Categorises risks per TNFD Recommendation Strategy.A into physical, transition, and systemic. Opportunities per TNFD's 5 opportunity categories.</small></p>
+
+  <h3>A1 — Physical risks (acute & chronic nature change)</h3>
+  <table>
+    <thead><tr><th>Risk</th><th style="width:140px">Likelihood (1–5)</th><th style="width:140px">Severity (1–5)</th><th>Time horizon</th></tr></thead>
+    <tbody>
+      <tr><td><b>Pollinator decline</b> — yield loss for insect-pollinated crops (c. 35% of global food volume)<br/><small>IPBES 2016</small></td><td><input type="number" id="r_poll_l" min="1" max="5" value="3"/></td><td><input type="number" id="r_poll_s" min="1" max="5" value="3"/></td><td><select id="r_poll_h"><option>0–2y</option><option selected>2–5y</option><option>5–10y</option></select></td></tr>
+      <tr><td><b>Water stress / drought</b> — supply interruption, intake restrictions<br/><small>WRI Aqueduct</small></td><td><input type="number" id="r_water_l" min="1" max="5" value="4"/></td><td><input type="number" id="r_water_s" min="1" max="5" value="4"/></td><td><select id="r_water_h"><option selected>0–2y</option><option>2–5y</option><option>5–10y</option></select></td></tr>
+      <tr><td><b>Soil degradation</b> — productivity decline, erosion<br/><small>FAO SOLAW 2021: 33% of global soil degraded</small></td><td><input type="number" id="r_soil_l" min="1" max="5" value="3"/></td><td><input type="number" id="r_soil_s" min="1" max="5" value="3"/></td><td><select id="r_soil_h"><option>0–2y</option><option>2–5y</option><option selected>5–10y</option></select></td></tr>
+      <tr><td><b>Pest & disease outbreaks</b> — loss of natural biological control<br/></td><td><input type="number" id="r_pest_l" min="1" max="5" value="3"/></td><td><input type="number" id="r_pest_s" min="1" max="5" value="2"/></td><td><select id="r_pest_h"><option selected>0–2y</option><option>2–5y</option><option>5–10y</option></select></td></tr>
+      <tr><td><b>Extreme weather amplified by ecosystem loss</b> — flood/landslide where buffer ecosystems lost<br/></td><td><input type="number" id="r_xw_l" min="1" max="5" value="3"/></td><td><input type="number" id="r_xw_s" min="1" max="5" value="4"/></td><td><select id="r_xw_h"><option>0–2y</option><option selected>2–5y</option><option>5–10y</option></select></td></tr>
+    </tbody>
+  </table>
+
+  <h3>A2 — Transition risks (policy, market, tech, reputation, liability)</h3>
+  <table>
+    <thead><tr><th>Risk</th><th style="width:140px">Likelihood (1–5)</th><th style="width:140px">Severity (1–5)</th><th>Category</th></tr></thead>
+    <tbody>
+      <tr><td><b>EUDR non-compliance</b> — market access loss for deforestation-linked commodities (eff. Dec 2025)<br/></td><td><input type="number" id="t_eudr_l" min="1" max="5" value="4"/></td><td><input type="number" id="t_eudr_s" min="1" max="5" value="4"/></td><td>Policy</td></tr>
+      <tr><td><b>CSRD / ESRS E4 mandatory biodiversity disclosure</b> — scope 1 wave FY2024, wave 2 FY2025<br/></td><td><input type="number" id="t_csrd_l" min="1" max="5" value="2"/></td><td><input type="number" id="t_csrd_s" min="1" max="5" value="3"/></td><td>Policy</td></tr>
+      <tr><td><b>Customer deselection</b> — buyer nature commitments exclude non-compliant suppliers<br/></td><td><input type="number" id="t_cust_l" min="1" max="5" value="3"/></td><td><input type="number" id="t_cust_s" min="1" max="5" value="3"/></td><td>Market</td></tr>
+      <tr><td><b>Capital cost uplift / debt covenant breach</b> — lender nature policies (IFC PS6, Equator Principles v4)<br/></td><td><input type="number" id="t_capital_l" min="1" max="5" value="2"/></td><td><input type="number" id="t_capital_s" min="1" max="5" value="3"/></td><td>Financial</td></tr>
+      <tr><td><b>Community / NGO campaign</b> — social license loss, protest, "stranded" project<br/></td><td><input type="number" id="t_social_l" min="1" max="5" value="3"/></td><td><input type="number" id="t_social_s" min="1" max="5" value="4"/></td><td>Reputational</td></tr>
+      <tr><td><b>Liability — nature damage claims</b> — ecocide laws (EU directive), biodiversity damage suits<br/></td><td><input type="number" id="t_liab_l" min="1" max="5" value="2"/></td><td><input type="number" id="t_liab_s" min="1" max="5" value="3"/></td><td>Legal</td></tr>
+    </tbody>
+  </table>
+
+  <h3>A3 — Systemic risks (ecosystem tipping points)</h3>
+  <p><small>Cascading risks from ecosystem collapse in regions that underpin your value chain. Planetary boundaries framework, Stockholm Resilience Centre 2023.</small></p>
+  <div class="row2">
+    <div>
+      <label>Exposure to Amazon tipping point? (drought-feedback collapse)</label>
+      <select id="sy_amazon"><option value="0">None</option><option value="2">Indirect (soy/beef upstream)</option><option value="4">Direct operations / sourcing</option></select>
+    </div>
+    <div>
+      <label>Exposure to marine fisheries collapse?</label>
+      <select id="sy_fish"><option value="0" selected>None</option><option value="2">Indirect (fish-meal feed)</option><option value="4">Direct (wild capture)</option></select>
+    </div>
+    <div>
+      <label>Exposure to coral reef / reef fisheries collapse?</label>
+      <select id="sy_reef"><option value="0" selected>None</option><option value="2">Indirect</option><option value="4">Direct</option></select>
+    </div>
+    <div>
+      <label>Exposure to groundwater depletion tipping?</label>
+      <select id="sy_water"><option value="0">None</option><option value="2">Indirect</option><option value="4" selected>Direct</option></select>
+    </div>
+  </div>
+
+  <h3>A4 — Opportunities (TNFD 5 categories)</h3>
+  <p><small>Score each opportunity's feasibility in your context: 0 (none) / 1 (possible) / 2 (active opportunity).</small></p>
+  <div class="row">
+    <div><label>Resource efficiency (water, materials, energy) <br/><small>e.g. regen-ag reduces input cost 15–30%</small></label>
+      <select id="o_resource"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+    <div><label>Products & services (nature-positive offerings)<br/><small>e.g. biodiversity-rich ingredients premium</small></label>
+      <select id="o_product"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option></select></div>
+    <div><label>Markets (new nature-linked revenue)<br/><small>e.g. biodiversity credits, ecosystem-service payments</small></label>
+      <select id="o_market"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option></select></div>
+    <div><label>Capital flow & financing<br/><small>e.g. green bonds, sustainability-linked loans with nature KPI</small></label>
+      <select id="o_capital"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option></select></div>
+    <div><label>Reputation capital<br/><small>e.g. trust premium in consumer-facing markets</small></label>
+      <select id="o_rep"><option value="0">0</option><option value="1">1</option><option value="2" selected>2</option></select></div>
+  </div>
+</div>
+</div>
+
+<!-- ======================= PREPARE ======================= -->
+<div class="tabpane" id="p-prepare">
+<div class="card">
+  <h2><span class="step" style="background:var(--coral);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-block;text-align:center;line-height:22px;font-size:12px;margin-right:6px">P</span> Prepare — response & target setting</h2>
+  <p><small>TNFD LEAP Guidance §P1–P4. Aligns to SBTN's 5-step methodology (Assess → Interpret & Prioritise → Measure, Set, Disclose → Act → Track) and the Kunming-Montreal Global Biodiversity Framework Target 15.</small></p>
+
+  <h3>P1 — Mitigation hierarchy</h3>
+  <p><small>All nature responses must apply the mitigation hierarchy: <b>Avoid → Reduce → Restore & Regenerate → Transform</b> (last: offset). Set a position per step.</small></p>
+  <div class="row2">
+    <div>
+      <label>Avoid — No-go commitments (primary forest, KBA, RAMSAR wetlands)</label>
+      <select id="m_avoid">
+        <option value="0">Not committed</option>
+        <option value="1">Commitment drafted</option>
+        <option value="2" selected>Commitment in place, partial coverage</option>
+        <option value="3">Full no-go commitment, audited</option>
+      </select>
+    </div>
+    <div>
+      <label>Reduce — pressure-reduction targets (SBTN-style)</label>
+      <select id="m_reduce">
+        <option value="0">None</option>
+        <option value="1" selected>Qualitative targets only</option>
+        <option value="2">Quantified targets vs. baseline</option>
+        <option value="3">Science-based targets (SBTN validated)</option>
+      </select>
+    </div>
+    <div>
+      <label>Restore & Regenerate — positive contribution</label>
+      <select id="m_restore">
+        <option value="0">None</option>
+        <option value="1" selected>Pilot / ad hoc</option>
+        <option value="2">At-scale programme, monitored</option>
+        <option value="3">Net-positive contribution target</option>
+      </select>
+    </div>
+    <div>
+      <label>Transform — business model change</label>
+      <select id="m_transform">
+        <option value="0" selected>Not in scope</option>
+        <option value="1">Under exploration</option>
+        <option value="2">Committed — nature-positive business model</option>
+      </select>
+    </div>
+  </div>
+
+  <h3>P2 — Target setting alignment</h3>
+  <div class="row">
+    <div>
+      <label>SBTN targets set?</label>
+      <select id="p_sbtn">
+        <option value="0">None</option>
+        <option value="1" selected>Planning</option>
+        <option value="2">Freshwater / Land Step 3 in progress</option>
+        <option value="3">Targets submitted</option>
+        <option value="4">Targets validated by SBTN</option>
+      </select>
+    </div>
+    <div>
+      <label>Alignment with Kunming-Montreal GBF</label>
+      <select id="p_gbf">
+        <option value="0">No alignment mapped</option>
+        <option value="1" selected>Partial — selected targets</option>
+        <option value="2">Full GBF 23-target mapping</option>
+      </select>
+    </div>
+    <div>
+      <label>Board-level oversight of nature?</label>
+      <select id="p_board">
+        <option value="0">None</option>
+        <option value="1" selected>Combined with ESG oversight</option>
+        <option value="2">Dedicated nature item on board agenda</option>
+        <option value="3">Named board director with nature mandate</option>
+      </select>
+    </div>
+  </div>
+
+  <h3>P3 — Capital allocation</h3>
+  <div class="row2">
+    <div>
+      <label>CapEx/OpEx tagged to nature-positive activities (% of total, last FY)</label>
+      <input type="number" id="p_capex" value="4" />
+    </div>
+    <div>
+      <label>Internal price of nature used in investment decisions?</label>
+      <select id="p_price">
+        <option value="0" selected>No</option>
+        <option value="1">Piloting — water or carbon proxy</option>
+        <option value="2">Formal internal natural capital pricing</option>
+      </select>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ======================= DISCLOSE ======================= -->
+<div class="tabpane" id="p-disclose">
+<div class="card">
+  <h2>TNFD Recommended Disclosures — readiness scorecard</h2>
+  <p><small>Score your readiness against all 14 TNFD v1.0 Recommended Disclosures, organised by the four pillars (Governance, Strategy, Risk & Impact Management, Metrics & Targets). 0 = not started, 1 = drafted internal, 2 = partial external disclosure, 3 = full disclosure with assurance pathway.</small></p>
+  <div id="discl_container"></div>
+</div>
+</div>
+
+<!-- ======================= RESULT ======================= -->
+<div class="tabpane" id="p-result">
+<div class="card">
+  <h2>Nature-related risk & TNFD readiness — synthesis</h2>
+  <div class="row3">
+    <div class="box">
+      <small>Overall nature-materiality score</small>
+      <div class="score-big" id="r_materiality">—</div>
+      <div class="pill neutral" id="r_mat_pill">—</div>
+    </div>
+    <div class="box">
+      <small>Net risk exposure (risks − opportunities)</small>
+      <div class="score-big" id="r_net">—</div>
+      <div class="pill neutral" id="r_net_pill">—</div>
+    </div>
+    <div class="box">
+      <small>TNFD disclosure readiness</small>
+      <div class="score-big" id="r_discl">—</div>
+      <div class="pill neutral" id="r_discl_pill">—</div>
+    </div>
+  </div>
+
+  <div class="box">
+    <h3 style="margin-top:0">Overall grade</h3>
+    <p><span class="grade" id="r_grade">—</span> &nbsp; <span id="r_grade_desc" style="font-size:14px"></span></p>
+    <div class="progressbar"><div id="r_progress" style="width:0%"></div></div>
+  </div>
+
+  <h3>Priority-filter verdict (TNFD materiality triggers)</h3>
+  <div id="r_triggers"></div>
+
+  <h3>Top 5 risks (likelihood × severity)</h3>
+  <table id="r_risk_table"><thead><tr><th>Risk</th><th>Category</th><th>Score</th><th>Time</th></tr></thead><tbody></tbody></table>
+
+  <h3>Dependency hotspots</h3>
+  <div id="r_dep_hotspots"></div>
+
+  <h3>Recommended 90-day actions</h3>
+  <div id="r_actions"></div>
+
+  <h3>Benchmark vs. sector peers</h3>
+  <div id="r_bench"></div>
+
+  <div class="print-hide" style="margin-top:18px">
+    <button class="btn" id="btn_recalc">Recalculate</button>
+    <button class="btn alt" id="btn_csv">Export CSV memo</button>
+    <button class="btn ghost" onclick="window.print()">Print / Save PDF</button>
+  </div>
+</div>
+</div>
+
+<!-- ======================= CLAUDE ======================= -->
+<div class="tabpane" id="p-claude">
+<div class="card">
+  <h2>Claude Analysis Prompt</h2>
+  <p><small>Paste the prompt below into Claude to get a written TNFD-aligned narrative, board-briefing paragraphs, and a prioritised action plan grounded in your scores.</small></p>
+  <div class="print-hide" style="margin-bottom:10px">
+    <button class="btn" id="btn_gen_prompt">Generate prompt</button>
+    <button class="btn ghost" id="btn_copy_prompt">Copy to clipboard</button>
+  </div>
+  <div class="prompt" id="claude_prompt">Click "Generate prompt" to build a personalised prompt from your inputs.</div>
+</div>
+</div>
+
+<div class="footer">
+  Useful<b>AF</b> · Tool #23 · TNFD v1.0 Recommendations (Sept 2023) · ENCORE v0.3 dependency ratings · SBTN Step 1–3 methodology · IUCN GET v2.0 · IPBES 2019 Global Assessment · Kunming-Montreal GBF · References: tnfd.global, sciencebasedtargetsnetwork.org, encorenature.org
+</div>
+
+</div>
+
+<script>
+// ============ DATA ============
+
+// ENCORE-informed dependency ratings (VH/H/M/L/VL) by sector
+// 21 ecosystem services reduced to 14 material ones for brevity
+// Ratings drawn from Natural Capital Finance Alliance ENCORE v0.3 (2022 data refresh)
+const DEPENDENCIES = [
+  {id:'water_s',    name:'Surface water supply',     tip:'Fresh surface water for production / cooling / irrigation'},
+  {id:'water_g',    name:'Ground water supply',      tip:'Aquifer recharge and groundwater draw'},
+  {id:'water_q',    name:'Water quality regulation', tip:'Natural filtration of pollutants by wetlands / soils'},
+  {id:'pollination',name:'Pollination',              tip:'Insect / bird / wind pollination of crops'},
+  {id:'pest',       name:'Biological pest control',  tip:'Natural predators suppressing pests & diseases'},
+  {id:'soil_q',     name:'Soil quality regulation',  tip:'Soil fertility, structure, nutrient cycling'},
+  {id:'erosion',    name:'Erosion / sediment control', tip:'Vegetation stabilising soil, reducing landslide & sediment load'},
+  {id:'climate',    name:'Climate regulation',        tip:'Carbon sequestration & local cooling by ecosystems'},
+  {id:'flood',      name:'Flood & storm buffering',   tip:'Wetlands, mangroves, forests reducing flood peak / storm surge'},
+  {id:'genetic',    name:'Genetic materials',         tip:'Wild genetic stock for crops / livestock / pharma'},
+  {id:'fibres',     name:'Fibres & other materials',  tip:'Timber, fibres, wild harvest products'},
+  {id:'air',        name:'Air quality regulation',    tip:'Removal of particulates & pollutants by vegetation'},
+  {id:'mass',       name:'Mass stabilisation',        tip:'Roots and vegetation stabilising slopes, coasts'},
+  {id:'dilution',   name:'Dilution by atmosphere & ecosystems', tip:'Capacity of ecosystems to absorb / dilute emissions'}
+];
+
+// Heat rating per sector (VH/H/M/L/VL) ENCORE-informed
+const DEP_HEAT = {
+  food_ag:       { water_s:'VH', water_g:'VH', water_q:'H',  pollination:'VH', pest:'H',  soil_q:'VH', erosion:'H',  climate:'H',  flood:'M',  genetic:'H',  fibres:'M',  air:'L',  mass:'M',  dilution:'M' },
+  aquaculture:   { water_s:'VH', water_g:'M',  water_q:'VH', pollination:'VL',pest:'M',  soil_q:'L',  erosion:'M',  climate:'H',  flood:'H',  genetic:'H',  fibres:'L',  air:'L',  mass:'M',  dilution:'H' },
+  forestry:      { water_s:'H',  water_g:'M',  water_q:'M',  pollination:'M', pest:'H',  soil_q:'VH', erosion:'VH', climate:'H',  flood:'M',  genetic:'H',  fibres:'VH', air:'L',  mass:'H',  dilution:'M' },
+  metals_mining: { water_s:'VH', water_g:'VH', water_q:'H',  pollination:'VL',pest:'VL', soil_q:'L',  erosion:'H',  climate:'L',  flood:'M',  genetic:'VL', fibres:'VL', air:'L',  mass:'H',  dilution:'VH' },
+  oil_gas:       { water_s:'H',  water_g:'H',  water_q:'M',  pollination:'VL',pest:'VL', soil_q:'L',  erosion:'M',  climate:'L',  flood:'M',  genetic:'VL', fibres:'VL', air:'M',  mass:'M',  dilution:'VH' },
+  chemicals:     { water_s:'VH', water_g:'H',  water_q:'M',  pollination:'VL',pest:'VL', soil_q:'L',  erosion:'L',  climate:'L',  flood:'M',  genetic:'L',  fibres:'L',  air:'M',  mass:'L',  dilution:'VH' },
+  pharma_biotech:{ water_s:'H',  water_g:'M',  water_q:'M',  pollination:'L', pest:'L',  soil_q:'M',  erosion:'L',  climate:'L',  flood:'L',  genetic:'VH', fibres:'M',  air:'L',  mass:'L',  dilution:'M' },
+  electric_utilities:{water_s:'VH',water_g:'M',water_q:'M',  pollination:'VL',pest:'VL', soil_q:'L',  erosion:'M',  climate:'M',  flood:'H',  genetic:'VL', fibres:'VL', air:'M',  mass:'M',  dilution:'H' },
+  water_utilities:{water_s:'VH', water_g:'VH', water_q:'VH', pollination:'VL',pest:'VL', soil_q:'M',  erosion:'H',  climate:'M',  flood:'VH', genetic:'VL', fibres:'VL', air:'L',  mass:'M',  dilution:'VH' },
+  apparel:       { water_s:'VH', water_g:'H',  water_q:'M',  pollination:'H', pest:'M',  soil_q:'VH', erosion:'H',  climate:'M',  flood:'L',  genetic:'M',  fibres:'VH', air:'L',  mass:'L',  dilution:'M' },
+  building_products:{water_s:'M',water_g:'M',  water_q:'M',  pollination:'M', pest:'M',  soil_q:'H',  erosion:'H',  climate:'M',  flood:'M',  genetic:'M',  fibres:'VH', air:'L',  mass:'M',  dilution:'M' },
+  finance_bank:  { water_s:'M',  water_g:'M',  water_q:'M',  pollination:'M', pest:'M',  soil_q:'M',  erosion:'M',  climate:'M',  flood:'M',  genetic:'L',  fibres:'M',  air:'L',  mass:'L',  dilution:'M' },
+  finance_invest:{ water_s:'M',  water_g:'M',  water_q:'M',  pollination:'M', pest:'M',  soil_q:'M',  erosion:'M',  climate:'M',  flood:'M',  genetic:'L',  fibres:'M',  air:'L',  mass:'L',  dilution:'M' },
+  real_estate:   { water_s:'H',  water_g:'M',  water_q:'L',  pollination:'VL',pest:'VL', soil_q:'L',  erosion:'M',  climate:'L',  flood:'H',  genetic:'VL', fibres:'L',  air:'M',  mass:'M',  dilution:'M' },
+  infrastructure:{ water_s:'H',  water_g:'M',  water_q:'M',  pollination:'VL',pest:'VL', soil_q:'M',  erosion:'H',  climate:'L',  flood:'H',  genetic:'VL', fibres:'L',  air:'M',  mass:'H',  dilution:'M' },
+  transport:     { water_s:'M',  water_g:'M',  water_q:'L',  pollination:'VL',pest:'VL', soil_q:'L',  erosion:'L',  climate:'L',  flood:'M',  genetic:'VL', fibres:'L',  air:'M',  mass:'M',  dilution:'M' },
+  consumer_goods:{ water_s:'H',  water_g:'M',  water_q:'M',  pollination:'H', pest:'M',  soil_q:'H',  erosion:'M',  climate:'L',  flood:'L',  genetic:'M',  fibres:'H',  air:'L',  mass:'L',  dilution:'M' },
+  tech:          { water_s:'M',  water_g:'M',  water_q:'L',  pollination:'VL',pest:'VL', soil_q:'VL', erosion:'VL', climate:'L',  flood:'L',  genetic:'VL', fibres:'L',  air:'L',  mass:'L',  dilution:'M' }
+};
+
+// Convert heat rating to numeric weight
+const HEAT_WEIGHT = { VH:5, H:4, M:3, L:2, VL:1 };
+const HEAT_LABEL  = { VH:'Very High', H:'High', M:'Medium', L:'Low', VL:'Very Low' };
+
+// The 14 TNFD Recommended Disclosures (TNFD v1.0, Sept 2023)
+const DISCLOSURES = [
+  // Governance
+  {code:'Gov-A', pillar:'Governance', name:'Board oversight of nature-related issues', desc:'Describe the board\'s oversight of nature-related dependencies, impacts, risks and opportunities.'},
+  {code:'Gov-B', pillar:'Governance', name:'Management role',     desc:'Describe management\'s role in assessing and managing nature issues.'},
+  {code:'Gov-C', pillar:'Governance', name:'Human-rights approach & engagement', desc:'Describe the organisation\'s human-rights policies and engagement activities with Indigenous Peoples, local communities and other affected stakeholders. *TNFD addition — not in TCFD.*'},
+  // Strategy
+  {code:'Str-A', pillar:'Strategy',   name:'Identified issues & time horizons', desc:'Describe the nature-related dependencies, impacts, risks and opportunities identified over short / medium / long term.'},
+  {code:'Str-B', pillar:'Strategy',   name:'Effect on strategy & financials',  desc:'Describe the effect on business model, strategy, financial planning.'},
+  {code:'Str-C', pillar:'Strategy',   name:'Resilience to nature scenarios',   desc:'Describe the resilience of strategy under different nature scenarios (including climate-nature interactions).'},
+  {code:'Str-D', pillar:'Strategy',   name:'Priority locations',               desc:'Disclose locations of assets / activities in the organisation\'s direct operations and, where relevant, upstream / downstream that meet the criteria for priority locations. *TNFD addition — not in TCFD.*'},
+  // Risk & Impact Management
+  {code:'Rim-A', pillar:'Risk & Impact Mgmt', name:'Processes — direct ops',    desc:'Describe processes to identify, assess and prioritise nature issues in direct operations.'},
+  {code:'Rim-A2',pillar:'Risk & Impact Mgmt', name:'Processes — upstream/downstream', desc:'Describe processes to identify, assess and prioritise issues in upstream / downstream value chain.'},
+  {code:'Rim-B', pillar:'Risk & Impact Mgmt', name:'Management processes',      desc:'Describe the processes to manage nature-related dependencies, impacts, risks and opportunities.'},
+  {code:'Rim-C', pillar:'Risk & Impact Mgmt', name:'Integration into ERM',      desc:'Describe how nature-related processes are integrated into the overall risk management framework.'},
+  // Metrics & Targets
+  {code:'Mt-A',  pillar:'Metrics & Targets', name:'Metrics on risks & opportunities', desc:'Disclose the metrics used to assess and manage material risks and opportunities.'},
+  {code:'Mt-B',  pillar:'Metrics & Targets', name:'Metrics on dependencies & impacts', desc:'Disclose the metrics used to assess and manage dependencies and impacts on nature.'},
+  {code:'Mt-C',  pillar:'Metrics & Targets', name:'Targets',                     desc:'Describe targets and goals used to manage nature-related issues, and performance against them.'}
+];
+
+// Sector-peer benchmark (% of sector at each disclosure-readiness tier, illustrative from WBCSD/TNFD pilot reports 2024)
+const SECTOR_BENCH = {
+  food_ag:       {readiness_median:42, top_quartile:65, laggard_share:40},
+  aquaculture:   {readiness_median:35, top_quartile:58, laggard_share:48},
+  forestry:      {readiness_median:55, top_quartile:75, laggard_share:22},
+  metals_mining: {readiness_median:48, top_quartile:70, laggard_share:30},
+  oil_gas:       {readiness_median:40, top_quartile:62, laggard_share:38},
+  chemicals:     {readiness_median:38, top_quartile:60, laggard_share:42},
+  pharma_biotech:{readiness_median:32, top_quartile:55, laggard_share:50},
+  electric_utilities:{readiness_median:45,top_quartile:68,laggard_share:32},
+  water_utilities:{readiness_median:50,top_quartile:72,laggard_share:25},
+  apparel:       {readiness_median:28, top_quartile:50, laggard_share:55},
+  building_products:{readiness_median:25,top_quartile:48,laggard_share:60},
+  finance_bank:  {readiness_median:38, top_quartile:62, laggard_share:42},
+  finance_invest:{readiness_median:42, top_quartile:68, laggard_share:38},
+  real_estate:   {readiness_median:20, top_quartile:42, laggard_share:65},
+  infrastructure:{readiness_median:22, top_quartile:45, laggard_share:62},
+  transport:     {readiness_median:18, top_quartile:40, laggard_share:68},
+  consumer_goods:{readiness_median:30, top_quartile:52, laggard_share:52},
+  tech:          {readiness_median:15, top_quartile:35, laggard_share:72}
+};
+
+// ============ RENDER ============
+function el(id){return document.getElementById(id)}
+
+function renderDeps(){
+  const sector = el('sector').value;
+  const heat = DEP_HEAT[sector] || DEP_HEAT.food_ag;
+  const container = el('deps_container');
+  let html = '';
+  DEPENDENCIES.forEach(d=>{
+    const h = heat[d.id] || 'M';
+    const cls = h==='VH'||h==='H' ? 'heat-h' : (h==='M' ? 'heat-m' : (h==='L' ? 'heat-l' : 'heat-vl'));
+    html += `<div class="dep"><div><b>${d.name}</b><br/><small>${d.tip}</small></div>`
+         +  `<select data-dep="${d.id}" style="font-size:12px;padding:4px;">
+               <option value="VH"${h==='VH'?' selected':''}>Very High</option>
+               <option value="H"${h==='H'?' selected':''}>High</option>
+               <option value="M"${h==='M'?' selected':''}>Medium</option>
+               <option value="L"${h==='L'?' selected':''}>Low</option>
+               <option value="VL"${h==='VL'?' selected':''}>Very Low</option>
+             </select></div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderDiscl(){
+  const container = el('discl_container');
+  let html = '';
+  let currentPillar = '';
+  DISCLOSURES.forEach(d=>{
+    if (d.pillar !== currentPillar){
+      html += `<h3 style="margin-top:18px;color:var(--coral-dark)">${d.pillar}</h3>`;
+      currentPillar = d.pillar;
+    }
+    html += `<div class="discl">
+       <div class="code">${d.code}</div>
+       <div><b>${d.name}</b><br/><small>${d.desc}</small></div>
+       <div class="checkcol"><select data-discl="${d.code}">
+         <option value="0">0 — Not started</option>
+         <option value="1" selected>1 — Drafted internally</option>
+         <option value="2">2 — Partial external</option>
+         <option value="3">3 — Full disclosure</option>
+       </select></div>
+     </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ============ SCORING ============
+function num(id){ const v = parseFloat(el(id).value); return isNaN(v)?0:v; }
+function ck(id){ return el(id).checked; }
+
+function depScore(){
+  const sector = el('sector').value;
+  const heat = DEP_HEAT[sector] || DEP_HEAT.food_ag;
+  const selects = document.querySelectorAll('#deps_container select[data-dep]');
+  let total = 0, n = 0, highCount = 0;
+  const hotspots = [];
+  selects.forEach(s=>{
+    const w = HEAT_WEIGHT[s.value];
+    total += w; n++;
+    if (w >= 4){ highCount++; hotspots.push({name: DEPENDENCIES.find(d=>d.id===s.dataset.dep).name, rating: s.value}); }
+  });
+  const avg = total / Math.max(n,1); // 1–5
+  return { avg, highCount, hotspots };
+}
+
+function impactScore(){
+  const vals = [num('imp_land'),num('imp_resource'),num('imp_climate'),num('imp_pollution'),num('imp_invasive')];
+  const total = vals.reduce((a,b)=>a+b,0);
+  const max = vals.length * 5;
+  return total / max; // 0–1
+}
+
+function locateScore(){
+  // Materiality triggers: KBA, protected area, indigenous, water stress, red-list eco, degraded
+  const triggers = [];
+  if (num('l_kba') > 0) triggers.push({type:'bad', text:`${num('l_kba')} site(s) in Key Biodiversity Areas`});
+  if (num('l_pa') > 0) triggers.push({type:'bad', text:`${num('l_pa')} site(s) in IUCN Protected Areas`});
+  if (num('l_indigenous') > 0) triggers.push({type:'warn', text:`${num('l_indigenous')} site(s) on indigenous / community lands — FPIC required`});
+  if (num('l_water_stress') > 0) triggers.push({type:'warn', text:`${num('l_water_stress')} site(s) in WRI Aqueduct high / extremely-high water-stress basins`});
+  if (num('l_red_eco') > 0) triggers.push({type:'bad', text:`${num('l_red_eco')} site(s) in IUCN Red-Listed threatened ecosystems`});
+  if (num('l_degraded') > 0) triggers.push({type:'warn', text:`${num('l_degraded')} site(s) post-2020 degraded / converted land`});
+  if (num('l_eudr_count') > 0 && num('l_trace_pct') < 95) {
+    triggers.push({type:'bad', text:`EUDR exposure: ${num('l_eudr_count')} regulated commodity(ies), ${num('l_trace_pct')}% traceability (95%+ needed by Dec 2025)`});
+  }
+  // Score: 0 = no triggers / high triggers => high materiality
+  const sum = num('l_kba')*3 + num('l_pa')*3 + num('l_indigenous')*2 + num('l_water_stress')*2 + num('l_red_eco')*3 + num('l_degraded')*2;
+  const normalized = Math.min(sum/20, 1); // 0–1
+  return { triggers, normalized };
+}
+
+function riskScore(){
+  const risks = [
+    {name:'Pollinator decline', cat:'Physical', l:num('r_poll_l'),  s:num('r_poll_s'),  h:el('r_poll_h').value},
+    {name:'Water stress',        cat:'Physical', l:num('r_water_l'),s:num('r_water_s'), h:el('r_water_h').value},
+    {name:'Soil degradation',    cat:'Physical', l:num('r_soil_l'), s:num('r_soil_s'),  h:el('r_soil_h').value},
+    {name:'Pest / disease',      cat:'Physical', l:num('r_pest_l'), s:num('r_pest_s'),  h:el('r_pest_h').value},
+    {name:'Extreme weather',     cat:'Physical', l:num('r_xw_l'),   s:num('r_xw_s'),    h:el('r_xw_h').value},
+    {name:'EUDR non-compliance', cat:'Transition / Policy', l:num('t_eudr_l'), s:num('t_eudr_s'), h:'0–2y'},
+    {name:'CSRD / ESRS E4',      cat:'Transition / Policy', l:num('t_csrd_l'), s:num('t_csrd_s'), h:'0–2y'},
+    {name:'Customer deselection',cat:'Transition / Market',  l:num('t_cust_l'), s:num('t_cust_s'), h:'2–5y'},
+    {name:'Capital cost / covenant',cat:'Transition / Financial', l:num('t_capital_l'), s:num('t_capital_s'), h:'2–5y'},
+    {name:'Social license loss', cat:'Transition / Reputational', l:num('t_social_l'), s:num('t_social_s'), h:'0–2y'},
+    {name:'Nature damage liability', cat:'Transition / Legal',  l:num('t_liab_l'), s:num('t_liab_s'), h:'5–10y'}
+  ];
+  risks.forEach(r=> r.score = r.l * r.s);
+  risks.sort((a,b)=> b.score - a.score);
+
+  const sys = num('sy_amazon') + num('sy_fish') + num('sy_reef') + num('sy_water'); // max 16
+  const totalPhys = risks.filter(r=>r.cat==='Physical').reduce((a,b)=>a+b.score,0);
+  const totalTrans = risks.filter(r=>r.cat.startsWith('Transition')).reduce((a,b)=>a+b.score,0);
+  const avgRisk = risks.reduce((a,b)=>a+b.score,0) / risks.length / 25; // 0–1
+
+  const opps = num('o_resource')+num('o_product')+num('o_market')+num('o_capital')+num('o_rep'); // max 10
+
+  return { risks, totalPhys, totalTrans, sys, avgRisk, opps };
+}
+
+function disclScore(){
+  const selects = document.querySelectorAll('#discl_container select[data-discl]');
+  let total = 0;
+  const maxPer = 3;
+  const perPillar = {'Governance':0,'Strategy':0,'Risk & Impact Mgmt':0,'Metrics & Targets':0};
+  const countPer = {'Governance':0,'Strategy':0,'Risk & Impact Mgmt':0,'Metrics & Targets':0};
+  selects.forEach(s=>{
+    const v = parseInt(s.value);
+    total += v;
+    const d = DISCLOSURES.find(x=>x.code===s.dataset.discl);
+    if (d){ perPillar[d.pillar] += v; countPer[d.pillar]++; }
+  });
+  const pct = total / (DISCLOSURES.length * maxPer) * 100;
+  return { total, pct, perPillar, countPer };
+}
+
+// ============ COMPUTE + RENDER RESULTS ============
+function compute(){
+  const dep = depScore();        // avg 1-5, hotspots
+  const imp = impactScore();     // 0-1
+  const loc = locateScore();     // {triggers, normalized 0-1}
+  const risk = riskScore();
+  const disc = disclScore();
+
+  // Materiality: combines deps (30%), impacts (30%), location triggers (40%)
+  const materiality = Math.round((dep.avg/5)*30 + imp*30 + loc.normalized*40); // 0-100
+
+  // Net risk: risk (0-1) scaled to 70, minus opportunities (scale 3 per opp)
+  const riskRaw = risk.avgRisk * 70 + risk.sys * 1.5; // up to ~94
+  const oppsScaled = risk.opps * 3;
+  const netRisk = Math.max(0, Math.round(riskRaw - oppsScaled));
+
+  // Readiness
+  const readiness = Math.round(disc.pct);
+
+  // Grade
+  // Risk-adjusted grade: high materiality + low readiness = poor
+  const gap = materiality - readiness; // +ve = risk outruns readiness
+  let grade, gradeDesc, gradeColor;
+  if (gap <= -10){ grade='A'; gradeDesc='Exceeds sector peers — strong TNFD readiness vs. exposure'; gradeColor='var(--ok)'; }
+  else if (gap <= 5){ grade='B'; gradeDesc='On-track — readiness is catching up with exposure'; gradeColor='var(--ok)'; }
+  else if (gap <= 20){ grade='C'; gradeDesc='Gap exists — risks run ahead of disclosure readiness'; gradeColor='var(--warn)'; }
+  else if (gap <= 40){ grade='D'; gradeDesc='Material gap — unprepared for material nature risks'; gradeColor='var(--bad)'; }
+  else { grade='E'; gradeDesc='Critical gap — high-materiality with minimal TNFD readiness'; gradeColor='var(--bad)'; }
+
+  el('r_materiality').textContent = materiality;
+  el('r_net').textContent = netRisk;
+  el('r_discl').textContent = readiness + '%';
+  el('r_grade').textContent = grade;
+  el('r_grade').style.background = gradeColor;
+  el('r_grade_desc').textContent = gradeDesc;
+  el('r_progress').style.width = readiness + '%';
+
+  // Pills
+  const matPill = el('r_mat_pill');
+  if (materiality >= 60){ matPill.className='pill bad'; matPill.textContent='High materiality'; }
+  else if (materiality >= 35){ matPill.className='pill warn'; matPill.textContent='Medium materiality'; }
+  else { matPill.className='pill ok'; matPill.textContent='Low materiality'; }
+
+  const netPill = el('r_net_pill');
+  if (netRisk >= 50){ netPill.className='pill bad'; netPill.textContent='High net risk'; }
+  else if (netRisk >= 25){ netPill.className='pill warn'; netPill.textContent='Medium net risk'; }
+  else { netPill.className='pill ok'; netPill.textContent='Low net risk'; }
+
+  const disclPill = el('r_discl_pill');
+  if (readiness >= 70){ disclPill.className='pill ok'; disclPill.textContent='Disclosure-ready'; }
+  else if (readiness >= 40){ disclPill.className='pill warn'; disclPill.textContent='Partial readiness'; }
+  else { disclPill.className='pill bad'; disclPill.textContent='Not disclosure-ready'; }
+
+  // Triggers
+  let trigHtml = '';
+  if (loc.triggers.length === 0){
+    trigHtml = '<div class="alert green">No TNFD priority-location triggers detected. Materiality is driven by dependencies & impacts, not sensitive-location overlap.</div>';
+  } else {
+    loc.triggers.forEach(t=>{
+      const cls = t.type==='bad' ? 'red' : 'amber';
+      trigHtml += `<div class="alert ${cls}">⚠ ${t.text}</div>`;
+    });
+    trigHtml += `<div class="box flag"><b>TNFD verdict:</b> ${loc.triggers.length} priority-materiality trigger(s) detected. Under TNFD LEAP §L3 these trigger mandatory assessment even at low revenue weight. Disclosure of priority locations (Str-D) is required.</div>`;
+  }
+  el('r_triggers').innerHTML = trigHtml;
+
+  // Top 5 risks
+  const rbody = document.querySelector('#r_risk_table tbody');
+  rbody.innerHTML = '';
+  risk.risks.slice(0,5).forEach(r=>{
+    const sev = r.score >= 16 ? 'bad' : (r.score >= 9 ? 'warn' : 'ok');
+    rbody.innerHTML += `<tr><td>${r.name}</td><td>${r.cat}</td><td><span class="pill ${sev}">${r.score}/25</span></td><td>${r.h}</td></tr>`;
+  });
+
+  // Dependency hotspots
+  let depHtml = '';
+  if (dep.hotspots.length === 0) depHtml = '<p><small>No high/very-high dependencies identified — confirm this is correct for your processes.</small></p>';
+  else {
+    dep.hotspots.forEach(h=>{
+      depHtml += `<span class="risk-chip" style="background:#F3D7D1;color:var(--bad)">${h.name} — ${HEAT_LABEL[h.rating]}</span>`;
+    });
+    depHtml += `<p><small>Each hotspot is an ecosystem service your operations rely on. If that service degrades, you face operational or supply disruption. ENCORE v0.3 baseline ratings shown; adjust for your specific context.</small></p>`;
+  }
+  el('r_dep_hotspots').innerHTML = depHtml;
+
+  // Actions
+  const actions = [];
+  if (loc.triggers.filter(t=>t.type==='bad').length > 0){
+    actions.push(`<b>Within 30 days:</b> Commission a priority-location dossier for each KBA / PA / red-list ecosystem site (satellite imagery + on-site ecology assessment). This satisfies TNFD Str-D and de-risks investor/lender due diligence.`);
+  }
+  if (disc.perPillar['Governance'] <= 2){
+    actions.push(`<b>Board:</b> Add a standing nature item to board agenda. Name one director as nature lead. Addresses Gov-A, Gov-B in one action.`);
+  }
+  if (num('l_eudr_count') > 0 && num('l_trace_pct') < 95){
+    actions.push(`<b>EUDR compliance sprint:</b> ${num('l_eudr_count')} regulated commodity(ies), ${num('l_trace_pct')}% trace. Need 95%+ geolocation-traceable by 30 Dec 2025 (large-operator deadline). Start supplier polygon-mapping now.`);
+  }
+  if (num('p_sbtn') <= 1){
+    actions.push(`<b>Target setting:</b> Begin SBTN Step 1 assessment (Materiality screening) — use the free SBTN Step 1 workbook to scope issues; reserves ~6 weeks of analyst time.`);
+  }
+  if (num('imp_resource') >= 4 && num('l_water_stress') > 0){
+    actions.push(`<b>Water:</b> Set a context-based water target per AWS / CDP Water methodology for each water-stressed site. SBTN Freshwater Step 3 methodology released July 2023.`);
+  }
+  if (num('stakeholder_eng') === 'none' || el('stakeholder_eng').value === 'none' || el('stakeholder_eng').value === 'planned'){
+    actions.push(`<b>Stakeholder engagement:</b> Formal TNFD Principle 4 requires human-rights-based engagement with affected rights-holders. Start by mapping rights-holders and designing an FPIC protocol for indigenous-land sites.`);
+  }
+  if (disc.perPillar['Metrics & Targets'] <= 3){
+    actions.push(`<b>Metrics:</b> Adopt the TNFD Core Global Disclosure Metrics (14 indicators across impact drivers, state of nature, risks, response). Baseline reporting possible within one reporting cycle.`);
+  }
+  if (risk.sys >= 6){
+    actions.push(`<b>Systemic risk:</b> Score indicates material exposure to ecosystem tipping-point(s). Commission a scenario analysis using TNFD Scenarios (Ahead-of-the-curve / Go-it-alone / Sand in the wheels / Same old story) for Str-C disclosure.`);
+  }
+
+  if (actions.length === 0) actions.push('All priority actions cleared at this scoring. Focus on continuous-improvement metrics and assurance pathway.');
+  el('r_actions').innerHTML = actions.map((a,i)=>`<div class="box sub">${i+1}. ${a}</div>`).join('');
+
+  // Benchmark
+  const sector = el('sector').value;
+  const bench = SECTOR_BENCH[sector] || SECTOR_BENCH.food_ag;
+  let position;
+  if (readiness >= bench.top_quartile) position = '<span class="pill ok">Top quartile</span>';
+  else if (readiness >= bench.readiness_median) position = '<span class="pill info">Above sector median</span>';
+  else if (readiness >= (bench.readiness_median - 15)) position = '<span class="pill warn">Below sector median</span>';
+  else position = '<span class="pill bad">Laggard — bottom ' + bench.laggard_share + '%</span>';
+
+  el('r_bench').innerHTML = `<table>
+    <tr><th>Your readiness</th><td>${readiness}%</td></tr>
+    <tr><th>Sector median (peer cohort)</th><td>${bench.readiness_median}%</td></tr>
+    <tr><th>Sector top quartile</th><td>${bench.top_quartile}%</td></tr>
+    <tr><th>Your position</th><td>${position}</td></tr>
+  </table>
+  <p><small>Benchmarks from WBCSD TNFD pilot cohort reports 2024 (N=400+ companies) and TNFD Adopter early-disclosure review. Illustrative for priority sectors; non-priority sectors have fewer disclosed datapoints.</small></p>`;
+
+  // Stash results for CSV / prompt
+  window._tnfdResults = { materiality, netRisk, readiness, grade, gradeDesc, risks:risk.risks, dep, triggers:loc.triggers, disc, bench, actions };
+}
+
+// ============ CSV ============
+function exportCSV(){
+  const r = window._tnfdResults;
+  if (!r){ compute(); return exportCSV(); }
+  const rows = [];
+  rows.push(['TNFD Nature-Related Risk Assessment — Memo']);
+  rows.push(['Generated', new Date().toISOString().slice(0,10)]);
+  rows.push([]);
+  rows.push(['ENTITY']);
+  rows.push(['Organisation', el('org_name').value]);
+  rows.push(['Sector', el('sector').value]);
+  rows.push(['Geography', el('geography').value]);
+  rows.push(['Revenue / AUM USDm', el('size').value]);
+  rows.push(['Value chain scope', el('value_chain').value]);
+  rows.push(['Reporting maturity', el('maturity').value]);
+  rows.push([]);
+  rows.push(['SCORES']);
+  rows.push(['Materiality (0-100)', r.materiality]);
+  rows.push(['Net risk (0-100)', r.netRisk]);
+  rows.push(['TNFD disclosure readiness %', r.readiness]);
+  rows.push(['Overall grade', r.grade]);
+  rows.push(['Verdict', r.gradeDesc]);
+  rows.push([]);
+  rows.push(['PRIORITY-LOCATION TRIGGERS']);
+  if (r.triggers.length===0) rows.push(['None detected']);
+  else r.triggers.forEach(t=> rows.push([t.type.toUpperCase(), t.text]));
+  rows.push([]);
+  rows.push(['TOP RISKS']);
+  rows.push(['Risk','Category','Likelihood','Severity','Score','Horizon']);
+  r.risks.slice(0,10).forEach(risk=> rows.push([risk.name, risk.cat, risk.l, risk.s, risk.score, risk.h]));
+  rows.push([]);
+  rows.push(['DEPENDENCY HOTSPOTS (High/Very High)']);
+  if (r.dep.hotspots.length === 0) rows.push(['None']);
+  else r.dep.hotspots.forEach(h=> rows.push([h.name, HEAT_LABEL[h.rating]]));
+  rows.push([]);
+  rows.push(['DISCLOSURE READINESS BY PILLAR']);
+  Object.keys(r.disc.perPillar).forEach(p=>{
+    const count = r.disc.countPer[p];
+    const pct = Math.round(r.disc.perPillar[p] / (count*3) * 100);
+    rows.push([p, r.disc.perPillar[p] + '/' + (count*3), pct + '%']);
+  });
+  rows.push([]);
+  rows.push(['SECTOR BENCHMARK']);
+  rows.push(['Your readiness', r.readiness + '%']);
+  rows.push(['Sector median', r.bench.readiness_median + '%']);
+  rows.push(['Sector top quartile', r.bench.top_quartile + '%']);
+  rows.push([]);
+  rows.push(['RECOMMENDED 90-DAY ACTIONS']);
+  r.actions.forEach((a,i)=> rows.push([i+1, a.replace(/<[^>]+>/g,'')]));
+  rows.push([]);
+  rows.push(['CLAUDE PROMPT']);
+  rows.push([buildPrompt().replace(/\n/g,' | ')]);
+
+  const csv = rows.map(r=> r.map(c => {
+    const s = (c===undefined||c===null) ? '' : String(c);
+    return s.includes(',')||s.includes('"')||s.includes('\n') ? '"'+s.replace(/"/g,'""')+'"' : s;
+  }).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'tnfd-nature-assessment-' + (el('org_name').value || 'org').replace(/\s+/g,'-') + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ============ CLAUDE PROMPT ============
+function buildPrompt(){
+  const r = window._tnfdResults;
+  if (!r) compute();
+  const rr = window._tnfdResults;
+  const org = el('org_name').value;
+  const sector = el('sector').options[el('sector').selectedIndex].text;
+  const geo = el('geography').options[el('geography').selectedIndex].text;
+  const vc = el('value_chain').options[el('value_chain').selectedIndex].text;
+  const topRisks = rr.risks.slice(0,5).map(r=> `${r.name} (${r.cat}, ${r.score}/25, ${r.h})`).join('; ');
+  const hotspots = rr.dep.hotspots.length ? rr.dep.hotspots.map(h=>`${h.name} (${HEAT_LABEL[h.rating]})`).join('; ') : 'none';
+  const triggers = rr.triggers.length ? rr.triggers.map(t=>t.text).join('; ') : 'none detected';
+
+  return `You are a TNFD-certified nature-risk analyst supporting ${org}, a ${sector.replace(' *priority','')} operating in ${geo}.
+
+ASSESSMENT CONTEXT
+- Value chain scope: ${vc}
+- Reporting driver: ${el('driver').options[el('driver').selectedIndex].text}
+- ESG/TCFD maturity: ${el('maturity').options[el('maturity').selectedIndex].text}
+- Revenue / AUM: USD ${el('size').value}m
+
+SCORING SUMMARY (TNFD LEAP methodology)
+- Nature materiality: ${rr.materiality}/100
+- Net risk exposure: ${rr.netRisk}/100
+- TNFD disclosure readiness: ${rr.readiness}%
+- Overall grade: ${rr.grade} — ${rr.gradeDesc}
+
+PRIORITY-LOCATION TRIGGERS
+${triggers}
+
+TOP 5 RISKS (likelihood × severity)
+${topRisks}
+
+DEPENDENCY HOTSPOTS (High / Very High ecosystem-service reliance)
+${hotspots}
+
+DISCLOSURE READINESS BY PILLAR
+- Governance: ${Math.round(rr.disc.perPillar['Governance']/(rr.disc.countPer['Governance']*3)*100)}%
+- Strategy: ${Math.round(rr.disc.perPillar['Strategy']/(rr.disc.countPer['Strategy']*3)*100)}%
+- Risk & Impact Mgmt: ${Math.round(rr.disc.perPillar['Risk & Impact Mgmt']/(rr.disc.countPer['Risk & Impact Mgmt']*3)*100)}%
+- Metrics & Targets: ${Math.round(rr.disc.perPillar['Metrics & Targets']/(rr.disc.countPer['Metrics & Targets']*3)*100)}%
+
+WHAT I NEED FROM YOU (produce each as a separate numbered section):
+
+1. EXECUTIVE SUMMARY for the board — 200 words, plain language, ending with the 3 most urgent decisions the board must make in the next 90 days.
+
+2. TNFD STR-A DISCLOSURE PARAGRAPH — draft a publishable "nature-related dependencies, impacts, risks and opportunities over short / medium / long term" paragraph suitable for our next annual report. Use TNFD terminology. Reference our priority-location triggers explicitly.
+
+3. TNFD STR-D PRIORITY-LOCATION DISCLOSURE — draft the priority-location disclosure paragraph.
+
+4. SBTN ROADMAP — 18-month plan to move from our current target-setting status to validated Freshwater + Land targets. Phase it into three 6-month blocks with deliverables.
+
+5. ASSUMPTION STRESS-TEST — challenge the 3 scores I should be most sceptical of and explain why. What counter-evidence should I seek?
+
+6. INVESTOR / LENDER Q&A — the 10 toughest questions a nature-focused investor will ask in diligence, with model answers using our current data.
+
+7. METRICS SHORTLIST — propose 8 TNFD Core Global Metrics + 4 sector-specific metrics we should start tracking this quarter. Specify data source and approximate cost to collect for each.
+
+8. MITIGATION-HIERARCHY RED FLAGS — review our "Avoid / Reduce / Restore / Transform" positions and flag where we are skipping straight to offsets or otherwise misapplying the hierarchy.
+
+Keep answers operational and specific to our sector and geography. Cite TNFD Recommendation codes (Gov-A, Str-D, Rim-A, Mt-B etc.) and SBTN step numbers inline. Do not pad.`;
+}
+
+function generatePrompt(){
+  compute();
+  el('claude_prompt').textContent = buildPrompt();
+}
+
+function copyPrompt(){
+  const p = el('claude_prompt').textContent;
+  navigator.clipboard.writeText(p).then(()=>{
+    const btn = el('btn_copy_prompt');
+    const old = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(()=> btn.textContent = old, 1500);
+  }).catch(()=>{
+    const ta = document.createElement('textarea');
+    ta.value = p; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  });
+}
+
+// ============ EVENTS ============
+function wireTabs(){
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.tabpane').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      el(t.dataset.p).classList.add('active');
+      if (t.dataset.p === 'p-result') compute();
+      if (t.dataset.p === 'p-claude') generatePrompt();
+    });
+  });
+}
+
+function wireInputs(){
+  el('sector').addEventListener('change', renderDeps);
+  el('btn_recalc').addEventListener('click', compute);
+  el('btn_csv').addEventListener('click', exportCSV);
+  el('btn_gen_prompt').addEventListener('click', generatePrompt);
+  el('btn_copy_prompt').addEventListener('click', copyPrompt);
+}
+
+// ============ INIT ============
+renderDeps();
+renderDiscl();
+wireTabs();
+wireInputs();
+compute();
+</script>
+
+</body>
+</html>
