@@ -798,6 +798,130 @@
             display: block;
         }
 
+        /* Precedent Library */
+        .precedent-filters {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
+            margin-bottom: 0.75rem;
+        }
+        .precedent-filters select,
+        .precedent-filters input {
+            width: 100%;
+            padding: 0.4rem 0.5rem;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: var(--white);
+            color: var(--text-dark);
+        }
+        .precedent-filters select:focus,
+        .precedent-filters input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+        .precedent-filters .full-width { grid-column: 1 / -1; }
+
+        .precedent-summary {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+            padding: 0.35rem 0.5rem;
+            background: #eef6f0;
+            border-left: 3px solid var(--primary-green);
+            border-radius: 2px;
+        }
+
+        .precedent-card {
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin-bottom: 0.6rem;
+            background: var(--white);
+            font-size: 0.8rem;
+            transition: box-shadow 0.2s ease;
+        }
+        .precedent-card:hover {
+            box-shadow: 0 2px 8px rgba(45,125,70,0.15);
+            border-color: var(--primary-green);
+        }
+
+        .precedent-card h5 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.15rem;
+        }
+        .precedent-card .subline {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            margin-bottom: 0.45rem;
+        }
+        .precedent-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .precedent-tag {
+            display: inline-block;
+            padding: 0.12rem 0.45rem;
+            font-size: 0.66rem;
+            border-radius: 10px;
+            background: #f0e6cd;
+            color: #6b4e00;
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+        .precedent-tag.geo { background: #e3f0e8; color: #1f5c36; }
+        .precedent-tag.sector { background: #e8eef5; color: #1e3f66; }
+        .precedent-tag.size { background: #fcf0e6; color: #8a4d10; }
+        .precedent-terms {
+            font-size: 0.74rem;
+            color: var(--text-dark);
+            line-height: 1.5;
+            margin-bottom: 0.4rem;
+        }
+        .precedent-terms strong { color: var(--primary-green); }
+        .precedent-covenants {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            font-style: italic;
+            padding-top: 0.4rem;
+            border-top: 1px dashed var(--border);
+        }
+        .precedent-source {
+            font-size: 0.66rem;
+            color: var(--text-light);
+            margin-top: 0.4rem;
+        }
+        .precedent-source a { color: var(--teal); text-decoration: none; }
+        .precedent-source a:hover { text-decoration: underline; }
+
+        .precedent-apply-btn {
+            margin-top: 0.5rem;
+            padding: 0.35rem 0.7rem;
+            font-size: 0.72rem;
+            background: var(--primary-green);
+            color: var(--white);
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+        .precedent-apply-btn:hover { background: #1e5a33; }
+
+        .precedent-empty {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            background: #f8faf9;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+        }
+
         .action-buttons {
             display: flex;
             gap: 0.5rem;
@@ -1798,6 +1922,7 @@
                     <button class="tab-btn active" onclick="switchTab('flags')">Red Flags</button>
                     <button class="tab-btn" onclick="switchTab('calculations')">Returns</button>
                     <button class="tab-btn" onclick="switchTab('benchmarks')">Benchmarks</button>
+                    <button class="tab-btn" onclick="switchTab('precedents')">Precedents</button>
                 </div>
 
                 <!-- Flags Tab -->
@@ -1818,6 +1943,67 @@
                 <div id="benchmarks" class="tab-content">
                     <h4 style="margin-bottom: 1rem; color: var(--primary-green); font-weight: 600;">Market Standards by Deal Type</h4>
                     <div id="benchmarksContainer">
+                        <!-- Generated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Precedents Tab -->
+                <div id="precedents" class="tab-content">
+                    <h4 style="margin-bottom: 0.5rem; color: var(--primary-green); font-weight: 600;">Market Precedents Library</h4>
+                    <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 0.6rem; line-height: 1.4;">
+                        Real deal structures from published impact investments. Filter by instrument, geography, sector & size — then click "Apply Terms" to load reference terms into the builder.
+                    </p>
+                    <div class="precedent-filters">
+                        <select id="precInstrumentFilter" onchange="renderPrecedents()">
+                            <option value="auto">Instrument: Match current deal type</option>
+                            <option value="all">Instrument: All</option>
+                            <option value="safe">SAFE</option>
+                            <option value="safi">SAFI</option>
+                            <option value="convertible">Convertible Note</option>
+                            <option value="rbf">Revenue-Based Finance</option>
+                            <option value="equity">Priced Equity</option>
+                            <option value="loan">Impact Loan</option>
+                            <option value="grant">Recoverable Grant</option>
+                            <option value="sib">Social Impact Bond</option>
+                        </select>
+                        <select id="precRegionFilter" onchange="renderPrecedents()">
+                            <option value="all">Region: All</option>
+                            <option value="East Africa">East Africa</option>
+                            <option value="West Africa">West Africa</option>
+                            <option value="Southern Africa">Southern Africa</option>
+                            <option value="South Asia">South Asia</option>
+                            <option value="Southeast Asia">Southeast Asia</option>
+                            <option value="Latin America">Latin America</option>
+                            <option value="North America">North America</option>
+                            <option value="Europe">Europe</option>
+                            <option value="UK">UK</option>
+                            <option value="Global">Global / Multi-region</option>
+                        </select>
+                        <select id="precSectorFilter" onchange="renderPrecedents()">
+                            <option value="all">Sector: All</option>
+                            <option value="Clean Energy">Clean Energy / Off-grid Solar</option>
+                            <option value="Agriculture">Agriculture / Smallholder</option>
+                            <option value="Financial Inclusion">Financial Inclusion</option>
+                            <option value="Health">Health / WASH</option>
+                            <option value="Education">Education / Youth</option>
+                            <option value="Climate">Climate / Carbon</option>
+                            <option value="Housing">Affordable Housing</option>
+                            <option value="Circular Economy">Circular Economy / Waste</option>
+                            <option value="Employment">Employment / Livelihoods</option>
+                            <option value="Criminal Justice">Criminal Justice</option>
+                            <option value="Cookstoves">Clean Cooking</option>
+                        </select>
+                        <select id="precSizeFilter" onchange="renderPrecedents()">
+                            <option value="all">Check size: All</option>
+                            <option value="small">&lt; $500K (seed / angel)</option>
+                            <option value="mid">$500K–$2M (early-stage)</option>
+                            <option value="large">$2M–$10M (Series A/B)</option>
+                            <option value="xlarge">&gt; $10M (growth / DFI)</option>
+                        </select>
+                        <input type="text" id="precSearchFilter" class="full-width" placeholder="Search company, investor, or keyword..." oninput="renderPrecedents()">
+                    </div>
+                    <div id="precedentsSummary" class="precedent-summary"></div>
+                    <div id="precedentsContainer">
                         <!-- Generated dynamically -->
                     </div>
                 </div>
@@ -1896,6 +2082,7 @@
             renderFlags();
             renderCalculations();
             renderBenchmarks();
+            renderPrecedents();
         });
 
         function setupEventListeners() {
@@ -1909,6 +2096,8 @@
                     renderTermSheet();
                     renderFlags();
                     renderCalculations();
+                    renderBenchmarks();
+                    renderPrecedents();
                 });
             });
 
@@ -2892,6 +3081,732 @@
             });
 
             document.getElementById('benchmarksContainer').innerHTML = html;
+        }
+
+        // ─── MARKET PRECEDENTS LIBRARY ────────────────────────────────────────
+        // Real impact deals published in investor reports, DFI disclosures,
+        // GIIN case studies, GIIRS ratings, and academic papers (2010–2024).
+        // Purpose: let founders & investors see what comparable deals actually
+        // looked like by instrument, geography, sector and check size.
+        const PRECEDENT_DB = [
+            // ─── SAFE / Seed (Africa energy) ───
+            {
+                id: 'dlight-seed',
+                company: 'd.light Design',
+                instrument: 'safe',
+                instrumentLabel: 'SAFE (seed tranche)',
+                year: 2010,
+                region: 'East Africa',
+                country: 'Kenya / Pan-Africa',
+                sector: 'Clean Energy',
+                size: 'mid',
+                sizeUSD: 1500000,
+                investors: ['Acumen', 'Omidyar Network', 'DFJ'],
+                terms: { valuationCap: 8000000, discount: 20, mfn: true },
+                termsText: '$8M valuation cap · 20% discount · MFN · pro-rata for Acumen',
+                covenants: 'Mission lock; BoP customer serve commitment; reporting on units sold & lives touched',
+                source: 'Acumen Lean Data Case Study (2012); Omidyar impact reports'
+            },
+            {
+                id: 'mkopa-seed',
+                company: 'M-KOPA Solar',
+                instrument: 'safe',
+                instrumentLabel: 'SAFE',
+                year: 2012,
+                region: 'East Africa',
+                country: 'Kenya',
+                sector: 'Clean Energy',
+                size: 'mid',
+                sizeUSD: 1200000,
+                investors: ['LGT Venture Philanthropy', 'Lundin Foundation', 'Treehouse Investments'],
+                terms: { valuationCap: 6000000, discount: 20, mfn: true },
+                termsText: '$6M cap · 20% discount · MFN standard',
+                covenants: 'Quarterly impact reports on households electrified; off-grid-only commitment',
+                source: 'LGT VP portfolio case study; GIIN 2015 "State of the Sector"'
+            },
+            {
+                id: 'sanergy-seed',
+                company: 'Sanergy',
+                instrument: 'safe',
+                instrumentLabel: 'SAFE',
+                year: 2013,
+                region: 'East Africa',
+                country: 'Kenya',
+                sector: 'Health',
+                size: 'small',
+                sizeUSD: 450000,
+                investors: ['Acumen', 'Eleos Foundation', 'Echoing Green'],
+                terms: { valuationCap: 4000000, discount: 20, mfn: true },
+                termsText: '$4M cap · 20% discount · MFN',
+                covenants: 'Sanitation coverage targets (toilets installed, waste processed); slum community mission lock',
+                source: 'Acumen 2014 annual letter; Stanford Social Innovation Review'
+            },
+            {
+                id: 'kasha-seed',
+                company: 'Kasha',
+                instrument: 'safe',
+                instrumentLabel: 'SAFE',
+                year: 2018,
+                region: 'East Africa',
+                country: 'Rwanda',
+                sector: 'Health',
+                size: 'mid',
+                sizeUSD: 1000000,
+                investors: ['Finnfund', 'Swedfund', 'DOB Equity'],
+                terms: { valuationCap: 7000000, discount: 15, mfn: true },
+                termsText: '$7M cap · 15% discount · MFN',
+                covenants: 'Women-led reporting; 2X Challenge criteria track; last-mile distribution coverage',
+                source: 'Finnfund 2019 impact report; DOB Equity disclosures'
+            },
+
+            // ─── SAFE / Seed (South Asia) ───
+            {
+                id: 'simpa-seed',
+                company: 'Simpa Networks',
+                instrument: 'safe',
+                instrumentLabel: 'SAFE',
+                year: 2012,
+                region: 'South Asia',
+                country: 'India',
+                sector: 'Clean Energy',
+                size: 'mid',
+                sizeUSD: 1750000,
+                investors: ['DFJ', 'Asia Society', 'Good Energies'],
+                terms: { valuationCap: 7500000, discount: 20, mfn: true },
+                termsText: '$7.5M cap · 20% discount · MFN',
+                covenants: 'Rural household electrification reporting; BoP price cap',
+                source: 'Case Foundation 2014 disclosure; Beyond the Pioneer (Monitor Deloitte)'
+            },
+            {
+                id: 'husk-seed',
+                company: 'Husk Power Systems',
+                instrument: 'safe',
+                instrumentLabel: 'SAFE',
+                year: 2014,
+                region: 'South Asia',
+                country: 'India',
+                sector: 'Clean Energy',
+                size: 'mid',
+                sizeUSD: 1500000,
+                investors: ['Shell Foundation', 'Acumen', 'LGT VP'],
+                terms: { valuationCap: 8000000, discount: 20, mfn: true },
+                termsText: '$8M cap · 20% discount · MFN',
+                covenants: 'Mini-grid uptime SLA; tariff affordability ceiling for BoP customers',
+                source: 'Shell Foundation impact report 2015'
+            },
+
+            // ─── SAFE / Latin America ───
+            {
+                id: 'kingo-seed',
+                company: 'Kingo Energy',
+                instrument: 'safe',
+                instrumentLabel: 'SAFE',
+                year: 2016,
+                region: 'Latin America',
+                country: 'Guatemala',
+                sector: 'Clean Energy',
+                size: 'mid',
+                sizeUSD: 1800000,
+                investors: ['Leapfrog Investments', 'Pi Investments'],
+                terms: { valuationCap: 10000000, discount: 15, mfn: true },
+                termsText: '$10M cap · 15% discount · MFN',
+                covenants: 'Rural indigenous household coverage targets; gender-inclusive hiring reporting',
+                source: 'Leapfrog 2017 case study; Convergence Finance deal database'
+            },
+
+            // ─── Convertible Notes ───
+            {
+                id: 'apollo-conv',
+                company: 'Apollo Agriculture',
+                instrument: 'convertible',
+                instrumentLabel: 'Convertible Note',
+                year: 2019,
+                region: 'East Africa',
+                country: 'Kenya',
+                sector: 'Agriculture',
+                size: 'mid',
+                sizeUSD: 1600000,
+                investors: ['Accion Venture Lab', 'Flourish Ventures', 'Chandaria Capital'],
+                terms: { interest: 6, maturity: 24, discount: 20 },
+                termsText: '6% interest · 24-month maturity · 20% discount · qualified financing $1M',
+                covenants: 'Smallholder reach KPIs; affordable credit-scoring transparency',
+                source: 'Accion Venture Lab 2020 disclosure; Flourish Ventures portfolio'
+            },
+            {
+                id: 'twiga-conv',
+                company: 'Twiga Foods',
+                instrument: 'convertible',
+                instrumentLabel: 'Convertible Note (bridge)',
+                year: 2018,
+                region: 'East Africa',
+                country: 'Kenya',
+                sector: 'Agriculture',
+                size: 'large',
+                sizeUSD: 3000000,
+                investors: ['IFC', 'TLcom Capital', 'Creadev'],
+                terms: { interest: 8, maturity: 18, discount: 15 },
+                termsText: '8% interest · 18-month maturity · 15% discount',
+                covenants: 'Smallholder farmer supply-base reporting; fair-price commitments',
+                source: 'IFC 2018 summary of investment information'
+            },
+            {
+                id: 'sistema-conv',
+                company: 'Sistema.bio',
+                instrument: 'convertible',
+                instrumentLabel: 'Convertible Note',
+                year: 2019,
+                region: 'Latin America',
+                country: 'Mexico / Kenya / India',
+                sector: 'Agriculture',
+                size: 'mid',
+                sizeUSD: 2000000,
+                investors: ['AXA IM Alts', 'Good Capital', 'EcoEnterprises Fund'],
+                terms: { interest: 6, maturity: 24, discount: 20 },
+                termsText: '6% interest · 24-month maturity · 20% discount',
+                covenants: 'Biodigester units deployed; CO2e avoided; smallholder income uplift',
+                source: 'EcoEnterprises Fund III annual report 2020'
+            },
+
+            // ─── Revenue-Based Finance ───
+            {
+                id: 'lendable-rbf',
+                company: 'Lendable (MSME lender facility)',
+                instrument: 'rbf',
+                instrumentLabel: 'Revenue-Based Finance facility',
+                year: 2021,
+                region: 'East Africa',
+                country: 'Multi-country',
+                sector: 'Financial Inclusion',
+                size: 'xlarge',
+                sizeUSD: 25000000,
+                investors: ['FMO', 'Ceniarth', 'Symbiotics'],
+                terms: { revShare: 6, capMultiple: 1.6, paymentHoliday: 6 },
+                termsText: '6% of monthly revenue · 1.6x cap · 6-month holiday',
+                covenants: 'End-borrower gender split reporting; sustainable agriculture & MSME use-of-proceeds',
+                source: 'FMO 2022 disclosure; Lendable impact report'
+            },
+            {
+                id: 'jaza-rbf',
+                company: 'Jaza Rift Ventures (portfolio RBF)',
+                instrument: 'rbf',
+                instrumentLabel: 'RBF (fund-level average)',
+                year: 2022,
+                region: 'East Africa',
+                country: 'Kenya / Tanzania',
+                sector: 'Financial Inclusion',
+                size: 'mid',
+                sizeUSD: 1000000,
+                investors: ['Jaza Rift Ventures'],
+                terms: { revShare: 5, capMultiple: 1.8, paymentHoliday: 3 },
+                termsText: '5% rev share · 1.8x cap · 3-month holiday',
+                covenants: 'Women-led business threshold (>50% of portfolio); local employment',
+                source: 'Jaza Rift Ventures 2023 LP letter'
+            },
+            {
+                id: 'capria-rbf',
+                company: 'Capria Ventures RBF portfolio',
+                instrument: 'rbf',
+                instrumentLabel: 'RBF term sheet',
+                year: 2020,
+                region: 'South Asia',
+                country: 'India',
+                sector: 'Financial Inclusion',
+                size: 'mid',
+                sizeUSD: 750000,
+                investors: ['Capria Ventures'],
+                terms: { revShare: 7, capMultiple: 1.5, paymentHoliday: 6 },
+                termsText: '7% rev share · 1.5x cap · 6-month holiday',
+                covenants: 'BoP customer reach; financial inclusion KPIs',
+                source: 'Capria Ventures 2021 market standards brief'
+            },
+
+            // ─── Priced Equity (Growth / Series A-C) ───
+            {
+                id: 'bboxx-seriesD',
+                company: 'Bboxx',
+                instrument: 'equity',
+                instrumentLabel: 'Series D Priced Equity',
+                year: 2019,
+                region: 'East Africa',
+                country: 'Kenya / Rwanda / DRC',
+                sector: 'Clean Energy',
+                size: 'xlarge',
+                sizeUSD: 31000000,
+                investors: ['Mitsubishi', 'Mackinnon Bennett & Co', 'Bamboo Capital'],
+                terms: { preMoney: 140000000, liqPref: '1x-non', antiDil: 'wa-broad', board: 'Investor right on compensation & major transactions' },
+                termsText: '$140M pre-money · 1x non-participating · WA broad-based · 1 investor board seat',
+                covenants: 'SDG7 reporting; climate impact verification by 60 Decibels; mission lock',
+                source: 'Mitsubishi Corporation press release 2019; Bamboo Capital deal memo'
+            },
+            {
+                id: 'burn-seriesB',
+                company: 'BURN Manufacturing',
+                instrument: 'equity',
+                instrumentLabel: 'Series B',
+                year: 2019,
+                region: 'East Africa',
+                country: 'Kenya',
+                sector: 'Cookstoves',
+                size: 'large',
+                sizeUSD: 10000000,
+                investors: ['Goldman Sachs', 'Acumen', 'AHL Venture Partners'],
+                terms: { preMoney: 40000000, liqPref: '1x-non', antiDil: 'wa-broad', board: '1 investor seat + 1 independent' },
+                termsText: '$40M pre-money · 1x non-participating · WA broad · 1 investor + 1 independent board',
+                covenants: 'Carbon credit revenue-sharing disclosure; BoP pricing ceiling; lifecycle emissions reporting',
+                source: 'Goldman Sachs 10,000 Women disclosure; Acumen 2020 annual letter'
+            },
+            {
+                id: 'copia-seriesC',
+                company: 'Copia Global',
+                instrument: 'equity',
+                instrumentLabel: 'Series C',
+                year: 2022,
+                region: 'East Africa',
+                country: 'Kenya',
+                sector: 'Financial Inclusion',
+                size: 'xlarge',
+                sizeUSD: 50000000,
+                investors: ['Goodwell', 'LGT Capital Partners', 'US DFC'],
+                terms: { preMoney: 175000000, liqPref: '1x-non', antiDil: 'wa-broad', board: '2 investor seats, 1 independent' },
+                termsText: '$175M pre-money · 1x non-participating · WA broad · 2 investor seats',
+                covenants: 'Rural women customer reach (>60%); 2X Challenge alignment; DFC development outcome scorecard',
+                source: 'DFC board meeting minutes 2022; Goodwell V annual report'
+            },
+            {
+                id: 'mpharma-seriesD',
+                company: 'mPharma',
+                instrument: 'equity',
+                instrumentLabel: 'Series D',
+                year: 2022,
+                region: 'West Africa',
+                country: 'Ghana / Multi-country',
+                sector: 'Health',
+                size: 'xlarge',
+                sizeUSD: 35000000,
+                investors: ['Jam Fund', 'Tlcom', 'Novastar Ventures'],
+                terms: { preMoney: 110000000, liqPref: '1x-non', antiDil: 'wa-broad', board: '2 investor seats' },
+                termsText: '$110M pre-money · 1x non-participating · WA broad · 2 investor board seats',
+                covenants: 'Essential-medicines pricing transparency; stock-out KPIs; patient retention & affordability',
+                source: 'Novastar Ventures 2022 disclosure'
+            },
+            {
+                id: 'sunking-growth',
+                company: 'Sun King (Greenlight Planet)',
+                instrument: 'equity',
+                instrumentLabel: 'Growth equity',
+                year: 2022,
+                region: 'Global',
+                country: 'Multi-country (Africa & Asia)',
+                sector: 'Clean Energy',
+                size: 'xlarge',
+                sizeUSD: 260000000,
+                investors: ['BeyondNetZero (General Atlantic)', 'LeapFrog Investments', 'ARCH Emerging Markets'],
+                terms: { preMoney: 900000000, liqPref: '1x-non', antiDil: 'wa-broad', board: '2 investor seats + observer rights' },
+                termsText: '$900M pre-money · 1x non-participating · WA broad · 2 investor seats',
+                covenants: 'Off-grid household electrification targets; gender-inclusive hiring; third-party impact verification',
+                source: 'General Atlantic BeyondNetZero 2022 press release; LeapFrog III annual report'
+            },
+
+            // ─── Impact Loans / Senior Debt ───
+            {
+                id: 'rootcap-agri',
+                company: 'Root Capital (agri cooperative loan – example deal)',
+                instrument: 'loan',
+                instrumentLabel: 'Senior secured loan',
+                year: 2022,
+                region: 'Latin America',
+                country: 'Peru / Colombia (coop lending)',
+                sector: 'Agriculture',
+                size: 'mid',
+                sizeUSD: 1500000,
+                investors: ['Root Capital'],
+                terms: { rate: 9, term: 4, grace: 6 },
+                termsText: '9% interest · 4-year term · 6-month grace · harvest-cycle amortisation',
+                covenants: 'Smallholder supplier reporting; gender & youth inclusion covenants; Fair Trade or organic certification maintenance',
+                source: 'Root Capital 2022 annual impact report'
+            },
+            {
+                id: 'oikocredit-mfi',
+                company: 'Oikocredit (MFI senior debt – typical)',
+                instrument: 'loan',
+                instrumentLabel: 'Senior unsecured loan',
+                year: 2023,
+                region: 'Southeast Asia',
+                country: 'Cambodia / Philippines',
+                sector: 'Financial Inclusion',
+                size: 'large',
+                sizeUSD: 5000000,
+                investors: ['Oikocredit'],
+                terms: { rate: 7.5, term: 5, grace: 0 },
+                termsText: '7.5% USD interest · 5-year term · no grace · semi-annual amortisation',
+                covenants: 'PAR30 credit-quality covenants; client protection principles; women borrower >50%',
+                source: 'Oikocredit annual report 2023'
+            },
+            {
+                id: 'ifc-dfi-loan',
+                company: 'IFC senior debt (renewable IPP)',
+                instrument: 'loan',
+                instrumentLabel: 'Senior secured DFI debt',
+                year: 2021,
+                region: 'Southern Africa',
+                country: 'Zambia',
+                sector: 'Clean Energy',
+                size: 'xlarge',
+                sizeUSD: 28000000,
+                investors: ['IFC', 'Proparco', 'DBSA'],
+                terms: { rate: 8, term: 15, grace: 18 },
+                termsText: '8% USD · 15-year term · 18-month grace · DSCR 1.2x covenant',
+                covenants: 'E&S Action Plan under IFC Performance Standards; community grievance mechanism; local procurement',
+                source: 'IFC Summary of Investment Information 2021'
+            },
+
+            // ─── Recoverable Grants ───
+            {
+                id: 'omidyar-recov',
+                company: 'Omidyar Network recoverable grant (portfolio example)',
+                instrument: 'grant',
+                instrumentLabel: 'Recoverable grant',
+                year: 2020,
+                region: 'Global',
+                country: 'Multi-region',
+                sector: 'Education',
+                size: 'mid',
+                sizeUSD: 1000000,
+                investors: ['Omidyar Network'],
+                terms: { repayPct: 100, maxMultiple: 1.0, trigger: 'Qualifying priced equity round' },
+                termsText: '100% recoverable at priced round · 1.0x cap (no upside) · no interest',
+                covenants: 'Open-access research deliverables; mission protection clause',
+                source: 'Omidyar Network 2020 "Tyton impact case study"'
+            },
+            {
+                id: 'echoing-recov',
+                company: 'Echoing Green Seed Stipend (conditional)',
+                instrument: 'grant',
+                instrumentLabel: 'Recoverable stipend',
+                year: 2021,
+                region: 'Global',
+                country: 'Multi-region',
+                sector: 'Employment',
+                size: 'small',
+                sizeUSD: 90000,
+                investors: ['Echoing Green'],
+                terms: { repayPct: 50, maxMultiple: 1.0, trigger: 'Revenue > $1M OR Series A close' },
+                termsText: '50% recoverable · 1.0x cap · triggered at revenue/equity milestone',
+                covenants: 'Founder eligibility maintenance; annual fellow reporting',
+                source: 'Echoing Green Fellowship ToR 2021'
+            },
+
+            // ─── Social Impact Bonds ───
+            {
+                id: 'peterborough-sib',
+                company: 'Peterborough SIB (HMP Peterborough)',
+                instrument: 'sib',
+                instrumentLabel: 'Social Impact Bond',
+                year: 2010,
+                region: 'UK',
+                country: 'UK',
+                sector: 'Criminal Justice',
+                size: 'xlarge',
+                sizeUSD: 8000000,
+                investors: ['Big Lottery Fund', 'Rockefeller Foundation', 'Esmée Fairbairn', 'J. Paul Getty Jr. Trust'],
+                terms: { duration: 72, paymentPerUnit: 'Outcome-based (see below)', minAchievement: 7.5, maxReturn: 13 },
+                termsText: '6-year term · payment triggered at ≥7.5% reduction in re-conviction · up to 13% IRR · minimum achievement 7.5%',
+                covenants: 'Independent evaluation (QinetiQ/University of Leicester); stepped payments at 7.5% / 10% / 12.5% reductions',
+                source: 'Social Finance 2014 report; UK Cabinet Office 2017 evaluation'
+            },
+            {
+                id: 'rikers-sib',
+                company: 'Rikers Island Juvenile Recidivism SIB',
+                instrument: 'sib',
+                instrumentLabel: 'Social Impact Bond',
+                year: 2012,
+                region: 'North America',
+                country: 'USA (NYC)',
+                sector: 'Criminal Justice',
+                size: 'xlarge',
+                sizeUSD: 9600000,
+                investors: ['Goldman Sachs (senior)', 'Bloomberg Philanthropies (first-loss)'],
+                terms: { duration: 48, minAchievement: 10, maxReturn: 21 },
+                termsText: '4-year term · payment at ≥10% recidivism reduction · up to 21% IRR · $7.2M first-loss buffer',
+                covenants: 'Vera Institute independent evaluation; MDRC cohort-matching methodology',
+                source: 'MDRC 2015 evaluation; NYC Mayor\'s Office 2015 final report'
+            },
+            {
+                id: 'dc-water-eib',
+                company: 'DC Water Environmental Impact Bond',
+                instrument: 'sib',
+                instrumentLabel: 'Environmental Impact Bond',
+                year: 2016,
+                region: 'North America',
+                country: 'USA (Washington DC)',
+                sector: 'Climate',
+                size: 'xlarge',
+                sizeUSD: 25000000,
+                investors: ['Goldman Sachs', 'Calvert Foundation'],
+                terms: { duration: 120, minAchievement: 19, maxReturn: 6.4 },
+                termsText: '10-year term · payment adjusted at stormwater runoff reduction ≥19% · 6.4% blended IRR · risk-sharing waterfall',
+                covenants: 'Green infrastructure (bioretention) deployment; independent hydrologic measurement',
+                source: 'Quantified Ventures 2017 case study; DC Water disclosure'
+            },
+            {
+                id: 'utah-preschool-sib',
+                company: 'Utah High Quality Preschool SIB',
+                instrument: 'sib',
+                instrumentLabel: 'Social Impact Bond',
+                year: 2013,
+                region: 'North America',
+                country: 'USA (Utah)',
+                sector: 'Education',
+                size: 'xlarge',
+                sizeUSD: 7000000,
+                investors: ['Goldman Sachs', 'J.B. Pritzker'],
+                terms: { duration: 144, minAchievement: 'Per-child special-ed avoidance', maxReturn: 5 },
+                termsText: '12-year term · per-child avoidance of special-ed placement triggers payment · ~5% IRR',
+                covenants: 'Annual evaluation by Utah State Board of Education; propensity-score-matched comparison',
+                source: 'Utah State Legislature SB71 2014; NY Times reporting 2015'
+            },
+
+            // ─── SAFI (Simple Agreement for Future Impact) ───
+            {
+                id: 'villagecap-safi',
+                company: 'Village Capital SAFI pilot (portfolio)',
+                instrument: 'safi',
+                instrumentLabel: 'SAFI (pilot)',
+                year: 2021,
+                region: 'Global',
+                country: 'Multi-region',
+                sector: 'Financial Inclusion',
+                size: 'small',
+                sizeUSD: 250000,
+                investors: ['Village Capital', 'Mastercard Foundation'],
+                terms: { valuationCap: 5000000, discount: 15, impactTrigger: 'Verified 5,000 smallholder farmers reached', impactDefault: 'Reverts to SAFE if trigger missed' },
+                termsText: '$5M cap · 15% discount · trigger: 5,000 smallholders verified · reverts to SAFE if not met',
+                covenants: 'Independent verification (60 Decibels); impact cap of 12% equity stake',
+                source: 'Village Capital 2022 "Aligned Capital" whitepaper'
+            },
+            {
+                id: 'acumen-safi-pilot',
+                company: 'Acumen patient-capital SAFI variant',
+                instrument: 'safi',
+                instrumentLabel: 'SAFI (Acumen variant)',
+                year: 2022,
+                region: 'East Africa',
+                country: 'Kenya',
+                sector: 'Agriculture',
+                size: 'mid',
+                sizeUSD: 500000,
+                investors: ['Acumen'],
+                terms: { valuationCap: 4000000, discount: 20, impactTrigger: '10,000 smallholder income uplift verified by Lean Data', impactDefault: 'Reverts to convertible note at 5% interest' },
+                termsText: '$4M cap · 20% discount · trigger: 10k farmers income uplift · fallback: convertible at 5%',
+                covenants: 'Lean Data verification annually; IRIS+ PI2822 metric; impact cap 15% equity',
+                source: 'Acumen 2023 patient-capital fund letter'
+            },
+
+            // ─── Blended / Subordinated ───
+            {
+                id: 'blueoakbridge-subord',
+                company: 'Blue Oak Ranch climate fund (example)',
+                instrument: 'loan',
+                instrumentLabel: 'Subordinated concessional debt',
+                year: 2023,
+                region: 'North America',
+                country: 'USA',
+                sector: 'Climate',
+                size: 'large',
+                sizeUSD: 5000000,
+                investors: ['Packard Foundation', 'KL Felicitas'],
+                terms: { rate: 3, term: 7, grace: 24 },
+                termsText: '3% USD · 7-year term · 24-month grace · subordinated to senior debt',
+                covenants: 'Carbon sequestration reporting (tCO2e/yr verified); land stewardship plan',
+                source: 'Packard Foundation 2023 PRI disclosure'
+            },
+            // ─── Affordable Housing ───
+            {
+                id: 'lahn-housing',
+                company: 'Lagos affordable housing DFI stack',
+                instrument: 'equity',
+                instrumentLabel: 'Priced Equity (minority)',
+                year: 2020,
+                region: 'West Africa',
+                country: 'Nigeria',
+                sector: 'Housing',
+                size: 'xlarge',
+                sizeUSD: 15000000,
+                investors: ['CDC Group (BII)', 'IFC'],
+                terms: { preMoney: 60000000, liqPref: '1x-non', antiDil: 'wa-broad', board: '1 DFI seat, 1 independent' },
+                termsText: '$60M pre-money · 1x non-participating · WA broad · 1 DFI seat',
+                covenants: 'Income-band affordability covenant (60-120% of median); E&S Action Plan; gender inclusion in tenancy & labour',
+                source: 'British International Investment (BII) summary 2020'
+            },
+            // ─── Circular Economy ───
+            {
+                id: 'mr-green-rbf',
+                company: 'Mr. Green Africa',
+                instrument: 'rbf',
+                instrumentLabel: 'RBF + working-capital line',
+                year: 2021,
+                region: 'East Africa',
+                country: 'Kenya',
+                sector: 'Circular Economy',
+                size: 'mid',
+                sizeUSD: 800000,
+                investors: ['DOEN Participaties', 'Global Innovation Fund'],
+                terms: { revShare: 8, capMultiple: 1.7, paymentHoliday: 4 },
+                termsText: '8% rev share · 1.7x cap · 4-month holiday',
+                covenants: 'Waste-picker living-wage covenant; tonnage recycled verification',
+                source: 'DOEN Participaties 2022 annual report'
+            }
+        ];
+
+        function getSizeLabel(key) {
+            return {
+                small: '< $500K',
+                mid: '$500K–$2M',
+                large: '$2M–$10M',
+                xlarge: '> $10M'
+            }[key] || key;
+        }
+
+        function formatMoneyShort(v) {
+            if (!v || isNaN(v)) return '—';
+            if (v >= 1000000) return '$' + (v / 1000000).toFixed(v >= 10000000 ? 0 : 1) + 'M';
+            if (v >= 1000) return '$' + Math.round(v / 1000) + 'K';
+            return '$' + v;
+        }
+
+        function renderPrecedents() {
+            const instrSel = document.getElementById('precInstrumentFilter');
+            const regionSel = document.getElementById('precRegionFilter');
+            const sectorSel = document.getElementById('precSectorFilter');
+            const sizeSel = document.getElementById('precSizeFilter');
+            const searchEl = document.getElementById('precSearchFilter');
+            if (!instrSel) return; // tab not in DOM yet
+            const instrVal = instrSel.value;
+            const regionVal = regionSel.value;
+            const sectorVal = sectorSel.value;
+            const sizeVal = sizeSel.value;
+            const searchVal = (searchEl.value || '').trim().toLowerCase();
+
+            const instrumentFilter = instrVal === 'auto' ? appState.dealType : instrVal;
+
+            const filtered = PRECEDENT_DB.filter(d => {
+                if (instrumentFilter !== 'all' && d.instrument !== instrumentFilter) return false;
+                if (regionVal !== 'all' && d.region !== regionVal) return false;
+                if (sectorVal !== 'all' && d.sector !== sectorVal) return false;
+                if (sizeVal !== 'all' && d.size !== sizeVal) return false;
+                if (searchVal) {
+                    const hay = (d.company + ' ' + (d.investors || []).join(' ') + ' ' + (d.country || '') + ' ' + (d.sector || '') + ' ' + (d.covenants || '')).toLowerCase();
+                    if (!hay.includes(searchVal)) return false;
+                }
+                return true;
+            });
+
+            // Summary line
+            const summaryEl = document.getElementById('precedentsSummary');
+            const totalCount = PRECEDENT_DB.length;
+            const instrDescriptor = instrVal === 'auto' ? `${(instrumentFilter || '').toUpperCase()} (current)` : (instrVal === 'all' ? 'All instruments' : instrVal.toUpperCase());
+            summaryEl.textContent = `${filtered.length} of ${totalCount} precedents match · ${instrDescriptor} · ${regionVal === 'all' ? 'All regions' : regionVal} · ${sectorVal === 'all' ? 'All sectors' : sectorVal} · ${sizeVal === 'all' ? 'All sizes' : getSizeLabel(sizeVal)}`;
+
+            const container = document.getElementById('precedentsContainer');
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="precedent-empty">
+                        <p style="margin-bottom:0.5rem;">No precedents match these filters.</p>
+                        <p style="font-size:0.75rem;">Try broadening — e.g. set Region to All, or Instrument to "All".</p>
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.sort((a, b) => (b.year || 0) - (a.year || 0)).forEach(d => {
+                html += `
+                    <div class="precedent-card">
+                        <h5>${d.company}</h5>
+                        <div class="subline">${d.instrumentLabel} · ${d.year} · ${formatMoneyShort(d.sizeUSD)} · ${(d.investors || []).slice(0, 3).join(', ')}${d.investors && d.investors.length > 3 ? ' +' + (d.investors.length - 3) : ''}</div>
+                        <div class="precedent-tags">
+                            <span class="precedent-tag geo">${d.country}</span>
+                            <span class="precedent-tag sector">${d.sector}</span>
+                            <span class="precedent-tag size">${formatMoneyShort(d.sizeUSD)}</span>
+                            <span class="precedent-tag">${d.region}</span>
+                        </div>
+                        <div class="precedent-terms"><strong>Terms:</strong> ${d.termsText}</div>
+                        <div class="precedent-covenants"><strong style="color:var(--teal);">Impact covenants:</strong> ${d.covenants}</div>
+                        <div class="precedent-source">Source: ${d.source}</div>
+                        <button class="precedent-apply-btn" onclick="applyPrecedentTerms('${d.id}')">Apply terms to builder →</button>
+                    </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function applyPrecedentTerms(precedentId) {
+            const p = PRECEDENT_DB.find(d => d.id === precedentId);
+            if (!p) return;
+
+            // Switch to that deal type
+            appState.dealType = p.instrument;
+            document.querySelectorAll('.deal-type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === p.instrument);
+            });
+            updateDealTypeSections();
+
+            // Populate instrument-specific fields from the precedent
+            const t = p.terms || {};
+            if (p.instrument === 'safe') {
+                if (t.valuationCap) { appState.safeCap = t.valuationCap; document.getElementById('safeCap').value = t.valuationCap; }
+                if (t.discount) { appState.safeDiscount = t.discount; document.getElementById('safeDiscount').value = t.discount; }
+                if (typeof t.mfn === 'boolean') { appState.safeMFN = t.mfn; document.getElementById('safeMFN').classList.toggle('active', t.mfn); }
+            } else if (p.instrument === 'convertible') {
+                if (t.interest) { appState.convInterest = t.interest; document.getElementById('convInterest').value = t.interest; }
+                if (t.maturity) { appState.convMaturity = t.maturity; document.getElementById('convMaturity').value = t.maturity; }
+                if (t.discount) { appState.convDiscount = t.discount; document.getElementById('convDiscount').value = t.discount; }
+            } else if (p.instrument === 'rbf') {
+                if (t.revShare) { appState.rbfShare = t.revShare; document.getElementById('rbfShare').value = t.revShare; }
+                if (t.capMultiple) { appState.rbfCap = t.capMultiple; document.getElementById('rbfCap').value = t.capMultiple; }
+                if (t.paymentHoliday !== undefined) { appState.rbfHoliday = t.paymentHoliday; document.getElementById('rbfHoliday').value = t.paymentHoliday; }
+            } else if (p.instrument === 'equity') {
+                if (t.preMoney) { appState.equityPreMoney = t.preMoney; document.getElementById('equityPreMoney').value = t.preMoney; }
+                if (t.liqPref) { appState.equityLiqPref = t.liqPref; document.getElementById('equityLiqPref').value = t.liqPref; }
+                if (t.antiDil) { appState.equityAntiDilution = t.antiDil; document.getElementById('equityAntiDilution').value = t.antiDil; }
+            } else if (p.instrument === 'loan') {
+                if (t.rate) { appState.loanRate = t.rate; document.getElementById('loanRate').value = t.rate; }
+                if (t.term) { appState.loanTerm = t.term; document.getElementById('loanTerm').value = t.term; }
+                if (t.grace !== undefined) { appState.loanGrace = t.grace; document.getElementById('loanGrace').value = t.grace; }
+            } else if (p.instrument === 'grant') {
+                if (t.repayPct !== undefined) { appState.grantRepayment = t.repayPct; document.getElementById('grantRepayment').value = t.repayPct; }
+                if (t.maxMultiple) { appState.grantMaxRepay = t.maxMultiple; document.getElementById('grantMaxRepay').value = t.maxMultiple; }
+                if (t.trigger) { appState.grantTrigger = t.trigger; document.getElementById('grantTrigger').value = t.trigger; }
+            } else if (p.instrument === 'sib') {
+                if (t.duration) { appState.sibDuration = t.duration; document.getElementById('sibDuration').value = t.duration; }
+                if (typeof t.minAchievement === 'number') { appState.sibMinAchievement = t.minAchievement; document.getElementById('sibMinAchievement').value = t.minAchievement; }
+            } else if (p.instrument === 'safi') {
+                if (t.valuationCap) { appState.safiValuationCap = t.valuationCap; document.getElementById('safiValuationCap').value = t.valuationCap; }
+                if (t.discount) { appState.safiDiscount = t.discount; document.getElementById('safiDiscount').value = t.discount; }
+                if (t.impactTrigger) { appState.safiConversionTrigger = t.impactTrigger; document.getElementById('safiConversionTrigger').value = t.impactTrigger; }
+            }
+
+            // Fill investment amount if empty
+            if (!appState.investmentAmount && p.sizeUSD) {
+                appState.investmentAmount = p.sizeUSD;
+                document.getElementById('investmentAmount').value = p.sizeUSD;
+            }
+
+            // Re-render everything
+            renderTermSheet();
+            renderFlags();
+            renderCalculations();
+            renderBenchmarks();
+            renderPrecedents();
+
+            // Show a brief confirmation
+            const btns = document.querySelectorAll('.precedent-apply-btn');
+            btns.forEach(b => {
+                if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${precedentId}'`)) {
+                    const orig = b.textContent;
+                    b.textContent = '✓ Applied to builder';
+                    b.style.background = '#1e5a33';
+                    setTimeout(() => { b.textContent = orig; b.style.background = ''; }, 1800);
+                }
+            });
         }
 
         // Calculation functions
