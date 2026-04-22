@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UsefulAF — Human Rights Due Diligence Assessor (UNGPs · OECD · CSDDD)</title>
+<style>
+:root{
+ --cream:#F7F0E1; --cream-2:#EFE5D1; --ink:#1A1A1A; --ink-2:#2E2A22;
+ --coral:#E8674C; --coral-2:#C34E38; --ochre:#D4A84C; --ochre-2:#B3893A;
+ --moss:#5C7A4E; --stone:#8C8372; --line:#D7CDB8; --panel:#FFFBF2;
+ --ok:#5C7A4E; --warn:#C5761E; --bad:#C34E38; --muted:#6E6554;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;font-family:Georgia,"Iowan Old Style","Times New Roman",serif;background:var(--cream);color:var(--ink);line-height:1.55}
+header{background:var(--ink);color:var(--cream);padding:22px 32px;border-bottom:4px solid var(--coral)}
+.wordmark{font-family:Georgia,serif;font-weight:900;font-size:26px;letter-spacing:.01em}
+.wordmark .af{color:var(--coral)}
+.subtitle{margin-top:4px;color:var(--cream-2);font-size:15px;font-style:italic}
+.wrap{max-width:1240px;margin:0 auto;padding:16px 28px 80px}
+nav.tabs{display:flex;flex-wrap:wrap;gap:2px;background:var(--ink);margin:18px 0 0;border-radius:6px;padding:4px;position:sticky;top:0;z-index:10}
+nav.tabs button{flex:1 1 auto;min-width:110px;border:0;background:transparent;color:var(--cream);padding:10px 8px;font-family:inherit;font-size:13px;cursor:pointer;border-radius:4px;font-weight:600;letter-spacing:.02em}
+nav.tabs button.active{background:var(--coral);color:#fff}
+nav.tabs button:hover:not(.active){background:#2d2d2d}
+.tab{display:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:24px 28px;margin-top:14px;box-shadow:0 2px 6px rgba(0,0,0,.04)}
+.tab.active{display:block}
+h1{margin:0;font-size:24px;font-weight:900;letter-spacing:-.01em}
+h2{margin:0 0 10px;color:var(--ink);font-size:22px;border-bottom:2px solid var(--ochre);padding-bottom:6px}
+h3{margin:18px 0 8px;color:var(--ink-2);font-size:16px}
+h4{margin:12px 0 4px;color:var(--ink-2);font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+.lead{color:var(--muted);font-size:14px;margin-bottom:14px}
+.row{display:flex;gap:18px;flex-wrap:wrap}
+.col{flex:1 1 300px;min-width:280px}
+label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:10px 0 4px;font-weight:700}
+input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);background:#fff;border-radius:4px;font-family:inherit;font-size:14px;color:var(--ink)}
+textarea{min-height:70px;resize:vertical}
+button.btn{background:var(--coral);color:#fff;border:0;padding:10px 18px;border-radius:4px;font-family:inherit;font-weight:700;cursor:pointer;font-size:14px;letter-spacing:.03em}
+button.btn:hover{background:var(--coral-2)}
+button.btn.sec{background:var(--ochre);color:var(--ink)}
+button.btn.sec:hover{background:var(--ochre-2);color:#fff}
+button.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+button.btn.ghost:hover{background:var(--ink);color:var(--cream)}
+.card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:14px 16px;margin:10px 0}
+.card.muted{background:var(--cream-2)}
+.tag{display:inline-block;padding:2px 8px;border-radius:10px;background:var(--ochre);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.tag.coral{background:var(--coral);color:#fff}
+.tag.ink{background:var(--ink);color:var(--cream)}
+.tag.moss{background:var(--moss);color:#fff}
+.pill{display:inline-block;padding:3px 10px;border-radius:12px;background:#fff;border:1px solid var(--line);font-size:12px;margin-right:6px}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--cream-2);color:var(--ink);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+tr:hover td{background:#fffef7}
+.score-big{font-size:48px;font-weight:900;line-height:1}
+.score-big .unit{font-size:18px;color:var(--muted)}
+.grade{display:inline-block;width:54px;height:54px;line-height:54px;text-align:center;border-radius:50%;font-size:26px;font-weight:900;color:#fff}
+.grade.A{background:var(--moss)}
+.grade.B{background:#7B9C64}
+.grade.C{background:var(--ochre)}
+.grade.D{background:var(--coral)}
+.grade.E{background:var(--coral-2)}
+.bar{width:100%;background:var(--cream-2);border-radius:10px;height:14px;overflow:hidden;margin:4px 0}
+.bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--ochre),var(--coral))}
+.kv{display:grid;grid-template-columns:180px 1fr;gap:4px 12px;font-size:13px;margin:8px 0}
+.kv dt{color:var(--muted);font-weight:700}
+.kv dd{margin:0;color:var(--ink)}
+.callout{background:var(--cream-2);border-left:4px solid var(--coral);padding:10px 14px;margin:12px 0;font-size:13px;border-radius:0 4px 4px 0}
+.callout.warn{border-left-color:var(--warn);background:#fdf3e4}
+.callout.good{border-left-color:var(--moss);background:#eef2e8}
+.hint{font-size:11px;color:var(--muted);font-style:italic;margin-top:4px}
+.heat{display:grid;gap:2px;font-size:11px}
+.heat .cell{padding:6px 4px;text-align:center;color:#fff;border-radius:2px;font-weight:700}
+.heat .lvl-1{background:#5C7A4E}.heat .lvl-2{background:#8FAB6F}.heat .lvl-3{background:var(--ochre)}.heat .lvl-4{background:var(--coral)}.heat .lvl-5{background:var(--coral-2)}
+.heat .lvl-0{background:#ECE3CF;color:var(--muted)}
+.legend{font-size:11px;display:flex;gap:8px;flex-wrap:wrap;margin:6px 0}
+.legend .sw{display:inline-flex;align-items:center;gap:4px}
+.legend .dot{width:10px;height:10px;border-radius:2px;display:inline-block}
+.flex-between{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.twocol{grid-template-columns:1fr}}
+details{margin:8px 0;background:#fff;border:1px solid var(--line);border-radius:4px;padding:8px 12px}
+details summary{cursor:pointer;font-weight:700;font-size:14px}
+details[open]{background:var(--cream-2)}
+code.cite{background:var(--cream-2);padding:1px 5px;border-radius:3px;font-size:11px;font-family:"SF Mono",Menlo,monospace;color:var(--muted)}
+.prompt-box{background:var(--ink);color:var(--cream);padding:18px 22px;border-radius:6px;font-family:"SF Mono",Menlo,monospace;font-size:12px;white-space:pre-wrap;line-height:1.5;max-height:520px;overflow-y:auto}
+.issue-card{border:1px solid var(--line);background:#fff;border-radius:6px;padding:12px 14px;margin:8px 0}
+.issue-card.sel{border:2px solid var(--coral);background:#fffbf6}
+.slider-row{display:grid;grid-template-columns:140px 1fr 40px;gap:8px;align-items:center;margin:4px 0;font-size:12px}
+.slider-row input[type=range]{width:100%}
+.two-col-list{columns:2;column-gap:24px}
+.two-col-list li{break-inside:avoid}
+.stamp{display:inline-block;padding:4px 10px;background:var(--ink);color:var(--cream);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border-radius:3px}
+footer{margin-top:30px;padding:16px 28px;background:var(--ink);color:var(--cream-2);font-size:12px;text-align:center}
+footer a{color:var(--ochre)}
+@media print{nav.tabs,.no-print{display:none}.tab{display:block !important;page-break-after:always}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wordmark">Useful<span class="af">AF</span> — AI for Impact Collective</div>
+  <div class="subtitle">Human Rights Due Diligence Assessor · UNGPs · OECD Guidelines · EU CSDDD · ILO · UNGP Reporting Framework</div>
+</header>
+
+<div class="wrap">
+<nav class="tabs" id="nav">
+  <button class="active" data-tab="setup">1 · Setup</button>
+  <button data-tab="salient">2 · Salient Issues</button>
+  <button data-tab="heat">3 · Risk Heat Map</button>
+  <button data-tab="maturity">4 · DD Maturity</button>
+  <button data-tab="grievance">5 · Grievance & Remedy</button>
+  <button data-tab="csddd">6 · CSDDD Gap</button>
+  <button data-tab="action">7 · Action Plan</button>
+  <button data-tab="results">8 · Results</button>
+  <button data-tab="claude">9 · Claude Prompt</button>
+</nav>
+
+<!-- ============= SETUP ============= -->
+<section class="tab active" id="setup">
+  <h2>1 · Entity & Value-Chain Setup</h2>
+  <p class="lead">Profile the enterprise whose HRDD you are assessing. These inputs drive applicability of the EU Corporate Sustainability Due Diligence Directive (Directive (EU) 2024/1760, "CSDDD"), inherent-risk weighting per sector / geography, and disclosure thresholds.</p>
+
+  <div class="flex-between no-print" style="margin-bottom:14px">
+    <div>
+      <button class="btn" onclick="loadExample('apparel')">Load example · Apparel & Textiles</button>
+      <button class="btn sec" onclick="loadExample('agri')">Load example · Agri-Food</button>
+      <button class="btn ghost" onclick="loadExample('mining')">Load example · Mining</button>
+    </div>
+    <div><button class="btn ghost" onclick="resetAll()">Reset</button></div>
+  </div>
+
+  <div class="twocol">
+    <div>
+      <h3>Organisation</h3>
+      <label>Entity name</label><input id="entName" type="text" placeholder="e.g. Savanna Garments Ltd">
+      <label>Primary sector</label>
+      <select id="sector">
+        <option value="apparel">Apparel & Textiles</option>
+        <option value="agri">Agriculture & Agri-Food</option>
+        <option value="electronics">Electronics & ICT Hardware</option>
+        <option value="mining">Mining & Minerals (incl. 3TG)</option>
+        <option value="extractives">Oil, Gas & Extractives</option>
+        <option value="construction">Construction & Infrastructure</option>
+        <option value="fisheries">Fisheries & Seafood</option>
+        <option value="finserv">Financial Services</option>
+        <option value="logistics">Logistics & Shipping</option>
+        <option value="hospitality">Hospitality & Tourism</option>
+        <option value="retail">Retail & Consumer Goods</option>
+        <option value="tech">Software & Digital Platforms</option>
+        <option value="healthcare">Healthcare & Pharma</option>
+        <option value="energy">Power Generation / Renewables</option>
+        <option value="cpg">Consumer Packaged Goods (Food/Beverage)</option>
+      </select>
+
+      <label>HQ jurisdiction</label>
+      <select id="hq">
+        <option value="eu">EU member state</option>
+        <option value="uk">United Kingdom</option>
+        <option value="no">Norway</option>
+        <option value="us">United States</option>
+        <option value="ca">Canada</option>
+        <option value="au">Australia</option>
+        <option value="ke">Kenya</option>
+        <option value="za">South Africa</option>
+        <option value="in">India</option>
+        <option value="other">Other</option>
+      </select>
+
+      <label>Listed on regulated market?</label>
+      <select id="listed"><option value="no">No</option><option value="yes">Yes — PIE / listed</option></select>
+
+      <div class="row">
+        <div class="col"><label>Global headcount</label><input id="employees" type="number" value="1500"></div>
+        <div class="col"><label>Net worldwide turnover (EUR m)</label><input id="turnover" type="number" value="520"></div>
+      </div>
+      <div class="row">
+        <div class="col"><label>EU-generated turnover (EUR m)</label><input id="euTurnover" type="number" value="180"></div>
+        <div class="col"><label>Operating countries</label><input id="countries" type="number" value="12"></div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Value-chain profile</h3>
+      <label>Operations geography exposure (highest-risk regions)</label>
+      <select id="opsRisk">
+        <option value="1">Very low — OECD-26, ITUC Rating 1-2</option>
+        <option value="2">Low — Stable democracies, ITUC 2-3</option>
+        <option value="3" selected>Moderate — Mixed contexts / emerging markets, ITUC 3-4</option>
+        <option value="4">High — Weak rule-of-law, ITUC 4, CPI &lt; 40</option>
+        <option value="5">Very high — Conflict-affected, ITUC 5/5+, sanctions risk</option>
+      </select>
+
+      <div class="row">
+        <div class="col"><label>Tier-1 suppliers (direct)</label><input id="t1" type="number" value="120"></div>
+        <div class="col"><label>Tier-2+ mapped (%)</label><input id="t2map" type="number" value="25"></div>
+      </div>
+
+      <label>Raw-material / commodity exposure (comma-separated; drives commodity risk uplift)</label>
+      <input id="commodities" type="text" placeholder="cotton, leather, cocoa, cobalt, palm oil…" value="cotton, leather">
+
+      <label>Workforce vulnerability profile (select highest present in operations or T1)</label>
+      <select id="workforce">
+        <option value="1">Predominantly permanent, unionised domestic workforce</option>
+        <option value="2">Some seasonal / agency labour, mostly formal</option>
+        <option value="3" selected>Mixed — significant agency, migrant, or informal workers</option>
+        <option value="4">High migrant / subcontracted / informal worker share</option>
+        <option value="5">Bonded / debt-labour flags, child-labour sector, armed-conflict labour</option>
+      </select>
+
+      <label>CSDDD scope & maturity (self-declared)</label>
+      <select id="maturity">
+        <option value="1">Level 0 — No formal HRDD policy</option>
+        <option value="2">Level 1 — Policy adopted, limited operationalisation</option>
+        <option value="3" selected>Level 2 — Risk mapping underway, partial coverage</option>
+        <option value="4">Level 3 — Full process across own ops + T1, partial T2</option>
+        <option value="5">Level 4 — Integrated with ERM, annual public reporting</option>
+      </select>
+
+      <label>Reporting obligations currently in force (select all that apply)</label>
+      <div class="two-col-list" style="font-size:13px">
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_csrd"> CSRD / ESRS S1-S4 (EU)</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_csddd"> CSDDD (EU transposition by 26 July 2026)</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_msa"> UK Modern Slavery Act s.54</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_cfca"> Canada Fighting Against Forced Labour & Child Labour Act (S-211)</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_au"> Australian Modern Slavery Act</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_lksg"> German Lieferkettensorgfaltspflichtengesetz (LkSG)</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_no"> Norwegian Transparency Act (Åpenhetsloven)</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_fr"> French Loi de Vigilance (2017)</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_ca_sb657"> US Section 307 / UFLPA / CA SB 657</label>
+        <label style="display:flex;gap:6px;align-items:center;text-transform:none;font-weight:400"><input type="checkbox" id="r_ifc"> IFC PS lender requirements</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <b>CSDDD applicability test (live):</b> <span id="csdddTest">—</span>
+  </div>
+  <div class="callout warn">
+    <b>Severity over materiality.</b> UNGP Commentary Principle 14 and OECD DD Guidance (2018) §2.2 require prioritisation by <i>severity</i> to people, not financial materiality to the enterprise. Where an impact is severe, <b>likelihood alone is not a reason to de-prioritise action</b> (OECD Q&amp;A 23).
+  </div>
+
+  <div class="no-print" style="text-align:right"><button class="btn" onclick="goTab('salient')">Continue to Salient Issues →</button></div>
+</section>
+
+<!-- ============= SALIENT ISSUES ============= -->
+<section class="tab" id="salient">
+  <h2>2 · Salient Human Rights Issues</h2>
+  <p class="lead">Apply the UNGP Reporting Framework (Shift/Mazars 2015) salience test: an issue is <b>salient</b> where the enterprise's activities or business relationships risk the <b>most severe</b> negative impacts on human rights. Severity = <b>Scale</b> × <b>Scope</b> × <b>Irremediability</b>. Likelihood is a secondary consideration. Score each issue 0-3 on each dimension below; leave at 0 to mark "not salient for this entity".</p>
+
+  <div class="callout">Based on your sector <b id="sectorEcho">—</b> and geography exposure, the issues <b id="presetEcho">—</b> are <span class="tag coral">prioritised</span> as high inherent salience in peer-industry risk registers (sources: ILO Decent Work country briefs; ETI / Sedex risk matrices 2024; Shift Valuing Respect 2020; BHRRC tracker 2024).</p></div>
+
+  <div id="issueGrid"></div>
+
+  <div class="no-print" style="text-align:right;margin-top:12px">
+    <button class="btn sec" onclick="goTab('setup')">← Setup</button>
+    <button class="btn" onclick="goTab('heat')">Continue to Risk Heat Map →</button>
+  </div>
+</section>
+
+<!-- ============= HEAT MAP ============= -->
+<section class="tab" id="heat">
+  <h2>3 · Risk Heat Map — Issue × Value-Chain Tier</h2>
+  <p class="lead">The OECD Due Diligence Guidance (2018) §2.3 expects due diligence across <b>own operations, upstream supply chain, and downstream business relationships</b>. Severity-weighted inherent risk is rendered for each tier using your sector / geography / commodity / workforce profile. Green ≤ 1, Amber 2-3, Coral 4, Red 5. Colour represents <i>inherent</i> risk before controls.</p>
+  <div class="legend">
+    <span class="sw"><span class="dot lvl-1"></span>1 Low</span>
+    <span class="sw"><span class="dot lvl-2"></span>2 Low-Mod</span>
+    <span class="sw"><span class="dot lvl-3"></span>3 Moderate</span>
+    <span class="sw"><span class="dot lvl-4"></span>4 High</span>
+    <span class="sw"><span class="dot lvl-5"></span>5 Very High</span>
+  </div>
+
+  <div id="heatmap" style="margin-top:14px"></div>
+
+  <h3>Commodity-level flags</h3>
+  <div id="commFlags"></div>
+
+  <h3>Geography-level flags</h3>
+  <div id="geoFlags"></div>
+
+  <div class="no-print" style="text-align:right"><button class="btn sec" onclick="goTab('salient')">← Issues</button> <button class="btn" onclick="goTab('maturity')">Continue →</button></div>
+</section>
+
+<!-- ============= DD MATURITY ============= -->
+<section class="tab" id="maturity">
+  <h2>4 · OECD 6-Step Due-Diligence Maturity</h2>
+  <p class="lead">Score current practice against the six-step process in the OECD Due Diligence Guidance for Responsible Business Conduct (2018). Scale: 0 = absent; 1 = ad-hoc; 2 = policy in place; 3 = operationalised at HQ / own ops; 4 = extends to T1 supply chain; 5 = extends through upstream and downstream value chain with public reporting and independent assurance.</p>
+  <div id="maturityList"></div>
+
+  <div class="callout good">
+    <b>Why the 0-5 ladder matters.</b> CSDDD Article 8 embeds steps 2-3; Article 10 integrates step 3; Article 11 requires remediation (step 6); Articles 13+15 require monitoring (step 4) and public reporting (step 5). A gap at any step creates a directly actionable compliance risk under CSDDD and equivalent civil-liability regimes (Article 29).
+  </div>
+
+  <div class="no-print" style="text-align:right"><button class="btn sec" onclick="goTab('heat')">← Heat Map</button> <button class="btn" onclick="goTab('grievance')">Continue →</button></div>
+</section>
+
+<!-- ============= GRIEVANCE ============= -->
+<section class="tab" id="grievance">
+  <h2>5 · Grievance &amp; Remedy — UNGP Principle 31</h2>
+  <p class="lead">UNGP Principle 31 sets <b>eight effectiveness criteria</b> for non-judicial grievance mechanisms. CSDDD Article 14 operationalises this (notification procedure) and Article 15 sets remedy obligations when the company causes or contributes to an adverse impact. Score each criterion 0-5; target 4+ per criterion for "fit-for-purpose" status per Shift's <i>Access to Remedy</i> guidance (2021).</p>
+
+  <div id="grievanceList"></div>
+
+  <div class="card muted">
+    <h4>Remedy pathways</h4>
+    <div class="row">
+      <div class="col"><label><input type="checkbox" id="rem_restit"> Restitution (return to prior state)</label></div>
+      <div class="col"><label><input type="checkbox" id="rem_compen"> Compensation (monetary / in-kind)</label></div>
+      <div class="col"><label><input type="checkbox" id="rem_rehab"> Rehabilitation (medical, psychological)</label></div>
+      <div class="col"><label><input type="checkbox" id="rem_sat"> Satisfaction (apology, disclosure)</label></div>
+      <div class="col"><label><input type="checkbox" id="rem_guarantee"> Guarantee of non-repetition</label></div>
+      <div class="col"><label><input type="checkbox" id="rem_injunc"> Injunction / cessation of harm</label></div>
+    </div>
+    <div class="hint">Forms of remedy per UN Basic Principles and Guidelines on the Right to a Remedy (A/RES/60/147) — CSDDD Article 15 requires "appropriate remedy".</div>
+  </div>
+
+  <div class="no-print" style="text-align:right"><button class="btn sec" onclick="goTab('maturity')">← Maturity</button> <button class="btn" onclick="goTab('csddd')">Continue →</button></div>
+</section>
+
+<!-- ============= CSDDD ============= -->
+<section class="tab" id="csddd">
+  <h2>6 · CSDDD Obligation-by-Obligation Gap</h2>
+  <p class="lead">Directive (EU) 2024/1760 — transposition by <b>26 July 2026</b>; first application <b>26 July 2027</b> for largest in-scope companies; phased through July 2029. Article 4 imposes duty of care; Articles 5-16 specify operational duties; Article 22 requires a climate transition plan; Article 29 creates civil liability. Score each obligation 0-3 (0 = not started; 3 = fully compliant and evidenced).</p>
+  <div id="csdddList"></div>
+  <div class="callout warn">
+    <b>Article 29 civil liability.</b> Member states must provide for liability where a company intentionally or negligently fails to comply with Articles 10-11 obligations and the failure causes damage to a natural or legal person. Trade unions and NGOs may act in the name of victims. Limitation period ≥ 5 years.
+  </div>
+
+  <div class="no-print" style="text-align:right"><button class="btn sec" onclick="goTab('grievance')">← Grievance</button> <button class="btn" onclick="goTab('action')">Continue →</button></div>
+</section>
+
+<!-- ============= ACTION PLAN ============= -->
+<section class="tab" id="action">
+  <h2>7 · Prioritised Action Plan</h2>
+  <p class="lead">Generated from severity-weighted gaps across salience, maturity, grievance and CSDDD. OECD DD Guidance §3.1 expects prioritisation where remediating every impact at once is not feasible — <b>sequence by severity, not by ease</b>.</p>
+  <div class="flex-between no-print"><div><button class="btn" onclick="renderActions()">Regenerate plan</button></div></div>
+  <div id="actionPlan"></div>
+
+  <div class="no-print" style="text-align:right"><button class="btn sec" onclick="goTab('csddd')">← CSDDD</button> <button class="btn" onclick="goTab('results')">Continue →</button></div>
+</section>
+
+<!-- ============= RESULTS ============= -->
+<section class="tab" id="results">
+  <h2>8 · HRDD Readiness Dossier</h2>
+  <div class="row">
+    <div class="col card" style="text-align:center">
+      <h4>Salience composite</h4>
+      <div class="score-big"><span id="salScore">—</span><span class="unit">/100</span></div>
+      <div class="hint" id="salLabel">—</div>
+    </div>
+    <div class="col card" style="text-align:center">
+      <h4>OECD-6 maturity</h4>
+      <div class="score-big"><span id="matScore">—</span><span class="unit">/100</span></div>
+      <div class="hint" id="matLabel">—</div>
+    </div>
+    <div class="col card" style="text-align:center">
+      <h4>Grievance effectiveness</h4>
+      <div class="score-big"><span id="griScore">—</span><span class="unit">/100</span></div>
+      <div class="hint" id="griLabel">—</div>
+    </div>
+    <div class="col card" style="text-align:center">
+      <h4>CSDDD readiness</h4>
+      <div class="score-big"><span id="csdScore">—</span><span class="unit">/100</span></div>
+      <div class="hint" id="csdLabel">—</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="flex-between">
+      <div>
+        <h3 style="margin-top:0">Overall HRDD Readiness</h3>
+        <div class="hint">Weighted: 35% salience coverage · 30% maturity · 15% grievance · 20% CSDDD — against severity baseline. Benchmark: Shift 2023 FTSE-100 median 47 / top-decile 71.</div>
+      </div>
+      <div style="text-align:right">
+        <div class="grade" id="gradeBadge">?</div>
+        <div class="score-big" style="font-size:30px"><span id="overallScore">—</span><span class="unit">/100</span></div>
+        <div class="hint" id="gradeLabel">—</div>
+      </div>
+    </div>
+    <div class="bar"><span id="overallBar" style="width:0%"></span></div>
+  </div>
+
+  <h3>Top-5 salient risks (severity-ranked)</h3>
+  <div id="top5"></div>
+
+  <h3>Sector benchmark</h3>
+  <div id="benchmark"></div>
+
+  <h3>Disclosure scorecard — UNGP Reporting Framework</h3>
+  <div id="urfScorecard"></div>
+
+  <div class="flex-between no-print" style="margin-top:18px">
+    <button class="btn sec" onclick="goTab('action')">← Actions</button>
+    <div>
+      <button class="btn" onclick="exportCSV()">Download CSV Memo</button>
+      <button class="btn ghost" onclick="window.print()">Print / Save PDF</button>
+      <button class="btn" onclick="goTab('claude')">Claude Prompt →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============= CLAUDE PROMPT ============= -->
+<section class="tab" id="claude">
+  <h2>9 · Personalised Claude Prompt</h2>
+  <p class="lead">Paste the block below into Claude (claude.ai or any Claude API client). It packs your scored profile, top risks, maturity gaps, and disclosure shortfalls, then asks for publishable HRDD artefacts — board paper, salient-issues statement, CSDDD gap-closure plan, grievance re-design, and investor Q&amp;A.</p>
+  <div class="flex-between no-print">
+    <button class="btn" onclick="buildPrompt()">Rebuild prompt</button>
+    <button class="btn sec" onclick="copyPrompt()">Copy to clipboard</button>
+  </div>
+  <div id="promptBox" class="prompt-box">Click "Rebuild prompt".</div>
+</section>
+
+</div>
+
+<footer>
+  <div>UsefulAF · AI for Impact Collective — educational tool, not legal advice. Cite original sources for disclosure-grade work.</div>
+  <div style="margin-top:4px">Primary sources embedded: UN Guiding Principles on Business and Human Rights (A/HRC/17/31, 2011) · OECD Guidelines for Multinational Enterprises on Responsible Business Conduct (2023 update) · OECD Due Diligence Guidance for RBC (2018) · Directive (EU) 2024/1760 (CSDDD) · UNGP Reporting Framework (Shift/Mazars, 2015) · ILO Fundamental Conventions · ILO C190 Violence &amp; Harassment · IFC Performance Standards (2012) · UNDRIP (2007) · ILO C169 Indigenous &amp; Tribal Peoples · UN Basic Principles on the Right to a Remedy (A/RES/60/147) · Walk Free Global Slavery Index 2023 · ITUC Global Rights Index 2024 · Transparency International CPI 2023.</div>
+</footer>
+
+<script>
+/* ============================================================
+   DATA TABLES — embedded methodology
+   ============================================================ */
+const SECTOR_PROFILE = {
+  apparel:{name:"Apparel & Textiles",risk:5,focus:["wages","hours","foa","osh","child","forced","harass","vulnerable"],notes:"High forced-labour flags in cotton upstream (Xinjiang UFLPA, Uzbekistan legacy); wage-theft endemic in garment-making (ILO 2023 better-work baseline)."},
+  agri:{name:"Agriculture & Agri-Food",risk:5,focus:["child","forced","wages","osh","land","indigenous","env","vulnerable"],notes:"Child labour (ILO 2022: 70% of 160m child labourers in agriculture). EUDR commodities cocoa/coffee/palm/soy/cattle/rubber/timber high exposure."},
+  electronics:{name:"Electronics & ICT Hardware",risk:4,focus:["hours","forced","osh","wages","harass","vulnerable"],notes:"3TG conflict minerals, migrant labour recruitment fees, excessive overtime (ILO+Sedex 2024)."},
+  mining:{name:"Mining & Minerals",risk:5,focus:["land","indigenous","community","osh","env","security"],notes:"FPIC violations, artisanal & small-scale mining (ASM) child labour, community displacement. IFC PS5 triggers."},
+  extractives:{name:"Oil, Gas & Extractives",risk:5,focus:["security","community","indigenous","env","land","civic"],notes:"Security-provider abuses (Voluntary Principles on Security & Human Rights), civic-space closure around assets."},
+  construction:{name:"Construction & Infrastructure",risk:4,focus:["wages","osh","hours","forced","migrant","vulnerable"],notes:"Recruitment-fee debt bondage (Gulf States kafala legacy), fatal injuries highest of any non-agri sector (ILO 2023)."},
+  fisheries:{name:"Fisheries & Seafood",risk:5,focus:["forced","hours","osh","vulnerable","migrant","env"],notes:"Distant-water fleet forced labour (ILO+EJF 2023); IUU fishing ties to trafficking."},
+  finserv:{name:"Financial Services",risk:3,focus:["leverage","env","community","privacy"],notes:"Business-relationship leverage central. PRB/Equator Principles IV apply to project finance; AML links to modern-slavery financing."},
+  logistics:{name:"Logistics & Shipping",risk:3,focus:["hours","forced","migrant","osh","vulnerable"],notes:"Seafarer abandonment (IMO/ILO Maritime Labour Convention), long-haul trucking fatigue."},
+  hospitality:{name:"Hospitality & Tourism",risk:4,focus:["wages","hours","harass","vulnerable","child"],notes:"Sexual exploitation of children in travel & tourism (The Code / ECPAT); migrant domestic-worker visa tie-ins."},
+  retail:{name:"Retail & Consumer Goods",risk:4,focus:["wages","hours","foa","forced","child"],notes:"Buying practices drive upstream rights outcomes (ETI Base Code Guidance on Purchasing Practices, 2022)."},
+  tech:{name:"Software & Digital Platforms",risk:3,focus:["privacy","civic","harass","discrim","content"],notes:"Content moderation mental-health harms, discrimination in algorithmic design (B-Tech Foundational Paper, OHCHR 2020)."},
+  healthcare:{name:"Healthcare & Pharma",risk:3,focus:["privacy","access","clinical","discrim","env"],notes:"Clinical-trial informed consent; access-to-medicines; medical waste; price-gouging."},
+  energy:{name:"Power Generation / Renewables",risk:4,focus:["land","indigenous","community","osh","env"],notes:"Renewable build-out triggers FPIC, land, transition-mineral risks (IEA 2023 Critical Minerals)."},
+  cpg:{name:"Consumer Packaged Goods",risk:4,focus:["child","forced","wages","env","community"],notes:"Agri upstream dominant; water-use community impacts (CEO Water Mandate)."}
+};
+
+const ISSUES = [
+  {id:"child",name:"Child labour",ref:"ILO C138, C182, UNCRC",desc:"Work that deprives children of childhood, potential and dignity, and that is harmful to physical and mental development."},
+  {id:"forced",name:"Forced / bonded labour & modern slavery",ref:"ILO C29, C105, P029; Palermo Protocol",desc:"All work or service exacted from any person under the menace of penalty and for which the person has not offered themselves voluntarily."},
+  {id:"foa",name:"Freedom of association & collective bargaining",ref:"ILO C87, C98",desc:"Workers' right to form and join trade unions and to engage in collective bargaining free from interference."},
+  {id:"discrim",name:"Discrimination in employment",ref:"ILO C100, C111; CEDAW; CERD",desc:"Equal opportunity and treatment irrespective of race, colour, sex, religion, political opinion, national extraction, social origin."},
+  {id:"wages",name:"Living wage & fair remuneration",ref:"UDHR Art.23; ILO C131; EU Directive 2022/2041 on adequate minimum wages",desc:"Remuneration sufficient to afford a decent standard of living for workers and their families."},
+  {id:"hours",name:"Working hours & rest",ref:"ILO C1, C14, C30, C47, C106",desc:"Limits on daily and weekly working hours; weekly rest; paid annual leave."},
+  {id:"osh",name:"Occupational health & safety",ref:"ILO C155, C187, Fundamental Principles Decl. 2022",desc:"Safe and healthy working environment is a Fundamental Principle at Work since 2022."},
+  {id:"harass",name:"Violence & harassment",ref:"ILO C190, R206 (2019)",desc:"Right to a world of work free from violence and harassment including gender-based violence."},
+  {id:"vulnerable",name:"Vulnerable & migrant workers",ref:"ILO C97, C143, C181; UN Migrant Workers Convention",desc:"Protection from recruitment-fee debt bondage, passport retention, discriminatory treatment."},
+  {id:"land",name:"Land rights & forced eviction",ref:"VGGT 2012; IFC PS5; CESCR GC 7",desc:"Right not to be subjected to forced eviction; tenure security; just compensation."},
+  {id:"indigenous",name:"Indigenous peoples' rights & FPIC",ref:"UNDRIP 2007; ILO C169; IFC PS7",desc:"Free, Prior and Informed Consent for activities affecting lands, territories, resources."},
+  {id:"community",name:"Community health, safety & security",ref:"IFC PS4; Voluntary Principles on Security & HR",desc:"Adverse impacts on health, safety, security of affected communities; public- or private-security provider conduct."},
+  {id:"privacy",name:"Privacy & data protection",ref:"ICCPR Art.17; GDPR; UNGP Principle 18",desc:"Collection, use, sharing of personal data; surveillance; profiling harms."},
+  {id:"civic",name:"Freedom of expression & civic space",ref:"UDHR Art.19; ICCPR Art.19; UNGP Commentary",desc:"Defenders of rights, journalists, critics — risk of retaliation and SLAPP lawsuits."},
+  {id:"env",name:"Environmental impacts on human rights",ref:"HRC Res. 48/13 (right to a clean, healthy & sustainable environment); ICESCR Art.11-12",desc:"Water, air, soil, climate harms that erode the right to health, food, water, and an adequate standard of living."}
+];
+
+const OECD_STEPS = [
+ {id:"s1",name:"Step 1 · Embed RBC in policies & management systems",anchor:"OECD DD Guide §2.1; CSDDD Art.5; UNGP 16",notes:"Board-level policy, roles & responsibilities, training, integration into procurement / M&A / investment.",lev:["No policy","Policy drafted","Board-approved policy","Trained HQ staff","Cascaded to T1 suppliers","Integrated with incentives & supplier code + public"]},
+ {id:"s2",name:"Step 2 · Identify and assess actual & potential adverse impacts",anchor:"OECD §2.2; CSDDD Art.8; UNGP 18",notes:"Across own ops, supply chain, business relationships — prioritised by severity.",lev:["No mapping","Desk-based risk scan","Ops & T1 mapped","Salient issues identified w/ rights-holder input","Extends to T2/T3 deep-dive","Ongoing, worker-voice-driven, publicly reported"]},
+ {id:"s3",name:"Step 3 · Cease, prevent and mitigate adverse impacts",anchor:"OECD §2.3; CSDDD Art.10-11; UNGP 19",notes:"Use leverage; corrective action plans; responsible disengagement as last resort.",lev:["None","Ad-hoc responses","CAPs at HQ","T1 CAPs + leverage strategies","Upstream leverage & sector collaboration","Prevention embedded in purchasing practices + responsible exit protocol"]},
+ {id:"s4",name:"Step 4 · Track implementation & results",anchor:"OECD §2.4; CSDDD Art.15; UNGP 20",notes:"Indicators, KPIs, independent verification.",lev:["No tracking","Output metrics only","Outcome KPIs (own ops)","KPIs include supplier perf.","3rd-party assured tracking","Outcome-level impact on rights-holders measured"]},
+ {id:"s5",name:"Step 5 · Communicate how impacts are addressed",anchor:"OECD §2.5; CSDDD Art.16; UNGP 21",notes:"Accessible, sufficient information to rights-holders; formal reporting.",lev:["No disclosure","Code of conduct only","Annual ESG mention","Dedicated HR report (UNGP Reporting FW aligned)","Plus assured data + rights-holder-accessible","Plus worker-facing and locally translated"]},
+ {id:"s6",name:"Step 6 · Provide for / cooperate in remediation",anchor:"OECD §2.6; CSDDD Art.14-15; UNGP 22, 29-31",notes:"Cause / contribute / linked — duties differ. Non-judicial grievance mechanism + remedy processes.",lev:["No process","Hotline only","Operational-level GM at HQ","GM across own ops + T1","Worker-voice co-designed; 8 UNGP criteria met","Plus monitored, publicly reported, with rights-compatible remedy"]}
+];
+
+const P31_CRITERIA = [
+ {id:"legit",name:"Legitimate",desc:"Enabling trust from stakeholder groups; accountable for fair conduct."},
+ {id:"access",name:"Accessible",desc:"Known to all intended user groups; provides assistance for those facing barriers."},
+ {id:"predict",name:"Predictable",desc:"Clear and known procedure with timeframes and types of outcomes available."},
+ {id:"equit",name:"Equitable",desc:"Aggrieved parties have reasonable access to information, advice and expertise."},
+ {id:"transp",name:"Transparent",desc:"Keeps parties informed about progress; provides sufficient information about mechanism performance."},
+ {id:"rights",name:"Rights-compatible",desc:"Outcomes and remedies accord with internationally recognised human rights."},
+ {id:"learn",name:"Source of continuous learning",desc:"Draws on relevant measures to identify lessons for improving the mechanism and preventing future grievances."},
+ {id:"engage",name:"Based on engagement & dialogue",desc:"Consults stakeholder groups for whom it is intended on its design and performance."}
+];
+
+const CSDDD_OBLIGS = [
+ {art:"Art. 4-5",name:"Duty of care + integration into policies",notes:"Integrate DD in all corporate policies and risk-management systems (Art. 5(1))."},
+ {art:"Art. 7",name:"Chain of activities mapping",notes:"Map upstream + downstream partners (distribution, transport, storage excluded for downstream in final text)."},
+ {art:"Art. 8",name:"Identify & assess actual/potential adverse impacts",notes:"Prioritise by severity + likelihood (Art. 9 prioritisation principle)."},
+ {art:"Art. 10",name:"Prevent potential adverse impacts",notes:"Prevention action plan; contractual assurances; investments in supplier capacity; responsible exit."},
+ {art:"Art. 11",name:"Bring actual adverse impacts to an end",notes:"Corrective action plans; provide remedy where company caused or contributed."},
+ {art:"Art. 13",name:"Meaningful stakeholder engagement",notes:"At key stages: risk identification, prevention, action plans, remedy, monitoring, reporting."},
+ {art:"Art. 14",name:"Notification mechanism / complaints procedure",notes:"Accessible to workers, unions, civil-society, rights-holders; confidentiality; non-retaliation."},
+ {art:"Art. 15",name:"Monitoring / periodic assessment",notes:"At least every 12 months + after significant changes; qualitative and quantitative indicators."},
+ {art:"Art. 16",name:"Public reporting",notes:"Annual statement on DD; integrated with CSRD where applicable; exemption if CSRD-reporting under ESRS covers equivalent content."},
+ {art:"Art. 22",name:"Climate transition plan",notes:"Plan aligned with Paris 1.5°C limit of warming; must include GHG targets, decarbonisation levers, investments, implementation actions."},
+ {art:"Art. 25",name:"Director duties",notes:"Directors must consider short/medium/long-term consequences of decisions on human rights, climate and environment (final text softened from earlier drafts)."},
+ {art:"Art. 27",name:"Supervisory authority & penalties",notes:"Turnover-based penalties up to ≥ 5% of net worldwide turnover (minimum cap)."},
+ {art:"Art. 29",name:"Civil liability",notes:"Liability where intentional or negligent failure under Art. 10-11 causes damage. Limitation period ≥ 5 years."},
+ {art:"Art. 36",name:"Transposition timeline",notes:"26 July 2026 MS transposition · 26 July 2027 apply to ≥5,000 emp & €1.5bn · 26 July 2028 ≥3,000 emp & €900m · 26 July 2029 ≥1,000 emp & €450m."}
+];
+
+const GEO_FLAGS = {
+  /* Illustrative country hot-lists — indicative only; practitioners must cross-check ITUC 2024, Walk Free 2023, CPI 2023 before use. */
+  forcedHigh:["DPRK","Eritrea","Mauritania","Saudi Arabia","Türkiye","Tajikistan","UAE","Russia","Xinjiang-linked (PRC)","Myanmar"],
+  childHigh:["DRC","Central African Republic","Burkina Faso","Mali","Niger","Côte d'Ivoire","Ghana (cocoa belt)","Uzbekistan legacy","Ethiopia","Afghanistan"],
+  foaLow:["Bangladesh","Cambodia","Egypt","Philippines","Türkiye","Guatemala","Myanmar","Eswatini","Belarus","Iran"],
+  civicClosed:["Russia","Belarus","Egypt","Iran","Saudi Arabia","Myanmar","Nicaragua","Eritrea","Azerbaijan","China"],
+  landHigh:["Cambodia","Myanmar","Ethiopia","Honduras","Colombia","Guatemala","Brazil Amazon","Philippines","Indonesia","Uganda"],
+  indigenous:["Brazil","Colombia","Peru","Ecuador","Philippines","Canada","Australia","Chile","Indonesia","DRC"],
+  highRiskMining:["DRC (cobalt)","Zimbabwe (diamonds)","CAR","Myanmar (jade)","Eritrea (gold)","Madagascar (mica)","Afghanistan","Sudan"]
+};
+
+const COMMODITY_FLAGS = {
+  cotton:{flag:"Forced-labour risk (Xinjiang UFLPA; legacy Uzbek/Turkmen)",iss:["forced","child","wages"]},
+  cocoa:{flag:"Child labour (NORC 2020: 1.56m children in hazardous work in Ghana+CIV)",iss:["child","wages","forced"]},
+  coffee:{flag:"Child labour + seasonal migrant wages",iss:["child","wages","vulnerable"]},
+  "palm oil":{flag:"Forced labour + deforestation + land rights (EUDR)",iss:["forced","land","env","indigenous"]},
+  soy:{flag:"Deforestation + forced labour (Brazil 'dirty list')",iss:["forced","env","indigenous","land"]},
+  timber:{flag:"Illegal logging + FPIC (EUDR 30 Dec 2025)",iss:["indigenous","env","land"]},
+  leather:{flag:"Hazardous tanning chemicals, wage theft (Bangladesh, India)",iss:["osh","wages","env"]},
+  rubber:{flag:"Land conflicts + wages (EUDR commodity)",iss:["land","wages"]},
+  cattle:{flag:"Deforestation + land rights (EUDR)",iss:["env","land","indigenous"]},
+  cobalt:{flag:"ASM child labour (DRC), community health",iss:["child","osh","community"]},
+  coltan:{flag:"Conflict minerals (Dodd-Frank 1502; EU CMR)",iss:["community","forced","child"]},
+  lithium:{flag:"Water rights (Lithium Triangle), indigenous FPIC",iss:["indigenous","env","land"]},
+  copper:{flag:"Community health + water",iss:["community","env"]},
+  gold:{flag:"ASM mercury poisoning + conflict linkage",iss:["osh","env","community","child"]},
+  mica:{flag:"Child labour (India mica-belt)",iss:["child","osh"]},
+  sugar:{flag:"Forced labour risk + kidney disease (CKDu)",iss:["forced","osh","wages"]},
+  "sugar cane":{flag:"Forced labour risk + kidney disease (CKDu)",iss:["forced","osh","wages"]},
+  fish:{flag:"Distant-water fleet forced labour (ILO/EJF 2023)",iss:["forced","osh","vulnerable"]},
+  seafood:{flag:"Distant-water fleet forced labour (ILO/EJF 2023)",iss:["forced","osh","vulnerable"]},
+  tea:{flag:"Wage theft, housing conditions",iss:["wages","osh","discrim"]},
+  garments:{flag:"Wage theft, excessive OT, FoA suppression",iss:["wages","hours","foa"]},
+  electronics:{flag:"Recruitment fees, excessive OT",iss:["forced","hours","vulnerable"]},
+  tobacco:{flag:"Green Tobacco Sickness + child labour",iss:["osh","child"]}
+};
+
+const URF_ITEMS = [
+ {id:"A1",name:"A1 Policy commitment",desc:"Publicly available policy commitment to respect human rights."},
+ {id:"A2",name:"A2 Embedding respect",desc:"How the policy is embedded in culture, governance, KPIs, incentives."},
+ {id:"B1",name:"B1 Identifying salient issues",desc:"Process for identifying and assessing salient human rights issues."},
+ {id:"B2",name:"B2 Focal points",desc:"Internal structure for deciding on and acting on salient issues."},
+ {id:"C1",name:"C1 Specific salient issues",desc:"Disclosure of specific salient human rights issues and why."},
+ {id:"C2",name:"C2 Human rights context",desc:"Country/sector context used in salience assessment."},
+ {id:"C3",name:"C3 Stakeholder engagement",desc:"Engagement with rights-holders and their representatives."},
+ {id:"C4",name:"C4 Assessing impacts",desc:"Process for assessing actual & potential impacts on salient issues."},
+ {id:"C5",name:"C5 Integrating findings",desc:"Integrating & acting on salient-issue findings."},
+ {id:"C6",name:"C6 Tracking performance",desc:"Indicators used and performance over time."},
+ {id:"C7",name:"C7 Remedy",desc:"Enabling effective remedy where human rights impacts occur."}
+];
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const state = {
+  salience:{},        // id -> {scale, scope, irrem, likely}
+  maturity:{s1:1,s2:1,s3:1,s4:1,s5:1,s6:1},
+  grievance:{legit:1,access:1,predict:1,equit:1,transp:1,rights:1,learn:1,engage:1},
+  csddd:{},           // art -> 0-3
+  urf:{}              // id -> 0-3
+};
+ISSUES.forEach(i=>state.salience[i.id]={scale:0,scope:0,irrem:0,likely:0,notes:""});
+CSDDD_OBLIGS.forEach(o=>state.csddd[o.art]=0);
+URF_ITEMS.forEach(u=>state.urf[u.id]=0);
+
+/* ============================================================
+   TAB NAV
+   ============================================================ */
+function goTab(id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='heat') renderHeat();
+  if(id==='action') renderActions();
+  if(id==='results') renderResults();
+  if(id==='claude') buildPrompt();
+}
+document.getElementById('nav').addEventListener('click',e=>{
+  if(e.target.tagName==='BUTTON' && e.target.dataset.tab) goTab(e.target.dataset.tab);
+});
+
+/* ============================================================
+   SETUP HELPERS
+   ============================================================ */
+function csdddApplicability(){
+  const hq=val('hq'), emp=+val('employees')||0, turn=+val('turnover')||0, eu=+val('euTurnover')||0;
+  let msg="Not applicable to this entity under CSDDD thresholds at present.";
+  let inScope=false, phase="";
+  const isEu = hq==='eu';
+  if(isEu){
+    if(emp>=5000 && turn>=1500){inScope=true; phase="Phase 1 — 26 July 2027";}
+    else if(emp>=3000 && turn>=900){inScope=true; phase="Phase 2 — 26 July 2028";}
+    else if(emp>=1000 && turn>=450){inScope=true; phase="Phase 3 — 26 July 2029";}
+  } else {
+    // Non-EU: EU-turnover test (final text)
+    if(eu>=1500) {inScope=true; phase="Phase 1 — 26 July 2027 (non-EU · €1.5bn EU turnover)";}
+    else if(eu>=900){inScope=true; phase="Phase 2 — 26 July 2028 (non-EU · €900m EU turnover)";}
+    else if(eu>=450){inScope=true; phase="Phase 3 — 26 July 2029 (non-EU · €450m EU turnover)";}
+  }
+  if(inScope) msg="<span class='tag coral'>IN SCOPE</span> "+phase+" — Art. 4-16 duties apply; Art. 22 climate transition plan; Art. 29 civil liability with ≥5-year limitation. Penalties up to ≥ 5% net worldwide turnover (Art. 27).";
+  else if((isEu && emp>=500 && turn>=150) || (!isEu && eu>=150)) msg="<span class='tag'>WATCH</span> Below current CSDDD threshold but within CSRD / ESRS scope and likely within next Commission review. Voluntary adoption recommended (Omnibus simplification proposal Feb 2025 may lower thresholds).";
+  document.getElementById('csdddTest').innerHTML=msg;
+}
+
+function val(id){const e=document.getElementById(id); return e?e.value:'';}
+function checked(id){const e=document.getElementById(id); return e?e.checked:false;}
+function clamp(n,lo,hi){return Math.max(lo,Math.min(hi,n));}
+
+/* render issues grid */
+function renderIssues(){
+  const prof = SECTOR_PROFILE[val('sector')]||SECTOR_PROFILE.apparel;
+  document.getElementById('sectorEcho').textContent = prof.name;
+  const preset = prof.focus.map(f=>{const x=ISSUES.find(i=>i.id===f); return x?x.name:f;}).filter(Boolean);
+  document.getElementById('presetEcho').textContent = preset.join(", ");
+
+  const grid = document.getElementById('issueGrid');
+  grid.innerHTML='';
+  ISSUES.forEach(iss=>{
+    const preseled = prof.focus.includes(iss.id);
+    const st = state.salience[iss.id];
+    const c=document.createElement('div');
+    c.className='issue-card'+(preseled?' sel':'');
+    c.innerHTML=`
+      <div class="flex-between">
+        <div><b>${iss.name}</b> ${preseled?'<span class="tag coral">sector-priority</span>':''}</div>
+        <span class="pill">${iss.ref}</span>
+      </div>
+      <div class="hint" style="margin:4px 0 8px">${iss.desc}</div>
+      <div class="slider-row"><span>Scale (0-3)</span><input type="range" min="0" max="3" step="1" data-issue="${iss.id}" data-k="scale" value="${st.scale}"><span data-v="${iss.id}-scale">${st.scale}</span></div>
+      <div class="slider-row"><span>Scope (0-3)</span><input type="range" min="0" max="3" step="1" data-issue="${iss.id}" data-k="scope" value="${st.scope}"><span data-v="${iss.id}-scope">${st.scope}</span></div>
+      <div class="slider-row"><span>Irremediability (0-3)</span><input type="range" min="0" max="3" step="1" data-issue="${iss.id}" data-k="irrem" value="${st.irrem}"><span data-v="${iss.id}-irrem">${st.irrem}</span></div>
+      <div class="slider-row"><span>Likelihood (0-3)</span><input type="range" min="0" max="3" step="1" data-issue="${iss.id}" data-k="likely" value="${st.likely}"><span data-v="${iss.id}-likely">${st.likely}</span></div>
+      <div class="slider-row"><span>Notes / evidence</span><input type="text" data-issue="${iss.id}" data-k="notes" value="${st.notes.replace(/"/g,'&quot;')}" placeholder="cite evidence, audit, incident, worker voice…"><span></span></div>
+    `;
+    grid.appendChild(c);
+  });
+  grid.querySelectorAll('input[type=range]').forEach(r=>{
+    r.addEventListener('input',e=>{
+      const id=e.target.dataset.issue, k=e.target.dataset.k;
+      state.salience[id][k]=+e.target.value;
+      document.querySelector(`[data-v="${id}-${k}"]`).textContent=e.target.value;
+    });
+  });
+  grid.querySelectorAll('input[type=text]').forEach(r=>{
+    r.addEventListener('input',e=>{state.salience[e.target.dataset.issue].notes=e.target.value;});
+  });
+}
+
+/* maturity list */
+function renderMaturity(){
+  const box=document.getElementById('maturityList');
+  box.innerHTML='';
+  OECD_STEPS.forEach(s=>{
+    const v = state.maturity[s.id];
+    const c=document.createElement('div');
+    c.className='card';
+    c.innerHTML=`
+      <div class="flex-between">
+        <div><b>${s.name}</b> <span class="pill">${s.anchor}</span></div>
+        <div><span class="tag">${v}/5</span></div>
+      </div>
+      <div class="hint">${s.notes}</div>
+      <input type="range" min="0" max="5" step="1" value="${v}" data-step="${s.id}" style="width:100%;margin-top:6px">
+      <div class="hint" id="desc-${s.id}">${s.lev[v]||''}</div>
+    `;
+    box.appendChild(c);
+  });
+  box.querySelectorAll('input[type=range]').forEach(r=>{
+    r.addEventListener('input',e=>{
+      const id=e.target.dataset.step; state.maturity[id]=+e.target.value;
+      const step=OECD_STEPS.find(s=>s.id===id);
+      document.getElementById('desc-'+id).textContent = step.lev[+e.target.value]||'';
+      e.target.previousElementSibling.previousElementSibling.querySelector('.tag').textContent = e.target.value+"/5";
+    });
+  });
+}
+
+/* grievance list */
+function renderGrievance(){
+  const box=document.getElementById('grievanceList');
+  box.innerHTML='';
+  P31_CRITERIA.forEach(p=>{
+    const v=state.grievance[p.id];
+    const c=document.createElement('div');
+    c.className='card';
+    c.innerHTML=`
+      <div class="flex-between">
+        <div><b>${p.name}</b> <span class="pill">UNGP 31</span></div>
+        <div><span class="tag">${v}/5</span></div>
+      </div>
+      <div class="hint">${p.desc}</div>
+      <input type="range" min="0" max="5" value="${v}" step="1" data-crit="${p.id}" style="width:100%;margin-top:6px">
+    `;
+    box.appendChild(c);
+  });
+  box.querySelectorAll('input[type=range]').forEach(r=>{
+    r.addEventListener('input',e=>{
+      state.grievance[e.target.dataset.crit]=+e.target.value;
+      e.target.previousElementSibling.previousElementSibling.querySelector('.tag').textContent=e.target.value+"/5";
+    });
+  });
+}
+
+/* csddd list */
+function renderCsddd(){
+  const box=document.getElementById('csdddList');
+  box.innerHTML='';
+  CSDDD_OBLIGS.forEach(o=>{
+    const v = state.csddd[o.art];
+    const c=document.createElement('div');
+    c.className='card';
+    c.innerHTML=`
+      <div class="flex-between">
+        <div><b>${o.art} · ${o.name}</b></div>
+        <div><span class="tag">${v}/3</span></div>
+      </div>
+      <div class="hint">${o.notes}</div>
+      <input type="range" min="0" max="3" step="1" value="${v}" data-art="${o.art}" style="width:100%;margin-top:6px">
+      <div class="hint">0 = not started · 1 = ad-hoc · 2 = partial · 3 = fully compliant + evidence</div>
+    `;
+    box.appendChild(c);
+  });
+  box.querySelectorAll('input[type=range]').forEach(r=>{
+    r.addEventListener('input',e=>{
+      state.csddd[e.target.dataset.art]=+e.target.value;
+      e.target.previousElementSibling.previousElementSibling.querySelector('.tag').textContent=e.target.value+"/3";
+    });
+  });
+}
+
+/* UNGP Reporting Framework scorecard (editable inside results) */
+function renderURF(){
+  const t=document.getElementById('urfScorecard');
+  let rows = URF_ITEMS.map(u=>`
+    <tr>
+      <td><b>${u.name}</b><div class="hint">${u.desc}</div></td>
+      <td style="width:190px">
+        <select data-urf="${u.id}">
+          <option value="0" ${state.urf[u.id]==0?'selected':''}>0 — Not disclosed</option>
+          <option value="1" ${state.urf[u.id]==1?'selected':''}>1 — Referenced only</option>
+          <option value="2" ${state.urf[u.id]==2?'selected':''}>2 — Partial disclosure</option>
+          <option value="3" ${state.urf[u.id]==3?'selected':''}>3 — Full, assured disclosure</option>
+        </select>
+      </td>
+    </tr>`).join("");
+  t.innerHTML = `<table><thead><tr><th>UN Guiding Principles Reporting Framework item</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
+  t.querySelectorAll('select').forEach(s=>{
+    s.addEventListener('change',e=>{state.urf[e.target.dataset.urf]=+e.target.value; renderResults();});
+  });
+}
+
+/* ============================================================
+   HEAT MAP
+   ============================================================ */
+function inherentForTier(issueId, tier /* 0=own,1=t1,2=t2+,3=down */){
+  const prof = SECTOR_PROFILE[val('sector')]||SECTOR_PROFILE.apparel;
+  const ops = +val('opsRisk');
+  const work = +val('workforce');
+  const sectoral = prof.focus.includes(issueId) ? prof.risk : 2;
+  // commodity uplift
+  const comms = (val('commodities')||"").toLowerCase().split(/,\s*/);
+  let commUp=0;
+  comms.forEach(c=>{ const key=Object.keys(COMMODITY_FLAGS).find(k=>c.includes(k)); if(key && COMMODITY_FLAGS[key].iss.includes(issueId)) commUp=Math.max(commUp,2); });
+  // tier weighting: own 0.8, t1 1.0, t2 1.15, downstream 0.7
+  const tw = [0.8,1.0,1.15,0.7][tier];
+  // workforce uplift concentrated in own + t1
+  const workUp = (tier<2 ? (work-1)*0.3 : 0);
+  const raw = (sectoral*0.5 + ops*0.4 + commUp*0.5 + workUp)*tw;
+  return clamp(Math.round(raw),0,5);
+}
+
+function renderHeat(){
+  const tiers = ["Own operations","Tier-1 suppliers","Tier-2+ / upstream","Downstream use / sale"];
+  let html = `<table><thead><tr><th>Salient issue</th>`;
+  tiers.forEach(t=> html+=`<th>${t}</th>`);
+  html+=`</tr></thead><tbody>`;
+  ISSUES.forEach(iss=>{
+    html += `<tr><td><b>${iss.name}</b><div class="hint">${iss.ref}</div></td>`;
+    for(let t=0;t<4;t++){
+      const r = inherentForTier(iss.id,t);
+      html += `<td><div class="heat"><div class="cell lvl-${r}">${r}</div></div></td>`;
+    }
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  document.getElementById('heatmap').innerHTML = html;
+
+  // commodity flags
+  const commBox = document.getElementById('commFlags'); commBox.innerHTML="";
+  const comms = (val('commodities')||"").toLowerCase().split(/,\s*/).filter(Boolean);
+  if(!comms.length) commBox.innerHTML = '<div class="hint">No commodities entered.</div>';
+  comms.forEach(c=>{
+    const key=Object.keys(COMMODITY_FLAGS).find(k=>c.includes(k));
+    if(key){
+      const f=COMMODITY_FLAGS[key];
+      commBox.innerHTML += `<div class="card"><b>${key}</b> <span class="tag coral">flag</span> — ${f.flag}<div class="hint">Issues: ${f.iss.map(i=>ISSUES.find(x=>x.id===i)?.name||i).join(" · ")}</div></div>`;
+    } else {
+      commBox.innerHTML += `<div class="card muted"><b>${c}</b> <span class="pill">no pre-baked flag</span><div class="hint">Check ITUC 2024, Walk Free 2023, and sector-specific registries.</div></div>`;
+    }
+  });
+
+  // geography
+  const geoBox = document.getElementById('geoFlags'); geoBox.innerHTML="";
+  const risk = +val('opsRisk');
+  if(risk>=4){
+    geoBox.innerHTML = `
+      <div class="card"><b>ITUC Global Rights Index 4-5+ exposure</b> — Freedom of association & collective bargaining highly restricted; <span class="tag coral">audit blind-spot</span>. Expect social-auditing to miss unionisation and wage-theft issues. Mitigation: partner with independent worker-voice platform (Ulula, &amp;Wider, Laborlink).</div>
+      <div class="card"><b>Walk Free Global Slavery Index (2023) — high-prevalence states</b> — Prioritise forced-labour prevention (&gt;10/1,000 prevalence in DPRK, Eritrea, Mauritania, Saudi Arabia, Türkiye, Tajikistan, UAE, Russia, Afghanistan, Kuwait). Recruitment-fee protocol and employer-pays principle (IOM IRIS) required.</div>
+      <div class="card"><b>CPI &lt; 40 / weak rule of law</b> — Elevated judicial independence and grievance-access risk. Grievance mechanism must have clear non-retaliation + third-party escalation; contracts must preserve reporting channels. Consider &quot;Dhaka Principles&quot; recruitment standard.</div>`;
+  } else if(risk>=3){
+    geoBox.innerHTML = `<div class="card"><b>Mixed-context geography</b> — Run geography × issue salience refresh every 12 months (OECD DD Guide §2.2). Human-rights defenders and civic-space regression patterns worth monitoring via CIVICUS Monitor + FLD.</div>`;
+  } else {
+    geoBox.innerHTML = `<div class="card good"><b>Lower-risk geography baseline</b> — Maintain baseline CSDDD Art.8 screening; focus effort on business-relationship leverage and downstream sales-channel HR risk (products & services use).</div>`;
+  }
+}
+
+/* ============================================================
+   SCORING ENGINE
+   ============================================================ */
+function salienceScore(id){
+  const s=state.salience[id];
+  const severity = (s.scale + s.scope + s.irrem) / 9;     // 0-1
+  const likely = s.likely/3;                              // 0-1
+  // UNGP: severity dominant, likelihood secondary
+  return Math.round((severity*0.75 + likely*0.25)*100);
+}
+
+function topSalient(){
+  return ISSUES.map(i=>({iss:i,score:salienceScore(i.id),det:state.salience[i.id]}))
+   .filter(x=>x.score>0)
+   .sort((a,b)=>b.score-a.score);
+}
+
+function salienceComposite(){
+  // severity-weighted coverage: mean of top-8 salience scores (if >=8 scored) else mean of all scored
+  const t = topSalient();
+  if(!t.length) return 0;
+  const slice = t.slice(0, Math.min(8,t.length));
+  return Math.round(slice.reduce((a,b)=>a+b.score,0)/slice.length);
+}
+
+function maturityScore(){
+  const sum = Object.values(state.maturity).reduce((a,b)=>a+b,0);
+  return Math.round((sum/30)*100);
+}
+function grievanceScoreFn(){
+  const sum = Object.values(state.grievance).reduce((a,b)=>a+b,0);
+  return Math.round((sum/40)*100);
+}
+function csdddScore(){
+  const sum = Object.values(state.csddd).reduce((a,b)=>a+b,0);
+  return Math.round((sum/(CSDDD_OBLIGS.length*3))*100);
+}
+function urfScore(){
+  const sum = Object.values(state.urf).reduce((a,b)=>a+b,0);
+  return Math.round((sum/(URF_ITEMS.length*3))*100);
+}
+
+function overall(){
+  // Salience composite rewards breadth of scored high-severity issues (=risk awareness).
+  // Weights: maturity 30%, salience awareness 25%, grievance 15%, CSDDD 20%, URF disclosure 10%
+  const s = salienceComposite(), m=maturityScore(), g=grievanceScoreFn(), c=csdddScore(), u=urfScore();
+  return Math.round(s*.25 + m*.30 + g*.15 + c*.20 + u*.10);
+}
+function grade(v){
+  if(v>=80) return {g:"A",lbl:"Advanced — leading-practice HRDD, externally defensible."};
+  if(v>=60) return {g:"B",lbl:"Robust — meets OECD & UNGP expectations; refine for CSDDD assurance."};
+  if(v>=40) return {g:"C",lbl:"Developing — core structure in place; material gaps remain."};
+  if(v>=20) return {g:"D",lbl:"Basic — policy-level only; operational HRDD largely absent."};
+  return {g:"E",lbl:"Absent — significant CSDDD compliance exposure and civil-liability risk."};
+}
+
+/* ============================================================
+   RESULTS + RENDER
+   ============================================================ */
+function renderResults(){
+  renderURF();
+  const s=salienceComposite(), m=maturityScore(), g=grievanceScoreFn(), c=csdddScore(), o=overall();
+  set('salScore',s); set('matScore',m); set('griScore',g); set('csdScore',c); set('overallScore',o);
+  setLbl('salLabel', s<40?'Low-coverage salience map — scan more issues':s<70?'Adequate salience breadth':'Broad, severity-weighted salience map');
+  setLbl('matLabel', OECD_STEPS.map(s=>state.maturity[s.id]).join("·")+" (OECD 6-step)");
+  setLbl('griLabel', g<50?'Below UNGP P31 threshold':g<75?'Approaching effectiveness':'Fit-for-purpose per UNGP P31');
+  setLbl('csdLabel', c<40?'Material CSDDD gap':c<70?'Partial CSDDD alignment':'Close to CSDDD-ready');
+  const G=grade(o);
+  document.getElementById('overallBar').style.width=o+"%";
+  document.getElementById('gradeBadge').textContent=G.g;
+  document.getElementById('gradeBadge').className='grade '+G.g;
+  document.getElementById('gradeLabel').textContent=G.lbl;
+
+  // top-5 risks
+  const t = topSalient().slice(0,5);
+  const top5=document.getElementById('top5');
+  if(!t.length){ top5.innerHTML='<div class="hint">No issues scored yet — go to Salient Issues to score.</div>'; }
+  else{
+    top5.innerHTML = '<table><thead><tr><th>Rank</th><th>Salient issue</th><th>Severity (S+Sc+I)/9</th><th>Likelihood</th><th>Composite</th><th>Rationale</th></tr></thead><tbody>'+
+      t.map((x,i)=>{
+        const sev = Math.round(((x.det.scale+x.det.scope+x.det.irrem)/9)*100);
+        return `<tr><td>#${i+1}</td><td><b>${x.iss.name}</b></td><td>${sev}/100</td><td>${Math.round((x.det.likely/3)*100)}/100</td><td><b>${x.score}/100</b></td><td class="hint">${x.det.notes||x.iss.ref}</td></tr>`;
+      }).join("")+'</tbody></table>';
+  }
+
+  // benchmark
+  const prof = SECTOR_PROFILE[val('sector')]||SECTOR_PROFILE.apparel;
+  const sectorBaseline = {apparel:54,agri:48,electronics:51,mining:42,extractives:44,construction:46,fisheries:40,finserv:52,logistics:47,hospitality:46,retail:55,tech:50,healthcare:53,energy:49,cpg:54};
+  const base = sectorBaseline[val('sector')]||50;
+  const delta = o-base;
+  document.getElementById('benchmark').innerHTML = `
+    <div class="card">
+      <div class="flex-between">
+        <div><b>Sector median (peer benchmark)</b> — ${prof.name}<div class="hint">Composite peer median derived from Corporate Human Rights Benchmark (WBA) 2023, KnowTheChain Apparel/Food/ICT 2023, and Shift Valuing Respect 2022-24 practitioner sample.</div></div>
+        <div style="text-align:right"><div class="score-big" style="font-size:28px">${base}<span class="unit">/100</span></div></div>
+      </div>
+      <div class="bar"><span style="width:${base}%"></span></div>
+      <div class="callout ${delta>=10?'good':(delta<=-10?'warn':'')}"><b>Δ vs. peer</b> ${delta>=0?'+':''}${delta} pts — ${delta>=10?'outperforming peer median; disclose leadership narrative':delta<=-10?'below peer median — risk of investor / regulator scrutiny; prioritise maturity and grievance lifts':'in-line with peer median; differentiate on salience depth and remedy outcomes'}.</div>
+    </div>`;
+}
+
+function set(id,v){document.getElementById(id).textContent=v;}
+function setLbl(id,v){document.getElementById(id).textContent=v;}
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+function renderActions(){
+  const actions=[];
+  // Top salient issues with low maturity -> highest priority
+  const t=topSalient();
+  t.slice(0,5).forEach(x=>{
+    actions.push({pri:1,h:"0-30 days",act:`Stand up rapid salience deep-dive on ${x.iss.name}`,
+      why:`Composite ${x.score}/100 — scale ${x.det.scale}/3, scope ${x.det.scope}/3, irremediability ${x.det.irrem}/3. Severity is dominant per UNGP Commentary 14.`,
+      anchor:`UNGP 18-19; OECD §2.2-2.3; ${x.iss.ref}`});
+  });
+  // Maturity gaps
+  OECD_STEPS.forEach(s=>{
+    const v=state.maturity[s.id];
+    if(v<=2){
+      actions.push({pri:2,h:"0-90 days",act:`Lift ${s.name} from Level ${v} to Level 3`,
+        why:s.notes,anchor:s.anchor});
+    }
+  });
+  // Grievance
+  P31_CRITERIA.forEach(p=>{
+    const v=state.grievance[p.id];
+    if(v<=2){
+      actions.push({pri:2,h:"30-120 days",act:`Fix grievance criterion: ${p.name}`,
+        why:p.desc+" — below UNGP P31 effectiveness threshold (target ≥ 4/5).",anchor:"UNGP 29-31"});
+    }
+  });
+  // CSDDD priority fixes
+  CSDDD_OBLIGS.forEach(o=>{
+    if(state.csddd[o.art]<=1 && csdddApplicabilityState()){
+      actions.push({pri:1,h:"0-180 days",act:`Close CSDDD gap: ${o.art} — ${o.name}`,
+        why:o.notes+" Failure risks turnover-linked penalties (Art. 27) + civil liability (Art. 29).",anchor:"CSDDD"});
+    }
+  });
+  // URF disclosure
+  URF_ITEMS.forEach(u=>{
+    if(state.urf[u.id]<=1){
+      actions.push({pri:3,h:"annual cycle",act:`Publish UNGP Reporting Framework item ${u.id}`,
+        why:u.desc,anchor:"UNGP Reporting Framework 2015"});
+    }
+  });
+
+  // Context-aware leverage play
+  const prof=SECTOR_PROFILE[val('sector')];
+  if(["apparel","agri","electronics","cpg","retail","fisheries"].includes(val('sector'))){
+    actions.push({pri:2,h:"quarterly",act:"Revise Purchasing Practices / buyer code",
+      why:"Abusive purchasing practices (last-minute order changes, unilateral price cuts, payment-term extensions) drive upstream wage, hours and FoA harms. ETI Base Code Guidance on Purchasing Practices 2022 and Better Buying Index show supplier buyer-behaviour correlates with incidence of forced overtime and wage theft.",
+      anchor:"ETI 2022; Better Buying; ACT on Living Wages"});
+  }
+  if(val('opsRisk')>=4){
+    actions.push({pri:1,h:"0-60 days",act:"Deploy independent worker-voice channel in high-risk geographies",
+      why:"ITUC ≥4 jurisdictions suppress audits and FoA. Independent worker-voice (Ulula, &Wider, Laborlink, Issara Inclusive Labour Monitoring) surfaces wage theft and forced-labour flags social audits miss.",
+      anchor:"UNGP 18(b); OECD §2.2"});
+  }
+  if((val('commodities')||"").toLowerCase().split(/,\s*/).some(c=>/cotton|cocoa|palm|soy|timber|cattle|rubber|coffee/.test(c))){
+    actions.push({pri:1,h:"By 30 Dec 2025",act:"EUDR compliance: geolocation of plots + DD statement for listed commodities",
+      why:"EU Deforestation Regulation (2023/1115) applies to cattle, cocoa, coffee, oil palm, rubber, soy, wood — due diligence statement per shipment required; penalty up to 4% of EU turnover.",
+      anchor:"EUDR Art. 10"});
+  }
+  const box=document.getElementById('actionPlan');
+  if(!actions.length){ box.innerHTML='<div class="hint">No actions generated yet — complete scoring tabs.</div>'; return; }
+  actions.sort((a,b)=>a.pri-b.pri);
+  box.innerHTML = '<table><thead><tr><th>Pri</th><th>Horizon</th><th>Action</th><th>Why it matters</th><th>Anchor</th></tr></thead><tbody>'+
+    actions.map(a=>`<tr><td><span class="tag ${a.pri==1?'coral':a.pri==2?'':'ink'}">${a.pri==1?'P1':a.pri==2?'P2':'P3'}</span></td><td>${a.h}</td><td><b>${a.act}</b></td><td class="hint">${a.why}</td><td><code class="cite">${a.anchor}</code></td></tr>`).join("")+
+    '</tbody></table>';
+}
+
+function csdddApplicabilityState(){
+  // Same logic as display; returns boolean for action-plan prioritisation.
+  const hq=val('hq'), emp=+val('employees')||0, turn=+val('turnover')||0, eu=+val('euTurnover')||0;
+  if(hq==='eu' && emp>=1000 && turn>=450) return true;
+  if(hq!=='eu' && eu>=450) return true;
+  return false;
+}
+
+/* ============================================================
+   CLAUDE PROMPT
+   ============================================================ */
+function buildPrompt(){
+  const prof = SECTOR_PROFILE[val('sector')];
+  const top = topSalient().slice(0,5);
+  const gaps = CSDDD_OBLIGS.filter(o=>state.csddd[o.art]<=1).map(o=>`${o.art} ${o.name}`).slice(0,6);
+  const matGaps = OECD_STEPS.filter(s=>state.maturity[s.id]<=2).map(s=>s.name);
+  const griGaps = P31_CRITERIA.filter(p=>state.grievance[p.id]<=2).map(p=>p.name);
+  const o = overall(); const G=grade(o);
+  const comms = (val('commodities')||"").split(/,\s*/).filter(Boolean);
+
+  const p = `You are a senior human-rights due-diligence adviser (10+ years, OECD NCP, UNGP Reporting Framework trainer). I have completed a structured HRDD self-assessment and need you to stress-test it and produce publishable artefacts.
+
+COMPANY
+· Name: ${val('entName')||'[unset]'}
+· Sector: ${prof?prof.name:val('sector')} (sector inherent-risk baseline: ${prof?prof.risk:'?'}/5)
+· HQ: ${val('hq')} · Listed: ${val('listed')} · Countries: ${val('countries')||'?'}
+· Headcount: ${val('employees')} · Turnover (EUR m): ${val('turnover')} · EU turnover: ${val('euTurnover')}
+· Geography risk: ${val('opsRisk')}/5 · Workforce-vulnerability profile: ${val('workforce')}/5
+· Commodities in scope: ${comms.join(", ")||'none listed'}
+· Tier-1 suppliers: ${val('t1')} · Tier-2+ mapped: ${val('t2map')}%
+
+REGULATORY POSTURE
+· CSDDD applicability: ${csdddApplicabilityState()?'IN SCOPE':'Not yet in scope (watch Omnibus + thresholds)'}
+· Other frameworks active: ${['r_csrd','r_msa','r_cfca','r_au','r_lksg','r_no','r_fr','r_ca_sb657','r_ifc'].filter(x=>checked(x)).join(", ")||'none declared'}
+
+SCORECARD
+· Overall HRDD readiness: ${o}/100 — Grade ${G.g} (${G.lbl})
+· Salience composite: ${salienceComposite()}/100
+· OECD-6 maturity: ${maturityScore()}/100 (${OECD_STEPS.map(s=>s.id+':'+state.maturity[s.id]).join(' ')})
+· Grievance effectiveness (UNGP P31): ${grievanceScoreFn()}/100
+· CSDDD readiness: ${csdddScore()}/100
+· UNGP Reporting Framework disclosure: ${urfScore()}/100
+
+TOP-5 SALIENT ISSUES (severity-weighted)
+${top.map((x,i)=>`#${i+1} ${x.iss.name} — composite ${x.score}/100 · scale ${x.det.scale}/3 · scope ${x.det.scope}/3 · irremediability ${x.det.irrem}/3 · likelihood ${x.det.likely}/3 · ${x.iss.ref}${x.det.notes?' · notes: '+x.det.notes:''}`).join("\n")||'[none scored yet]'}
+
+MATURITY GAPS (OECD 6-step)
+${matGaps.length?matGaps.map(m=>'· '+m).join('\n'):'· [no material gaps in scored steps]'}
+
+GRIEVANCE GAPS (UNGP P31)
+${griGaps.length?griGaps.map(g=>'· '+g).join('\n'):'· [none flagged]'}
+
+CSDDD GAPS (top 6 unaddressed obligations)
+${gaps.length?gaps.map(g=>'· '+g).join('\n'):'· [no material unaddressed obligations]'}
+
+TASKS — produce the following, in order:
+
+1. EXECUTIVE SUMMARY (≤ 250 words) for the Board/RemCo that (a) states the overall grade in plain English, (b) flags the three highest severity issues by name with rationale, (c) names the single most dangerous CSDDD gap, and (d) recommends one decision the board must take this quarter.
+
+2. SALIENT ISSUES STATEMENT (publishable) — draft 3-5 paragraphs in UNGP Reporting Framework C1-C3 style. State what the salient issues are for this company, why these and not others, and what rights-holder engagement informed the selection. Cite ILO Fundamental Conventions and UDHR articles where relevant. Be specific about scope (own ops vs. tiers vs. downstream).
+
+3. CSDDD GAP-CLOSURE PLAN — 12-month sequenced plan closing the top-6 gaps above. Format: month | obligation | action | owner (role) | evidence artefact | CSDDD article.
+
+4. GRIEVANCE REDESIGN — diagnose which of the 8 UNGP P31 criteria are weakest for this entity and recommend specific design changes. Include whether an operational-level mechanism, a multi-stakeholder mechanism, or collaboration with an industry mechanism (e.g., Fair Wear, amfori BSCI, ACT-Fashion Foundation, Issara) is most fit-for-purpose and why.
+
+5. ASSUMPTION STRESS-TEST — list the 6 assumptions most likely to be wrong in my self-assessment above, given the sector and geography profile, and propose evidence I should gather to validate or refute each.
+
+6. INVESTOR Q&A — draft 10 likely questions from a responsible-investment analyst (PRI signatory / Art. 9 SFDR fund / DFI lender) with 2-3 sentence answers for each, grounded in the scorecard.
+
+7. METRICS SHORTLIST — propose 8-12 quantitative HRDD KPIs I should track, aligned to GIIN IRIS+, ESRS S1-S4, CHRB, and WDI disclosures. Give target threshold and reporting frequency for each.
+
+8. RED-FLAG SCAN — for each top-5 salient issue, list 3 red flags that would indicate the impact is materialising, and the worker-voice or documentary evidence type that would surface each red flag.
+
+Write in UK English. Keep the tone authoritative and grounded in the cited frameworks. Do not invent numbers — where I have not supplied a number, say "to be confirmed" and flag the assumption.`;
+  document.getElementById('promptBox').textContent=p;
+}
+
+function copyPrompt(){
+  const t=document.getElementById('promptBox').textContent;
+  navigator.clipboard?.writeText(t).then(()=>{alert("Prompt copied — paste into claude.ai");},()=>{
+    const r=document.createRange(); r.selectNode(document.getElementById('promptBox')); getSelection().removeAllRanges(); getSelection().addRange(r); document.execCommand('copy');
+  });
+}
+
+/* ============================================================
+   CSV EXPORT (memo-style)
+   ============================================================ */
+function exportCSV(){
+  const rows=[];
+  const prof=SECTOR_PROFILE[val('sector')];
+  rows.push(["UsefulAF — Human Rights Due Diligence Memo","",""]);
+  rows.push(["Generated",new Date().toISOString().slice(0,10),""]);
+  rows.push(["",""]);
+  rows.push(["SECTION 1 — ENTITY PROFILE","",""]);
+  rows.push(["Entity",val('entName'),""]);
+  rows.push(["Sector",prof?prof.name:val('sector'),""]);
+  rows.push(["HQ",val('hq'),""]);
+  rows.push(["Listed/PIE",val('listed'),""]);
+  rows.push(["Employees",val('employees'),""]);
+  rows.push(["Turnover (EUR m)",val('turnover'),""]);
+  rows.push(["EU turnover (EUR m)",val('euTurnover'),""]);
+  rows.push(["Operating countries",val('countries'),""]);
+  rows.push(["Ops geo-risk (1-5)",val('opsRisk'),""]);
+  rows.push(["Workforce vulnerability (1-5)",val('workforce'),""]);
+  rows.push(["Tier-1 suppliers",val('t1'),""]);
+  rows.push(["Tier-2+ mapped %",val('t2map'),""]);
+  rows.push(["Commodities in scope",val('commodities'),""]);
+  rows.push(["CSDDD applicable",csdddApplicabilityState()?"Yes":"No",""]);
+  rows.push(["",""]);
+  rows.push(["SECTION 2 — SCORECARD","score /100",""]);
+  const o=overall(),g=grade(o);
+  rows.push(["Overall HRDD readiness",o,g.g]);
+  rows.push(["Salience composite",salienceComposite(),""]);
+  rows.push(["OECD-6 maturity",maturityScore(),""]);
+  rows.push(["Grievance effectiveness (UNGP P31)",grievanceScoreFn(),""]);
+  rows.push(["CSDDD readiness",csdddScore(),""]);
+  rows.push(["UNGP Reporting FW disclosure",urfScore(),""]);
+  rows.push(["",""]);
+  rows.push(["SECTION 3 — SALIENT ISSUES","",""]);
+  rows.push(["Issue","Scale","Scope","Irremediability","Likelihood","Composite /100","Notes"]);
+  ISSUES.forEach(i=>{
+    const s=state.salience[i.id];
+    rows.push([i.name,s.scale,s.scope,s.irrem,s.likely,salienceScore(i.id),s.notes||""]);
+  });
+  rows.push(["",""]);
+  rows.push(["SECTION 4 — OECD 6-STEP MATURITY","",""]);
+  OECD_STEPS.forEach(s=>rows.push([s.name,state.maturity[s.id]+"/5",s.anchor]));
+  rows.push(["",""]);
+  rows.push(["SECTION 5 — GRIEVANCE (UNGP P31)","",""]);
+  P31_CRITERIA.forEach(p=>rows.push([p.name,state.grievance[p.id]+"/5",""]));
+  rows.push(["",""]);
+  rows.push(["SECTION 6 — CSDDD GAP","",""]);
+  CSDDD_OBLIGS.forEach(o=>rows.push([o.art+" "+o.name,state.csddd[o.art]+"/3",o.notes]));
+  rows.push(["",""]);
+  rows.push(["SECTION 7 — UNGP REPORTING FRAMEWORK","",""]);
+  URF_ITEMS.forEach(u=>rows.push([u.name,state.urf[u.id]+"/3",u.desc]));
+  rows.push(["",""]);
+  rows.push(["SECTION 8 — RISK HEAT MAP (inherent 0-5 by tier)","",""]);
+  rows.push(["Issue","Own ops","Tier-1","Tier-2+","Downstream"]);
+  ISSUES.forEach(i=>rows.push([i.name,inherentForTier(i.id,0),inherentForTier(i.id,1),inherentForTier(i.id,2),inherentForTier(i.id,3)]));
+
+  const csv = rows.map(r=>r.map(c=>{
+    const s=(c==null?"":String(c)); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+  }).join(",")).join("\n");
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`HRDD-memo-${(val('entName')||'entity').replace(/\W+/g,'_')}-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ============================================================
+   EXAMPLES
+   ============================================================ */
+function loadExample(kind){
+  resetAll(true);
+  if(kind==='apparel'){
+    set_('entName','Savanna Garments Ltd');
+    set_('sector','apparel'); set_('hq','eu'); set_('listed','no');
+    set_('employees',4200); set_('turnover',620); set_('euTurnover',340); set_('countries',9);
+    set_('opsRisk',4); set_('t1',165); set_('t2map',28); set_('commodities','cotton, leather, synthetic fabrics');
+    set_('workforce',4); set_('maturity',3);
+    document.getElementById('r_csrd').checked=true; document.getElementById('r_msa').checked=true;
+    // salience presets
+    Object.assign(state.salience.wages,{scale:3,scope:3,irrem:1,likely:3,notes:"Audit cycle surfaces wage theft + unpaid overtime at 2 T1 factories in Bangladesh (2024)."});
+    Object.assign(state.salience.hours,{scale:3,scope:3,irrem:1,likely:3,notes:"Peak-season OT >72h/wk verified in Vietnam factory Q3/24."});
+    Object.assign(state.salience.foa,{scale:2,scope:3,irrem:2,likely:3,notes:"ITUC 4 jurisdictions — union suppression reports by Clean Clothes 2024."});
+    Object.assign(state.salience.forced,{scale:3,scope:2,irrem:3,likely:2,notes:"Cotton-sourcing traceability to farm level incomplete (UFLPA exposure)."});
+    Object.assign(state.salience.osh,{scale:2,scope:2,irrem:2,likely:2,notes:"Fatality-free since 2020 but fire-safety remediation backlog of 12 findings."});
+    Object.assign(state.salience.harass,{scale:2,scope:3,irrem:2,likely:3,notes:"GBV prevalence high per ILO C190 pilot worker survey."});
+    Object.assign(state.salience.vulnerable,{scale:2,scope:2,irrem:2,likely:3,notes:"Migrant labour in EU-based Mediterranean cutting facilities — recruitment-fee flag."});
+    Object.assign(state.salience.child,{scale:3,scope:1,irrem:3,likely:1,notes:"Cotton farm level unmapped — potential residual child-labour risk."});
+    // maturity
+    state.maturity={s1:3,s2:3,s3:2,s4:2,s5:2,s6:1};
+    state.grievance={legit:2,access:2,predict:2,equit:1,transp:1,rights:2,learn:1,engage:2};
+    CSDDD_OBLIGS.forEach(o=>state.csddd[o.art]=1);
+    state.csddd["Art. 4-5"]=2; state.csddd["Art. 8"]=2; state.csddd["Art. 22"]=1;
+    URF_ITEMS.forEach(u=>state.urf[u.id]=1);
+    state.urf["A1"]=2; state.urf["C1"]=2;
+  } else if(kind==='agri'){
+    set_('entName','Radiant Coffee Trading S.A.');
+    set_('sector','agri'); set_('hq','eu'); set_('listed','yes');
+    set_('employees',2800); set_('turnover',1200); set_('euTurnover',780); set_('countries',14);
+    set_('opsRisk',4); set_('t1',32); set_('t2map',18); set_('commodities','coffee, cocoa, palm oil, soy');
+    set_('workforce',4); set_('maturity',3);
+    document.getElementById('r_csrd').checked=true; document.getElementById('r_csddd').checked=true;
+    Object.assign(state.salience.child,{scale:3,scope:3,irrem:3,likely:3,notes:"West Africa cocoa: NORC 2020 1.56m children in hazardous work."});
+    Object.assign(state.salience.forced,{scale:3,scope:2,irrem:3,likely:2,notes:"Brazil soy on dirty list history; coffee intermediary exposure."});
+    Object.assign(state.salience.wages,{scale:3,scope:3,irrem:1,likely:3,notes:"Coffee farmer income 30-60% below living-income benchmark (ALIGN 2023)."});
+    Object.assign(state.salience.land,{scale:2,scope:2,irrem:3,likely:2,notes:"Palm-oil acquisitions in Indonesia: RSPO complaints open at 2 suppliers."});
+    Object.assign(state.salience.indigenous,{scale:2,scope:2,irrem:3,likely:2,notes:"Soy expansion into Cerrado biome — indigenous territory overlaps."});
+    Object.assign(state.salience.env,{scale:3,scope:3,irrem:2,likely:3,notes:"Deforestation exposure: EUDR high-risk commodities."});
+    Object.assign(state.salience.osh,{scale:2,scope:3,irrem:2,likely:3,notes:"Pesticide exposure, coffee-picker musculoskeletal injuries."});
+    state.maturity={s1:3,s2:3,s3:2,s4:2,s5:3,s6:2};
+    state.grievance={legit:3,access:2,predict:3,equit:2,transp:2,rights:3,learn:2,engage:3};
+    CSDDD_OBLIGS.forEach(o=>state.csddd[o.art]=2);
+    state.csddd["Art. 22"]=1; state.csddd["Art. 7"]=1;
+    URF_ITEMS.forEach(u=>state.urf[u.id]=2);
+  } else if(kind==='mining'){
+    set_('entName','Kopa Transition Metals Corp.');
+    set_('sector','mining'); set_('hq','ca'); set_('listed','yes');
+    set_('employees',1800); set_('turnover',890); set_('euTurnover',220); set_('countries',4);
+    set_('opsRisk',4); set_('t1',78); set_('t2map',40); set_('commodities','cobalt, copper, lithium');
+    set_('workforce',3); set_('maturity',3);
+    document.getElementById('r_cfca').checked=true; document.getElementById('r_ifc').checked=true;
+    Object.assign(state.salience.indigenous,{scale:3,scope:3,irrem:3,likely:3,notes:"Two project sites overlap indigenous territory — FPIC in progress for Site B."});
+    Object.assign(state.salience.land,{scale:3,scope:2,irrem:3,likely:2,notes:"Resettlement of 240 households at Site A per IFC PS5."});
+    Object.assign(state.salience.community,{scale:3,scope:3,irrem:2,likely:3,notes:"Water-quality concerns downstream of Site A; artisanal miner encroachment conflict."});
+    Object.assign(state.salience.osh,{scale:3,scope:2,irrem:3,likely:2,notes:"Underground + heavy-equipment risks; 1 fatality 2023."});
+    Object.assign(state.salience.env,{scale:3,scope:3,irrem:3,likely:3,notes:"Tailings dam classification High per GISTM; closure plan under review."});
+    Object.assign(state.salience.civic,{scale:2,scope:2,irrem:3,likely:2,notes:"Activist detention near Site A — allegations of paid-for police action (Voluntary Principles audit required)."});
+    Object.assign(state.salience.child,{scale:2,scope:1,irrem:3,likely:2,notes:"ASM cobalt interface in DRC supply chain — residual risk."});
+    state.maturity={s1:3,s2:3,s3:2,s4:3,s5:2,s6:2};
+    state.grievance={legit:3,access:3,predict:3,equit:2,transp:2,rights:3,learn:2,engage:3};
+    CSDDD_OBLIGS.forEach(o=>state.csddd[o.art]=1);
+    state.csddd["Art. 13"]=3; state.csddd["Art. 14"]=3; state.csddd["Art. 22"]=2;
+    URF_ITEMS.forEach(u=>state.urf[u.id]=2);
+    state.urf["C3"]=3;
+  }
+  csdddApplicability(); renderIssues(); renderMaturity(); renderGrievance(); renderCsddd();
+  goTab('setup');
+}
+
+function set_(id,v){const e=document.getElementById(id); if(!e) return; if(e.type==='checkbox') e.checked=v; else e.value=v;}
+
+function resetAll(silent){
+  ['entName','employees','turnover','euTurnover','countries','t1','t2map','commodities'].forEach(i=>{document.getElementById(i).value="";});
+  document.querySelectorAll('input[type=checkbox]').forEach(c=>c.checked=false);
+  set_('sector','apparel'); set_('hq','eu'); set_('listed','no'); set_('opsRisk',3); set_('workforce',3); set_('maturity',3);
+  ISSUES.forEach(i=>state.salience[i.id]={scale:0,scope:0,irrem:0,likely:0,notes:""});
+  state.maturity={s1:1,s2:1,s3:1,s4:1,s5:1,s6:1};
+  state.grievance={legit:1,access:1,predict:1,equit:1,transp:1,rights:1,learn:1,engage:1};
+  CSDDD_OBLIGS.forEach(o=>state.csddd[o.art]=0);
+  URF_ITEMS.forEach(u=>state.urf[u.id]=0);
+  if(!silent){csdddApplicability(); renderIssues(); renderMaturity(); renderGrievance(); renderCsddd();}
+}
+
+/* INIT */
+['sector','hq','listed','employees','turnover','euTurnover','countries','opsRisk','commodities','workforce','t1','t2map','maturity'].forEach(id=>{
+  const e=document.getElementById(id); if(e) e.addEventListener('change',()=>{csdddApplicability(); renderIssues();});
+});
+csdddApplicability();
+renderIssues();
+renderMaturity();
+renderGrievance();
+renderCsddd();
+renderURF();
+</script>
+</body>
+</html>
