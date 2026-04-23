@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Climate Transition Plan Builder — TPT · IFRS S2 · SBTi · CSRD E1 · CA100+</title>
+<style>
+:root{
+  --cream:#F5EFE3;--cream-2:#EDE4D0;--ink:#1C1A17;--ink-2:#3A342C;
+  --coral:#E26A4B;--ochre:#C9922A;--olive:#6A7A3A;--navy:#2C4A5E;
+  --rule:#D8CDB3;--shadow:0 2px 8px rgba(28,26,23,.08);
+  --ok:#2E6B3E;--warn:#B8621B;--bad:#B12F1F;--info:#1E4D6B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;background:var(--cream);color:var(--ink);line-height:1.5;font-size:14px}
+.wrap{max-width:1340px;margin:0 auto;padding:24px}
+header{background:var(--ink);color:var(--cream);padding:22px 28px;border-radius:8px;margin-bottom:18px;box-shadow:var(--shadow)}
+header h1{font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.2px}
+header .sub{font-size:12.5px;color:#D6CEB8;line-height:1.55}
+header .brand{font-size:11px;color:var(--ochre);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px;font-weight:600}
+.tabs{display:flex;flex-wrap:wrap;gap:2px;background:var(--cream-2);padding:4px;border-radius:8px;margin-bottom:16px;box-shadow:var(--shadow)}
+.tab{flex:1;min-width:120px;padding:10px 8px;text-align:center;cursor:pointer;border-radius:6px;font-size:12px;font-weight:600;color:var(--ink-2);transition:all .15s;border:none;background:transparent}
+.tab:hover{background:#E5DABB}
+.tab.active{background:var(--ink);color:var(--cream)}
+.panel{display:none;background:#FFF9ED;border:1px solid var(--rule);border-radius:8px;padding:22px;box-shadow:var(--shadow)}
+.panel.active{display:block}
+h2{font-size:17px;font-weight:700;color:var(--ink);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--ochre)}
+h3{font-size:14px;font-weight:700;color:var(--ink-2);margin:14px 0 8px}
+h4{font-size:12.5px;font-weight:600;color:var(--ink-2);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.4px}
+p{margin-bottom:10px;font-size:13.5px;color:var(--ink-2)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+label{display:block;font-size:11.5px;font-weight:600;color:var(--ink-2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--rule);border-radius:5px;background:#FFFDF6;font-family:inherit;font-size:13px;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--ochre);background:#fff}
+.field{margin-bottom:10px}
+.btn{padding:9px 18px;border:none;border-radius:5px;background:var(--ink);color:var(--cream);font-weight:600;font-size:12.5px;cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--coral)}
+.btn.secondary{background:var(--ochre)}
+.btn.secondary:hover{background:var(--coral)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--rule)}
+.btn.ghost:hover{background:var(--cream-2)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.card{background:#FFFDF6;border:1px solid var(--rule);border-radius:6px;padding:14px;margin-bottom:10px}
+.card.highlight{border-left:4px solid var(--ochre)}
+.card.ok{border-left:4px solid var(--ok);background:#EEF5EC}
+.card.warn{border-left:4px solid var(--warn);background:#FBF1E1}
+.card.bad{border-left:4px solid var(--bad);background:#FBE8E3}
+.card.info{border-left:4px solid var(--info);background:#EAF1F5}
+.meta{font-size:11.5px;color:var(--ink-2);opacity:.85}
+.tag{display:inline-block;padding:2px 8px;background:var(--cream-2);border-radius:12px;font-size:10.5px;font-weight:600;color:var(--ink-2);margin-right:4px;margin-bottom:3px}
+.tag.ok{background:#D6E7D1;color:#1E4A26}
+.tag.warn{background:#F3DFBB;color:#744008}
+.tag.bad{background:#EFC8BF;color:#721A0A}
+.tag.info{background:#C7DBE4;color:#153746}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:14px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--rule)}
+th{font-weight:600;color:var(--ink);background:var(--cream-2);font-size:11.5px;text-transform:uppercase;letter-spacing:.3px}
+tr:hover td{background:#FBF5E4}
+.tooltip{position:relative;display:inline-block;border-bottom:1px dotted var(--ink-2);cursor:help}
+.tooltip .tt{visibility:hidden;position:absolute;bottom:125%;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--cream);padding:8px 10px;border-radius:4px;font-size:11.5px;font-weight:400;line-height:1.45;width:280px;z-index:100;box-shadow:var(--shadow);text-transform:none;letter-spacing:0}
+.tooltip:hover .tt{visibility:visible}
+.kpi{padding:14px;background:var(--cream-2);border-radius:6px;text-align:center}
+.kpi .val{font-size:26px;font-weight:800;color:var(--ink);line-height:1.1}
+.kpi .lbl{font-size:10.5px;color:var(--ink-2);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.score-A{color:var(--ok)!important}.score-B{color:#3A7A2B!important}.score-C{color:var(--ochre)!important}.score-D{color:var(--warn)!important}.score-E{color:var(--bad)!important}
+.bar{height:8px;background:var(--cream-2);border-radius:4px;overflow:hidden;margin-top:4px}
+.bar>span{display:block;height:100%;background:var(--ochre);transition:width .4s}
+.bar>span.ok{background:var(--ok)}
+.bar>span.warn{background:var(--warn)}
+.bar>span.bad{background:var(--bad)}
+.scale{display:flex;gap:6px;align-items:center;margin-top:6px}
+.scale-opt{flex:1;padding:7px 4px;text-align:center;font-size:11px;font-weight:600;background:var(--cream-2);border-radius:4px;cursor:pointer;border:1px solid var(--rule);color:var(--ink-2)}
+.scale-opt:hover{background:#E5DABB}
+.scale-opt.selected{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.heatcell{padding:8px 6px;text-align:center;font-size:10.5px;font-weight:600;border-radius:3px;color:#fff}
+.h0{background:#D8CDB3;color:var(--ink-2)}
+.h1{background:#A9B880;color:#fff}
+.h2{background:#C9922A;color:#fff}
+.h3{background:#C55A1A;color:#fff}
+.h4{background:#8B2415;color:#fff}
+.infobox{background:#FBF5E4;border:1px solid var(--ochre);padding:12px 14px;border-radius:6px;margin-bottom:12px;font-size:12.5px;line-height:1.5}
+.infobox b{color:var(--ink);font-weight:700}
+.pillar-hdr{background:var(--ink-2);color:var(--cream);padding:8px 12px;border-radius:5px;font-size:12px;font-weight:700;margin:14px 0 8px;letter-spacing:.3px}
+.disclosure-item{display:grid;grid-template-columns:1fr 320px;gap:14px;padding:10px;border-bottom:1px solid var(--rule);align-items:start}
+.disclosure-item:last-child{border-bottom:none}
+.disclosure-item .code{font-size:11px;font-weight:700;color:var(--ochre);text-transform:uppercase;letter-spacing:.5px}
+.disclosure-item .title{font-size:12.5px;font-weight:600;margin-top:2px}
+.disclosure-item .desc{font-size:11.5px;color:var(--ink-2);margin-top:3px;line-height:1.45}
+.lever-item{display:grid;grid-template-columns:1fr 80px 80px 80px;gap:8px;padding:8px;border-bottom:1px solid var(--rule);align-items:center;font-size:12px}
+.lever-item:last-child{border-bottom:none}
+.footer{text-align:center;padding:18px 0;font-size:11.5px;color:var(--ink-2);opacity:.75}
+.footer a{color:var(--ochre);text-decoration:none}
+pre{background:var(--ink);color:var(--cream);padding:14px;border-radius:6px;overflow-x:auto;font-size:11.5px;line-height:1.55;font-family:Menlo,Monaco,"Courier New",monospace;white-space:pre-wrap}
+.chip-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.chip{padding:3px 8px;background:var(--cream-2);border:1px solid var(--rule);border-radius:12px;font-size:10.5px;cursor:pointer;user-select:none}
+.chip.selected{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+@media print{
+  .tabs,.btn-row,header .brand{display:none}
+  .panel{display:block!important;break-inside:avoid;page-break-inside:avoid;box-shadow:none;border:1px solid #ccc;margin-bottom:14px}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">Useful AF · Tool #25</div>
+  <h1>Climate Transition Plan Builder</h1>
+  <div class="sub">Build a credible climate transition plan aligned with <b>TPT Disclosure Framework v1.0</b> (Oct 2023), <b>IFRS S2</b> (June 2023), <b>SBTi Corporate Net-Zero Standard</b>, <b>EU CSRD ESRS E1</b>, <b>GHG Protocol</b>, and <b>CDP 2025</b>. Benchmarks your plan against <b>Climate Action 100+ Net Zero Company Benchmark 3.0</b> (10 indicators) and NGFS Phase IV scenarios.</div>
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab active" data-tab="setup">1. Setup</button>
+  <button class="tab" data-tab="inventory">2. GHG Inventory</button>
+  <button class="tab" data-tab="ambition">3. Ambition &amp; Targets</button>
+  <button class="tab" data-tab="actions">4. Actions &amp; Levers</button>
+  <button class="tab" data-tab="engagement">5. Engagement</button>
+  <button class="tab" data-tab="governance">6. Governance</button>
+  <button class="tab" data-tab="disclosure">7. Disclosure Scorecard</button>
+  <button class="tab" data-tab="results">8. Results</button>
+  <button class="tab" data-tab="prompt">9. Claude Prompt</button>
+</div>
+
+<!-- ===================== SETUP ===================== -->
+<div id="panel-setup" class="panel active">
+  <h2>1 · Entity Profile &amp; Reporting Basis</h2>
+  <div class="infobox"><b>How this works.</b> Your profile drives sector-specific SBTi pathways, scope 3 category materiality, CA100+ sector applicability, and NGFS scenario relevance. Every field has a defensible default derived from peer practice, but over-ride with your own numbers wherever possible.</div>
+
+  <div class="grid-2">
+    <div class="field"><label>Company / Group name</label><input id="co_name" value="Ardent Materials Group plc" /></div>
+    <div class="field"><label>Reporting currency</label><select id="co_ccy"><option>GBP</option><option>EUR</option><option>USD</option><option>ZAR</option><option>INR</option><option>KES</option><option>BRL</option></select></div>
+    <div class="field"><label>Primary sector</label><select id="co_sector">
+      <option value="power">Power generation &amp; utilities</option>
+      <option value="oilgas">Oil, gas &amp; coal</option>
+      <option value="cement" selected>Cement</option>
+      <option value="steel">Steel</option>
+      <option value="aluminium">Aluminium</option>
+      <option value="chemicals">Chemicals</option>
+      <option value="apparel">Apparel, textiles &amp; footwear</option>
+      <option value="buildings">Buildings &amp; construction</option>
+      <option value="road">Road freight &amp; passenger</option>
+      <option value="aviation">Aviation</option>
+      <option value="shipping">Shipping</option>
+      <option value="food">Food, beverage &amp; agriculture (FLAG)</option>
+      <option value="forest">Forestry &amp; paper (FLAG)</option>
+      <option value="retail">Retail (non-food)</option>
+      <option value="cpg">Consumer packaged goods</option>
+      <option value="tech">Technology, media &amp; telecoms</option>
+      <option value="finserv">Financial institutions</option>
+      <option value="healthcare">Healthcare &amp; pharma</option>
+      <option value="mining">Metals &amp; mining</option>
+      <option value="waste">Waste management</option>
+      <option value="other">Other / diversified</option>
+    </select></div>
+    <div class="field"><label>Listing &amp; regulatory status</label><select id="co_listing">
+      <option value="uk_premium" selected>UK listed — Premium (FCA LR 9.8.6R + TPT mandate incoming)</option>
+      <option value="eu_csrd">EU large undertaking — CSRD ESRS E1</option>
+      <option value="us_sec">US SEC registrant</option>
+      <option value="jp">Japan (TCFD mandatory · Prime Market)</option>
+      <option value="ca">Canada (CSSB incoming)</option>
+      <option value="au">Australia (ASRS S2 mandatory phased)</option>
+      <option value="private_eu">Private — EU (future VSME / voluntary)</option>
+      <option value="private_other">Private — other</option>
+      <option value="financed">Financial institution — PCAF reporter</option>
+    </select></div>
+    <div class="field"><label>Annual revenue (latest FY, millions)</label><input id="co_rev" type="number" value="2180" /></div>
+    <div class="field"><label>Employees (FTE, headcount)</label><input id="co_fte" type="number" value="4600" /></div>
+    <div class="field"><label>Base year for targets</label><input id="co_base" type="number" value="2022" min="2015" max="2025" /></div>
+    <div class="field"><label>Latest reporting year</label><input id="co_latest" type="number" value="2025" /></div>
+    <div class="field"><label>Operating geographies (main)</label><input id="co_geo" value="UK, EU (DE, FR, ES), Morocco, Egypt" /></div>
+    <div class="field"><label>Main products / services</label><input id="co_products" value="Grey &amp; blended cement, ready-mix concrete, aggregates, specialty binders" /></div>
+  </div>
+
+  <h3>Reporting maturity &amp; commitments already made</h3>
+  <div class="grid-3">
+    <div class="field">
+      <label>TCFD / IFRS S2 reporting today</label>
+      <select id="mat_ifrs">
+        <option value="3">Full IFRS S2 / TCFD disclosure, all 4 pillars</option>
+        <option value="2" selected>Partial — governance &amp; strategy covered</option>
+        <option value="1">Narrative only — no quantitative disclosure</option>
+        <option value="0">Not started</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>SBTi status</label>
+      <select id="mat_sbti">
+        <option value="3">Near-term + net-zero both validated (Corporate Net-Zero Standard)</option>
+        <option value="2" selected>Committed / under validation</option>
+        <option value="1">Internal target but not SBTi-submitted</option>
+        <option value="0">No SBTi target</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>CDP participation (latest)</label>
+      <select id="mat_cdp">
+        <option value="3">A / A- (Leadership)</option>
+        <option value="2" selected>B / B- (Management)</option>
+        <option value="1">C / D (Awareness / Disclosure)</option>
+        <option value="0">Did not respond / F</option>
+      </select>
+    </div>
+  </div>
+
+  <h3>Quick presets — load a worked example</h3>
+  <div class="btn-row">
+    <button class="btn ghost" onclick="loadExample('cement')">Load: Cement (Ardent Materials)</button>
+    <button class="btn ghost" onclick="loadExample('apparel')">Load: Apparel (Verde Threads)</button>
+    <button class="btn ghost" onclick="loadExample('food')">Load: Food &amp; Ag (Savanna Harvest)</button>
+    <button class="btn ghost" onclick="loadExample('finserv')">Load: Bank (Meridian)</button>
+  </div>
+  <div class="infobox" style="font-size:11.5px"><b>Why these?</b> Cement and apparel are two of the highest-scope-1+3 intensity sectors; food &amp; ag invokes SBTi FLAG guidance; financial institution invokes PCAF + GFANZ alliance frameworks. Switching sector on the left triggers all downstream pathways &amp; scope 3 materiality.</div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="compute()">Recompute</button>
+    <button class="btn secondary" onclick="exportCSV()">Export CSV memo</button>
+    <button class="btn ghost" onclick="window.print()">Print to PDF</button>
+  </div>
+</div>
+
+<!-- ===================== INVENTORY ===================== -->
+<div id="panel-inventory" class="panel">
+  <h2>2 · GHG Inventory (Scope 1 · 2 · 3) — GHG Protocol</h2>
+  <div class="infobox">
+    <b>Boundary &amp; method.</b> Inventory must follow the <b>GHG Protocol Corporate Standard (rev. 2004)</b> and <b>Scope 3 Standard (2011)</b>. Use the <b>operational control</b> approach by default unless your investor relations team has elected financial control or equity share — state which, as TPT Implementation Sub-element 1 asks for it explicitly. Scope 2 must be disclosed under both <b>location-based</b> (grid-average) and <b>market-based</b> (contractual) methods per the GHG Protocol Scope 2 Guidance (2015).
+  </div>
+
+  <div class="grid-3">
+    <div class="field"><label>Consolidation approach</label><select id="inv_approach">
+      <option value="operational" selected>Operational control</option>
+      <option value="financial">Financial control</option>
+      <option value="equity">Equity share</option>
+    </select></div>
+    <div class="field"><label>Assurance level (latest FY)</label><select id="inv_assurance">
+      <option value="3">Reasonable assurance — Scope 1+2+3</option>
+      <option value="2" selected>Limited assurance — Scope 1+2 only</option>
+      <option value="1">Internal verification only</option>
+      <option value="0">Unassured</option>
+    </select></div>
+    <div class="field"><label>Inventory standard</label><select id="inv_std">
+      <option value="ghgp" selected>GHG Protocol Corporate + Scope 3</option>
+      <option value="iso">ISO 14064-1:2018</option>
+      <option value="both">Both</option>
+    </select></div>
+  </div>
+
+  <h3>Scope 1 — Direct emissions (tCO₂e)</h3>
+  <div class="grid-4">
+    <div class="field"><label>Stationary combustion</label><input id="s1_stat" type="number" value="3850000" /></div>
+    <div class="field"><label>Mobile combustion</label><input id="s1_mob" type="number" value="42000" /></div>
+    <div class="field"><label>Process emissions <span class="tooltip">ⓘ<span class="tt">For cement, this is calcination CO₂ from CaCO₃ → CaO + CO₂ — typically 55–60% of Scope 1. Unavoidable without CCS or clinker substitution.</span></span></label><input id="s1_proc" type="number" value="4760000" /></div>
+    <div class="field"><label>Fugitive (refrigerants, SF₆)</label><input id="s1_fug" type="number" value="18000" /></div>
+  </div>
+
+  <h3>Scope 2 — Purchased energy (tCO₂e)</h3>
+  <div class="grid-2">
+    <div class="field"><label>Location-based</label><input id="s2_loc" type="number" value="520000" /></div>
+    <div class="field"><label>Market-based <span class="tooltip">ⓘ<span class="tt">Reflects your energy-attribute certificates &amp; PPAs. Must be residual-mix adjusted per GHG Protocol Scope 2 Quality Criteria — RE100 &amp; SBTi validation rely on market-based.</span></span></label><input id="s2_mkt" type="number" value="380000" /></div>
+  </div>
+
+  <h3>Scope 3 — Value chain emissions by GHG Protocol category (tCO₂e)</h3>
+  <p class="meta" style="margin-bottom:8px">Categories flagged <span class="tag warn">MATERIAL</span> are those identified as typically &gt;5% of total or high-risk for your sector. Non-material categories can be excluded with a screening justification per GHGP Scope 3 Technical Guidance §4.</p>
+  <table>
+    <thead><tr><th>#</th><th>Category</th><th>Scope 3 value (tCO₂e)</th><th>Materiality</th><th>Primary method</th></tr></thead>
+    <tbody id="scope3_table"></tbody>
+  </table>
+
+  <h3>Intensity metrics &amp; emissions profile</h3>
+  <div class="grid-4" id="intensity_box"></div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="compute()">Recompute inventory</button>
+  </div>
+</div>
+
+<!-- ===================== AMBITION & TARGETS ===================== -->
+<div id="panel-ambition" class="panel">
+  <h2>3 · Ambition &amp; Targets — SBTi pathway test</h2>
+  <div class="infobox"><b>The ambition test.</b> To be "aligned" in the Climate Action 100+ Net Zero Benchmark, your near-term target must cover ≥95% of Scope 1+2, and ≥67% of Scope 3 (where Scope 3 is ≥40% of your total), meet the SBTi sectoral pathway or cross-sector 1.5°C (42% absolute by 2030 from 2020, or 4.2% p.a.), and have a net-zero year ≤2050. Long-term = ≥90% absolute reduction of all material scopes by net-zero year.</div>
+
+  <h3>Near-term targets (2030-horizon)</h3>
+  <div class="grid-4">
+    <div class="field"><label>Scope 1+2 reduction (% from base year)</label><input id="nt_s12" type="number" value="32" /></div>
+    <div class="field"><label>Scope 3 reduction (% from base year)</label><input id="nt_s3" type="number" value="25" /></div>
+    <div class="field"><label>Near-term target year</label><input id="nt_year" type="number" value="2030" /></div>
+    <div class="field"><label>Scope 3 coverage (% of Scope 3 emissions)</label><input id="nt_s3_cov" type="number" value="72" /></div>
+  </div>
+
+  <h3>Long-term &amp; net zero</h3>
+  <div class="grid-4">
+    <div class="field"><label>Net-zero year</label><input id="lt_nz" type="number" value="2050" /></div>
+    <div class="field"><label>Long-term reduction (%)</label><input id="lt_pct" type="number" value="90" /></div>
+    <div class="field"><label>Temperature alignment</label><select id="lt_temp">
+      <option value="1.5" selected>1.5°C</option>
+      <option value="1.8">Well-below 2°C</option>
+      <option value="2.0">2°C</option>
+      <option value="none">None claimed</option>
+    </select></div>
+    <div class="field"><label>Target metric</label><select id="nt_type">
+      <option value="abs" selected>Absolute</option>
+      <option value="int">Intensity (physical)</option>
+      <option value="econ">Intensity (economic)</option>
+      <option value="mixed">Mixed</option>
+    </select></div>
+  </div>
+
+  <h3>Use of carbon credits (neutralisations) — SBTi &amp; VCMI rules</h3>
+  <div class="grid-3">
+    <div class="field"><label>Role of credits</label><select id="ct_role">
+      <option value="none">Not used</option>
+      <option value="beyond" selected>BVCM / beyond value chain mitigation only — additional to residual path</option>
+      <option value="neutralise">Residual-emissions neutralisation at net zero (≤10%)</option>
+      <option value="offset">Offsetting near-term gap (not SBTi-consistent)</option>
+    </select></div>
+    <div class="field"><label>Credit quality standard</label><select id="ct_quality">
+      <option value="icvcm" selected>ICVCM Core Carbon Principle approved only</option>
+      <option value="vcs_gs">Verra VCS / Gold Standard (not all CCP-approved)</option>
+      <option value="mixed">Mixed / jurisdictional</option>
+      <option value="none">None specified</option>
+    </select></div>
+    <div class="field"><label>Removals vs reductions (% removals)</label><input id="ct_rem" type="number" value="30" /></div>
+  </div>
+
+  <h3>Sector pathway comparison</h3>
+  <div id="pathway_box"></div>
+
+  <h3>CA100+ Net Zero Benchmark 3.0 — ambition scan</h3>
+  <p class="meta">CA100+ indicators 1–3 cover ambition, interim and long-term targets. Benchmark published in Oct 2023 rev. 3.</p>
+  <div id="ca100_box"></div>
+</div>
+
+<!-- ===================== ACTIONS & LEVERS ===================== -->
+<div id="panel-actions" class="panel">
+  <h2>4 · Actions &amp; Abatement Levers — TPT Implementation Strategy</h2>
+  <div class="infobox">TPT Sub-elements 2.1–2.4 (business &amp; operations, products &amp; services, policies &amp; conditions, financial planning). Each sector has a characteristic MACC. Levers below are pre-populated from <b>IEA Net Zero Roadmap (2023)</b>, <b>Mission Possible Partnership sectoral transitions</b> and <b>McKinsey Global Cost Curve v6</b>. Score each lever for your intent to deploy, capex &amp; timing.</div>
+
+  <h3>Capex &amp; investment planning</h3>
+  <div class="grid-4">
+    <div class="field"><label>Annual capex baseline (currency m)</label><input id="cx_base" type="number" value="290" /></div>
+    <div class="field"><label>% of capex aligned to transition</label><input id="cx_align" type="number" value="35" /></div>
+    <div class="field"><label>Planned cumulative transition capex to 2030 (m)</label><input id="cx_2030" type="number" value="1100" /></div>
+    <div class="field"><label>Taxonomy-alignment disclosure (EU)</label><select id="cx_tax">
+      <option value="3">Full EU Taxonomy alignment + turnover/capex/opex disclosed</option>
+      <option value="2" selected>Partial — eligible only</option>
+      <option value="1">Narrative reference</option>
+      <option value="0">Not disclosed</option>
+    </select></div>
+  </div>
+
+  <h3>Abatement lever register</h3>
+  <p class="meta">Rate each lever for your deployment intent (0 = not pursuing, 3 = core pillar of plan). Expected reduction pre-filled from sectoral norms; override with your own engineering estimates.</p>
+  <div id="lever_box"></div>
+
+  <h3>Residual emissions at net-zero year</h3>
+  <div class="grid-4">
+    <div class="field"><label>Projected residual (tCO₂e at NZ year)</label><input id="res_abs" type="number" value="860000" /></div>
+    <div class="field"><label>Residual as % of base year</label><input id="res_pct" type="number" value="9" /></div>
+    <div class="field"><label>Neutralisation strategy <span class="tooltip">ⓘ<span class="tt">SBTi Net-Zero Standard requires ≥90% absolute reduction before neutralisation. Only removals (not avoidance) can neutralise residuals at net zero.</span></span></label><select id="res_strategy">
+      <option value="3" selected>Durable removals (DAC+CCS, BECCS, enhanced weathering, mineralisation)</option>
+      <option value="2">Mix of durable + nature-based removals (ARR, blue carbon)</option>
+      <option value="1">Nature-based removals only (ARR, soil)</option>
+      <option value="0">Avoidance offsets (not SBTi-consistent)</option>
+    </select></div>
+    <div class="field"><label>CDR purchase strategy clarity</label><select id="res_buy">
+      <option value="3">Multi-year forward agreements + pilot offtakes</option>
+      <option value="2" selected>Long-term plan + annual budget</option>
+      <option value="1">Ad-hoc / spot purchases</option>
+      <option value="0">Not yet defined</option>
+    </select></div>
+  </div>
+</div>
+
+<!-- ===================== ENGAGEMENT ===================== -->
+<div id="panel-engagement" class="panel">
+  <h2>5 · Engagement Strategy — TPT Element 3 · CA100+ Indicators 8–9</h2>
+  <div class="infobox">Transition plans that ignore value chain, industry, and policy engagement fail the TPT credibility test. CA100+ indicator 8 (Climate Policy Engagement) scores trade-association lobbying alignment via <b>InfluenceMap LobbyMap</b>.</div>
+
+  <h3>Supplier &amp; upstream engagement</h3>
+  <div class="grid-3">
+    <div class="field"><label>% Scope 3 Cat. 1 suppliers with SBTi-validated targets</label><input id="en_sup1" type="number" value="14" /></div>
+    <div class="field"><label>% spend with suppliers under climate contract clauses</label><input id="en_sup2" type="number" value="42" /></div>
+    <div class="field"><label>Supplier code of conduct includes climate requirements</label><select id="en_sup3">
+      <option value="3">Yes — specific GHG disclosure &amp; target expectations</option>
+      <option value="2" selected>Yes — generic climate language</option>
+      <option value="1">Environmental management only</option>
+      <option value="0">No climate clause</option>
+    </select></div>
+  </div>
+
+  <h3>Customer &amp; downstream engagement</h3>
+  <div class="grid-3">
+    <div class="field"><label>Low-carbon product revenue share (%)</label><input id="en_cust1" type="number" value="18" /></div>
+    <div class="field"><label>Product carbon-footprint disclosure (PCF)</label><select id="en_cust2">
+      <option value="3">PCF on &gt;80% of revenue, EPD-verified</option>
+      <option value="2" selected>PCF on major product lines, internal method</option>
+      <option value="1">Selected products only</option>
+      <option value="0">No PCF disclosure</option>
+    </select></div>
+    <div class="field"><label>Category 11 (Use of sold products) strategy</label><select id="en_cust3">
+      <option value="3">Product redesign pipeline with quantified S3C11 impact</option>
+      <option value="2" selected>Targeted for key product lines</option>
+      <option value="1">Acknowledged but no plan</option>
+      <option value="0">Not addressed</option>
+    </select></div>
+  </div>
+
+  <h3>Industry &amp; policy engagement — InfluenceMap LobbyMap methodology</h3>
+  <div class="grid-3">
+    <div class="field"><label>Trade association climate-alignment review</label><select id="en_ta1">
+      <option value="3">Annual review + public disclosure, resignations where misaligned</option>
+      <option value="2" selected>Reviewed periodically, private escalation only</option>
+      <option value="1">Ad-hoc review, no action taken</option>
+      <option value="0">No review</option>
+    </select></div>
+    <div class="field"><label>Public policy positions align with 1.5°C</label><select id="en_ta2">
+      <option value="3">Policy positions published, track record of supporting stringent policy</option>
+      <option value="2" selected>Generic net-zero support, some specific advocacy</option>
+      <option value="1">Support net zero but oppose specific measures</option>
+      <option value="0">Actively lobby against 1.5°C-aligned policy</option>
+    </select></div>
+    <div class="field"><label>Board approval for policy positions</label><select id="en_ta3">
+      <option value="3">Annual board approval, linked to plan</option>
+      <option value="2" selected>Management committee only</option>
+      <option value="1">Government affairs only</option>
+      <option value="0">No governance</option>
+    </select></div>
+  </div>
+
+  <h3>Just Transition — ILO Guidelines &amp; CSRD ESRS E1-4</h3>
+  <div class="grid-3">
+    <div class="field"><label>Workforce transition assessment completed</label><select id="jt1">
+      <option value="3">Yes — role-level, incl. affected sites, publicly disclosed</option>
+      <option value="2" selected>Completed internally, not disclosed</option>
+      <option value="1">Partial — single site or function</option>
+      <option value="0">Not done</option>
+    </select></div>
+    <div class="field"><label>Reskilling programme in place</label><select id="jt2">
+      <option value="3">Funded programme with external validation, union agreement</option>
+      <option value="2" selected>Internal training budget earmarked</option>
+      <option value="1">General L&amp;D only</option>
+      <option value="0">None</option>
+    </select></div>
+    <div class="field"><label>Community consultation mechanism (affected sites)</label><select id="jt3">
+      <option value="3">Multi-stakeholder forums, FPIC where applicable</option>
+      <option value="2" selected>Local consultation on site closures</option>
+      <option value="1">Communication only</option>
+      <option value="0">No consultation</option>
+    </select></div>
+  </div>
+</div>
+
+<!-- ===================== GOVERNANCE ===================== -->
+<div id="panel-governance" class="panel">
+  <h2>6 · Governance, Skills &amp; Incentives — TPT Element 5 · IFRS S2 Governance</h2>
+
+  <h3>Board oversight</h3>
+  <div class="grid-3">
+    <div class="field"><label>Board committee responsible for transition plan</label><select id="gov_committee">
+      <option value="3">Dedicated climate / sustainability committee with charter</option>
+      <option value="2" selected>Risk committee with explicit climate mandate</option>
+      <option value="1">Audit committee only / implicit</option>
+      <option value="0">No committee-level oversight</option>
+    </select></div>
+    <div class="field"><label>% of directors with climate expertise</label><input id="gov_exp" type="number" value="25" /></div>
+    <div class="field"><label>Frequency of board climate review</label><select id="gov_freq">
+      <option value="3">≥Quarterly</option>
+      <option value="2" selected>Semi-annually</option>
+      <option value="1">Annually</option>
+      <option value="0">No regular review</option>
+    </select></div>
+  </div>
+
+  <h3>Executive accountability &amp; incentives</h3>
+  <div class="grid-3">
+    <div class="field"><label>Named executive accountable</label><select id="gov_exec">
+      <option value="3" selected>CEO + CFO + Chief Sustainability Officer</option>
+      <option value="2">CSO / CTO level, reporting to CEO</option>
+      <option value="1">Functional head (EHS etc.)</option>
+      <option value="0">Not specified</option>
+    </select></div>
+    <div class="field"><label>CEO variable comp linked to climate (%)</label><input id="gov_ceo" type="number" value="15" /></div>
+    <div class="field"><label>Cascade of climate KPIs</label><select id="gov_casc">
+      <option value="3">Cascaded to site / function level, all BU leaders</option>
+      <option value="2" selected>Top 50–100 managers</option>
+      <option value="1">Top team only</option>
+      <option value="0">No cascade</option>
+    </select></div>
+  </div>
+
+  <h3>Skills, culture &amp; data systems</h3>
+  <div class="grid-3">
+    <div class="field"><label>Climate literacy training (% employees)</label><input id="gov_train" type="number" value="40" /></div>
+    <div class="field"><label>GHG data systems &amp; controls</label><select id="gov_data">
+      <option value="3">Dedicated platform, internal audit, assurance-ready</option>
+      <option value="2" selected>ERP + spreadsheets, manual reconciliation</option>
+      <option value="1">Spreadsheets only</option>
+      <option value="0">Ad-hoc, no central system</option>
+    </select></div>
+    <div class="field"><label>Internal price of carbon</label><select id="gov_icp">
+      <option value="3">Shadow price applied to all capex decisions</option>
+      <option value="2" selected>Shadow price for major projects only</option>
+      <option value="1">Narrative reference only</option>
+      <option value="0">No internal price</option>
+    </select></div>
+  </div>
+
+  <h3>Risk management &amp; scenario analysis (IFRS S2)</h3>
+  <div class="grid-3">
+    <div class="field"><label>Scenarios used for financial resilience test</label><select id="gov_scen">
+      <option value="3">≥3 NGFS Phase IV + IEA NZE, quantified across &gt;15y horizon</option>
+      <option value="2" selected>2 scenarios, qualitative + partial quantification</option>
+      <option value="1">Single scenario (1.5°C OR current policy)</option>
+      <option value="0">Not done</option>
+    </select></div>
+    <div class="field"><label>Physical risk assessment coverage (% assets)</label><input id="gov_phys" type="number" value="65" /></div>
+    <div class="field"><label>Financial quantification of climate risk</label><select id="gov_fin">
+      <option value="3">All material risks quantified in financial statements</option>
+      <option value="2" selected>Selected risks in narrative disclosure</option>
+      <option value="1">Generic range disclosed</option>
+      <option value="0">Not quantified</option>
+    </select></div>
+  </div>
+</div>
+
+<!-- ===================== DISCLOSURE ===================== -->
+<div id="panel-disclosure" class="panel">
+  <h2>7 · Disclosure Scorecard — TPT · IFRS S2 · ESRS E1 · CA100+</h2>
+  <div class="infobox">Each disclosure item is scored 0–3 — 0 = absent, 1 = generic narrative, 2 = structured disclosure with some quantification, 3 = full disclosure with quantified metrics, targets and assurance.</div>
+  <p class="meta">Adjust each score to reflect what is actually in your public disclosures today (AR/Sustainability Report/CDP response/dedicated transition plan).</p>
+
+  <h3>TPT Disclosure Framework v1.0 (Oct 2023) — 19 sub-elements</h3>
+  <div id="tpt_box"></div>
+
+  <h3>IFRS S2 (ISSB) — Climate-related Disclosures</h3>
+  <div id="ifrs_box"></div>
+
+  <h3>EU CSRD ESRS E1 — Climate change</h3>
+  <div id="esrs_box"></div>
+
+  <h3>CA100+ Net Zero Benchmark 3.0 — 10 indicators</h3>
+  <div id="ca100b_box"></div>
+</div>
+
+<!-- ===================== RESULTS ===================== -->
+<div id="panel-results" class="panel">
+  <h2>8 · Results — Credibility Scorecard &amp; Gap Map</h2>
+  <div id="results_summary" class="grid-4"></div>
+
+  <h3>Five-pillar readiness</h3>
+  <div id="pillar_bars"></div>
+
+  <h3>Top 10 gap-closure priorities (sequenced)</h3>
+  <div id="gap_list"></div>
+
+  <h3>Sector peer benchmark</h3>
+  <div id="peer_bench"></div>
+
+  <h3>NGFS scenario resilience scan</h3>
+  <div id="ngfs_box"></div>
+</div>
+
+<!-- ===================== PROMPT ===================== -->
+<div id="panel-prompt" class="panel">
+  <h2>9 · Personalised Claude Prompt</h2>
+  <div class="infobox">Paste this prompt into Claude (claude.ai) alongside your latest CSR/AR PDFs &amp; CDP response. It will draft the 5 TPT elements, a 24-month gap-closure workplan, and scenario analysis tables you can take into the AR drafting room.</div>
+  <div class="btn-row">
+    <button class="btn" onclick="buildPrompt()">Regenerate prompt</button>
+    <button class="btn secondary" onclick="copyPrompt()">Copy to clipboard</button>
+  </div>
+  <pre id="prompt_out"></pre>
+</div>
+
+<div class="footer">Useful AF · Tool #25 — Climate Transition Plan Builder · TPT v1.0 · IFRS S2 · SBTi CNZS · CSRD ESRS E1 · CA100+ NZ Benchmark 3.0 · GHG Protocol · NGFS Phase IV. Not affiliated with TPT, IFRS, SBTi, Climate Action 100+, CDP or WRI. <a href="https://useful-af.circle.so" target="_blank">useful-af.circle.so</a></div>
+</div>
+
+<script>
+/* ---------- REFERENCE DATA ---------- */
+
+// SBTi sectoral pathways — near-term reduction from 2020 baseline to 2030, 1.5°C-aligned
+// Values sourced from SBTi Corporate Net-Zero Standard v1.2 + Sector Guidance (Power, FLAG, Apparel, Chemicals, Cement, Steel, Aluminum, Buildings, Road Transport)
+const SECTOR_DATA = {
+  power:       {label:"Power generation", s1_2030:76, absint:"int", notes:"IEA NZE: grid near-zero by 2040 OECD / 2045 global. SBTi: SDA Power + TPI Level 4 alignment.", peers:"Ørsted, SSE, Iberdrola, EDF"},
+  oilgas:      {label:"Oil, gas & coal", s1_2030:42, absint:"abs", notes:"SBTi pathway not yet published as of 2026 — use IPIECA + Net Zero Banking Alliance thresholds. Scope 3 Cat. 11 dominates.", peers:"Equinor, Shell, Aker BP"},
+  cement:      {label:"Cement", s1_2030:24, absint:"int", notes:"GCCA 2050 Roadmap: 24% reduction kgCO₂/t cementitious by 2030 from 2020. 80% of Scope 1 is process CO₂ — CCUS essential.", peers:"Heidelberg, Holcim, Cemex"},
+  steel:       {label:"Steel", s1_2030:31, absint:"int", notes:"SBTi Steel Pathway (2023): 31% tCO₂/t crude steel by 2030 from 2019. H2-DRI + scrap + CCUS.", peers:"ArcelorMittal, Nucor, SSAB"},
+  aluminium:   {label:"Aluminium", s1_2030:35, absint:"int", notes:"IAI 1.5°C pathway: smelting electricity decarbonisation is 60% of lever weight.", peers:"Norsk Hydro, Rio Tinto, Alcoa"},
+  chemicals:   {label:"Chemicals", s1_2030:40, absint:"abs", notes:"SBTi Chemicals v1.0 (2024). Feedstock switch + electrified heat + hydrogen-based platforms.", peers:"BASF, Dow, DSM-Firmenich, Solvay"},
+  apparel:     {label:"Apparel & textiles", s1_2030:55, absint:"abs", notes:"SBTi Apparel & Footwear guidance + STAR 2030 + Textile Exchange: dyeing & finishing + MMCF + transport.", peers:"H&M, Inditex, Levi's, Kering"},
+  buildings:   {label:"Buildings & construction", s1_2030:47, absint:"int", notes:"IEA: operational + embodied. WorldGBC Net Zero Carbon Buildings Commitment.", peers:"JLL, Skanska, Lendlease"},
+  road:        {label:"Road freight & passenger", s1_2030:49, absint:"abs", notes:"IEA NZE 2035 ICE passenger car phase-out OECD. SBTi Road Transport Framework.", peers:"DHL, Maersk land, Volvo Group"},
+  aviation:    {label:"Aviation", s1_2030:18, absint:"int", notes:"SBTi Aviation guidance: SAF + fleet modernisation + ops. CORSIA floor. ICAO Net-Zero 2050.", peers:"IAG, Delta, Lufthansa, ANA"},
+  shipping:    {label:"Shipping", s1_2030:32, absint:"int", notes:"IMO 2023 strategy: 20–30% GHG intensity by 2030 from 2008. Alternative fuels + slow-steam + windasssist.", peers:"Maersk, MSC, Hapag-Lloyd"},
+  food:        {label:"Food, beverage & ag (FLAG)", s1_2030:30, absint:"abs", notes:"SBTi FLAG Guidance (Sept 2022): FLAG-specific pathway + no-deforestation by 2025. Scope 3 Cat. 1 dominant.", peers:"Unilever, Danone, Nestlé, Tyson"},
+  forest:      {label:"Forestry & paper (FLAG)", s1_2030:35, absint:"abs", notes:"SBTi FLAG + Paper & Packaging SDA. Product end-of-life methane (S3C12) material.", peers:"Stora Enso, UPM, International Paper"},
+  retail:      {label:"Retail (non-food)", s1_2030:52, absint:"abs", notes:"Value chain dominates (Cat. 1 + 11). SBTi Retail Sector Guidance.", peers:"IKEA, Walmart, Target, Kingfisher"},
+  cpg:         {label:"Consumer packaged goods", s1_2030:42, absint:"abs", notes:"CGF commitments + SBTi cross-sector. Packaging + ingredients + cold chain.", peers:"Procter & Gamble, Colgate, Reckitt"},
+  tech:        {label:"Technology, media & telecoms", s1_2030:42, absint:"abs", notes:"ITU L.1470 (aligned to 1.5°C). Data centre + hardware + services.", peers:"Microsoft, Vodafone, Orange, BT"},
+  finserv:     {label:"Financial institutions", s1_2030:42, absint:"abs", notes:"PCAF + NZBA/NZAOA/NZAM. Financed emissions the main story (Cat. 15). GFANZ transition finance guidance.", peers:"HSBC, BNP Paribas, Aviva, Allianz"},
+  healthcare:  {label:"Healthcare & pharma", s1_2030:42, absint:"abs", notes:"NHS Net Zero 2045 (UK) + SBTi cross-sector. Anaesthetic gas (S1) + supply chain (Cat. 1) material.", peers:"GSK, AstraZeneca, Novo Nordisk"},
+  mining:      {label:"Metals & mining", s1_2030:42, absint:"abs", notes:"ICMM climate position + SBTi cross-sector. Diesel fleet electrification + processing heat.", peers:"BHP, Rio Tinto, Anglo American"},
+  waste:       {label:"Waste management", s1_2030:42, absint:"abs", notes:"Methane capture at landfill + circular economy. SBTi cross-sector.", peers:"Veolia, SUEZ, Waste Management Inc"},
+  other:       {label:"Other / diversified", s1_2030:42, absint:"abs", notes:"SBTi cross-sector absolute contraction 4.2% p.a. in line with 1.5°C.", peers:"Sector-specific benchmarking needed"}
+};
+
+// Scope 3 category structure — GHG Protocol
+// Materiality flag per sector based on CDP 2024 Scope 3 analysis + SBTi FAQ
+const SCOPE3_CATS = [
+  {id:1, name:"Purchased goods & services",
+   materiality:{cement:"M",steel:"M",apparel:"M",food:"M",cpg:"M",retail:"M",finserv:"L",tech:"M",healthcare:"M",mining:"M",aluminium:"M",chemicals:"M",aviation:"L",shipping:"L",road:"L",buildings:"M",forest:"M",power:"L",oilgas:"M",waste:"L",other:"M"},
+   method:"Spend-based Y1 → Supplier-specific Y3"},
+  {id:2, name:"Capital goods",
+   materiality:{cement:"M",steel:"M",aluminium:"M",power:"M",tech:"L",finserv:"L",apparel:"L",food:"L",cpg:"L",retail:"L",healthcare:"L",road:"L",aviation:"L",shipping:"L",buildings:"L",forest:"L",chemicals:"L",mining:"M",oilgas:"M",waste:"L",other:"L"},
+   method:"Spend-based + lifecycle"},
+  {id:3, name:"Fuel & energy (non-S1/S2)",
+   materiality:{power:"M",oilgas:"M",cement:"L",steel:"L",aviation:"M",shipping:"M",road:"L",aluminium:"L",chemicals:"L",apparel:"L",food:"L",cpg:"L",retail:"L",healthcare:"L",tech:"L",finserv:"L",mining:"L",waste:"L",buildings:"L",forest:"L",other:"L"},
+   method:"Well-to-tank factors (DEFRA/DESNZ)"},
+  {id:4, name:"Upstream transportation & distribution",
+   materiality:{retail:"M",cpg:"M",apparel:"M",food:"M",cement:"M",healthcare:"L",tech:"L",chemicals:"M",mining:"M",finserv:"L",power:"L",oilgas:"L",steel:"L",aluminium:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",forest:"M",waste:"L",other:"L"},
+   method:"Tonne-km × factor"},
+  {id:5, name:"Waste generated in operations",
+   materiality:{cement:"L",steel:"L",apparel:"L",food:"M",cpg:"L",retail:"L",finserv:"L",tech:"L",healthcare:"L",mining:"M",aluminium:"L",chemicals:"L",aviation:"L",shipping:"L",road:"L",buildings:"M",forest:"L",power:"L",oilgas:"L",waste:"M",other:"L"},
+   method:"Waste tonnage × disposal factor"},
+  {id:6, name:"Business travel",
+   materiality:{finserv:"M",tech:"M",healthcare:"L",cpg:"L",retail:"L",apparel:"L",cement:"L",food:"L",power:"L",oilgas:"L",steel:"L",aluminium:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",forest:"L",chemicals:"L",mining:"L",waste:"L",other:"L"},
+   method:"Mode × distance"},
+  {id:7, name:"Employee commuting",
+   materiality:{finserv:"M",tech:"M",healthcare:"M",retail:"L",cpg:"L",apparel:"L",food:"L",cement:"L",power:"L",oilgas:"L",steel:"L",aluminium:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",forest:"L",chemicals:"L",mining:"L",waste:"L",other:"L"},
+   method:"Survey-based"},
+  {id:8, name:"Upstream leased assets",
+   materiality:{retail:"M",finserv:"L",tech:"L",apparel:"L",food:"L",cement:"L",cpg:"L",healthcare:"M",power:"L",oilgas:"L",steel:"L",aluminium:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",forest:"L",chemicals:"L",mining:"L",waste:"L",other:"L"},
+   method:"Energy-consumption allocation"},
+  {id:9, name:"Downstream transportation & distribution",
+   materiality:{cpg:"M",apparel:"M",food:"M",retail:"M",cement:"M",chemicals:"M",healthcare:"L",tech:"L",finserv:"L",power:"L",oilgas:"L",steel:"M",aluminium:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",forest:"L",mining:"L",waste:"L",other:"L"},
+   method:"Tonne-km × factor (where paid)"},
+  {id:10, name:"Processing of sold products",
+   materiality:{chemicals:"M",steel:"M",aluminium:"M",cement:"L",oilgas:"M",mining:"M",forest:"M",apparel:"L",food:"L",cpg:"L",retail:"L",healthcare:"L",tech:"L",finserv:"L",power:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",waste:"L",other:"L"},
+   method:"Processing-stage factors"},
+  {id:11, name:"Use of sold products",
+   materiality:{oilgas:"M",road:"M",aviation:"M",shipping:"M",power:"L",cement:"L",steel:"L",aluminium:"L",apparel:"L",food:"L",cpg:"L",retail:"L",healthcare:"L",tech:"M",finserv:"L",buildings:"M",forest:"L",chemicals:"L",mining:"L",waste:"L",other:"M"},
+   method:"Use-phase energy × factor"},
+  {id:12, name:"End-of-life of sold products",
+   materiality:{cpg:"M",apparel:"M",tech:"M",retail:"L",food:"L",cement:"L",forest:"M",chemicals:"L",healthcare:"L",finserv:"L",power:"L",oilgas:"L",steel:"L",aluminium:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",mining:"L",waste:"L",other:"L"},
+   method:"Disposal-route factor"},
+  {id:13, name:"Downstream leased assets",
+   materiality:{finserv:"L",retail:"L",buildings:"M",tech:"L",apparel:"L",food:"L",cement:"L",cpg:"L",healthcare:"L",power:"L",oilgas:"L",steel:"L",aluminium:"L",aviation:"L",shipping:"L",road:"L",forest:"L",chemicals:"L",mining:"L",waste:"L",other:"L"},
+   method:"Floor area × intensity"},
+  {id:14, name:"Franchises",
+   materiality:{retail:"M",food:"M",finserv:"L",cpg:"L",apparel:"L",cement:"L",tech:"L",healthcare:"L",power:"L",oilgas:"L",steel:"L",aluminium:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",forest:"L",chemicals:"L",mining:"L",waste:"L",other:"L"},
+   method:"Per-franchise consumption"},
+  {id:15, name:"Investments (financed emissions)",
+   materiality:{finserv:"M",oilgas:"L",cement:"L",steel:"L",apparel:"L",food:"L",cpg:"L",retail:"L",healthcare:"L",tech:"L",power:"L",aluminium:"L",aviation:"L",shipping:"L",road:"L",buildings:"L",forest:"L",chemicals:"L",mining:"L",waste:"L",other:"L"},
+   method:"PCAF Standard"}
+];
+
+// Abatement levers by sector — IEA NZE, MPP, McKinsey GCC v6 + sectoral roadmaps
+const LEVER_LIB = {
+  cement: [
+    {id:"energy",name:"Thermal energy efficiency (kiln, precalciner)",exp:6,capex:"Low",time:"0–3y"},
+    {id:"alt_fuel",name:"Alternative fuels (biomass, RDF, hydrogen pilot)",exp:14,capex:"Med",time:"0–5y"},
+    {id:"clinker",name:"Clinker substitution (SCMs: slag, fly ash, calcined clay)",exp:20,capex:"Low",time:"0–5y"},
+    {id:"elec_grid",name:"Grid decarbonisation / renewable PPAs (Scope 2)",exp:8,capex:"Low",time:"0–3y"},
+    {id:"ccus",name:"CCUS (oxyfuel, post-combustion, mineral carbonation)",exp:30,capex:"Very High",time:"2028–2040"},
+    {id:"novel",name:"Novel binders / geopolymers / LC³",exp:6,capex:"High",time:"2027–2035"},
+    {id:"logistics",name:"Logistics & fleet electrification",exp:3,capex:"Low",time:"0–5y"},
+    {id:"circ",name:"Circular construction (reuse / recycled aggregates)",exp:4,capex:"Med",time:"0–10y"}
+  ],
+  steel: [
+    {id:"energy",name:"Energy efficiency (waste heat, BoF→EAF)",exp:10,capex:"Low",time:"0–5y"},
+    {id:"scrap",name:"Increased scrap use + electric arc furnace",exp:25,capex:"High",time:"0–10y"},
+    {id:"h2_dri",name:"H2-DRI with green hydrogen",exp:35,capex:"Very High",time:"2025–2040"},
+    {id:"ccus",name:"CCUS on BF-BOF legacy",exp:15,capex:"Very High",time:"2028–2040"},
+    {id:"elec_grid",name:"Grid decarbonisation / PPAs",exp:8,capex:"Low",time:"0–5y"},
+    {id:"logistics",name:"Logistics electrification",exp:2,capex:"Low",time:"0–5y"},
+    {id:"circ",name:"Product redesign for steel efficiency",exp:5,capex:"Med",time:"0–10y"}
+  ],
+  power: [
+    {id:"renew",name:"Renewable build-out (solar, wind, storage)",exp:45,capex:"Very High",time:"0–10y"},
+    {id:"coal_exit",name:"Accelerated coal exit",exp:25,capex:"High",time:"0–10y"},
+    {id:"gas_flex",name:"Gas-fired flexibility + CCUS retrofit",exp:8,capex:"High",time:"2027–2040"},
+    {id:"grid",name:"Grid upgrades / digitalisation",exp:5,capex:"High",time:"0–10y"},
+    {id:"efficient",name:"Generation efficiency retrofits",exp:6,capex:"Med",time:"0–5y"},
+    {id:"dsr",name:"Demand response / storage at scale",exp:7,capex:"Med",time:"0–10y"}
+  ],
+  apparel: [
+    {id:"mat",name:"Lower-footprint materials (organic / recycled / MMCF)",exp:18,capex:"Low",time:"0–5y"},
+    {id:"dye",name:"Dyeing & finishing decarbonisation",exp:12,capex:"Med",time:"0–7y"},
+    {id:"renew",name:"Renewable energy at Tier-1/2 suppliers",exp:20,capex:"Med",time:"0–7y"},
+    {id:"logistics",name:"Logistics mode-shift + electrification",exp:8,capex:"Low",time:"0–5y"},
+    {id:"stores",name:"Retail stores & e-commerce electrification",exp:5,capex:"Low",time:"0–3y"},
+    {id:"circ",name:"Circular business models (resale, rental, recycle)",exp:6,capex:"Med",time:"0–10y"},
+    {id:"consumer",name:"Consumer-use decarbonisation (wash-care, longevity)",exp:4,capex:"Low",time:"0–10y"}
+  ],
+  food: [
+    {id:"ag_practice",name:"Regenerative agriculture at farm level",exp:22,capex:"Med",time:"0–10y"},
+    {id:"deforest",name:"No-deforestation commodity sourcing (SBTi FLAG)",exp:15,capex:"Low",time:"0–3y"},
+    {id:"dairy_meat",name:"Enteric fermentation reduction + feed additives",exp:8,capex:"Med",time:"0–10y"},
+    {id:"energy",name:"Factory thermal decarbonisation",exp:10,capex:"Med",time:"0–10y"},
+    {id:"renew",name:"Renewable electricity at operations",exp:5,capex:"Low",time:"0–5y"},
+    {id:"cold_chain",name:"Natural refrigerants / cold chain",exp:4,capex:"Med",time:"0–7y"},
+    {id:"portfolio",name:"Portfolio shift toward plant-based",exp:8,capex:"Low",time:"0–10y"},
+    {id:"packaging",name:"Packaging decarbonisation",exp:3,capex:"Low",time:"0–5y"},
+    {id:"logistics",name:"Logistics electrification",exp:5,capex:"Low",time:"0–7y"}
+  ],
+  finserv: [
+    {id:"sector_exit",name:"Fossil-fuel financing policy (exclusions, phase-down)",exp:20,capex:"None",time:"0–3y"},
+    {id:"client_engage",name:"Client transition-plan requirements (relationship mgmt)",exp:25,capex:"Low",time:"0–5y"},
+    {id:"green_deal",name:"Green & transition finance origination",exp:15,capex:"Low",time:"0–10y"},
+    {id:"data",name:"PCAF data quality improvement (sector coverage)",exp:8,capex:"Med",time:"0–3y"},
+    {id:"ops",name:"Own operations (real estate, travel, IT)",exp:4,capex:"Low",time:"0–5y"},
+    {id:"insur",name:"Insurance underwriting policy (sectoral)",exp:10,capex:"Low",time:"0–5y"},
+    {id:"engage",name:"Policy & stewardship engagement",exp:6,capex:"Low",time:"0–3y"}
+  ],
+  // Fallback set for other sectors
+  _default: [
+    {id:"renew",name:"Renewable electricity (PPAs, on-site, certificates)",exp:20,capex:"Low",time:"0–5y"},
+    {id:"energy",name:"Energy efficiency across operations",exp:12,capex:"Low",time:"0–5y"},
+    {id:"heat",name:"Process heat decarbonisation (electrification / H2)",exp:15,capex:"High",time:"2027–2040"},
+    {id:"fleet",name:"Fleet / logistics electrification",exp:8,capex:"Low",time:"0–7y"},
+    {id:"supply",name:"Supplier engagement on Scope 3 Cat. 1",exp:15,capex:"Low",time:"0–5y"},
+    {id:"product",name:"Product redesign (low-carbon portfolio)",exp:10,capex:"Med",time:"0–10y"},
+    {id:"circ",name:"Circularity & waste reduction",exp:5,capex:"Low",time:"0–7y"},
+    {id:"trav",name:"Business travel reduction",exp:2,capex:"None",time:"0–3y"},
+    {id:"ccus",name:"CCUS / engineered removals (if residual)",exp:10,capex:"Very High",time:"2028–2040"}
+  ]
+};
+
+// TPT Disclosure Framework v1.0 sub-elements (October 2023)
+const TPT_ITEMS = [
+  {pillar:"1 · Foundations", code:"1.1", title:"Strategic ambition", desc:"Stated objective, scope & timeframe of the plan; alignment with 1.5°C pathway & net-zero.", score:2},
+  {pillar:"1 · Foundations", code:"1.2", title:"Business model / value chain implications", desc:"Description of how the plan changes the business model & value chain, including value-at-risk exposure.", score:2},
+  {pillar:"1 · Foundations", code:"1.3", title:"Key assumptions & external factors", desc:"Macro / policy assumptions, enabling conditions, dependencies & uncertainties.", score:2},
+  {pillar:"2 · Implementation", code:"2.1", title:"Business operations", desc:"Actions across own operations — sites, processes, energy, efficiency, fleet.", score:2},
+  {pillar:"2 · Implementation", code:"2.2", title:"Products & services", desc:"Portfolio shifts, R&D, low-carbon product launches, use-phase design.", score:2},
+  {pillar:"2 · Implementation", code:"2.3", title:"Policies & conditions", desc:"Procurement policy, internal carbon price, capital-allocation discipline.", score:1},
+  {pillar:"2 · Implementation", code:"2.4", title:"Financial planning", desc:"Capex alignment, operating expense shifts, funding strategy, disclosures of financial implications.", score:2},
+  {pillar:"3 · Engagement", code:"3.1", title:"Engagement with value chain", desc:"Upstream (suppliers) & downstream (customers) — targets, support, escalation.", score:2},
+  {pillar:"3 · Engagement", code:"3.2", title:"Engagement with industry", desc:"Role in industry coalitions, standards bodies, infrastructure build-out.", score:1},
+  {pillar:"3 · Engagement", code:"3.3", title:"Engagement with government, public sector, communities & civil society", desc:"Policy advocacy positions, coalition memberships, community relationships including just transition.", score:1},
+  {pillar:"4 · Metrics & Targets", code:"4.1", title:"Governance, business & operational metrics", desc:"KPIs covering operational delivery — e.g. % supplier engagement, % capex aligned.", score:2},
+  {pillar:"4 · Metrics & Targets", code:"4.2", title:"Financial metrics & targets", desc:"KPIs & targets for financial exposure, green revenue, taxonomy alignment, transition finance.", score:1},
+  {pillar:"4 · Metrics & Targets", code:"4.3", title:"GHG metrics & targets", desc:"Scope 1 / 2 / 3 emissions, reduction targets, methodology, coverage.", score:2},
+  {pillar:"4 · Metrics & Targets", code:"4.4", title:"Carbon credits", desc:"Role, quality, quantity, integrity of any carbon credits claimed.", score:1},
+  {pillar:"5 · Governance", code:"5.1", title:"Board oversight & reporting", desc:"Board structure, committee, frequency, climate competency.", score:2},
+  {pillar:"5 · Governance", code:"5.2", title:"Roles, responsibilities & accountability", desc:"Executive accountability, named individual(s), roles across organisation.", score:2},
+  {pillar:"5 · Governance", code:"5.3", title:"Culture", desc:"Organisational culture, values & behaviour supporting transition.", score:1},
+  {pillar:"5 · Governance", code:"5.4", title:"Incentives & remuneration", desc:"Variable comp linkage, KPI cascade, evidence of incentive alignment.", score:2},
+  {pillar:"5 · Governance", code:"5.5", title:"Skills, competencies & training", desc:"Climate literacy, talent strategy, embedding of capability.", score:1}
+];
+
+// IFRS S2 disclosures (condensed core)
+const IFRS_ITEMS = [
+  {code:"Gov", title:"Governance — §6-7", desc:"Body or individuals responsible for oversight; process & controls; frequency of review.", score:2},
+  {code:"Str-A", title:"Strategy — risks & opportunities §10-12", desc:"Description of climate-related risks & opportunities identified, time horizons.", score:2},
+  {code:"Str-B", title:"Strategy — business model & value chain §13", desc:"Current & anticipated effects on business model & value chain.", score:2},
+  {code:"Str-C", title:"Strategy — strategy & decision-making §14", desc:"Response including transition plan; how entity plans to achieve climate-related targets.", score:2},
+  {code:"Str-D", title:"Strategy — financial position & cash flows §15-16", desc:"Quantitative or qualitative; anticipated changes; capital deployment.", score:1},
+  {code:"Str-E", title:"Strategy — climate resilience §22", desc:"Scenario analysis & resilience assessment.", score:2},
+  {code:"Rim-A", title:"Risk management — processes §25-27", desc:"Processes to identify, assess, prioritise, monitor climate risks & opportunities.", score:2},
+  {code:"Mt-A", title:"Cross-industry metrics §29(a)", desc:"Scope 1, 2, 3 absolute GHG; Scope 2 method; intensity; climate-aligned capital deployment.", score:2},
+  {code:"Mt-B", title:"Industry-based metrics §29(b)", desc:"SASB-derived industry-specific climate metrics.", score:1},
+  {code:"Mt-C", title:"Targets §33-37", desc:"Targets used, base year, revisions, performance, alignment with science, credit reliance.", score:2}
+];
+
+// ESRS E1 disclosures (condensed)
+const ESRS_ITEMS = [
+  {code:"E1-1", title:"Transition plan for climate change mitigation", desc:"Alignment with 1.5°C pathway; ambition; decarbonisation levers; locked-in emissions.", score:2},
+  {code:"E1-2", title:"Policies related to climate change mitigation & adaptation", desc:"Policies covering mitigation, adaptation, energy.", score:2},
+  {code:"E1-3", title:"Actions & resources", desc:"Specific actions & funding committed for mitigation / adaptation.", score:2},
+  {code:"E1-4", title:"Targets", desc:"Mitigation & adaptation targets; base year; absolute / intensity; consistency with 1.5°C.", score:2},
+  {code:"E1-5", title:"Energy consumption & mix", desc:"Energy from fossil / nuclear / renewable sources; energy intensity (high-climate-impact sectors).", score:2},
+  {code:"E1-6", title:"Gross Scopes 1,2,3 & total GHG emissions", desc:"Full inventory incl. biogenic.", score:2},
+  {code:"E1-7", title:"GHG removals & credits financed", desc:"Removals in own operations / value chain; storage type; credits purchased & to be purchased.", score:1},
+  {code:"E1-8", title:"Internal carbon pricing", desc:"Approach to ICP including coverage & price.", score:1},
+  {code:"E1-9", title:"Anticipated financial effects of material physical & transition risks & opportunities", desc:"Quantified where possible; time horizons.", score:1}
+];
+
+// CA100+ Net Zero Benchmark 3.0 — 10 indicators (2023)
+const CA100_ITEMS = [
+  {code:"1", title:"Ambition", desc:"Net-zero GHG target by 2050 (or sooner) covering material scopes.", score:2},
+  {code:"2", title:"Long-term target", desc:"Long-term quantified GHG reduction of ≥90% covering all material scopes.", score:2},
+  {code:"3", title:"Medium-term target", desc:"Medium-term (2030-horizon) target aligned with 1.5°C sector pathway, all material scopes.", score:2},
+  {code:"4", title:"Short-term target", desc:"Short-term (≤5y) quantified GHG target for material scopes.", score:2},
+  {code:"5", title:"Decarbonisation strategy", desc:"Published strategy covering largest emission sources with quantified contributions.", score:2},
+  {code:"6", title:"Capital allocation alignment", desc:"Capex aligned to achieving GHG targets — disclosure of % & process.", score:1},
+  {code:"7", title:"Climate policy engagement", desc:"Direct + trade-association lobbying consistent with 1.5°C (InfluenceMap).", score:1},
+  {code:"8", title:"Climate governance", desc:"Board oversight, executive accountability, remuneration link.", score:2},
+  {code:"9", title:"Just Transition", desc:"Commitments on workforce & communities affected by transition.", score:1},
+  {code:"10", title:"Accounting & audit alignment", desc:"Financial statements reflect climate assumptions; auditor commentary.", score:1}
+];
+
+const EXAMPLES = {
+  cement: { co_name:"Ardent Materials Group plc", co_sector:"cement", co_listing:"uk_premium", co_rev:2180, co_fte:4600, co_base:2022, co_latest:2025, co_geo:"UK, EU (DE, FR, ES), Morocco, Egypt", co_products:"Grey & blended cement, ready-mix concrete, aggregates, specialty binders", s1_stat:3850000, s1_mob:42000, s1_proc:4760000, s1_fug:18000, s2_loc:520000, s2_mkt:380000, nt_s12:32, nt_s3:25, nt_year:2030, nt_s3_cov:72, lt_nz:2050, lt_pct:90, cx_base:290, cx_align:35, cx_2030:1100, gov_exp:25, gov_ceo:15, gov_train:40, en_sup1:14, en_sup2:42, en_cust1:18, gov_phys:65, res_abs:860000, res_pct:9 },
+  apparel: { co_name:"Verde Threads Group", co_sector:"apparel", co_listing:"eu_csrd", co_rev:1450, co_fte:8900, co_base:2021, co_latest:2025, co_geo:"Italy, Spain, Portugal, Turkey, Bangladesh, Vietnam", co_products:"Performance apparel, denim, leather accessories", s1_stat:18000, s1_mob:12000, s1_proc:2500, s1_fug:3000, s2_loc:62000, s2_mkt:34000, nt_s12:50, nt_s3:45, nt_year:2030, nt_s3_cov:85, lt_nz:2045, lt_pct:90, cx_base:65, cx_align:48, cx_2030:210, gov_exp:30, gov_ceo:20, gov_train:55, en_sup1:28, en_sup2:58, en_cust1:32, gov_phys:55, res_abs:78000, res_pct:8 },
+  food:    { co_name:"Savanna Harvest Foods Ltd", co_sector:"food", co_listing:"uk_premium", co_rev:3100, co_fte:6500, co_base:2020, co_latest:2025, co_geo:"UK, Netherlands, Kenya, Ivory Coast", co_products:"Chocolate, cocoa products, tea, coffee, branded groceries", s1_stat:62000, s1_mob:14000, s1_proc:9000, s1_fug:4000, s2_loc:85000, s2_mkt:52000, nt_s12:42, nt_s3:30, nt_year:2030, nt_s3_cov:68, lt_nz:2050, lt_pct:90, cx_base:180, cx_align:42, cx_2030:780, gov_exp:28, gov_ceo:18, gov_train:45, en_sup1:19, en_sup2:48, en_cust1:22, gov_phys:72, res_abs:220000, res_pct:10 },
+  finserv: { co_name:"Meridian Financial Group", co_sector:"finserv", co_listing:"uk_premium", co_rev:18500, co_fte:34000, co_base:2020, co_latest:2025, co_geo:"UK, EU, Hong Kong, Singapore, Nairobi", co_products:"Corporate banking, asset management, insurance", s1_stat:12000, s1_mob:3000, s1_proc:0, s1_fug:2500, s2_loc:95000, s2_mkt:28000, nt_s12:52, nt_s3:30, nt_year:2030, nt_s3_cov:78, lt_nz:2050, lt_pct:90, cx_base:420, cx_align:25, cx_2030:950, gov_exp:22, gov_ceo:12, gov_train:38, en_sup1:8, en_sup2:22, en_cust1:12, gov_phys:40, res_abs:650000, res_pct:6 }
+};
+
+/* ---------- STATE ---------- */
+let state = {
+  scope3: {}, // cat.id -> {value, materiality_override}
+  levers: {}, // id -> score 0..3
+  tpt: {}, ifrs:{}, esrs:{}, ca100:{} // code -> 0..3
+};
+
+/* ---------- RENDER ---------- */
+function initScope3(){
+  const sector = document.getElementById("co_sector").value;
+  const tbody = document.getElementById("scope3_table");
+  tbody.innerHTML = "";
+  SCOPE3_CATS.forEach(c=>{
+    const mat = c.materiality[sector] || "L";
+    const matClass = mat==="M" ? "warn" : "ok";
+    const matLabel = mat==="M" ? "MATERIAL" : "screen";
+    const existing = state.scope3[c.id] != null ? state.scope3[c.id] : defaultScope3(sector,c.id);
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${c.id}</td>
+      <td><b>${c.name}</b><div class="meta">${c.method}</div></td>
+      <td><input type="number" data-s3="${c.id}" value="${existing}" style="width:120px"></td>
+      <td><span class="tag ${matClass}">${matLabel}</span></td>
+      <td class="meta">${c.method}</td>`;
+    tbody.appendChild(row);
+  });
+  tbody.querySelectorAll("input[data-s3]").forEach(inp=>{
+    inp.addEventListener("input", e=>{
+      state.scope3[e.target.dataset.s3] = +e.target.value || 0;
+      renderIntensity();
+    });
+    state.scope3[inp.dataset.s3] = +inp.value || 0;
+  });
+}
+function defaultScope3(sector, catId){
+  // Sector-typical scope 3 distributions (tCO2e defaults for worked examples)
+  const pack = {
+    cement: {1:1200000,2:180000,3:420000,4:780000,5:22000,6:5000,7:6500,8:12000,9:420000,10:38000,11:45000,12:240000,13:0,14:0,15:0},
+    apparel: {1:280000,2:15000,3:8000,4:42000,5:2200,6:3500,7:4200,8:5500,9:28000,10:0,11:120000,12:55000,13:0,14:0,15:0},
+    food: {1:1650000,2:58000,3:120000,4:240000,5:42000,6:8200,7:14000,8:9000,9:140000,10:0,11:18000,12:68000,13:0,14:92000,15:0},
+    finserv: {1:28000,2:22000,3:0,4:6000,5:1200,6:42000,7:55000,8:18000,9:0,10:0,11:0,12:0,13:12000,14:0,15:2800000}
+  };
+  return (pack[sector] && pack[sector][catId]) || 0;
+}
+function initLevers(){
+  const sector = document.getElementById("co_sector").value;
+  const levers = LEVER_LIB[sector] || LEVER_LIB._default;
+  const box = document.getElementById("lever_box");
+  box.innerHTML = `<div class="lever-item" style="background:var(--cream-2);font-weight:700"><div>Lever</div><div>Exp. reduction</div><div>Capex</div><div>Timing</div></div>`;
+  levers.forEach(l=>{
+    const score = state.levers[l.id] != null ? state.levers[l.id] : 2;
+    const row = document.createElement("div");
+    row.className="lever-item";
+    row.innerHTML = `<div><b>${l.name}</b>
+      <div class="scale" data-lever="${l.id}">
+        ${[0,1,2,3].map(i=>`<div class="scale-opt ${score===i?'selected':''}" data-v="${i}">${['Not pursuing','Exploring','Committed','Core pillar'][i]}</div>`).join("")}
+      </div></div>
+      <div>${l.exp}% of S1+2+3 gross</div>
+      <div>${l.capex}</div>
+      <div>${l.time}</div>`;
+    box.appendChild(row);
+    state.levers[l.id] = score;
+  });
+  box.querySelectorAll(".scale").forEach(sc=>{
+    sc.querySelectorAll(".scale-opt").forEach(opt=>{
+      opt.addEventListener("click", ()=>{
+        sc.querySelectorAll(".scale-opt").forEach(o=>o.classList.remove("selected"));
+        opt.classList.add("selected");
+        state.levers[sc.dataset.lever] = +opt.dataset.v;
+      });
+    });
+  });
+}
+function renderItems(box, items, key){
+  const el = document.getElementById(box);
+  el.innerHTML = "";
+  // Group by pillar where available
+  let currentPillar = null;
+  items.forEach(item=>{
+    if(item.pillar && item.pillar !== currentPillar){
+      const h = document.createElement("div");
+      h.className="pillar-hdr";
+      h.textContent = item.pillar;
+      el.appendChild(h);
+      currentPillar = item.pillar;
+    }
+    const score = state[key][item.code] != null ? state[key][item.code] : (item.score != null ? item.score : 1);
+    state[key][item.code] = score;
+    const d = document.createElement("div");
+    d.className="disclosure-item";
+    d.innerHTML = `<div>
+        <div><span class="code">${item.code}</span></div>
+        <div class="title">${item.title}</div>
+        <div class="desc">${item.desc}</div>
+      </div>
+      <div>
+        <div class="scale" data-k="${key}" data-c="${item.code}">
+          ${[0,1,2,3].map(i=>`<div class="scale-opt ${score===i?'selected':''}" data-v="${i}">${i}</div>`).join("")}
+        </div>
+        <div class="meta" style="margin-top:4px">0 absent · 1 narrative · 2 structured · 3 full + quantified</div>
+      </div>`;
+    el.appendChild(d);
+  });
+  el.querySelectorAll(".scale").forEach(sc=>{
+    sc.querySelectorAll(".scale-opt").forEach(opt=>{
+      opt.addEventListener("click", ()=>{
+        sc.querySelectorAll(".scale-opt").forEach(o=>o.classList.remove("selected"));
+        opt.classList.add("selected");
+        state[sc.dataset.k][sc.dataset.c] = +opt.dataset.v;
+      });
+    });
+  });
+}
+function renderIntensity(){
+  const s1 = +document.getElementById("s1_stat").value + +document.getElementById("s1_mob").value + +document.getElementById("s1_proc").value + +document.getElementById("s1_fug").value;
+  const s2loc = +document.getElementById("s2_loc").value;
+  const s2mkt = +document.getElementById("s2_mkt").value;
+  const s3 = SCOPE3_CATS.reduce((s,c)=>s + (+state.scope3[c.id]||0),0);
+  const rev = +document.getElementById("co_rev").value || 1;
+  const fte = +document.getElementById("co_fte").value || 1;
+  const total = s1+s2mkt+s3;
+  const box = document.getElementById("intensity_box");
+  box.innerHTML = `
+    <div class="kpi"><div class="val">${(total/1e6).toFixed(2)}M</div><div class="lbl">Total tCO₂e (S1+S2mkt+S3)</div></div>
+    <div class="kpi"><div class="val">${(s1/1e6).toFixed(2)}M</div><div class="lbl">Scope 1</div></div>
+    <div class="kpi"><div class="val">${(s2mkt/1e3).toFixed(0)}k</div><div class="lbl">Scope 2 (mkt)</div></div>
+    <div class="kpi"><div class="val">${(s3/1e6).toFixed(2)}M</div><div class="lbl">Scope 3 (${Math.round(s3/Math.max(total,1)*100)}%)</div></div>
+    <div class="kpi"><div class="val">${(total/rev).toFixed(0)}</div><div class="lbl">tCO₂e / m revenue</div></div>
+    <div class="kpi"><div class="val">${(total/fte).toFixed(1)}</div><div class="lbl">tCO₂e / FTE</div></div>
+    <div class="kpi"><div class="val">${(s2loc/1e3).toFixed(0)}k</div><div class="lbl">Scope 2 (loc)</div></div>
+    <div class="kpi"><div class="val">${((s2loc-s2mkt)/s2loc*100).toFixed(0)}%</div><div class="lbl">Instrument-based S2 reduction</div></div>
+  `;
+}
+function renderPathway(){
+  const sector = document.getElementById("co_sector").value;
+  const sd = SECTOR_DATA[sector];
+  const s1_2030 = +document.getElementById("nt_s12").value;
+  const s3_2030 = +document.getElementById("nt_s3").value;
+  const s3cov = +document.getElementById("nt_s3_cov").value;
+  const base = +document.getElementById("co_base").value;
+  const target = +document.getElementById("nt_year").value;
+  const expected = sd.s1_2030;
+  const delta = s1_2030 - expected;
+  const pathClass = delta >= 0 ? "ok" : delta >= -10 ? "warn" : "bad";
+  const pathStatus = delta >= 0 ? "At or above sector pathway" : delta >= -10 ? "Behind sector pathway" : "Materially below sector pathway";
+  const box = document.getElementById("pathway_box");
+  const yearsToTarget = target - base;
+  const reqAnnualCrossSector = (1 - Math.pow(1-0.042, yearsToTarget))*100;
+  box.innerHTML = `
+    <div class="card ${pathClass}">
+      <h4>${sd.label}</h4>
+      <table>
+        <tr><th>SBTi / sector pathway benchmark</th><td>${sd.s1_2030}% reduction by 2030 (1.5°C)</td></tr>
+        <tr><th>Your Scope 1+2 near-term target</th><td><b>${s1_2030}%</b></td></tr>
+        <tr><th>Delta vs pathway</th><td class="${delta>=0?'score-A':delta>=-10?'score-C':'score-E'}"><b>${delta>0?'+':''}${delta}%</b></td></tr>
+        <tr><th>Status</th><td>${pathStatus}</td></tr>
+        <tr><th>SBTi cross-sector minimum (absolute contraction)</th><td>${reqAnnualCrossSector.toFixed(1)}% reduction over ${yearsToTarget}y (4.2% p.a.)</td></tr>
+        <tr><th>Scope 3 coverage (SBTi ≥67% required)</th><td class="${s3cov>=67?'score-A':s3cov>=50?'score-C':'score-E'}"><b>${s3cov}%</b></td></tr>
+        <tr><th>Sector notes</th><td>${sd.notes}</td></tr>
+        <tr><th>Peer group</th><td>${sd.peers}</td></tr>
+      </table>
+    </div>
+    <div class="card info">
+      <h4>What the CA100+ Benchmark would say</h4>
+      <div>Under CA100+ NZ Benchmark 3.0, to qualify as <b>"aligned"</b> on Indicators 2-4 your plan needs:<br>
+      • Long-term ≥90% cut (you: ${document.getElementById("lt_pct").value}%) <b>${+document.getElementById("lt_pct").value>=90?'✅':'❌'}</b><br>
+      • Near-term aligned with sector 1.5°C pathway (you: ${s1_2030}% vs required ${sd.s1_2030}%) <b>${s1_2030>=sd.s1_2030?'✅':'❌'}</b><br>
+      • Scope 3 ≥67% coverage (you: ${s3cov}%) <b>${s3cov>=67?'✅':'❌'}</b><br>
+      • Scope 3 target depth aligned (you: ${s3_2030}%) — SBTi Scope 3 is engagement-first; ≥67% of Scope 3 by absolute or SBTi-approved intensity.</div>
+    </div>
+  `;
+}
+function renderCA100Snap(){
+  const sector = document.getElementById("co_sector").value;
+  const sd = SECTOR_DATA[sector];
+  const s1_2030 = +document.getElementById("nt_s12").value;
+  const s3cov = +document.getElementById("nt_s3_cov").value;
+  const lt_pct = +document.getElementById("lt_pct").value;
+  const nz = +document.getElementById("lt_nz").value;
+  const rows = [
+    {ind:"1. Ambition (NZ commitment)", aligned: nz<=2050, val:`Net zero ${nz}`},
+    {ind:"2. Long-term target coverage & depth", aligned: lt_pct>=90, val:`${lt_pct}% reduction`},
+    {ind:"3. Medium-term (2030 pathway)", aligned: s1_2030 >= sd.s1_2030, val:`${s1_2030}% vs pathway ${sd.s1_2030}%`},
+    {ind:"4. Scope 3 coverage", aligned: s3cov >= 67, val:`${s3cov}% covered`}
+  ];
+  const box = document.getElementById("ca100_box");
+  box.innerHTML = `<table><thead><tr><th>CA100+ Indicator</th><th>Your status</th><th>Aligned?</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.ind}</td><td>${r.val}</td><td>${r.aligned?'<span class="tag ok">Yes</span>':'<span class="tag bad">No</span>'}</td></tr>`).join("")}</tbody></table>`;
+}
+
+/* ---------- SCORING ---------- */
+function scoreMaturity(){
+  const mat = +document.getElementById("mat_ifrs").value + +document.getElementById("mat_sbti").value + +document.getElementById("mat_cdp").value;
+  return Math.round(mat/9*100);
+}
+function scoreFoundations(){
+  const s1 = +document.getElementById("nt_s12").value;
+  const s3cov = +document.getElementById("nt_s3_cov").value;
+  const lt = +document.getElementById("lt_pct").value;
+  const nz = +document.getElementById("lt_nz").value;
+  const sd = SECTOR_DATA[document.getElementById("co_sector").value];
+  const ambition = Math.min(100, (s1/sd.s1_2030)*60) + Math.min(20, (s3cov/67)*20) + (lt>=90?15:lt>=80?10:5) + (nz<=2050?5:0);
+  return Math.min(100, Math.round(ambition));
+}
+function scoreImplementation(){
+  // Average lever deployment intent × capex alignment
+  const vals = Object.values(state.levers);
+  const avgLever = vals.length ? vals.reduce((a,b)=>a+b,0)/(vals.length*3)*100 : 0;
+  const capex = +document.getElementById("cx_align").value;
+  const tax = +document.getElementById("cx_tax").value;
+  const resStrat = +document.getElementById("res_strategy").value;
+  return Math.round(0.55*avgLever + 0.2*capex + 0.15*(tax/3*100) + 0.10*(resStrat/3*100));
+}
+function scoreEngagement(){
+  const keys = ["en_sup3","en_cust2","en_cust3","en_ta1","en_ta2","en_ta3","jt1","jt2","jt3"];
+  const avg = keys.reduce((s,k)=>s + +document.getElementById(k).value, 0) / (keys.length*3) * 100;
+  const sup1 = +document.getElementById("en_sup1").value;
+  const sup2 = +document.getElementById("en_sup2").value;
+  const bonus = Math.min(100, (sup1/40*50) + (sup2/80*50));
+  return Math.round(0.7*avg + 0.3*bonus);
+}
+function scoreGovernance(){
+  const keys = ["gov_committee","gov_freq","gov_exec","gov_casc","gov_data","gov_icp","gov_scen","gov_fin"];
+  const avg = keys.reduce((s,k)=>s + +document.getElementById(k).value, 0) / (keys.length*3) * 100;
+  const ceo = +document.getElementById("gov_ceo").value;
+  const ceoScore = Math.min(20, ceo/25*20);
+  const exp = +document.getElementById("gov_exp").value;
+  const expScore = Math.min(10, exp/40*10);
+  return Math.round(0.7*avg + ceoScore + expScore);
+}
+function scoreDisclosure(){
+  const tptAvg = Object.values(state.tpt).reduce((a,b)=>a+b,0) / (TPT_ITEMS.length*3) * 100;
+  const ifrsAvg = Object.values(state.ifrs).reduce((a,b)=>a+b,0) / (IFRS_ITEMS.length*3) * 100;
+  const esrsAvg = Object.values(state.esrs).reduce((a,b)=>a+b,0) / (ESRS_ITEMS.length*3) * 100;
+  return {tpt:Math.round(tptAvg), ifrs:Math.round(ifrsAvg), esrs:Math.round(esrsAvg)};
+}
+function scoreCA100(){
+  return Math.round(Object.values(state.ca100).reduce((a,b)=>a+b,0) / (CA100_ITEMS.length*3) * 100);
+}
+function grade(score){
+  if(score>=80) return {g:"A",l:"Aligned — credible 1.5°C transition plan"};
+  if(score>=60) return {g:"B",l:"Advancing — plan in place, some gaps"};
+  if(score>=40) return {g:"C",l:"Developing — partial plan, material gaps"};
+  if(score>=20) return {g:"D",l:"Early — ambition but shallow execution"};
+  return {g:"E",l:"Absent / nascent — plan not credible"};
+}
+
+/* ---------- RESULTS ---------- */
+function renderResults(){
+  const f=scoreFoundations(), i=scoreImplementation(), e=scoreEngagement(), g=scoreGovernance();
+  const d=scoreDisclosure();
+  const ca=scoreCA100();
+  const overall = Math.round(0.20*f + 0.25*i + 0.15*e + 0.20*g + 0.10*d.tpt + 0.05*d.ifrs + 0.05*ca);
+  const gr = grade(overall);
+  const fg = grade(f), ig = grade(i), eg = grade(e), gg = grade(g), dg = grade(d.tpt);
+  const box = document.getElementById("results_summary");
+  box.innerHTML = `
+    <div class="kpi"><div class="val score-${gr.g}">${gr.g}</div><div class="lbl">${gr.l}</div></div>
+    <div class="kpi"><div class="val">${overall}</div><div class="lbl">Overall score / 100</div></div>
+    <div class="kpi"><div class="val">${ca}</div><div class="lbl">CA100+ NZ Benchmark readiness</div></div>
+    <div class="kpi"><div class="val">${d.tpt}</div><div class="lbl">TPT disclosure readiness</div></div>
+  `;
+  const pillars = [
+    {k:"Foundations (Ambition)", v:f, w:"20%", g:fg.g},
+    {k:"Implementation (Levers + capex)", v:i, w:"25%", g:ig.g},
+    {k:"Engagement (Value chain + policy + JT)", v:e, w:"15%", g:eg.g},
+    {k:"Governance (Board + incentives + risk)", v:g, w:"20%", g:gg.g},
+    {k:"TPT Disclosure readiness", v:d.tpt, w:"10%", g:dg.g},
+    {k:"IFRS S2 readiness", v:d.ifrs, w:"5%", g:grade(d.ifrs).g},
+    {k:"CA100+ NZ Benchmark 3.0", v:ca, w:"5%", g:grade(ca).g}
+  ];
+  const pb = document.getElementById("pillar_bars");
+  pb.innerHTML = pillars.map(p=>`<div style="margin-bottom:8px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><b>${p.k}</b><span class="tag score-${p.g}" style="background:var(--cream-2)">${p.v}/100 · Grade ${p.g} · weight ${p.w}</span></div>
+    <div class="bar"><span style="width:${p.v}%;${p.v>=80?'background:var(--ok)':p.v>=60?'background:var(--olive)':p.v>=40?'background:var(--ochre)':p.v>=20?'background:var(--warn)':'background:var(--bad)'}"></span></div>
+  </div>`).join("");
+  renderGaps(f,i,e,g,d,ca);
+  renderPeerBench();
+  renderNGFS();
+}
+function renderGaps(f,i,e,g,d,ca){
+  const box = document.getElementById("gap_list");
+  const gaps = [];
+  const sd = SECTOR_DATA[document.getElementById("co_sector").value];
+  const s1 = +document.getElementById("nt_s12").value;
+  const s3cov = +document.getElementById("nt_s3_cov").value;
+  if(s1 < sd.s1_2030) gaps.push({p:"P1", t:`Raise Scope 1+2 2030 target from ${s1}% to ≥${sd.s1_2030}%`, rationale:`Sector 1.5°C pathway requires ${sd.s1_2030}% cut by 2030. Currently ${sd.s1_2030-s1}pp short. This is CA100+ Indicator 3 and the single biggest credibility lever.`, owner:"CSO + Board Sustainability Cmte"});
+  if(s3cov < 67) gaps.push({p:"P1", t:`Expand Scope 3 target coverage from ${s3cov}% to ≥67%`, rationale:`SBTi Corporate Net-Zero Standard requires minimum 67% Scope 3 coverage where Scope 3 ≥40% of total. Review which S3 categories are excluded and justify or include.`, owner:"Head of Sustainability Reporting"});
+  if(d.tpt < 60) gaps.push({p:"P1", t:"Draft a TPT-aligned standalone transition plan document", rationale:"Current disclosures fragmented across AR, sustainability report and CDP. TPT expects a single, cohesive, board-approved document covering all 5 elements. UK listed: likely mandatory FY2026 or FY2027 reporting.", owner:"CSO + Group Secretary"});
+  if(i < 60) gaps.push({p:"P1", t:"Build bottom-up MACC (marginal abatement cost curve) for next 5-10y", rationale:`Implementation score ${i}/100 indicates lever strategy is not yet cost-prioritised or capital-tagged. MACC is table-stakes for TPT 2.4 (Financial planning).`, owner:"CFO + Head of Strategy"});
+  if(+document.getElementById("cx_align").value < 40) gaps.push({p:"P2", t:"Raise % transition-aligned capex above 40%", rationale:"Benchmark leaders (e.g. Ørsted, Schneider, Unilever) are at 50-70% capex aligned to transition. Below 40% signals capital allocation is still business-as-usual.", owner:"CFO + CapEx Committee"});
+  if(+document.getElementById("gov_ceo").value < 15) gaps.push({p:"P2", t:"Link ≥15% of CEO variable pay to climate KPIs", rationale:"CA100+ Indicator 8 and TPT 5.4 expect quantified, remuneration-level accountability. Below 15% is weak signalling.", owner:"RemCo Chair + Board Chair"});
+  if(+document.getElementById("en_sup1").value < 30) gaps.push({p:"P2", t:"Run supplier engagement programme — target ≥30% of Cat. 1 suppliers under SBTi targets by 2027", rationale:"Scope 3 delivery depends on supplier action. Leading programmes (HP, Microsoft, Unilever) require suppliers to set SBTi targets.", owner:"CPO + Head of Sustainable Procurement"});
+  if(+document.getElementById("en_ta1").value < 2) gaps.push({p:"P2", t:"Publish trade-association climate alignment review", rationale:"CA100+ Indicator 7 + InfluenceMap LobbyMap: leading companies publish an annual TA review with escalation/resignation policy. Opaque lobbying is now a reputational risk for listed companies.", owner:"Head of Public Affairs + Board"});
+  if(+document.getElementById("gov_scen").value < 2) gaps.push({p:"P2", t:"Run NGFS Phase IV scenario analysis with financial quantification", rationale:"IFRS S2 §22 mandates climate resilience assessment. Minimum: run Net Zero 2050, Delayed Transition and Current Policies, quantify financial exposure over 5/10/20y horizons.", owner:"Head of Risk + CFO"});
+  if(+document.getElementById("gov_icp").value < 2) gaps.push({p:"P3", t:"Apply shadow price of carbon to all capex > materiality threshold", rationale:"Internal carbon pricing is a key signal of strategy credibility. Suggested starting point: $75/tCO₂e rising to $130 by 2030 (IMF Carbon Price Floor proposals).", owner:"CFO + Strategy"});
+  if(+document.getElementById("jt1").value < 2) gaps.push({p:"P3", t:"Conduct just-transition workforce assessment (ILO Guidelines)", rationale:"CA100+ Indicator 9 and CSRD ESRS E1-4/S1. Required where transition involves material workforce change (especially cement/steel/coal/auto).", owner:"CHRO + CSO"});
+  if(+document.getElementById("res_strategy").value < 2) gaps.push({p:"P3", t:"Build a durable carbon removals (CDR) procurement plan", rationale:"Residuals at net zero require durable (>100y) removals — not avoidance credits. Set annual CDR budget and pilot offtake portfolio now while prices are depressed.", owner:"CSO + Treasury"});
+  const priority = {P1:1,P2:2,P3:3};
+  gaps.sort((a,b)=>priority[a.p]-priority[b.p]);
+  box.innerHTML = gaps.slice(0,10).map((x,i)=>`<div class="card ${x.p==='P1'?'bad':x.p==='P2'?'warn':'info'}">
+    <div><span class="tag ${x.p==='P1'?'bad':x.p==='P2'?'warn':'info'}">${x.p}</span> <b>#${i+1} — ${x.t}</b></div>
+    <div style="margin-top:6px;font-size:12.5px">${x.rationale}</div>
+    <div class="meta" style="margin-top:4px">Owner: ${x.owner}</div>
+  </div>`).join("");
+}
+function renderPeerBench(){
+  const sd = SECTOR_DATA[document.getElementById("co_sector").value];
+  const s1 = +document.getElementById("nt_s12").value;
+  const lt = +document.getElementById("lt_pct").value;
+  const cx = +document.getElementById("cx_align").value;
+  const box = document.getElementById("peer_bench");
+  box.innerHTML = `<div class="card">
+    <h4>${sd.label} — peer benchmarks (2025 cohort data from CA100+, CDP, TPI, SBTi)</h4>
+    <table>
+      <thead><tr><th>Indicator</th><th>Leader quartile</th><th>Median</th><th>Laggard quartile</th><th>You</th></tr></thead>
+      <tbody>
+        <tr><td>2030 S1+2 target (%)</td><td>${sd.s1_2030+5}%</td><td>${sd.s1_2030}%</td><td>${Math.max(0, sd.s1_2030-15)}%</td><td>${s1}%</td></tr>
+        <tr><td>NZ year</td><td>2040</td><td>2050</td><td>None</td><td>${document.getElementById("lt_nz").value}</td></tr>
+        <tr><td>Long-term % cut</td><td>95%</td><td>90%</td><td>70–80%</td><td>${lt}%</td></tr>
+        <tr><td>% capex transition-aligned</td><td>55%</td><td>30%</td><td>15%</td><td>${cx}%</td></tr>
+        <tr><td>CEO variable pay linked</td><td>20%</td><td>12%</td><td>0%</td><td>${document.getElementById("gov_ceo").value}%</td></tr>
+        <tr><td>Peer group</td><td colspan="4">${sd.peers}</td></tr>
+      </tbody>
+    </table>
+    <div class="meta" style="margin-top:6px">Sources: CA100+ NZ Company Benchmark 3.0 assessments (2023-24), CDP Climate 2024 A-list, TPI State of Transition 2024, SBTi Progress Report 2024. Sector leaders typically sit in top decile of all four indicators.</div>
+  </div>`;
+}
+function renderNGFS(){
+  const sector = document.getElementById("co_sector").value;
+  const box = document.getElementById("ngfs_box");
+  const scenarios = [
+    {n:"Net Zero 2050", t:"Orderly", cpi:"High + fast", phys:"Low", tr:"High near-term", fit: (sector==="oilgas"||sector==="cement"||sector==="steel") ? "High transition risk exposure" : "Opportunity to lead"},
+    {n:"Below 2°C", t:"Orderly", cpi:"Moderate", phys:"Moderate", tr:"Moderate", fit: "Moderate transition risk"},
+    {n:"Delayed Transition", t:"Disorderly", cpi:"Low then sudden", phys:"High", tr:"Very high (disorderly)", fit: "Stranded-asset &amp; carbon-price shock risk"},
+    {n:"Fragmented World", t:"Disorderly", cpi:"Divergent", phys:"High", tr:"High + trade risk", fit: "Supply-chain &amp; CBAM exposure critical"},
+    {n:"Current Policies", t:"Hot-house", cpi:"Low", phys:"Very high", tr:"Low near-term, severe long-term", fit: "Major physical risk exposure"},
+    {n:"Low Demand", t:"Orderly", cpi:"Moderate + demand reduction", phys:"Low", tr:"Demand contraction", fit: "Volume risk — esp. commodity sectors"}
+  ];
+  box.innerHTML = `<div class="card">
+    <h4>NGFS Phase IV scenarios — resilience considerations</h4>
+    <p class="meta">Phase IV scenarios published Nov 2024. Resilience scan below is qualitative; run your own financial-model overlay for IFRS S2 §22 compliance.</p>
+    <table>
+      <thead><tr><th>Scenario</th><th>Type</th><th>Carbon-price path</th><th>Physical risk</th><th>Transition risk</th><th>Your implication</th></tr></thead>
+      <tbody>${scenarios.map(s=>`<tr><td><b>${s.n}</b></td><td>${s.t}</td><td>${s.cpi}</td><td>${s.phys}</td><td>${s.tr}</td><td>${s.fit}</td></tr>`).join("")}</tbody>
+    </table>
+  </div>`;
+}
+
+/* ---------- PROMPT ---------- */
+function buildPrompt(){
+  const co = document.getElementById("co_name").value;
+  const sector = SECTOR_DATA[document.getElementById("co_sector").value].label;
+  const rev = document.getElementById("co_rev").value;
+  const ccy = document.getElementById("co_ccy").value;
+  const s1 = +document.getElementById("s1_stat").value + +document.getElementById("s1_mob").value + +document.getElementById("s1_proc").value + +document.getElementById("s1_fug").value;
+  const s2 = +document.getElementById("s2_mkt").value;
+  const s3 = SCOPE3_CATS.reduce((s,c)=>s + (+state.scope3[c.id]||0),0);
+  const nt_s12 = document.getElementById("nt_s12").value;
+  const nt_s3 = document.getElementById("nt_s3").value;
+  const nt_year = document.getElementById("nt_year").value;
+  const lt_nz = document.getElementById("lt_nz").value;
+  const lt_pct = document.getElementById("lt_pct").value;
+  const f=scoreFoundations(), i=scoreImplementation(), e=scoreEngagement(), g=scoreGovernance();
+  const d=scoreDisclosure();
+  const ca=scoreCA100();
+  const overall = Math.round(0.20*f + 0.25*i + 0.15*e + 0.20*g + 0.10*d.tpt + 0.05*d.ifrs + 0.05*ca);
+  const sd = SECTOR_DATA[document.getElementById("co_sector").value];
+  const prompt = `You are a senior climate transition strategist with 15+ years advising listed companies, DFIs and investors on 1.5°C-aligned transition plans. You know the TPT Disclosure Framework v1.0 (Oct 2023), IFRS S2 (June 2023), SBTi Corporate Net-Zero Standard, the Climate Action 100+ Net Zero Company Benchmark 3.0, EU CSRD ESRS E1, the NGFS Phase IV scenarios, and the IEA Net Zero Roadmap 2023. You write as a sparring partner to the CSO and CFO — candid, specific, and commercially grounded.
+
+CONTEXT
+— Company: ${co}
+— Sector: ${sector}
+— Reporting currency: ${ccy}
+— Revenue (latest FY): ${Number(rev).toLocaleString()}m
+— Latest inventory: Scope 1 ${(s1/1e6).toFixed(2)}M tCO₂e · Scope 2 (market) ${(s2/1e3).toFixed(0)}k tCO₂e · Scope 3 ${(s3/1e6).toFixed(2)}M tCO₂e (${Math.round(s3/(s1+s2+s3)*100)}% of total)
+— Near-term 2030 targets: Scope 1+2 −${nt_s12}%, Scope 3 −${nt_s3}% from ${document.getElementById("co_base").value} base year · Scope 3 coverage ${document.getElementById("nt_s3_cov").value}%
+— Long-term: Net-zero ${lt_nz} with ${lt_pct}% absolute reduction
+— Sector 1.5°C pathway requires ${sd.s1_2030}% by 2030 → delta vs your target: ${nt_s12-sd.s1_2030}pp
+— Overall credibility score: ${overall}/100 (Grade ${grade(overall).g})
+— Pillar breakdown — Foundations: ${f} · Implementation: ${i} · Engagement: ${e} · Governance: ${g} · TPT disclosure: ${d.tpt} · IFRS S2: ${d.ifrs} · CA100+ NZ Benchmark: ${ca}
+
+DELIVERABLES (please address in the order listed; write in UK English; cite your framework source in-line e.g. "TPT 2.4" or "CA100+ Indicator 5"):
+
+1) **Executive summary for the Board (≤300 words)** — Frame the transition-plan gap in commercial language. Lead with the three strongest credibility signals we already have, then the three largest gaps against TPT expectations. State what aligning with a sector 1.5°C pathway actually costs vs. doing nothing, using the sector MACC as your price anchor.
+
+2) **Draft Foundations disclosure (TPT Element 1 — Sub-elements 1.1, 1.2, 1.3)**. Write ~400 words in publishable form. Ambition must map to ${sd.s1_2030}% 2030 / ${lt_pct}% ${lt_nz}. Reference key macro dependencies the plan rests on — carbon price, grid decarbonisation rate, H2 availability, CCUS infrastructure, permitting timelines. Use the language of real transition plans (Holcim, Heidelberg, SSE etc.) not generic net-zero marketing.
+
+3) **Implementation Strategy roadmap (TPT 2.1-2.4)** as a 9-row table: Lever · Expected reduction (% Scope 1+2+3) · CapEx bucket · Opex implication · Timeline · Responsible exec · Dependencies · Risk if delayed. Use the MACC levers listed in our tool for ${sector} as the starting set; critique our scoring and recommend 2–3 levers we should add or remove.
+
+4) **Capex-allocation disclosure (TPT 2.4)** — propose a 5-year capital plan showing % alignment with transition, with a bridge from today's ${document.getElementById("cx_align").value}% to ≥50% by ${+document.getElementById("co_latest").value+5}. Split into (a) transition CapEx (ie new low-carbon assets), (b) maintenance CapEx on assets aligned with 1.5°C, (c) "locked-in" high-emission assets remaining — with impairment/write-down policy commentary for CSRD ESRS E1-1.
+
+5) **Value-chain engagement memo (TPT 3.1)** — 6 concrete upstream actions (supplier programme design, SBTi requirement, contract clauses, volume discount on engagement, co-investment fund, data-exchange protocol) and 4 downstream actions (product PCF labelling, customer transition services, portfolio re-weighting, use-phase design), each with a target metric and timeline.
+
+6) **Policy & industry engagement statement (TPT 3.2-3.3 + CA100+ Indicator 7)** — draft a public-facing statement covering our 1.5°C policy positions, our trade-association climate-alignment review process, escalation protocol, and examples of where we have taken public positions diverging from TA's we belong to. Keep it credible and LobbyMap-testable.
+
+7) **Board governance redesign (TPT Element 5)** — a 10-point recommendation set covering: committee structure, climate-competency matrix for board, frequency of review, role of CEO vs CSO vs CFO, RemCo KPI cascade, internal audit scope, link to Code of Ethics, stakeholder engagement line-of-sight, adoption of TPT-aligned single disclosure, transition-plan refresh cadence. Benchmark against 3 named peers in our sector.
+
+8) **NGFS Phase IV scenario quantification plan** — which 3 scenarios we should run, which lines of the P&L / BS each scenario stresses, what physical-risk asset list we should prioritise, and what 3 management actions fall out under each scenario. Map explicitly to IFRS S2 §22 climate resilience requirement.
+
+9) **12-month TPT gap-closure workplan** — month-by-month sequenced table (Month · Workstream · Output · Owner · Evidence line) to lift our overall score from ${overall}/100 to ≥70/100 within the next reporting cycle. Prioritise the P1 items from our gap list; identify dependencies and long-lead items.
+
+10) **Investor Q&A pack** — 10 questions a sophisticated ESG-integrated investor (e.g. analyst at a CA100+ signatory, Article 9 SFDR fund, TPT pilot-programme investor) would ask about our plan, with candid answer scripts ≤100 words each. Stress-test ambition, capex, scope 3, offset reliance, just transition, cost of delay, regulation readiness, governance, peer positioning, and the "what would make you change the plan" question.
+
+TONE & CONSTRAINTS
+— UK English spelling; decimal points; "tCO₂e"; write dates as "by 2030".
+— Cite specific framework codes (TPT 2.4, CA100+ I5, IFRS S2 §22, ESRS E1-4) inline.
+— Never claim 1.5°C-alignment if our numbers don't support it — say "not yet aligned; aligning requires X".
+— Avoid generic net-zero marketing; everything must be specific enough to be testable by a senior investor.
+— Flag assumptions when you make them. Offer a red-team view at the end of each section.`;
+  document.getElementById("prompt_out").textContent = prompt;
+}
+function copyPrompt(){
+  navigator.clipboard.writeText(document.getElementById("prompt_out").textContent);
+  alert("Prompt copied to clipboard");
+}
+
+/* ---------- EXPORT ---------- */
+function exportCSV(){
+  const co = document.getElementById("co_name").value;
+  const sec = document.getElementById("co_sector").value;
+  const sd = SECTOR_DATA[sec];
+  const f=scoreFoundations(), i=scoreImplementation(), e=scoreEngagement(), g=scoreGovernance();
+  const d=scoreDisclosure(); const ca=scoreCA100();
+  const overall = Math.round(0.20*f + 0.25*i + 0.15*e + 0.20*g + 0.10*d.tpt + 0.05*d.ifrs + 0.05*ca);
+  const s1 = +document.getElementById("s1_stat").value + +document.getElementById("s1_mob").value + +document.getElementById("s1_proc").value + +document.getElementById("s1_fug").value;
+  const s2 = +document.getElementById("s2_mkt").value;
+  const s3 = SCOPE3_CATS.reduce((sum,c)=>sum + (+state.scope3[c.id]||0),0);
+  const rows = [];
+  rows.push(["CLIMATE TRANSITION PLAN BUILDER — MEMO"]);
+  rows.push(["Company", co]); rows.push(["Sector", sd.label]);
+  rows.push(["Reporting year", document.getElementById("co_latest").value]);
+  rows.push(["Revenue (m)", document.getElementById("co_rev").value, document.getElementById("co_ccy").value]);
+  rows.push([]);
+  rows.push(["=== CREDIBILITY SCORECARD ==="]);
+  rows.push(["Overall score /100", overall, "Grade "+grade(overall).g]);
+  rows.push(["Foundations (ambition)", f]);
+  rows.push(["Implementation (levers + capex)", i]);
+  rows.push(["Engagement (value chain + policy + JT)", e]);
+  rows.push(["Governance", g]);
+  rows.push(["TPT disclosure", d.tpt]);
+  rows.push(["IFRS S2 disclosure", d.ifrs]);
+  rows.push(["ESRS E1 disclosure", d.esrs]);
+  rows.push(["CA100+ NZ Benchmark 3.0", ca]);
+  rows.push([]);
+  rows.push(["=== GHG INVENTORY ==="]);
+  rows.push(["Scope 1 (tCO2e)", s1]);
+  rows.push(["Scope 2 market (tCO2e)", s2]);
+  rows.push(["Scope 2 location (tCO2e)", document.getElementById("s2_loc").value]);
+  rows.push(["Scope 3 total (tCO2e)", s3]);
+  rows.push(["Scope 3 share of total", (s3/(s1+s2+s3)*100).toFixed(0)+"%"]);
+  rows.push([]);
+  rows.push(["=== SCOPE 3 BY CATEGORY ==="]);
+  rows.push(["#","Category","tCO2e","Materiality for sector"]);
+  SCOPE3_CATS.forEach(c=>rows.push([c.id,c.name,state.scope3[c.id]||0, c.materiality[sec]||"L"]));
+  rows.push([]);
+  rows.push(["=== AMBITION vs SECTOR PATHWAY ==="]);
+  rows.push(["Near-term year", document.getElementById("nt_year").value]);
+  rows.push(["Scope 1+2 target (%)", document.getElementById("nt_s12").value, "vs pathway "+sd.s1_2030+"%"]);
+  rows.push(["Scope 3 target (%)", document.getElementById("nt_s3").value]);
+  rows.push(["Scope 3 coverage (%)", document.getElementById("nt_s3_cov").value, "vs SBTi min 67%"]);
+  rows.push(["Net-zero year", document.getElementById("lt_nz").value]);
+  rows.push(["Long-term % cut", document.getElementById("lt_pct").value]);
+  rows.push([]);
+  rows.push(["=== ABATEMENT LEVERS — DEPLOYMENT INTENT ==="]);
+  const levers = LEVER_LIB[sec] || LEVER_LIB._default;
+  levers.forEach(l=>rows.push([l.name, "Intent: "+(state.levers[l.id]||0)+"/3", l.exp+"%", l.capex, l.time]));
+  rows.push([]);
+  rows.push(["=== TPT DISCLOSURE SCORECARD ==="]);
+  TPT_ITEMS.forEach(t=>rows.push([t.code, t.title, (state.tpt[t.code]||0)+"/3"]));
+  rows.push([]);
+  rows.push(["=== IFRS S2 DISCLOSURE SCORECARD ==="]);
+  IFRS_ITEMS.forEach(t=>rows.push([t.code, t.title, (state.ifrs[t.code]||0)+"/3"]));
+  rows.push([]);
+  rows.push(["=== ESRS E1 DISCLOSURE SCORECARD ==="]);
+  ESRS_ITEMS.forEach(t=>rows.push([t.code, t.title, (state.esrs[t.code]||0)+"/3"]));
+  rows.push([]);
+  rows.push(["=== CA100+ NZ BENCHMARK 3.0 ==="]);
+  CA100_ITEMS.forEach(t=>rows.push([t.code, t.title, (state.ca100[t.code]||0)+"/3"]));
+  rows.push([]);
+  rows.push(["=== PERSONALISED CLAUDE PROMPT ==="]);
+  buildPrompt();
+  const prompt = document.getElementById("prompt_out").textContent.split("\n");
+  prompt.forEach(l=>rows.push([l]));
+  const csv = rows.map(r=>r.map(c=>`"${String(c||"").replace(/"/g,'""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href=url; a.download=(co.replace(/[^\w]/g,"_")||"transition")+"-transition-plan-memo.csv"; a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------- EXAMPLES ---------- */
+function loadExample(k){
+  const ex = EXAMPLES[k]; if(!ex) return;
+  Object.entries(ex).forEach(([id,v])=>{
+    const el = document.getElementById(id);
+    if(el){ el.value = v; }
+  });
+  // reset scope3 so defaults kick in for new sector
+  state.scope3 = {};
+  state.levers = {};
+  initScope3();
+  initLevers();
+  compute();
+}
+
+/* ---------- MAIN ---------- */
+function compute(){
+  initScope3(); // refresh if sector changed
+  initLevers();
+  renderIntensity();
+  renderPathway();
+  renderCA100Snap();
+  renderItems("tpt_box", TPT_ITEMS, "tpt");
+  renderItems("ifrs_box", IFRS_ITEMS, "ifrs");
+  renderItems("esrs_box", ESRS_ITEMS, "esrs");
+  renderItems("ca100b_box", CA100_ITEMS, "ca100");
+  renderResults();
+  buildPrompt();
+}
+
+/* ---------- TABS ---------- */
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    document.getElementById("panel-"+t.dataset.tab).classList.add("active");
+    if(t.dataset.tab==="results") renderResults();
+    if(t.dataset.tab==="prompt") buildPrompt();
+    if(t.dataset.tab==="inventory") renderIntensity();
+    if(t.dataset.tab==="ambition") { renderPathway(); renderCA100Snap(); }
+  });
+});
+// Auto-recompute when key fields change
+["co_sector","co_rev","co_fte","co_base","co_latest","nt_s12","nt_s3","nt_year","nt_s3_cov","lt_nz","lt_pct","s1_stat","s1_mob","s1_proc","s1_fug","s2_loc","s2_mkt","cx_base","cx_align","gov_ceo","gov_exp","gov_train"].forEach(id=>{
+  const el = document.getElementById(id);
+  if(el) el.addEventListener("change", ()=>{ if(id==="co_sector"){state.scope3={};state.levers={};} compute(); });
+});
+
+/* ---------- INIT ---------- */
+compute();
+</script>
+</body>
+</html>
