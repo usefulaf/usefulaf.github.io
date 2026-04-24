@@ -1,1982 +1,1141 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SROI Pro Calculator</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #f5f7fa;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background: linear-gradient(135deg, #1a2730 0%, #1a6b6b 100%);
-            color: white;
-            padding: 40px 20px;
-            margin: -20px -20px 40px -20px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 32px;
-            margin-bottom: 5px;
-        }
-
-        header p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-
-        .progress-bar {
-            background: white;
-            height: 4px;
-            margin: 30px 0;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: #2d7d46;
-            height: 100%;
-            transition: width 0.3s;
-        }
-
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-            padding: 0 10px;
-        }
-
-        .step-indicator .step {
-            text-align: center;
-            font-size: 12px;
-            color: #999;
-            flex: 1;
-        }
-
-        .step-indicator .step.active {
-            color: #2d7d46;
-            font-weight: 600;
-        }
-
-        .step-indicator .step.active::before {
-            content: '';
-            display: block;
-            width: 24px;
-            height: 24px;
-            background: #2d7d46;
-            color: white;
-            border-radius: 50%;
-            margin: 0 auto 5px;
-            font-size: 12px;
-            line-height: 24px;
-        }
-
-        .step-content {
-            display: none;
-            animation: fadeIn 0.3s;
-        }
-
-        .step-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #1a2730;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #2d7d46;
-            box-shadow: 0 0 0 3px rgba(45, 125, 70, 0.1);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .guidance {
-            background: #f0f8f6;
-            padding: 12px;
-            border-left: 4px solid #1a6b6b;
-            margin-top: 8px;
-            font-size: 13px;
-            color: #333;
-            border-radius: 4px;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 40px;
-        }
-
-        button {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: #2d7d46;
-            color: white;
-            flex: 1;
-        }
-
-        .btn-primary:hover {
-            background: #235a34;
-        }
-
-        .btn-secondary {
-            background: #eee;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #ddd;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-            padding: 8px 16px;
-            font-size: 12px;
-        }
-
-        .btn-add {
-            background: #1a6b6b;
-            color: white;
-            width: 100%;
-            margin-top: 20px;
-        }
-
-        .btn-add:hover {
-            background: #145555;
-        }
-
-        .outcome-card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-            border-left: 4px solid #b8860b;
-        }
-
-        .outcome-card h3 {
-            margin-bottom: 15px;
-            color: #1a2730;
-            font-size: 16px;
-        }
-
-        .outcome-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .outcome-grid .form-group {
-            margin-bottom: 0;
-        }
-
-        .outcome-value {
-            background: #f0f8f6;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 15px;
-            border-left: 4px solid #2d7d46;
-        }
-
-        .outcome-value strong {
-            color: #2d7d46;
-        }
-
-        .outcome-delete {
-            margin-top: 15px;
-        }
-
-        .proxy-search {
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .proxy-options {
-            background: white;
-            border: 1px solid #ddd;
-            border-top: none;
-            max-height: 250px;
-            overflow-y: auto;
-            border-radius: 0 0 6px 6px;
-        }
-
-        .proxy-option {
-            padding: 12px;
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-            font-size: 13px;
-        }
-
-        .proxy-option:hover {
-            background: #f9f9f9;
-        }
-
-        .proxy-option strong {
-            display: block;
-            color: #2d7d46;
-        }
-
-        .proxy-option small {
-            display: block;
-            color: #999;
-            margin-top: 2px;
-        }
-
-        .results-section {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .sroi-ratio {
-            background: linear-gradient(135deg, #1a2730 0%, #1a6b6b 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .sroi-ratio .label {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        .sroi-ratio .value {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .sroi-ratio .context {
-            font-size: 13px;
-            opacity: 0.85;
-        }
-
-        .breakdown-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-        }
-
-        .breakdown-table th {
-            background: #f5f7fa;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            color: #1a2730;
-            border-bottom: 2px solid #ddd;
-        }
-
-        .breakdown-table td {
-            padding: 12px;
-            border-bottom: 1px solid #eee;
-            font-size: 13px;
-        }
-
-        .bar-chart {
-            margin-bottom: 30px;
-        }
-
-        .bar-item {
-            margin-bottom: 20px;
-        }
-
-        .bar-label {
-            font-size: 13px;
-            margin-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .bar-label strong {
-            color: #1a2730;
-        }
-
-        .bar-label span {
-            color: #2d7d46;
-            font-weight: 600;
-        }
-
-        .bar-container {
-            background: #f0f0f0;
-            height: 24px;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .bar-fill {
-            background: linear-gradient(90deg, #2d7d46 0%, #1a6b6b 100%);
-            height: 100%;
-            border-radius: 12px;
-            transition: width 0.3s;
-        }
-
-        .sensitivity-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-
-        .sensitivity-table th {
-            background: #f5f7fa;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 12px;
-            color: #1a2730;
-        }
-
-        .sensitivity-table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #eee;
-            font-size: 12px;
-        }
-
-        .sensitivity-table .scenario-down {
-            color: #dc3545;
-        }
-
-        .sensitivity-table .scenario-base {
-            color: #2d7d46;
-            font-weight: 600;
-        }
-
-        .sensitivity-table .scenario-up {
-            color: #1a6b6b;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1a2730;
-            margin-bottom: 20px;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-
-        .section-title:first-child {
-            margin-top: 0;
-            border-top: none;
-            padding-top: 0;
-        }
-
-        .assumptions-list {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 6px;
-            font-size: 13px;
-            line-height: 1.8;
-        }
-
-        .assumptions-list li {
-            margin-bottom: 10px;
-            list-style: none;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .assumptions-list li:before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: #2d7d46;
-        }
-
-        .export-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .export-buttons button {
-            flex: 1;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid #dc3545;
-        }
-
-        .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid #28a745;
-        }
-
-        /* ===== QUICK SROI WIZARD STYLES ===== */
-        .mode-picker {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .mode-card {
-            background: white;
-            border: 2px solid #e5e5e5;
-            border-radius: 12px;
-            padding: 28px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: left;
-        }
-
-        .mode-card:hover {
-            border-color: #1a6b6b;
-            box-shadow: 0 6px 16px rgba(26, 107, 107, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .mode-card .mode-icon {
-            font-size: 32px;
-            margin-bottom: 12px;
-        }
-
-        .mode-card h3 {
-            font-size: 20px;
-            color: #1a2730;
-            margin-bottom: 8px;
-        }
-
-        .mode-card .mode-time {
-            display: inline-block;
-            background: #f0f8f6;
-            color: #1a6b6b;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .mode-card p {
-            color: #666;
-            font-size: 13px;
-            line-height: 1.5;
-            margin-bottom: 14px;
-        }
-
-        .mode-card ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .mode-card ul li {
-            font-size: 12px;
-            color: #555;
-            padding-left: 18px;
-            position: relative;
-            margin-bottom: 6px;
-        }
-
-        .mode-card ul li:before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #2d7d46;
-            font-weight: 700;
-        }
-
-        .template-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 16px;
-            margin-bottom: 25px;
-        }
-
-        .template-card {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .template-card:hover {
-            border-color: #2d7d46;
-            box-shadow: 0 4px 12px rgba(45, 125, 70, 0.12);
-        }
-
-        .template-card .template-icon {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .template-card h4 {
-            font-size: 15px;
-            color: #1a2730;
-            margin-bottom: 6px;
-        }
-
-        .template-card .template-desc {
-            font-size: 12px;
-            color: #666;
-            line-height: 1.5;
-            margin-bottom: 10px;
-            min-height: 36px;
-        }
-
-        .template-card .template-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-top: 10px;
-        }
-
-        .template-tag {
-            background: #f5f7fa;
-            color: #555;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: 500;
-        }
-
-        .template-tag.primary {
-            background: #f0f8f6;
-            color: #1a6b6b;
-        }
-
-        .quick-summary {
-            background: linear-gradient(135deg, #f0f8f6 0%, #e8f1ef 100%);
-            padding: 20px;
-            border-radius: 10px;
-            border-left: 4px solid #1a6b6b;
-            margin-bottom: 25px;
-        }
-
-        .quick-summary h4 {
-            color: #1a2730;
-            margin-bottom: 8px;
-            font-size: 15px;
-        }
-
-        .quick-summary p {
-            font-size: 13px;
-            color: #555;
-            line-height: 1.5;
-        }
-
-        .quick-outcome-row {
-            background: white;
-            border: 1px solid #e5e5e5;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 10px;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .quick-outcome-name {
-            font-size: 13px;
-            color: #1a2730;
-            font-weight: 500;
-        }
-
-        .quick-outcome-name small {
-            display: block;
-            color: #888;
-            font-weight: 400;
-            margin-top: 2px;
-            font-size: 11px;
-        }
-
-        .quick-outcome-input {
-            width: 110px;
-        }
-
-        .quick-outcome-input input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 13px;
-            text-align: right;
-        }
-
-        .btn-back-mode {
-            background: none;
-            color: #1a6b6b;
-            border: none;
-            padding: 8px 0;
-            font-size: 13px;
-            cursor: pointer;
-            margin-bottom: 15px;
-        }
-
-        .btn-back-mode:hover {
-            text-decoration: underline;
-        }
-
-        .mode-badge {
-            display: inline-block;
-            background: #b8860b;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-
-        @media (max-width: 768px) {
-            .input-row, .outcome-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .mode-picker {
-                grid-template-columns: 1fr;
-            }
-
-            .template-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .sroi-ratio .value {
-                font-size: 36px;
-            }
-
-            header h1 {
-                font-size: 24px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EU Taxonomy Alignment Calculator — Useful AF</title>
+<meta name="description" content="Screen economic activities against the EU Taxonomy (Regulation 2020/852), assess Substantial Contribution, DNSH, and Minimum Safeguards, and compute Turnover, CapEx and OpEx alignment ratios for Article 8 Delegated Act reporting.">
+<style>
+:root{
+  --cream:#FAF5EB; --ink:#1C1A17; --ink-soft:#403C35; --coral:#E15A4C; --coral-soft:#F7DAD5;
+  --ochre:#D9A441; --ochre-soft:#F4E3BF; --moss:#5E7248; --moss-soft:#D9E2CD;
+  --stone:#E8E1D1; --stone-dark:#CDC4B0; --shadow:0 1px 0 rgba(0,0,0,.04),0 4px 18px rgba(28,26,23,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Arial,sans-serif;line-height:1.55;font-size:15px}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 64px}
+header.head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:0 0 18px;border-bottom:2px solid var(--ink);margin-bottom:22px}
+header.head h1{margin:0 0 4px;font-size:26px;letter-spacing:-.01em;font-weight:800}
+header.head .sub{color:var(--ink-soft);font-size:13.5px;max-width:820px}
+.brand{font-weight:800;letter-spacing:.02em}
+.brand .a{color:var(--coral)}.brand .b{color:var(--ochre)}
+.pill{display:inline-block;padding:3px 9px;border-radius:999px;background:var(--ochre-soft);color:var(--ink);font-size:11.5px;font-weight:600;margin-left:6px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}
+.tabs button{border:1.5px solid var(--stone-dark);background:#fff;color:var(--ink);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:600}
+.tabs button.active{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.tabs button:hover:not(.active){background:var(--stone)}
+section.pane{display:none;background:#fff;border:1px solid var(--stone-dark);border-radius:14px;padding:22px;box-shadow:var(--shadow)}
+section.pane.active{display:block}
+h2{margin:0 0 10px;font-size:18px;font-weight:800}
+h3{margin:18px 0 8px;font-size:15.5px;font-weight:700;color:var(--ink)}
+h4{margin:12px 0 6px;font-size:13.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft)}
+p{margin:6px 0 10px}
+.muted{color:var(--ink-soft);font-size:13px}
+.grid{display:grid;gap:14px}
+.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:760px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em}
+input[type=text],input[type=number],select,textarea{width:100%;padding:8px 10px;border:1.4px solid var(--stone-dark);border-radius:7px;background:var(--cream);font-size:14px;font-family:inherit;color:var(--ink)}
+textarea{min-height:80px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--coral)}
+button.btn{background:var(--ink);color:var(--cream);border:0;padding:9px 16px;border-radius:7px;cursor:pointer;font-weight:700;font-size:13.5px}
+button.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+button.btn.coral{background:var(--coral);color:#fff}
+button.btn.ochre{background:var(--ochre);color:var(--ink)}
+button.btn:hover{opacity:.9}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0}
+.card{background:var(--cream);border:1px solid var(--stone-dark);border-radius:10px;padding:14px;margin:10px 0}
+.card.tight{padding:10px 12px}
+.card.ok{border-color:var(--moss);background:var(--moss-soft)}
+.card.warn{border-color:var(--ochre);background:var(--ochre-soft)}
+.card.bad{border-color:var(--coral);background:var(--coral-soft)}
+.kpi{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:10px 0 16px}
+.kpi .k{background:var(--cream);border:1px solid var(--stone-dark);border-radius:10px;padding:10px 12px}
+.kpi .k .n{font-size:22px;font-weight:800}
+.kpi .k .t{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em}
+.kpi .k .sub{font-size:12px;color:var(--ink-soft)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:7px 8px;text-align:left;border-bottom:1px solid var(--stone-dark);vertical-align:top}
+th{background:var(--stone);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.03em}
+tr:hover td{background:var(--stone)}
+.tag{display:inline-block;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.02em}
+.tag.ok{background:var(--moss-soft);color:#2f4421}
+.tag.warn{background:var(--ochre-soft);color:#6b4b12}
+.tag.bad{background:var(--coral-soft);color:#8a2e24}
+.tag.neut{background:var(--stone);color:var(--ink-soft)}
+.tag.info{background:#e0e8ef;color:#264559}
+.hint{font-size:12px;color:var(--ink-soft);margin-top:4px;font-style:italic}
+.divider{height:1px;background:var(--stone-dark);margin:16px 0}
+details{background:var(--cream);border:1px solid var(--stone-dark);border-radius:8px;padding:8px 12px;margin:6px 0}
+summary{cursor:pointer;font-weight:600;font-size:13px;color:var(--ink)}
+.score-hero{display:grid;grid-template-columns:200px 1fr;gap:16px;align-items:center}
+@media(max-width:720px){.score-hero{grid-template-columns:1fr}}
+.score-hero .big{font-size:64px;font-weight:900;line-height:1;letter-spacing:-.02em}
+.score-hero .grade{font-size:20px;font-weight:700;color:var(--ink-soft)}
+.bar{height:10px;background:var(--stone);border-radius:999px;overflow:hidden;margin:6px 0 2px}
+.bar>span{display:block;height:100%;background:var(--moss);border-radius:999px}
+.bar>span.low{background:var(--coral)}
+.bar>span.mid{background:var(--ochre)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11.5px;margin:6px 0 0}
+.legend span{display:inline-flex;align-items:center;gap:4px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.foot{font-size:11.5px;color:var(--ink-soft);margin-top:20px;border-top:1px solid var(--stone-dark);padding-top:12px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.alist{margin:8px 0 10px;padding:0;list-style:none}
+.alist li{padding:6px 10px;border:1px solid var(--stone-dark);border-radius:8px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;background:var(--cream)}
+.alist li.p1{border-left:4px solid var(--coral)}
+.alist li.p2{border-left:4px solid var(--ochre)}
+.alist li.p3{border-left:4px solid var(--moss)}
+.alist li.p1 .pri{color:var(--coral)}.alist li.p2 .pri{color:#8a5f14}.alist li.p3 .pri{color:#3d5430}
+.pri{font-weight:800;font-size:11px;letter-spacing:.05em;text-transform:uppercase;min-width:28px}
+.note{background:#F6EFD9;border:1px dashed var(--ochre);border-radius:8px;padding:10px 12px;font-size:12.5px;color:var(--ink)}
+.seg{display:inline-flex;border:1.5px solid var(--stone-dark);border-radius:999px;overflow:hidden}
+.seg button{background:#fff;border:0;padding:5px 11px;font-size:12px;cursor:pointer;font-weight:600;color:var(--ink-soft)}
+.seg button.on{background:var(--ink);color:var(--cream)}
+.small{font-size:12px}
+.checklist label{display:flex;align-items:flex-start;gap:8px;padding:4px 0;font-size:13px;color:var(--ink);text-transform:none;font-weight:500;letter-spacing:0;margin:0}
+.checklist input[type=checkbox]{margin-top:3px;width:auto}
+.citation{font-size:11px;color:var(--ink-soft);font-style:italic}
+textarea.prompt{min-height:240px;font-family:ui-monospace,"SFMono-Regular",Menlo,monospace;font-size:12.5px;line-height:1.55;background:#FFFDF6}
+.badge-obj{padding:2px 6px;border-radius:4px;font-size:10.5px;font-weight:700;letter-spacing:.04em}
+.b-ccm{background:#FDE5E1;color:#8a2e24}.b-cca{background:#FCE9CD;color:#7a4d10}
+.b-wtr{background:#D8E8EF;color:#1e4f66}.b-ce{background:#E5EED8;color:#3d5430}
+.b-ppc{background:#E6D9EC;color:#4d2868}.b-bio{background:#D6EBDC;color:#1f5a37}
+.matrix{overflow:auto}
+.matrix table th:first-child,.matrix table td:first-child{text-align:left;max-width:260px}
+.matrix td.c-y{background:var(--moss-soft);text-align:center;font-weight:700}
+.matrix td.c-n{background:var(--coral-soft);text-align:center;font-weight:700}
+.matrix td.c-na{background:var(--stone);text-align:center;color:var(--ink-soft)}
+.matrix td.c-e{background:#D8E8EF;text-align:center;font-weight:700;color:#1e4f66}
+.kpiwide{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+@media(max-width:900px){.kpiwide{grid-template-columns:repeat(2,1fr)}}
+.kpiwide .c{background:var(--cream);border:1px solid var(--stone-dark);border-radius:10px;padding:9px}
+.kpiwide .c .v{font-size:18px;font-weight:800}
+.kpiwide .c .l{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em}
+@media print{.tabs,.toolbar,button{display:none!important}section.pane{display:block!important;box-shadow:none;border:0;page-break-inside:avoid}header.head{border-bottom:2px solid #000}body{background:#fff}}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>SROI Pro Calculator</h1>
-            <p>Social Return on Investment Calculator for Impact Practitioners</p>
-        </header>
+<div class="wrap">
+<header class="head">
+  <div>
+    <h1>EU Taxonomy Alignment Calculator <span class="pill">Regulation 2020/852</span></h1>
+    <div class="sub">Screen economic activities against the EU Taxonomy &mdash; Substantial Contribution (TSC), Do No Significant Harm (DNSH) and Minimum Safeguards &mdash; and compute Turnover, CapEx and OpEx alignment ratios for Article 8 Delegated Act reporting. Embeds the Climate Delegated Act (2021/2139) as amended, the Environmental Delegated Act (2023/2486), the Article 8 Disclosures Delegated Act (2021/2178), the Complementary Climate Delegated Act (2022/1214), and the Platform on Sustainable Finance&rsquo;s Minimum Safeguards recommendations (Oct 2022).</div>
+  </div>
+  <div class="brand">Useful<span class="a">AF</span></div>
+</header>
 
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
+<div class="toolbar">
+  <button class="btn coral" onclick="loadExample('apparel')">Load: Apparel Manufacturer (EU)</button>
+  <button class="btn ochre" onclick="loadExample('utility')">Load: European Power Utility</button>
+  <button class="btn ghost" onclick="loadExample('realestate')">Load: Real Estate Fund</button>
+  <button class="btn ghost" onclick="resetAll()">Reset</button>
+  <button class="btn" onclick="exportCSV()">Export CSV Memo</button>
+  <button class="btn ghost" onclick="window.print()">Print / PDF</button>
+</div>
 
-        <div class="step-indicator" id="stepIndicator">
-            <div class="step active" data-step="0">Choose Mode</div>
-            <div class="step" data-step="1">Project Setup</div>
-            <div class="step" data-step="2">Outcomes</div>
-            <div class="step" data-step="3">Results</div>
-            <div class="step" data-step="4">Report</div>
-        </div>
+<div class="tabs" id="tabs">
+  <button data-tab="setup" class="active" onclick="showTab('setup')">1. Setup</button>
+  <button data-tab="activities" onclick="showTab('activities')">2. Activities</button>
+  <button data-tab="sc" onclick="showTab('sc')">3. Substantial Contribution</button>
+  <button data-tab="dnsh" onclick="showTab('dnsh')">4. DNSH</button>
+  <button data-tab="safeguards" onclick="showTab('safeguards')">5. Minimum Safeguards</button>
+  <button data-tab="kpis" onclick="showTab('kpis')">6. KPI Ratios</button>
+  <button data-tab="disclosure" onclick="showTab('disclosure')">7. Disclosure</button>
+  <button data-tab="results" onclick="showTab('results')">8. Results &amp; Actions</button>
+  <button data-tab="prompt" onclick="showTab('prompt')">9. Claude Prompt</button>
+</div>
 
-        <!-- STEP 0: MODE PICKER -->
-        <div class="step-content active" id="step0">
-            <h2 style="color: #1a2730; margin-bottom: 8px; font-size: 22px;">How would you like to start?</h2>
-            <p style="color: #666; margin-bottom: 25px; font-size: 14px;">Choose the path that fits your experience and available time.</p>
-
-            <div class="mode-picker">
-                <div class="mode-card" onclick="selectMode('quick')">
-                    <div class="mode-icon">⚡</div>
-                    <span class="mode-time">≈ 5 minutes</span>
-                    <h3>Quick SROI Wizard</h3>
-                    <p>Pick a sector template. We pre-fill proxy values, deadweight, attribution &amp; duration from SROI literature. You just add your investment and beneficiary counts.</p>
-                    <ul>
-                        <li>12 pre-built sector templates</li>
-                        <li>Peer-reviewed proxy values included</li>
-                        <li>Best for non-specialists &amp; first analyses</li>
-                    </ul>
-                </div>
-
-                <div class="mode-card" onclick="selectMode('pro')">
-                    <div class="mode-icon">🎯</div>
-                    <span class="mode-time">≈ 20 minutes</span>
-                    <h3>Pro Mode (Custom)</h3>
-                    <p>Full control over every input. Build outcomes from scratch, pick from the 40-entry proxy library, set your own deadweight, attribution, displacement and drop-off values.</p>
-                    <ul>
-                        <li>Custom outcomes with full adjustments</li>
-                        <li>Full proxy library access</li>
-                        <li>Best for experienced practitioners</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; font-size: 12px; color: #666; line-height: 1.6;">
-                <strong style="color: #1a2730;">About SROI:</strong> Social Return on Investment measures the social, environmental and economic value a programme creates per £/$/€ invested. It follows the 7 principles of Social Value UK and is grounded in the Green Book, NICE, DWP and World Bank proxy databases. Both modes produce valid analyses — Quick is a strong starting point, Pro lets you customise every assumption.
-            </div>
-        </div>
-
-        <!-- STEP 1: PROJECT SETUP -->
-        <div class="step-content" id="step1">
-            <form id="setupForm">
-                <div class="form-group">
-                    <label>Organisation Name</label>
-                    <input type="text" id="orgName" placeholder="e.g., Impact47" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Project Name</label>
-                    <input type="text" id="projectName" placeholder="e.g., Employment Training Programme" required>
-                </div>
-
-                <div class="input-row">
-                    <div class="form-group">
-                        <label>Geography</label>
-                        <select id="geography" required onchange="updateDiscountRate()">
-                            <option value="">Select geography...</option>
-                            <option value="uk">United Kingdom</option>
-                            <option value="us">United States</option>
-                            <option value="eu">Europe (excl. UK)</option>
-                            <option value="south">Global South</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Currency</label>
-                        <select id="currency" required>
-                            <option value="GBP">GBP (£)</option>
-                            <option value="USD">USD ($)</option>
-                            <option value="EUR">EUR (€)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="input-row">
-                    <div class="form-group">
-                        <label>Total Investment Amount</label>
-                        <input type="number" id="investment" placeholder="0" step="0.01" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Evaluation Time Horizon (years)</label>
-                        <select id="timeHorizon" required>
-                            <option value="1">1 year</option>
-                            <option value="2">2 years</option>
-                            <option value="3" selected>3 years</option>
-                            <option value="4">4 years</option>
-                            <option value="5">5 years</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Social Discount Rate (%)</label>
-                    <input type="number" id="discountRate" step="0.1" required>
-                    <div class="guidance" id="discountGuidance"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Project Description</label>
-                    <textarea id="description" placeholder="Briefly describe your project and its social goals..."></textarea>
-                </div>
-
-                <div class="button-group">
-                    <button type="button" class="btn-secondary" onclick="goToStep(0)">← Back</button>
-                    <button type="button" class="btn-primary" onclick="nextStep()">Next: Add Outcomes</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- QUICK STEP A: TEMPLATE PICKER -->
-        <div class="step-content" id="stepQuickA">
-            <button type="button" class="btn-back-mode" onclick="goToStep(0)">← Change mode</button>
-            <h2 style="color: #1a2730; margin-bottom: 6px; font-size: 20px;">Pick a programme template <span class="mode-badge">QUICK</span></h2>
-            <p style="color: #666; margin-bottom: 20px; font-size: 13px;">Each template comes with pre-filled proxy values, deadweight &amp; attribution assumptions drawn from published SROI literature. You'll customise your specific numbers next.</p>
-
-            <div class="template-grid" id="templateGrid"></div>
-        </div>
-
-        <!-- QUICK STEP B: QUICK DETAILS -->
-        <div class="step-content" id="stepQuickB">
-            <button type="button" class="btn-back-mode" onclick="goToStep('QuickA')">← Pick different template</button>
-            <div class="quick-summary" id="quickSummary"></div>
-
-            <div class="input-row">
-                <div class="form-group">
-                    <label>Organisation Name</label>
-                    <input type="text" id="quickOrgName" placeholder="e.g., Impact47">
-                </div>
-                <div class="form-group">
-                    <label>Programme Name</label>
-                    <input type="text" id="quickProjectName" placeholder="e.g., 2026 Training Cohort">
-                </div>
-            </div>
-
-            <div class="input-row">
-                <div class="form-group">
-                    <label>Total Investment (programme cost)</label>
-                    <input type="number" id="quickInvestment" placeholder="0" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Currency</label>
-                    <select id="quickCurrency">
-                        <option value="GBP">GBP (£)</option>
-                        <option value="USD">USD ($)</option>
-                        <option value="EUR">EUR (€)</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="section-title">Your Outcomes</div>
-            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Enter the number of people who will experience each outcome. Proxy values, deadweight, attribution and duration are already set based on the template.</p>
-            <div id="quickOutcomesContainer"></div>
-
-            <div class="button-group">
-                <button type="button" class="btn-secondary" onclick="goToStep('QuickA')">Back</button>
-                <button type="button" class="btn-primary" onclick="submitQuickWizard()">Calculate SROI</button>
-            </div>
-        </div>
-
-        <!-- STEP 2: OUTCOMES -->
-        <div class="step-content" id="step2">
-            <div id="outcomesContainer"></div>
-            <button type="button" class="btn-add" onclick="addOutcome()">+ Add Outcome</button>
-            <div class="button-group" style="margin-top: 30px;">
-                <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
-                <button type="button" class="btn-primary" onclick="nextStep()">Calculate Results</button>
-            </div>
-        </div>
-
-        <!-- STEP 3: RESULTS -->
-        <div class="step-content" id="step3">
-            <div id="resultsContainer"></div>
-            <div class="button-group">
-                <button type="button" class="btn-secondary" onclick="prevStep()">Back to Outcomes</button>
-                <button type="button" class="btn-primary" onclick="nextStep()">View Report</button>
-            </div>
-        </div>
-
-        <!-- STEP 4: REPORT -->
-        <div class="step-content" id="step4">
-            <div id="reportContainer"></div>
-            <div class="export-buttons">
-                <button type="button" class="btn-secondary" onclick="exportAsText()">Copy Report</button>
-                <button type="button" class="btn-secondary" onclick="exportAsCSV()">Download CSV</button>
-            </div>
-            <div class="button-group" style="margin-top: 20px;">
-                <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
-                <button type="button" class="btn-primary" onclick="startOver()">Start New Analysis</button>
-            </div>
-        </div>
+<!-- 1. SETUP -->
+<section id="setup" class="pane active">
+  <h2>Entity &amp; reporting profile</h2>
+  <p class="muted">The Article 8 Disclosures Delegated Act (2021/2178, as amended by 2022/1214 and 2023/2486) requires in-scope NFRD/CSRD undertakings and financial-market participants subject to Article 8 of Regulation 2020/852 to disclose taxonomy-aligned KPIs. Scope expands phased through 2028 under CSRD.</p>
+  <div class="grid grid-2">
+    <div>
+      <label>Entity name</label>
+      <input type="text" id="ent_name" placeholder="e.g. Ardent Materials Group plc">
     </div>
+    <div>
+      <label>Primary NACE / Sector</label>
+      <select id="ent_sector">
+        <option value="">Select&hellip;</option>
+        <option>A - Agriculture, Forestry &amp; Fishing</option>
+        <option>B - Mining &amp; Quarrying</option>
+        <option>C - Manufacturing</option>
+        <option>D - Electricity, Gas &amp; Steam</option>
+        <option>E - Water, Sewerage &amp; Waste</option>
+        <option>F - Construction</option>
+        <option>G - Wholesale &amp; Retail Trade</option>
+        <option>H - Transportation &amp; Storage</option>
+        <option>J - Information &amp; Communication</option>
+        <option>K - Financial &amp; Insurance</option>
+        <option>L - Real Estate</option>
+        <option>M - Professional Services</option>
+        <option>Q - Human Health &amp; Social Work</option>
+        <option>Other - Multiple/Diversified</option>
+      </select>
+    </div>
+    <div>
+      <label>Reporting regime</label>
+      <select id="ent_regime">
+        <option value="NFU">Non-financial undertaking (Art. 8 NFRD/CSRD)</option>
+        <option value="CI">Credit institution (Art. 8 + GAR)</option>
+        <option value="AM">Asset manager / UCITS / AIF (Art. 8)</option>
+        <option value="INS">Insurer / reinsurer</option>
+        <option value="INV">Investment firm</option>
+        <option value="VOL">Voluntary disclosure (non-scope but publishing)</option>
+      </select>
+    </div>
+    <div>
+      <label>Financial year</label>
+      <input type="number" id="ent_year" value="2025" min="2021" max="2030">
+    </div>
+    <div>
+      <label>Reporting currency</label>
+      <select id="ent_cur"><option>EUR</option><option>GBP</option><option>USD</option><option>CHF</option><option>SEK</option><option>DKK</option><option>NOK</option><option>PLN</option></select>
+    </div>
+    <div>
+      <label>Group structure</label>
+      <select id="ent_group"><option>Consolidated group</option><option>Parent-only</option><option>Sub-consolidated</option></select>
+    </div>
+    <div>
+      <label>Total turnover (denominator, mn)</label>
+      <input type="number" id="fin_rev" value="0" step="1">
+      <div class="hint">IFRS 15 / Directive 2013/34/EU Art. 2(5) net turnover for the year.</div>
+    </div>
+    <div>
+      <label>Total CapEx (denominator, mn)</label>
+      <input type="number" id="fin_capex" value="0" step="1">
+      <div class="hint">Additions to tangible &amp; intangible fixed assets per IAS 16, IAS 38, IAS 40, IFRS 16, IFRS 3 &mdash; excluding fair-value changes &amp; goodwill (2021/2178 Annex I §1.1.2.2).</div>
+    </div>
+    <div>
+      <label>Total OpEx (denominator, mn)</label>
+      <input type="number" id="fin_opex" value="0" step="1">
+      <div class="hint">Direct non-capitalised R&amp;D, building renovation, short-term lease, maintenance &amp; repair (2021/2178 Annex I §1.1.3.2).</div>
+    </div>
+  </div>
+  <div class="card">
+    <h4>Reporting scope flags</h4>
+    <div class="checklist">
+      <label><input type="checkbox" id="flag_csrd"> In scope of CSRD (Directive (EU) 2022/2464)</label>
+      <label><input type="checkbox" id="flag_sfdr8"> Distributing SFDR Article 8 products</label>
+      <label><input type="checkbox" id="flag_sfdr9"> Distributing SFDR Article 9 products with taxonomy-aligned sustainable investments</label>
+      <label><input type="checkbox" id="flag_nuclear"> Invoking Complementary Climate Delegated Act (2022/1214) nuclear activities</label>
+      <label><input type="checkbox" id="flag_gas"> Invoking Complementary Climate Delegated Act (2022/1214) fossil gas activities</label>
+      <label><input type="checkbox" id="flag_voluntary_env"> Disclosing alignment to the four additional objectives (Environmental Delegated Act 2023/2486)</label>
+    </div>
+  </div>
+  <div class="note">The calculator stress-tests each activity against six environmental objectives (Articles 9 &amp; 10 of Regulation 2020/852): Climate change mitigation (CCM), adaptation (CCA), sustainable use of water (WTR), transition to a circular economy (CE), pollution prevention (PPC), and biodiversity &amp; ecosystems (BIO). An activity must substantially contribute to at least one objective, do no significant harm to the others, and comply with minimum safeguards to be <em>aligned</em>.</div>
+</section>
 
-    <script>
-        // PROXY VALUE LIBRARY
-        const proxyLibrary = {
-            employment: [
-                { name: "Moving unemployed person into employment", value: 13524, source: "UK Exchequer benefit, New Economics Foundation", annual: true },
-                { name: "Moving long-term unemployed into work", value: 15900, source: "DWP Cost Benefit Model", annual: true },
-                { name: "Living wage employment uplift", value: 3200, source: "Living wage vs minimum wage", annual: true },
-                { name: "Youth employment (NEET to employed)", value: 12900, source: "UK Government NEET costs", annual: true },
-                { name: "Skills training leading to employment", value: 8000, source: "DWP, cost of benefits avoided", oneOff: true },
-                { name: "Microenterprise creation (developing country)", value: 2400, source: "World Bank estimate", annual: true }
-            ],
-            health: [
-                { name: "QALY - UK (Quality-Adjusted Life Year)", value: 25000, source: "NICE threshold UK", annual: true },
-                { name: "QALY - US", value: 100000, source: "US standard", annual: true },
-                { name: "QALY - Global South", value: 5000, source: "Global South estimate", annual: true },
-                { name: "Preventing hospital admission", value: 2500, source: "NHS reference costs", oneOff: true },
-                { name: "Reducing GP visits (per visit avoided)", value: 39, source: "NHS, Curtis & Burns 2022", annual: true },
-                { name: "Mental health: severe to moderate depression", value: 8500, source: "PSSRU", annual: true },
-                { name: "Addiction recovery - substance abuse", value: 16000, source: "Home Office cost of addiction", annual: true },
-                { name: "Domestic abuse prevention (per case avoided)", value: 33000, source: "Home Office", oneOff: true },
-                { name: "Wellbeing improvement (+1 point ONS scale)", value: 13000, source: "HM Treasury Green Book", annual: true },
-                { name: "Preventing premature death", value: 1800000, source: "Value of Statistical Life, UK Government", oneOff: true }
-            ],
-            education: [
-                { name: "Child completing primary school (developing country)", value: 2500, source: "World Bank", annual: true },
-                { name: "Adult literacy achievement", value: 3200, source: "Basic Skills Agency UK", oneOff: true },
-                { name: "University degree completion", value: 230000, source: "UK lifetime earnings premium", annual: true },
-                { name: "Early childhood education (ECD)", value: 15, source: "Heckman Equation ROI per $1", annual: true },
-                { name: "School dropout prevention", value: 8000, source: "UK Government", annual: true }
-            ],
-            environment: [
-                { name: "Carbon tonne sequestered/avoided (conservative)", value: 50, source: "Voluntary carbon market", annual: true },
-                { name: "Carbon tonne sequestered/avoided (high estimate)", value: 150, source: "Social cost of carbon", annual: true },
-                { name: "Hectare of forest protected (per year)", value: 1000, source: "TEEB ecosystem services", annual: true },
-                { name: "Tree planted to maturity", value: 250, source: "Woodland Trust proxy", annual: true },
-                { name: "Plastic waste prevented (per tonne)", value: 400, source: "Environmental cost of plastic", oneOff: true },
-                { name: "Water saved (per megalitre)", value: 700, source: "World Bank, medium scarcity", annual: true },
-                { name: "Biodiversity unit (UK BNG)", value: 300, source: "UK Biodiversity Net Gain", annual: true }
-            ],
-            housing: [
-                { name: "Rough sleeper housed (annual savings)", value: 18000, source: "Crisis, cost of rough sleeping services avoided", annual: true },
-                { name: "Preventing eviction", value: 11700, source: "Crisis", oneOff: true },
-                { name: "Social housing provision subsidy value", value: 4200, source: "Subsidy per unit vs private market", annual: true }
-            ],
-            community: [
-                { name: "Volunteer hour value", value: 17.29, source: "NCVO 2023 UK", annual: true },
-                { name: "Volunteer hour value (US)", value: 28, source: "Independent Sector US", annual: true },
-                { name: "Reduction in loneliness (severe to moderate)", value: 5000, source: "Campaign to End Loneliness proxy", annual: true },
-                { name: "Community space use (per user per year)", value: 550, source: "CABE/Heritage Lottery valuations", annual: true },
-                { name: "Burglary crime prevented", value: 8000, source: "UK Government", oneOff: true },
-                { name: "Violent crime prevented", value: 40000, source: "UK Government", oneOff: true }
-            ],
-            financial: [
-                { name: "Microfinance loan income return (per $1 lent)", value: 10, source: "Grameen Foundation average", annual: true },
-                { name: "Moving unbanked person to banked", value: 200, source: "World Bank financial inclusion", annual: true },
-                { name: "Savings account opened (developing country)", value: 150, source: "Financial resilience proxy", annual: true }
-            ]
-        };
+<!-- 2. ACTIVITIES -->
+<section id="activities" class="pane">
+  <h2>Eligible economic activities</h2>
+  <p class="muted">Select activities from the delegated acts catalogue and enter turnover, CapEx and OpEx associated with each. Activities flagged <span class="tag info">Enabling</span> enable GHG reductions elsewhere; <span class="tag warn">Transitional</span> activities (Art. 10(2)) have time-limited thresholds. An activity is <em>eligible</em> once selected; <em>aligned</em> only if it passes Substantial Contribution + DNSH + Safeguards (see subsequent tabs).</p>
+  <div class="row">
+    <div style="flex:1;min-width:260px">
+      <label>Add from catalogue</label>
+      <select id="act_pick"><option value="">Search&hellip; (see 20 pre-loaded activities below)</option></select>
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button class="btn" onclick="addActivityFromPick()">+ Add activity</button>
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <button class="btn ghost" onclick="addActivityBlank()">Custom activity</button>
+    </div>
+  </div>
+  <div id="act_list"></div>
+  <div class="hint">Primary source texts: Commission Delegated Regulation (EU) 2021/2139 Annex I (CCM) &amp; Annex II (CCA); 2022/1214 adds nuclear (4.26&ndash;4.28) &amp; fossil gas (4.29&ndash;4.31); 2023/2486 adds Annexes for WTR, CE, PPC &amp; BIO.</div>
+</section>
 
-        // ===== QUICK SROI TEMPLATE LIBRARY (v2) =====
-        // Each template embeds: typical geography, discount rate, time horizon,
-        // and a set of pre-configured outcomes with proxy values, deadweight,
-        // attribution, displacement, duration and drop-off from SROI literature.
-        const quickTemplates = {
-            employment_training: {
-                icon: "💼",
-                name: "Employment Training Programme",
-                desc: "Training unemployed adults and moving them into sustained employment.",
-                tags: ["UK/EU/US", "Adults", "3-year horizon"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 3,
-                investmentHint: "Typical: £100k–£500k per cohort",
-                outcomes: [
-                    { name: "Participants moved from unemployment into work", category: "employment", proxyValue: 13524, proxySource: "UK Exchequer benefit, NEF", deadweight: 35, attribution: 80, displacement: 10, duration: 3, dropoff: -20, beneficiariesHint: "e.g., 50 participants gain employment" },
-                    { name: "Participants retained in work 12+ months", category: "employment", proxyValue: 15900, proxySource: "DWP Cost Benefit Model (long-term)", deadweight: 40, attribution: 70, displacement: 10, duration: 2, dropoff: -15, beneficiariesHint: "Typically 60-70% of above" },
-                    { name: "Wellbeing improvement (+1 point ONS scale)", category: "health", proxyValue: 13000, proxySource: "HM Treasury Green Book", deadweight: 30, attribution: 60, displacement: 0, duration: 2, dropoff: -20, beneficiariesHint: "Usually matches participants employed" }
-                ]
-            },
-            youth_neet: {
-                icon: "🎓",
-                name: "Youth NEET Prevention",
-                desc: "Keeping at-risk young people (16-24) in education, employment or training.",
-                tags: ["Youth", "NEET", "Strong proxy evidence"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 3,
-                investmentHint: "Typical: £50k–£300k per cohort",
-                outcomes: [
-                    { name: "Young people moved from NEET into EET (employment/education/training)", category: "employment", proxyValue: 12900, proxySource: "UK Government NEET lifetime costs", deadweight: 30, attribution: 75, displacement: 5, duration: 3, dropoff: -15, beneficiariesHint: "e.g., 30 young people" },
-                    { name: "School dropout prevented", category: "education", proxyValue: 8000, proxySource: "UK Government, lifetime cost avoided", deadweight: 25, attribution: 70, displacement: 0, duration: 2, dropoff: -20, beneficiariesHint: "Subset who re-engage with school" },
-                    { name: "Wellbeing improvement (+1 point ONS scale)", category: "health", proxyValue: 13000, proxySource: "HM Treasury Green Book", deadweight: 30, attribution: 65, displacement: 0, duration: 2, dropoff: -20, beneficiariesHint: "Typically all participants" }
-                ]
-            },
-            mental_health: {
-                icon: "🧠",
-                name: "Mental Health Support",
-                desc: "Community mental health group or 1-1 support for people with depression/anxiety.",
-                tags: ["Health", "Community", "NHS proxies"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 2,
-                investmentHint: "Typical: £50k–£200k per year",
-                outcomes: [
-                    { name: "People moved from severe to moderate depression", category: "health", proxyValue: 8500, proxySource: "PSSRU Unit Costs of Health & Social Care", deadweight: 35, attribution: 70, displacement: 0, duration: 2, dropoff: -20, beneficiariesHint: "e.g., 40 people" },
-                    { name: "GP visits avoided (per person reducing contact)", category: "health", proxyValue: 390, proxySource: "NHS reference costs, 10 visits × £39", deadweight: 25, attribution: 75, displacement: 0, duration: 2, dropoff: -15, beneficiariesHint: "Usually most participants" },
-                    { name: "Hospital admissions prevented", category: "health", proxyValue: 2500, proxySource: "NHS reference costs", deadweight: 40, attribution: 65, displacement: 0, duration: 1, dropoff: 0, beneficiariesHint: "Small subset, high value" }
-                ]
-            },
-            homelessness: {
-                icon: "🏠",
-                name: "Homelessness Prevention",
-                desc: "Housing support, floating-support or outreach for rough sleepers and those at risk.",
-                tags: ["Housing", "UK", "Crisis proxies"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 3,
-                investmentHint: "Typical: £100k–£400k per year",
-                outcomes: [
-                    { name: "Rough sleepers moved into sustained housing", category: "housing", proxyValue: 18000, proxySource: "Crisis, annual cost of rough sleeping avoided", deadweight: 25, attribution: 75, displacement: 5, duration: 3, dropoff: -15, beneficiariesHint: "e.g., 25 people housed" },
-                    { name: "Evictions prevented", category: "housing", proxyValue: 11700, proxySource: "Crisis, cost of eviction-to-recovery avoided", deadweight: 30, attribution: 70, displacement: 5, duration: 1, dropoff: 0, beneficiariesHint: "Subset of at-risk tenants" },
-                    { name: "Wellbeing improvement (+1 point ONS scale)", category: "health", proxyValue: 13000, proxySource: "HM Treasury Green Book", deadweight: 30, attribution: 60, displacement: 0, duration: 3, dropoff: -20, beneficiariesHint: "All clients housed" }
-                ]
-            },
-            community_hub: {
-                icon: "🤝",
-                name: "Community Social Hub",
-                desc: "Drop-in or activity space targeting social isolation, loneliness & community cohesion.",
-                tags: ["Community", "Loneliness", "Older adults"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 3,
-                investmentHint: "Typical: £30k–£150k per year",
-                outcomes: [
-                    { name: "Reduction in loneliness (severe to moderate)", category: "community", proxyValue: 5000, proxySource: "Campaign to End Loneliness proxy", deadweight: 40, attribution: 65, displacement: 0, duration: 2, dropoff: -20, beneficiariesHint: "e.g., 60 regular users" },
-                    { name: "Volunteer hours contributed by members", category: "community", proxyValue: 17.29, proxySource: "NCVO 2023 UK volunteer hour value", deadweight: 20, attribution: 90, displacement: 0, duration: 3, dropoff: -10, beneficiariesHint: "Total annual volunteer hours" },
-                    { name: "Community space users (per user per year)", category: "community", proxyValue: 550, proxySource: "CABE/Heritage Lottery valuations", deadweight: 30, attribution: 80, displacement: 10, duration: 3, dropoff: -10, beneficiariesHint: "Unique users per year" }
-                ]
-            },
-            food_bank: {
-                icon: "🥫",
-                name: "Food Bank / Food Security",
-                desc: "Emergency food provision and wrap-around support for food-insecure households.",
-                tags: ["Food security", "Wellbeing", "Crisis support"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 1,
-                investmentHint: "Typical: £20k–£100k per year",
-                outcomes: [
-                    { name: "Households receiving emergency food (wellbeing +1)", category: "health", proxyValue: 13000, proxySource: "HM Treasury Green Book wellbeing valuation", deadweight: 25, attribution: 60, displacement: 5, duration: 1, dropoff: 0, beneficiariesHint: "e.g., 250 households" },
-                    { name: "GP visits avoided (stress/nutrition related)", category: "health", proxyValue: 117, proxySource: "NHS reference costs, 3 visits × £39", deadweight: 40, attribution: 50, displacement: 0, duration: 1, dropoff: 0, beneficiariesHint: "Subset of household heads" },
-                    { name: "Volunteer hours contributed", category: "community", proxyValue: 17.29, proxySource: "NCVO 2023 UK volunteer hour value", deadweight: 20, attribution: 95, displacement: 0, duration: 1, dropoff: 0, beneficiariesHint: "Total annual volunteer hours" }
-                ]
-            },
-            refugee_integration: {
-                icon: "🌍",
-                name: "Refugee / Migrant Integration",
-                desc: "Language, skills, employment and wellbeing support for refugees and new migrants.",
-                tags: ["Integration", "Employment", "Wellbeing"],
-                geography: "eu",
-                currency: "EUR",
-                discountRate: 4,
-                timeHorizon: 3,
-                investmentHint: "Typical: €80k–€300k per year",
-                outcomes: [
-                    { name: "Participants moving into employment", category: "employment", proxyValue: 13524, proxySource: "NEF employment proxy (adapt locally)", deadweight: 45, attribution: 70, displacement: 10, duration: 3, dropoff: -20, beneficiariesHint: "e.g., 40 participants employed" },
-                    { name: "Adult literacy/language qualifications achieved", category: "education", proxyValue: 3200, proxySource: "Basic Skills Agency UK", deadweight: 30, attribution: 80, displacement: 0, duration: 2, dropoff: -15, beneficiariesHint: "Participants achieving level 1+" },
-                    { name: "Wellbeing improvement (+1 point ONS scale)", category: "health", proxyValue: 13000, proxySource: "HM Treasury Green Book", deadweight: 30, attribution: 65, displacement: 0, duration: 2, dropoff: -20, beneficiariesHint: "Most programme participants" }
-                ]
-            },
-            youth_mentoring: {
-                icon: "🌟",
-                name: "Youth Mentoring Programme",
-                desc: "1-1 or group mentoring for at-risk youth, focused on confidence, skills, outcomes.",
-                tags: ["Youth", "Mentoring", "Strong evidence"],
-                geography: "us",
-                currency: "USD",
-                discountRate: 7,
-                timeHorizon: 4,
-                investmentHint: "Typical: $50k–$250k per cohort",
-                outcomes: [
-                    { name: "Young people moving into employment/further education", category: "employment", proxyValue: 12900, proxySource: "Youth employment proxy (adapted)", deadweight: 35, attribution: 60, displacement: 5, duration: 4, dropoff: -15, beneficiariesHint: "e.g., 25 mentees" },
-                    { name: "Wellbeing & confidence improvement (QALY equivalent)", category: "health", proxyValue: 50000, proxySource: "Mid-range US QALY valuation", deadweight: 40, attribution: 55, displacement: 0, duration: 3, dropoff: -20, beneficiariesHint: "All mentees" },
-                    { name: "Violent crime incidents prevented (if community-based)", category: "community", proxyValue: 40000, proxySource: "UK Government cost per violent crime", deadweight: 50, attribution: 40, displacement: 10, duration: 2, dropoff: -25, beneficiariesHint: "Rough estimate for at-risk cohorts" }
-                ]
-            },
-            tree_planting: {
-                icon: "🌳",
-                name: "Climate: Tree Planting / Reforestation",
-                desc: "Afforestation or reforestation programme with community stewardship.",
-                tags: ["Climate", "Nature-based", "Long horizon"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 5,
-                investmentHint: "Typical: £50k–£500k per project",
-                outcomes: [
-                    { name: "Carbon tonnes sequestered (lifetime)", category: "environment", proxyValue: 100, proxySource: "Mid-point of VCM and social cost of carbon", deadweight: 20, attribution: 85, displacement: 5, duration: 5, dropoff: 0, beneficiariesHint: "Total tCO2e over 5 years" },
-                    { name: "Trees planted and surviving to maturity", category: "environment", proxyValue: 250, proxySource: "Woodland Trust ecosystem services proxy", deadweight: 25, attribution: 80, displacement: 0, duration: 5, dropoff: -5, beneficiariesHint: "Count of surviving trees" },
-                    { name: "Biodiversity units (BNG equivalent)", category: "environment", proxyValue: 300, proxySource: "UK Biodiversity Net Gain pricing", deadweight: 30, attribution: 75, displacement: 0, duration: 5, dropoff: 0, beneficiariesHint: "BNG units generated" },
-                    { name: "Volunteer hours contributed", category: "community", proxyValue: 17.29, proxySource: "NCVO 2023 UK volunteer hour value", deadweight: 20, attribution: 95, displacement: 0, duration: 5, dropoff: -10, beneficiariesHint: "Total volunteer hours across project" }
-                ]
-            },
-            microfinance: {
-                icon: "💰",
-                name: "Microfinance / Financial Inclusion",
-                desc: "Microloan, savings or financial literacy programme in emerging markets.",
-                tags: ["Financial inclusion", "Global South", "Livelihoods"],
-                geography: "south",
-                currency: "USD",
-                discountRate: 8,
-                timeHorizon: 3,
-                investmentHint: "Typical: $100k–$1M per cohort",
-                outcomes: [
-                    { name: "Microenterprises created/sustained", category: "employment", proxyValue: 2400, proxySource: "World Bank microenterprise proxy", deadweight: 40, attribution: 70, displacement: 15, duration: 3, dropoff: -20, beneficiariesHint: "e.g., 200 microenterprises" },
-                    { name: "Previously unbanked people accessing banking services", category: "financial", proxyValue: 200, proxySource: "World Bank financial inclusion proxy", deadweight: 30, attribution: 80, displacement: 0, duration: 3, dropoff: -10, beneficiariesHint: "Newly banked individuals" },
-                    { name: "Savings accounts opened", category: "financial", proxyValue: 150, proxySource: "Financial resilience proxy", deadweight: 30, attribution: 85, displacement: 0, duration: 2, dropoff: -15, beneficiariesHint: "New savers" }
-                ]
-            },
-            addiction_recovery: {
-                icon: "🔄",
-                name: "Addiction Recovery Programme",
-                desc: "Structured recovery programme for people with substance misuse issues.",
-                tags: ["Health", "Recovery", "High proxy value"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 3,
-                investmentHint: "Typical: £100k–£400k per year",
-                outcomes: [
-                    { name: "Sustained recovery (12+ months abstinent)", category: "health", proxyValue: 16000, proxySource: "Home Office cost of addiction avoided", deadweight: 35, attribution: 75, displacement: 5, duration: 3, dropoff: -15, beneficiariesHint: "e.g., 30 in sustained recovery" },
-                    { name: "Crime incidents prevented (acquisitive)", category: "community", proxyValue: 8000, proxySource: "UK Government burglary cost", deadweight: 40, attribution: 65, displacement: 10, duration: 2, dropoff: -20, beneficiariesHint: "Estimated offences avoided" },
-                    { name: "Hospital admissions avoided", category: "health", proxyValue: 2500, proxySource: "NHS reference costs", deadweight: 35, attribution: 70, displacement: 0, duration: 2, dropoff: -15, beneficiariesHint: "Rough estimate" }
-                ]
-            },
-            adult_literacy: {
-                icon: "📚",
-                name: "Adult Literacy / Basic Skills",
-                desc: "Programme improving adult literacy, numeracy or digital skills.",
-                tags: ["Education", "Adults", "Skills"],
-                geography: "uk",
-                currency: "GBP",
-                discountRate: 3.5,
-                timeHorizon: 3,
-                investmentHint: "Typical: £30k–£150k per cohort",
-                outcomes: [
-                    { name: "Adults achieving basic skills qualification", category: "education", proxyValue: 3200, proxySource: "Basic Skills Agency UK", deadweight: 30, attribution: 80, displacement: 0, duration: 3, dropoff: -10, beneficiariesHint: "e.g., 60 qualifications achieved" },
-                    { name: "Moving into employment post-qualification", category: "employment", proxyValue: 8000, proxySource: "DWP skills training to employment proxy", deadweight: 45, attribution: 60, displacement: 10, duration: 3, dropoff: -20, beneficiariesHint: "Subset of learners" },
-                    { name: "Wellbeing improvement (+1 point ONS scale)", category: "health", proxyValue: 13000, proxySource: "HM Treasury Green Book", deadweight: 30, attribution: 60, displacement: 0, duration: 2, dropoff: -20, beneficiariesHint: "Most participants" }
-                ]
-            }
-        };
+<!-- 3. SUBSTANTIAL CONTRIBUTION -->
+<section id="sc" class="pane">
+  <h2>Substantial contribution &mdash; technical screening criteria</h2>
+  <p class="muted">Each added activity is screened against the primary-objective TSC quantitative threshold or qualitative criteria. The tool is pre-loaded with the Climate Delegated Act and Environmental Delegated Act thresholds in force for reporting years 2024&ndash;2027 (as amended). Answers set the Substantial Contribution flag used in the Results tab.</p>
+  <div id="sc_list"></div>
+  <div class="note"><strong>Methodology note.</strong> Where an activity invokes a Life-Cycle GHG threshold (e.g. electricity generation &lt;100 gCO<sub>2</sub>e/kWh), the tool expects a life-cycle assessment per ISO 14067 / PEF or the JRC Life Cycle Indicators Framework. Where an activity relies on a climate risk &amp; vulnerability assessment (CR&amp;VA) for CCA, a 30-year horizon under at least two IPCC AR6 SSPs (high and low emission) is required.</div>
+</section>
 
-        // STATE
-        let currentStep = 0;
-        let outcomes = [];
-        let selectedTemplateKey = null;
-        let appMode = null; // "quick" or "pro"
+<!-- 4. DNSH -->
+<section id="dnsh" class="pane">
+  <h2>Do No Significant Harm &mdash; six-objective screen</h2>
+  <p class="muted">For each activity, confirm that the DNSH criteria for the other five environmental objectives are met. Any single &ldquo;No&rdquo; answer disqualifies the activity from alignment even if the Substantial Contribution test is passed.</p>
+  <div id="dnsh_list"></div>
+  <div class="note"><strong>Generic DNSH Appendix references.</strong> CCA DNSH follows Annex A of Delegated Regulation 2021/2139 (climate risk screening). WTR DNSH follows Annex B (water use &amp; marine resource impact). PPC DNSH follows Annex C (substance hazard classifications, incl. REACH Authorisation List, POPs Regulation (EU) 2019/1021, CLP Annex VI categories 1A/1B). BIO DNSH follows Annex D (impact assessment for Natura 2000, IUCN I&ndash;VI &amp; KBAs).</div>
+</section>
 
-        // UTILITIES
-        function getCurrentCurrency() {
-            return document.getElementById("currency").value;
+<!-- 5. MINIMUM SAFEGUARDS -->
+<section id="safeguards" class="pane">
+  <h2>Minimum safeguards &mdash; Article 18</h2>
+  <p class="muted">Article 18 of Regulation 2020/852 requires alignment with: OECD Guidelines for Multinational Enterprises, UN Guiding Principles on Business and Human Rights, ILO Core Conventions, and the International Bill of Human Rights. The Platform on Sustainable Finance&rsquo;s Final Report on Minimum Safeguards (October 2022) structures compliance in four sub-areas.</p>
+  <div class="card">
+    <h4>PSF sub-area 1 &mdash; Human rights (incl. worker &amp; consumer rights)</h4>
+    <div class="checklist">
+      <label><input type="checkbox" class="ms" data-id="ms_hr1"> Formal human-rights due diligence process per OECD 6-step guidance, covering own operations and value chain</label>
+      <label><input type="checkbox" class="ms" data-id="ms_hr2"> Board-approved human rights policy referencing UNGPs and ILO Core Conventions</label>
+      <label><input type="checkbox" class="ms" data-id="ms_hr3"> Operational-level grievance mechanism aligned with UNGP Principle 31 effectiveness criteria</label>
+      <label><input type="checkbox" class="ms" data-id="ms_hr4"> No unresolved outstanding allegations from OECD NCP proceedings, ILO CAS, or UN treaty-body complaints within past 3 years</label>
+    </div>
+  </div>
+  <div class="card">
+    <h4>PSF sub-area 2 &mdash; Corruption and bribery</h4>
+    <div class="checklist">
+      <label><input type="checkbox" class="ms" data-id="ms_co1"> Anti-bribery &amp; corruption policy aligned with OECD Anti-Bribery Convention</label>
+      <label><input type="checkbox" class="ms" data-id="ms_co2"> No final court conviction for corruption/bribery of entity or senior officer within past 5 years</label>
+      <label><input type="checkbox" class="ms" data-id="ms_co3"> Whistleblowing channel operational and publicly communicated (Directive (EU) 2019/1937)</label>
+    </div>
+  </div>
+  <div class="card">
+    <h4>PSF sub-area 3 &mdash; Taxation</h4>
+    <div class="checklist">
+      <label><input type="checkbox" class="ms" data-id="ms_tx1"> Published tax strategy approved by board (OECD BEPS alignment)</label>
+      <label><input type="checkbox" class="ms" data-id="ms_tx2"> Country-by-country reporting published (GRI 207-4 / Directive (EU) 2021/2101)</label>
+      <label><input type="checkbox" class="ms" data-id="ms_tx3"> No operations in EU tax-haven blacklist jurisdictions without substance justification</label>
+    </div>
+  </div>
+  <div class="card">
+    <h4>PSF sub-area 4 &mdash; Fair competition</h4>
+    <div class="checklist">
+      <label><input type="checkbox" class="ms" data-id="ms_fc1"> Competition / antitrust policy with training programme in place</label>
+      <label><input type="checkbox" class="ms" data-id="ms_fc2"> No final competition-authority conviction for entity within past 5 years (e.g. EU COMP, national competition authorities, CMA, FTC)</label>
+    </div>
+  </div>
+  <div class="card tight"><strong>Overall minimum safeguards score</strong> <span id="ms_overall_score" class="tag info">&mdash;</span> <span class="muted small">(all 12 items required for clean pass; 10-11 = &ldquo;Pass with gaps&rdquo;; &le;9 = Fail)</span></div>
+</section>
+
+<!-- 6. KPIs -->
+<section id="kpis" class="pane">
+  <h2>Taxonomy KPI ratios</h2>
+  <p class="muted">The Article 8 Delegated Act (2021/2178) requires disclosure of three KPIs: share of eligible and aligned turnover, CapEx and OpEx, with breakdowns per objective, transitional and enabling activities, and CapEx plans (Plan CapEx under Annex I §1.1.2.2 points (a)-(b)).</p>
+  <div class="kpiwide">
+    <div class="c"><div class="l">Eligible Turnover %</div><div class="v" id="kpi_elig_rev">0.0%</div></div>
+    <div class="c"><div class="l">Aligned Turnover %</div><div class="v" id="kpi_align_rev">0.0%</div></div>
+    <div class="c"><div class="l">Eligible CapEx %</div><div class="v" id="kpi_elig_cap">0.0%</div></div>
+    <div class="c"><div class="l">Aligned CapEx %</div><div class="v" id="kpi_align_cap">0.0%</div></div>
+    <div class="c"><div class="l">Eligible OpEx %</div><div class="v" id="kpi_elig_ope">0.0%</div></div>
+    <div class="c"><div class="l">Aligned OpEx %</div><div class="v" id="kpi_align_ope">0.0%</div></div>
+  </div>
+  <h3>Alignment share by environmental objective (Turnover)</h3>
+  <div id="kpi_by_obj_rev"></div>
+  <h3>Enabling &amp; transitional split</h3>
+  <div id="kpi_split"></div>
+  <h3>Per-activity KPI table</h3>
+  <div class="matrix"><table id="kpi_table"><thead><tr><th>Activity</th><th>Objective</th><th>Type</th><th>Turnover %</th><th>CapEx %</th><th>OpEx %</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+</section>
+
+<!-- 7. DISCLOSURE -->
+<section id="disclosure" class="pane">
+  <h2>Article 8 Delegated Act disclosure template</h2>
+  <p class="muted">Draft fragments populated from your inputs. These map directly to Annex II of Delegated Regulation (EU) 2021/2178 (mandatory disclosure templates). Copy into your non-financial / sustainability statement (ESRS E1 data-point DP &ldquo;taxonomy-aligned&rdquo; references).</p>
+  <h3>1. Accounting policy summary</h3>
+  <textarea id="disc_policy" rows="5" readonly></textarea>
+  <h3>2. Turnover KPI narrative</h3>
+  <textarea id="disc_rev" rows="5" readonly></textarea>
+  <h3>3. CapEx KPI narrative (incl. CapEx Plan if applicable)</h3>
+  <textarea id="disc_capex" rows="5" readonly></textarea>
+  <h3>4. OpEx KPI narrative</h3>
+  <textarea id="disc_opex" rows="4" readonly></textarea>
+  <h3>5. Minimum safeguards statement</h3>
+  <textarea id="disc_ms" rows="4" readonly></textarea>
+  <h3>6. Complementary Climate Delegated Act flags (nuclear / fossil gas)</h3>
+  <textarea id="disc_ccda" rows="3" readonly></textarea>
+</section>
+
+<!-- 8. RESULTS -->
+<section id="results" class="pane">
+  <h2>Alignment scorecard</h2>
+  <div class="score-hero">
+    <div>
+      <div class="big" id="overall_score">&mdash;</div>
+      <div class="grade" id="overall_grade">Run the tool to compute grade</div>
+    </div>
+    <div>
+      <div id="overall_summary" class="muted"></div>
+      <div class="bar"><span id="overall_bar" style="width:0%"></span></div>
+      <div class="legend"><span><i style="background:var(--coral)"></i>&lt;30% = E</span><span><i style="background:var(--ochre)"></i>30&ndash;49% = D</span><span><i style="background:#B29022"></i>50&ndash;69% = C</span><span><i style="background:var(--moss)"></i>70&ndash;84% = B</span><span><i style="background:#2F4421"></i>85%+ = A</span></div>
+    </div>
+  </div>
+
+  <div class="kpi">
+    <div class="k"><div class="t">Aligned Turnover</div><div class="n" id="res_align_rev">&mdash;</div><div class="sub" id="res_align_rev_val">0 mn</div></div>
+    <div class="k"><div class="t">Aligned CapEx</div><div class="n" id="res_align_cap">&mdash;</div><div class="sub" id="res_align_cap_val">0 mn</div></div>
+    <div class="k"><div class="t">Aligned OpEx</div><div class="n" id="res_align_ope">&mdash;</div><div class="sub" id="res_align_ope_val">0 mn</div></div>
+    <div class="k"><div class="t">Activities (aligned / eligible)</div><div class="n" id="res_act_count">&mdash;</div><div class="sub">out of total selected</div></div>
+  </div>
+
+  <h3>Sector benchmark context</h3>
+  <div id="bench_box" class="card tight"></div>
+
+  <h3>Prioritised gap-closure actions</h3>
+  <ul class="alist" id="actions_list"></ul>
+
+  <h3>Activity-by-activity alignment matrix</h3>
+  <div class="matrix" id="matrix_box"></div>
+</section>
+
+<!-- 9. PROMPT -->
+<section id="prompt" class="pane">
+  <h2>Personalised Claude prompt</h2>
+  <p class="muted">Paste into Claude (or any capable LLM) to draft board-ready disclosure, stress-test your alignment assertions, and get structured remediation advice. Updates automatically as you edit inputs.</p>
+  <textarea class="prompt" id="prompt_text" readonly></textarea>
+  <div class="row">
+    <button class="btn" onclick="copyPrompt()">Copy prompt</button>
+    <button class="btn ghost" onclick="exportCSV()">Export CSV memo</button>
+    <span class="muted small" id="prompt_meta"></span>
+  </div>
+</section>
+
+<div class="foot">
+  Built by <strong>UsefulAF</strong> &mdash; an AI-tools community for impact sector practitioners. This calculator embeds Regulation (EU) 2020/852, Delegated Regulations 2021/2139, 2021/2178, 2022/1214, 2023/2485 &amp; 2023/2486, and Platform on Sustainable Finance technical reports (2022&ndash;2024). Thresholds and disclosure templates reflect published law as of April 2026. Alignment decisions remain a matter of judgement for preparers and their auditors; this tool is a decision-support aid, not legal or audit advice.
+</div>
+</div>
+
+<script>
+/* =======================================================================
+   DATA LAYER — EU Taxonomy activities catalogue (subset of 20 common ones)
+   ======================================================================= */
+const OBJ_META = {
+  CCM: {name:'Climate change mitigation', cls:'b-ccm'},
+  CCA: {name:'Climate change adaptation', cls:'b-cca'},
+  WTR: {name:'Sustainable use of water & marine resources', cls:'b-wtr'},
+  CE:  {name:'Transition to a circular economy', cls:'b-ce'},
+  PPC: {name:'Pollution prevention & control', cls:'b-ppc'},
+  BIO: {name:'Protection & restoration of biodiversity & ecosystems', cls:'b-bio'}
+};
+
+/* Each activity: id, obj (primary), name, nace, type (subst/enabling/transitional), tsc (question + threshold help), dnsh set, legal ref */
+const ACTIVITIES = [
+  {id:'4_1', obj:'CCM', name:'4.1 Electricity generation using solar photovoltaic technology', nace:'D35.11; F42.22', type:'subst',
+    tsc:'Life-cycle GHG emissions below 100 g CO₂e/kWh (JRC PEF methodology or ISO 14067). No threshold degradation; declining trajectory to 0 g by 2050.',
+    threshold:'LCA ≤ 100 gCO₂e/kWh', ref:'Reg. 2021/2139 Annex I §4.1'},
+  {id:'4_3', obj:'CCM', name:'4.3 Electricity generation from wind power', nace:'D35.11; F42.22', type:'subst',
+    tsc:'Life-cycle GHG emissions below 100 g CO₂e/kWh. Onshore & offshore covered. End-of-life decommissioning plan required (DNSH CE).',
+    threshold:'LCA ≤ 100 gCO₂e/kWh', ref:'Reg. 2021/2139 Annex I §4.3'},
+  {id:'4_5', obj:'CCM', name:'4.5 Electricity generation from hydropower', nace:'D35.11', type:'subst',
+    tsc:'(i) Run-of-river (no artificial reservoir) OR (ii) power density > 5 W/m² OR (iii) life-cycle GHG < 100 g CO₂e/kWh. WFD Art. 4(7) exemption assessment required for any new capacity.',
+    threshold:'Power density > 5 W/m² OR LCA < 100 gCO₂e/kWh', ref:'Reg. 2021/2139 Annex I §4.5'},
+  {id:'4_10', obj:'CCM', name:'4.10 Storage of electricity', nace:'D35.11', type:'enabling',
+    tsc:'Electrochemical, mechanical, thermal, or chemical storage with end-of-life management plan and critical raw material sourcing policy (DNSH CE, PPC).',
+    threshold:'Qualitative + CE/PPC DNSH', ref:'Reg. 2021/2139 Annex I §4.10'},
+  {id:'3_7', obj:'CCM', name:'3.7 Manufacture of cement', nace:'C23.51', type:'transitional',
+    tsc:'Specific emissions ≤ 0.469 t CO₂e / t cement (grey clinker incl. ≤ 10% alternative fuels) OR ≤ 0.722 t CO₂e / t clinker. Aligned with CEMBUREAU 2050 Roadmap 1.5°C pathway.',
+    threshold:'≤ 0.469 tCO₂e/t cement OR ≤ 0.722 tCO₂e/t clinker', ref:'Reg. 2021/2139 Annex I §3.7'},
+  {id:'3_9', obj:'CCM', name:'3.9 Manufacture of iron & steel', nace:'C24.10', type:'transitional',
+    tsc:'BOF steel ≤ 1.331 t CO₂e/t crude steel; EAF (high-alloy) ≤ 0.352 t CO₂e/t; EAF (carbon) ≤ 0.209 t CO₂e/t; DRI ≤ 1.02 t CO₂e/t. Scope 1+2 only.',
+    threshold:'Route-specific tCO₂e/t; see Annex I §3.9', ref:'Reg. 2021/2139 Annex I §3.9'},
+  {id:'3_17', obj:'CCM', name:'3.17 Manufacture of plastics in primary form', nace:'C20.16', type:'subst',
+    tsc:'(a) Wholly produced by mechanical recycling OR (b) wholly produced by chemical recycling with LCA GHG savings ≥ 50% vs. equivalent virgin production OR (c) produced by renewable resource routes with ≥ 50% LCA savings.',
+    threshold:'≥50% LCA GHG savings OR mechanical/chemical recycling', ref:'Reg. 2021/2139 Annex I §3.17'},
+  {id:'6_5', obj:'CCM', name:'6.5 Transport by motorbikes, passenger cars and light commercial vehicles', nace:'H49.39; N77.1; C29.10', type:'transitional',
+    tsc:'From 1 Jan 2026: specific emissions ≤ 0 g CO₂/km (zero tailpipe). Before 2026: ≤ 50 g CO₂/km WLTP.',
+    threshold:'≤ 0 g CO₂/km (2026+)', ref:'Reg. 2021/2139 Annex I §6.5'},
+  {id:'6_14', obj:'CCM', name:'6.14 Infrastructure for rail transport', nace:'H52.21; F42.12', type:'enabling',
+    tsc:'Infrastructure for electrified rail or for trains meeting §6.3 TSC; or dedicated infrastructure for zero-emission road/inland vessels.',
+    threshold:'Qualitative — supports zero-emission transport', ref:'Reg. 2021/2139 Annex I §6.14'},
+  {id:'7_1', obj:'CCM', name:'7.1 Construction of new buildings', nace:'F41.1; F41.2; F43; L68.1', type:'subst',
+    tsc:'Primary Energy Demand ≥ 10% lower than NZEB threshold set at national level. For buildings >5,000 m², life-cycle GWP assessment (EN 15978) required; for >5,000 m², airtightness & thermal integrity tests required.',
+    threshold:'PED ≥ 10% < NZEB', ref:'Reg. 2021/2139 Annex I §7.1'},
+  {id:'7_2', obj:'CCM', name:'7.2 Renovation of existing buildings', nace:'F41; F43', type:'subst',
+    tsc:'Major renovation delivering ≥ 30% reduction in Primary Energy Demand OR compliance with national/regional major-renovation requirements.',
+    threshold:'≥ 30% PED reduction', ref:'Reg. 2021/2139 Annex I §7.2'},
+  {id:'7_7', obj:'CCM', name:'7.7 Acquisition and ownership of buildings', nace:'L68', type:'subst',
+    tsc:'For buildings built before 31 Dec 2020: EPC class A. For others built after 31 Dec 2020: compliance with §7.1. For large non-residential buildings (>5,000 m²) efficient operation demonstrated.',
+    threshold:'EPC A (pre-2020 builds) or §7.1 compliance', ref:'Reg. 2021/2139 Annex I §7.7'},
+  {id:'8_1', obj:'CCM', name:'8.1 Data processing, hosting and related activities', nace:'J63.11', type:'subst',
+    tsc:'Compliance with EU Code of Conduct for Data Centres Energy Efficiency OR CENELEC EN 50600-4 practices; PUE ≤ 1.4 (new); full transparency on GHG scope 1-3.',
+    threshold:'CoC / EN 50600-4 compliant; PUE ≤ 1.4', ref:'Reg. 2021/2139 Annex I §8.1'},
+  {id:'1_1', obj:'CCM', name:'1.1 Afforestation', nace:'A02', type:'subst',
+    tsc:'Forest management plan ≥ 10 years; native species or site-adapted; climate-risk assessment; carbon benefit analysis over 30 years; no afforestation on peatlands or Natura 2000 sites (DNSH BIO).',
+    threshold:'FMP + CBA + no peatland conversion', ref:'Reg. 2021/2139 Annex I §1.1'},
+  {id:'2_1_WTR', obj:'WTR', name:'2.1 WTR — Construction of water collection, treatment & supply systems', nace:'E36.00', type:'subst',
+    tsc:'Infrastructure Leakage Index (ILI) ≤ 1.5 for supplied area OR ≥ 20% improvement on baseline; net-energy consumption ≤ 0.5 kWh/m³ billed water.',
+    threshold:'ILI ≤ 1.5 OR ≥ 20% baseline improvement', ref:'Reg. 2023/2486 Annex I §2.1'},
+  {id:'1_2_CE', obj:'CE', name:'1.2 CE — Manufacture of plastic packaging goods', nace:'C22.22', type:'subst',
+    tsc:'(a) ≥ 65% recycled content by mass OR (b) wholly produced from bio-based feedstock AND designed for reuse/recyclability per ISO 18606.',
+    threshold:'≥ 65% recycled content OR bio-based + recyclable', ref:'Reg. 2023/2486 Annex II §1.2'},
+  {id:'2_3_PPC', obj:'PPC', name:'2.3 PPC — Remediation of legally non-compliant contaminated sites', nace:'E39.00', type:'enabling',
+    tsc:'Remediation follows best available techniques; excludes sites where polluter is identified and liable under polluter-pays principle.',
+    threshold:'BAT + non-polluter-pays scope', ref:'Reg. 2023/2486 Annex III §2.3'},
+  {id:'1_1_BIO', obj:'BIO', name:'1.1 BIO — Conservation of terrestrial & coastal habitats', nace:'R91.04', type:'subst',
+    tsc:'Protected area management plan aligned with IUCN I-VI or OECM criteria; monitoring of species & ecosystem indicators; no conversion of high-nature-value habitats.',
+    threshold:'IUCN/OECM-aligned management plan', ref:'Reg. 2023/2486 Annex IV §1.1'},
+  {id:'10_1_CCA', obj:'CCA', name:'10.1 CCA — Non-life insurance: climate-related perils', nace:'K65.12', type:'subst',
+    tsc:'Underwriting business model incorporates climate risk modelling (30-year horizon, ≥ 2 IPCC AR6 scenarios); risk-based premium pricing; leadership in insurance-sector climate adaptation R&D and sharing of risk data.',
+    threshold:'30-yr CR&VA + adaptation leadership', ref:'Reg. 2021/2139 Annex II §10.1'},
+  {id:'6_3', obj:'CCM', name:'6.3 Urban and suburban passenger land transport', nace:'H49.31; H49.39', type:'transitional',
+    tsc:'All light-duty vehicles in fleet: zero tailpipe emissions (2026+). Heavy-duty: ≤ 50% of EU-averaged HDV-CO₂ reference value; 2030+: zero-emission.',
+    threshold:'Fleet-wide ZE (light); CO₂ limits (heavy)', ref:'Reg. 2021/2139 Annex I §6.3'}
+];
+
+const DNSH_OBJECTIVES = ['CCM','CCA','WTR','CE','PPC','BIO'];
+const DNSH_GENERIC = {
+  CCM: 'Operations respect best-10% GHG intensity benchmarks where applicable; no activities that would lock in high-carbon assets past 2030.',
+  CCA: 'Climate risk & vulnerability assessment (CR&VA) completed with 30-year horizon under at least two IPCC AR6 scenarios; adaptation solutions identified and costed.',
+  WTR: 'No material adverse impact on water quality or status (Water Framework Directive 2000/60/EC); water-stress assessment where applicable.',
+  CE: 'Waste management plan in place; waste hierarchy (Directive 2008/98/EC) applied; durability and repairability considered in product design.',
+  PPC: 'No use of hazardous substances from REACH Authorisation List, POPs Reg. 2019/1021, CLP Annex VI Cat 1A/1B; emissions within industrial BAT AELs; plastic pellet loss prevention where relevant.',
+  BIO: 'Environmental Impact Assessment (EIA) completed for new sites; no net loss of biodiversity; no activity in Natura 2000, IUCN I-VI protected areas, or KBAs without fully-permitted Appropriate Assessment.'
+};
+
+/* Sector benchmarks from published Article 8 disclosures 2024 (KPI reporting FY2023) — FY2023 sample */
+const BENCH = {
+  'D - Electricity, Gas & Steam': {rev:33,cap:54,ope:46, note:'Utilities sector median aligned turnover = 33%, CapEx = 54% (FTSE All-World European utilities N=42, TP-ICAP / Bloomberg data). Leaders: Iberdrola 81% / Ørsted 70% / Verbund 89%. Laggards: RWE 18% / Enel X 25%.'},
+  'C - Manufacturing': {rev:6,cap:14,ope:10, note:'EU manufacturing median aligned turnover = 6% FY2023 (Transparency EU Taxonomy Benchmark 2024, N=213). Wide range by sub-sector: cement 0-12%, auto 15-28%, steel 2-8%, chemicals 1-5%.'},
+  'L - Real Estate': {rev:18,cap:28,ope:22, note:'Listed EPRA universe median aligned turnover = 18% FY2023 (EPRA sBPR Benchmark). Leaders: Gecina 48%, Aedifica 45%, Klépierre 38%. Many properties blocked by pre-2020 EPC not reaching A.'},
+  'H - Transportation & Storage': {rev:15,cap:22,ope:18, note:'Mixed profile: rail operators 60-80% aligned; road freight 5-15%; ports 8-20%; airlines 0% eligible under current TSC.'},
+  'F - Construction': {rev:7,cap:11,ope:9, note:'Construction contractors 3-12% aligned; specialised green-build firms 30%+. Primary constraint is NZEB threshold achievement.'},
+  'K - Financial & Insurance': {rev:3,cap:8,ope:5, note:'Banks: GAR median 3% FY2023 (EBA GAR Supervisory Benchmark, N=95). Insurance: 10.1 CCA non-life climate underwriting median 12%. Credit institutions disclose BTAR alongside GAR.'},
+  'A - Agriculture, Forestry & Fishing': {rev:12,cap:18,ope:15, note:'Mostly §1.1 afforestation and §1.3 forest management driving alignment; FLAG sector pathway compliance is critical DNSH gate.'},
+  'Other - Multiple/Diversified': {rev:10,cap:18,ope:14, note:'Diversified conglomerate median 10% aligned turnover.'}
+};
+
+/* =======================================================================
+   STATE
+   ======================================================================= */
+let STATE = {
+  entity:{name:'',sector:'',regime:'NFU',year:2025,cur:'EUR',group:'Consolidated group'},
+  fin:{rev:0,capex:0,opex:0},
+  flags:{csrd:false, sfdr8:false, sfdr9:false, nuclear:false, gas:false, voluntary_env:false},
+  activities:[], // {id, catId, name, obj, type, nace, threshold, rev, capex, opex, sc, dnsh:{CCM:1,CCA:1,WTR:1,CE:1,PPC:1,BIO:1}}
+  ms:{ms_hr1:false,ms_hr2:false,ms_hr3:false,ms_hr4:false,ms_co1:false,ms_co2:false,ms_co3:false,ms_tx1:false,ms_tx2:false,ms_tx3:false,ms_fc1:false,ms_fc2:false}
+};
+
+/* =======================================================================
+   INIT & TAB HANDLING
+   ======================================================================= */
+function showTab(t){
+  document.querySelectorAll('section.pane').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(t).classList.add('active');
+  document.querySelector(`.tabs button[data-tab="${t}"]`).classList.add('active');
+  if(t==='sc') renderSCTab();
+  if(t==='dnsh') renderDNSHTab();
+  if(t==='kpis') renderKPITab();
+  if(t==='disclosure') renderDisclosureTab();
+  if(t==='results') renderResultsTab();
+  if(t==='prompt') renderPromptTab();
+}
+
+function init(){
+  const sel = document.getElementById('act_pick');
+  ACTIVITIES.forEach(a=>{
+    const o = document.createElement('option');
+    o.value = a.id;
+    o.textContent = `[${a.obj}] ${a.name}`;
+    sel.appendChild(o);
+  });
+  // bindings
+  ['ent_name','ent_sector','ent_regime','ent_year','ent_cur','ent_group'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.addEventListener('input',()=>{STATE.entity[id.replace('ent_','')] = el.value; compute();});
+    el.addEventListener('change',()=>{STATE.entity[id.replace('ent_','')] = el.value; compute();});
+  });
+  ['fin_rev','fin_capex','fin_opex'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.addEventListener('input',()=>{STATE.fin[id.replace('fin_','')] = parseFloat(el.value)||0; compute();});
+  });
+  ['flag_csrd','flag_sfdr8','flag_sfdr9','flag_nuclear','flag_gas','flag_voluntary_env'].forEach(id=>{
+    const el = document.getElementById(id);
+    el.addEventListener('change',()=>{STATE.flags[id.replace('flag_','')] = el.checked; compute();});
+  });
+  document.querySelectorAll('input.ms').forEach(el=>{
+    el.addEventListener('change',()=>{STATE.ms[el.dataset.id] = el.checked; compute();});
+  });
+  renderActivities();
+  compute();
+}
+
+/* =======================================================================
+   ACTIVITIES TAB
+   ======================================================================= */
+function addActivityFromPick(){
+  const v = document.getElementById('act_pick').value;
+  if(!v) return;
+  const a = ACTIVITIES.find(x=>x.id===v);
+  if(!a) return;
+  STATE.activities.push({
+    id: 'ua_'+Date.now()+Math.round(Math.random()*999),
+    catId: a.id, name:a.name, obj:a.obj, type:a.type, nace:a.nace, threshold:a.threshold, tsc:a.tsc, ref:a.ref,
+    rev:0, capex:0, opex:0, sc:false, sc_note:'',
+    dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},
+    dnsh_note:''
+  });
+  document.getElementById('act_pick').value='';
+  renderActivities(); compute();
+}
+function addActivityBlank(){
+  STATE.activities.push({
+    id:'ua_'+Date.now()+Math.round(Math.random()*999),
+    catId:'custom', name:'Custom activity', obj:'CCM', type:'subst', nace:'', threshold:'Enter TSC reference',
+    tsc:'Describe the technical screening criteria applicable to your activity.', ref:'Custom',
+    rev:0, capex:0, opex:0, sc:false, sc_note:'',
+    dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},
+    dnsh_note:''
+  });
+  renderActivities(); compute();
+}
+function removeActivity(id){STATE.activities = STATE.activities.filter(a=>a.id!==id); renderActivities(); compute();}
+function updateActivity(id, field, value){
+  const a = STATE.activities.find(x=>x.id===id);
+  if(!a) return;
+  if(field==='rev'||field==='capex'||field==='opex') value = parseFloat(value)||0;
+  a[field] = value;
+  compute();
+}
+function renderActivities(){
+  const list = document.getElementById('act_list');
+  if(!STATE.activities.length){
+    list.innerHTML = '<div class="note">No activities added yet. Pick one from the catalogue above, or add a custom activity. A typical Article 8 NFU adds 3&ndash;8 activities; a bank assessing GAR counts eligibility of ~800 counterparties via automated mapping.</div>';
+    return;
+  }
+  list.innerHTML = '';
+  STATE.activities.forEach(a=>{
+    const card = document.createElement('div');
+    card.className='card';
+    const typeBadge = a.type==='enabling' ? '<span class="tag info">Enabling</span>' : a.type==='transitional' ? '<span class="tag warn">Transitional</span>' : '<span class="tag ok">Substantial</span>';
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <div>
+          <span class="badge-obj ${OBJ_META[a.obj].cls}">${a.obj}</span>
+          <strong>${escapeHtml(a.name)}</strong> ${typeBadge}
+          <div class="muted small">NACE ${escapeHtml(a.nace||'—')} · ${escapeHtml(a.ref)}</div>
+        </div>
+        <button class="btn ghost" onclick="removeActivity('${a.id}')">Remove</button>
+      </div>
+      <div class="grid grid-3" style="margin-top:10px">
+        <div><label>Turnover (mn)</label><input type="number" value="${a.rev}" step="0.1" oninput="updateActivity('${a.id}','rev',this.value)"></div>
+        <div><label>CapEx (mn)</label><input type="number" value="${a.capex}" step="0.1" oninput="updateActivity('${a.id}','capex',this.value)"></div>
+        <div><label>OpEx (mn)</label><input type="number" value="${a.opex}" step="0.1" oninput="updateActivity('${a.id}','opex',this.value)"></div>
+      </div>`;
+    list.appendChild(card);
+  });
+}
+
+/* =======================================================================
+   SC TAB
+   ======================================================================= */
+function renderSCTab(){
+  const list = document.getElementById('sc_list');
+  if(!STATE.activities.length){list.innerHTML='<div class="muted">Add activities first.</div>';return;}
+  list.innerHTML = '';
+  STATE.activities.forEach(a=>{
+    const card = document.createElement('div');
+    card.className='card';
+    card.innerHTML = `
+      <h4><span class="badge-obj ${OBJ_META[a.obj].cls}">${a.obj}</span> ${escapeHtml(a.name)}</h4>
+      <div class="muted small" style="margin-bottom:8px"><strong>TSC threshold:</strong> ${escapeHtml(a.threshold)} &middot; <em>${escapeHtml(a.ref)}</em></div>
+      <div class="muted" style="margin-bottom:10px">${escapeHtml(a.tsc)}</div>
+      <div class="checklist"><label><input type="checkbox" ${a.sc?'checked':''} onchange="updateActivity('${a.id}','sc',this.checked)"> <strong>TSC met</strong> — activity substantially contributes to ${OBJ_META[a.obj].name}</label></div>
+      <label style="margin-top:6px">Evidence / calculation notes</label>
+      <textarea rows="2" oninput="updateActivity('${a.id}','sc_note',this.value)" placeholder="Describe calculation, data sources, measurement methodology (e.g. LCA tool used, baseline year, third-party verification).">${escapeHtml(a.sc_note||'')}</textarea>`;
+    list.appendChild(card);
+  });
+}
+
+/* =======================================================================
+   DNSH TAB
+   ======================================================================= */
+function renderDNSHTab(){
+  const list = document.getElementById('dnsh_list');
+  if(!STATE.activities.length){list.innerHTML='<div class="muted">Add activities first.</div>';return;}
+  list.innerHTML = '';
+  STATE.activities.forEach(a=>{
+    const card = document.createElement('div');
+    card.className='card';
+    let objs = '';
+    DNSH_OBJECTIVES.forEach(o=>{
+      if(o===a.obj) return; // primary objective doesn't need DNSH
+      const ok = a.dnsh[o]!==false;
+      objs += `<div style="margin:8px 0;padding-left:10px;border-left:3px solid ${ok?'var(--moss)':'var(--coral)'}">
+        <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" ${ok?'checked':''} onchange="updateDnsh('${a.id}','${o}',this.checked)"> <strong>DNSH ${o}</strong> passed</label>
+        <div class="muted small" style="margin-top:2px">${DNSH_GENERIC[o]}</div>
+      </div>`;
+    });
+    card.innerHTML = `
+      <h4><span class="badge-obj ${OBJ_META[a.obj].cls}">${a.obj}</span> ${escapeHtml(a.name)} <span class="muted small">— DNSH on 5 remaining objectives</span></h4>
+      ${objs}
+      <label style="margin-top:6px">DNSH evidence notes</label>
+      <textarea rows="2" oninput="updateActivity('${a.id}','dnsh_note',this.value)" placeholder="EIA, CR&VA, REACH conformity, chemical substitution programme, etc.">${escapeHtml(a.dnsh_note||'')}</textarea>`;
+    list.appendChild(card);
+  });
+}
+function updateDnsh(id, obj, val){
+  const a = STATE.activities.find(x=>x.id===id);
+  if(!a) return;
+  a.dnsh[obj] = val;
+  compute();
+}
+
+/* =======================================================================
+   KPI TAB
+   ======================================================================= */
+function renderKPITab(){
+  const aligned = k => STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass()).reduce((s,a)=>s+(a[k]||0),0);
+  const eligible = k => STATE.activities.reduce((s,a)=>s+(a[k]||0),0);
+  const pct = (n,d)=> d>0 ? (100*n/d).toFixed(1)+'%':'0.0%';
+  document.getElementById('kpi_elig_rev').textContent = pct(eligible('rev'), STATE.fin.rev);
+  document.getElementById('kpi_align_rev').textContent = pct(aligned('rev'), STATE.fin.rev);
+  document.getElementById('kpi_elig_cap').textContent = pct(eligible('capex'), STATE.fin.capex);
+  document.getElementById('kpi_align_cap').textContent = pct(aligned('capex'), STATE.fin.capex);
+  document.getElementById('kpi_elig_ope').textContent = pct(eligible('opex'), STATE.fin.opex);
+  document.getElementById('kpi_align_ope').textContent = pct(aligned('opex'), STATE.fin.opex);
+
+  // By objective breakdown (turnover)
+  const byObj = {};
+  DNSH_OBJECTIVES.forEach(o=>{byObj[o]=0;});
+  STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass()).forEach(a=>{byObj[a.obj] += (a.rev||0);});
+  const bEl = document.getElementById('kpi_by_obj_rev');
+  let h = '<table><thead><tr><th>Objective</th><th>Aligned turnover (mn)</th><th>% of group turnover</th></tr></thead><tbody>';
+  DNSH_OBJECTIVES.forEach(o=>{
+    const v = byObj[o];
+    h += `<tr><td><span class="badge-obj ${OBJ_META[o].cls}">${o}</span> ${OBJ_META[o].name}</td><td>${v.toFixed(1)}</td><td>${STATE.fin.rev>0?(100*v/STATE.fin.rev).toFixed(1)+'%':'&mdash;'}</td></tr>`;
+  });
+  h += '</tbody></table>';
+  bEl.innerHTML = h;
+
+  // Split
+  const splitEn = STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass() && a.type==='enabling').reduce((s,a)=>s+(a.rev||0),0);
+  const splitTr = STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass() && a.type==='transitional').reduce((s,a)=>s+(a.rev||0),0);
+  const splitSu = STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass() && a.type==='subst').reduce((s,a)=>s+(a.rev||0),0);
+  document.getElementById('kpi_split').innerHTML = `<table><thead><tr><th>Category</th><th>Aligned turnover (mn)</th><th>% of aligned</th><th>% of group</th></tr></thead><tbody>
+    <tr><td>Substantial contribution</td><td>${splitSu.toFixed(1)}</td><td>${aligned('rev')>0?(100*splitSu/aligned('rev')).toFixed(1)+'%':'&mdash;'}</td><td>${pct(splitSu,STATE.fin.rev)}</td></tr>
+    <tr><td>Enabling (Art. 10(1)(i))</td><td>${splitEn.toFixed(1)}</td><td>${aligned('rev')>0?(100*splitEn/aligned('rev')).toFixed(1)+'%':'&mdash;'}</td><td>${pct(splitEn,STATE.fin.rev)}</td></tr>
+    <tr><td>Transitional (Art. 10(2))</td><td>${splitTr.toFixed(1)}</td><td>${aligned('rev')>0?(100*splitTr/aligned('rev')).toFixed(1)+'%':'&mdash;'}</td><td>${pct(splitTr,STATE.fin.rev)}</td></tr>
+  </tbody></table>`;
+
+  const tb = document.querySelector('#kpi_table tbody');
+  tb.innerHTML='';
+  STATE.activities.forEach(a=>{
+    const al = a.sc && passDnsh(a) && msPass();
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(a.name)}</td>
+      <td><span class="badge-obj ${OBJ_META[a.obj].cls}">${a.obj}</span></td>
+      <td>${a.type==='enabling'?'<span class="tag info">Enabling</span>':a.type==='transitional'?'<span class="tag warn">Transitional</span>':'<span class="tag ok">Substantial</span>'}</td>
+      <td>${STATE.fin.rev>0?(100*(a.rev||0)/STATE.fin.rev).toFixed(1)+'%':'&mdash;'}</td>
+      <td>${STATE.fin.capex>0?(100*(a.capex||0)/STATE.fin.capex).toFixed(1)+'%':'&mdash;'}</td>
+      <td>${STATE.fin.opex>0?(100*(a.opex||0)/STATE.fin.opex).toFixed(1)+'%':'&mdash;'}</td>
+      <td>${al?'<span class="tag ok">Aligned</span>':a.sc?'<span class="tag warn">Eligible, not aligned</span>':'<span class="tag bad">Not assessed</span>'}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+/* =======================================================================
+   DISCLOSURE TAB
+   ======================================================================= */
+function renderDisclosureTab(){
+  const fin = STATE.fin;
+  const e = STATE.entity;
+  const aligned = k => STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass()).reduce((s,a)=>s+(a[k]||0),0);
+  const eligible = k => STATE.activities.reduce((s,a)=>s+(a[k]||0),0);
+  const pct = (n,d)=> d>0 ? (100*n/d).toFixed(1):'0.0';
+
+  document.getElementById('disc_policy').value =
+`Accounting policy — EU Taxonomy KPIs (Regulation (EU) 2020/852, Delegated Regulation (EU) 2021/2178)
+
+${e.name||'[Entity]'} has performed its Taxonomy assessment for financial year ${e.year} in accordance with Article 8 of Regulation (EU) 2020/852. Eligibility has been determined by mapping the Group's economic activities against Delegated Regulations (EU) 2021/2139 (Climate), 2022/1214 (nuclear & fossil gas), and 2023/2486 (Water, Circular Economy, Pollution, Biodiversity). Alignment has been determined by assessing Substantial Contribution against the applicable Technical Screening Criteria, Do No Significant Harm against the five remaining environmental objectives, and Minimum Safeguards compliance per Article 18.
+
+Denominators: Turnover — net revenue per IFRS 15 / Directive 2013/34/EU Art. 2(5): ${e.cur||'EUR'} ${fmt(fin.rev)}m. CapEx — additions to tangible and intangible fixed assets per IAS 16, IAS 38, IAS 40, IFRS 16 and IFRS 3 (excluding fair-value changes and goodwill): ${e.cur||'EUR'} ${fmt(fin.capex)}m. OpEx — direct non-capitalised costs relating to R&D, building renovation, short-term lease, and day-to-day servicing of property, plant & equipment: ${e.cur||'EUR'} ${fmt(fin.opex)}m. No double counting has been applied: each unit of turnover/CapEx/OpEx is allocated to at most one economic activity.
+
+${STATE.flags.csrd?'The Group is in scope of Directive (EU) 2022/2464 (CSRD); these KPIs form part of the sustainability statement (ESRS E1 DP-E1-3 transition plan and DP-E1-6 targets cross-references).':'The Group discloses these KPIs on a voluntary basis alongside its sustainability-related financial disclosures.'} ${(STATE.flags.nuclear||STATE.flags.gas)?'Templates in Annex XII (2022/1214) are included where applicable.':''}`;
+
+  document.getElementById('disc_rev').value =
+`Turnover KPI — FY${e.year}
+
+Total net turnover: ${e.cur||'EUR'} ${fmt(fin.rev)}m (denominator).
+Turnover from Taxonomy-eligible economic activities: ${e.cur||'EUR'} ${fmt(eligible('rev'))}m (${pct(eligible('rev'),fin.rev)}% of total).
+Turnover from Taxonomy-aligned economic activities: ${e.cur||'EUR'} ${fmt(aligned('rev'))}m (${pct(aligned('rev'),fin.rev)}% of total).
+${msPass()?'All aligned activities pass the Minimum Safeguards (Art. 18) assessment.':'Minimum Safeguards (Art. 18) gaps identified — please refer to the Minimum Safeguards narrative below; aligned figures exclude activities carried out in entities that do not meet all four PSF sub-areas.'}
+No turnover has been allocated to more than one economic activity. The objective-level split is disclosed in the accompanying machine-readable Annex II template.`;
+
+  document.getElementById('disc_capex').value =
+`CapEx KPI — FY${e.year}
+
+Total CapEx: ${e.cur||'EUR'} ${fmt(fin.capex)}m (denominator).
+CapEx on Taxonomy-eligible activities: ${e.cur||'EUR'} ${fmt(eligible('capex'))}m (${pct(eligible('capex'),fin.capex)}%).
+CapEx on Taxonomy-aligned activities: ${e.cur||'EUR'} ${fmt(aligned('capex'))}m (${pct(aligned('capex'),fin.capex)}%).
+
+The Group has ${fin.capex>0&&aligned('capex')>0?'a':'no formal'} CapEx Plan under Annex I §1.1.2.2(b) aimed at expanding Taxonomy-aligned activities over a 5-year horizon (extendable to 10 years for specific capital-intensive projects). Plan CapEx is monitored at Group treasury level and reviewed by the Board Sustainability Committee at least annually.`;
+
+  document.getElementById('disc_opex').value =
+`OpEx KPI — FY${e.year}
+
+Total OpEx (per §1.1.3.2): ${e.cur||'EUR'} ${fmt(fin.opex)}m.
+OpEx on eligible activities: ${e.cur||'EUR'} ${fmt(eligible('opex'))}m (${pct(eligible('opex'),fin.opex)}%).
+OpEx on aligned activities: ${e.cur||'EUR'} ${fmt(aligned('opex'))}m (${pct(aligned('opex'),fin.opex)}%).
+${fin.opex>0?'The Group applies the non-materiality exemption under §1.1.3.2 where appropriate.':'Given the low materiality of the OpEx KPI, the Group discloses this KPI at the lowest relevant level of disaggregation.'}`;
+
+  const msDone = Object.values(STATE.ms).filter(Boolean).length;
+  document.getElementById('disc_ms').value =
+`Minimum safeguards — Article 18
+
+The Group assesses compliance with Article 18 of Regulation (EU) 2020/852 using the four-sub-area framework recommended by the Platform on Sustainable Finance (Final Report on Minimum Safeguards, October 2022). As at the reporting date: ${msDone}/12 operational sub-controls are in place, resulting in ${msDone===12?'a clean pass':msDone>=10?'a "pass with gaps" qualification with the remaining controls scheduled for closure in the next reporting cycle':'a provisional fail. A remediation plan has been established and all provisional minimum-safeguards gaps will be remediated within 12 months'}. No final court convictions for corruption, tax offences or competition-law breach have been recorded for the Group or its senior officers in the past 5 years, and no OECD NCP final determinations against the Group are outstanding.`;
+
+  if(STATE.flags.nuclear||STATE.flags.gas){
+    document.getElementById('disc_ccda').value =
+`Complementary Climate Delegated Act disclosures
+
+Pursuant to Delegated Regulation (EU) 2022/1214, the Group discloses the following under Annex XII templates:
+${STATE.flags.nuclear?'• Nuclear energy — activities 4.26, 4.27, 4.28 as applicable.\n':''}${STATE.flags.gas?'• Fossil gas — activities 4.29, 4.30, 4.31 as applicable.\n':''}The eligibility and alignment of these activities is separately disclosed in the Annex XII templates. All conditions — including retrofit timelines, GHG intensity thresholds (≤100 gCO₂e/kWh for fossil gas power generation on a life-cycle basis or ≤270 gCO₂/kWh for transitional category), and construction-permit vintages — have been tested against the TSC in §4.29–4.31.`;
+  } else {
+    document.getElementById('disc_ccda').value = 'Not applicable — the Group does not invoke the Complementary Climate Delegated Act (2022/1214) nuclear or fossil gas activities.';
+  }
+}
+
+/* =======================================================================
+   RESULTS TAB
+   ======================================================================= */
+function renderResultsTab(){
+  const aligned = k => STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass()).reduce((s,a)=>s+(a[k]||0),0);
+  const eligible = k => STATE.activities.reduce((s,a)=>s+(a[k]||0),0);
+  const pct = (n,d)=> d>0 ? (100*n/d):0;
+
+  // Score: composite of alignment ratios + MS + coverage
+  const revShare = pct(aligned('rev'),STATE.fin.rev);
+  const capShare = pct(aligned('capex'),STATE.fin.capex);
+  const opShare  = pct(aligned('opex'),STATE.fin.opex);
+  const coverage = STATE.activities.length === 0 ? 0 : Math.min(100, 10*STATE.activities.length);
+  const msScore = Math.round(100*Object.values(STATE.ms).filter(Boolean).length/12);
+
+  const composite = Math.round(0.35*revShare + 0.30*capShare + 0.10*opShare + 0.15*msScore + 0.10*coverage);
+
+  let grade = 'E', gradeLabel='Absent / not assessed', barClass='low';
+  if(composite>=85){grade='A';gradeLabel='Aligned — market-leading'; barClass='';}
+  else if(composite>=70){grade='B';gradeLabel='Advancing — credible alignment'; barClass='';}
+  else if(composite>=50){grade='C';gradeLabel='Developing — partial alignment with visible trajectory'; barClass='mid';}
+  else if(composite>=30){grade='D';gradeLabel='Early-stage — mostly eligibility without alignment'; barClass='low';}
+  else {grade='E';gradeLabel='Absent — limited taxonomy footprint or assessment incomplete'; barClass='low';}
+
+  document.getElementById('overall_score').textContent = composite;
+  document.getElementById('overall_grade').textContent = `Grade ${grade} — ${gradeLabel}`;
+  const sumEl = document.getElementById('overall_summary');
+  sumEl.innerHTML = `${STATE.activities.filter(a=>a.sc&&passDnsh(a)&&msPass()).length}/${STATE.activities.length} activities aligned &middot; Turnover ${revShare.toFixed(1)}% &middot; CapEx ${capShare.toFixed(1)}% &middot; OpEx ${opShare.toFixed(1)}% &middot; Min. Safeguards ${msScore}%`;
+  const bar = document.getElementById('overall_bar');
+  bar.style.width = composite+'%'; bar.className = barClass;
+
+  document.getElementById('res_align_rev').textContent = revShare.toFixed(1)+'%';
+  document.getElementById('res_align_rev_val').textContent = fmt(aligned('rev'))+' mn of '+fmt(STATE.fin.rev)+' mn';
+  document.getElementById('res_align_cap').textContent = capShare.toFixed(1)+'%';
+  document.getElementById('res_align_cap_val').textContent = fmt(aligned('capex'))+' mn';
+  document.getElementById('res_align_ope').textContent = opShare.toFixed(1)+'%';
+  document.getElementById('res_align_ope_val').textContent = fmt(aligned('opex'))+' mn';
+  document.getElementById('res_act_count').textContent = STATE.activities.filter(a=>a.sc&&passDnsh(a)&&msPass()).length+' / '+STATE.activities.length;
+
+  // Benchmark
+  const b = BENCH[STATE.entity.sector]||null;
+  document.getElementById('bench_box').innerHTML = b ?
+    `<strong>${escapeHtml(STATE.entity.sector)}</strong> peer context: aligned turnover median <strong>${b.rev}%</strong> · CapEx <strong>${b.cap}%</strong> · OpEx <strong>${b.ope}%</strong>. ${escapeHtml(b.note)}<br><span class="muted small">Source: Transparency EU Taxonomy Benchmark 2024 (N=213 EU NFRD reporters), EBA GAR Supervisory Benchmark 2024, EPRA sBPR 2024.</span>`
+    : `<span class="muted">Select a sector in Setup to view peer benchmark context.</span>`;
+
+  // Gap-closure actions (priority-ordered)
+  const actions = [];
+  // P1 — Minimum Safeguards gaps
+  Object.keys(STATE.ms).forEach(k=>{
+    if(!STATE.ms[k]){
+      const m = {
+        ms_hr1:'Establish OECD 6-step human-rights due diligence covering own operations + value chain.',
+        ms_hr2:'Adopt a board-approved human-rights policy referencing UNGPs and ILO Core Conventions.',
+        ms_hr3:'Build an operational-level grievance mechanism aligned with UNGP Principle 31.',
+        ms_hr4:'Resolve outstanding OECD NCP / ILO CAS / UN treaty-body complaints, or document why they are non-material.',
+        ms_co1:'Adopt anti-bribery policy aligned with OECD Anti-Bribery Convention.',
+        ms_co2:'Document that the entity has no corruption convictions in the past 5 years.',
+        ms_co3:'Operationalise Whistleblower Directive (EU) 2019/1937 channel & publicise internally & externally.',
+        ms_tx1:'Publish board-approved tax strategy aligned with OECD BEPS.',
+        ms_tx2:'Publish country-by-country report per GRI 207-4 / CBCR Directive (EU) 2021/2101.',
+        ms_tx3:'Review EU blacklist-jurisdiction exposure; disclose substance rationale.',
+        ms_fc1:'Deploy competition-law policy + mandatory training.',
+        ms_fc2:'Document clean competition-law record in past 5 years.'
+      };
+      actions.push({p:'P1', action:m[k], why:'Minimum Safeguards — any gap disqualifies all activities from alignment under Art. 18.'});
+    }
+  });
+  // P1 — activities that passed SC but failed DNSH
+  STATE.activities.forEach(a=>{
+    if(a.sc && !passDnsh(a)){
+      Object.keys(a.dnsh).forEach(o=>{
+        if(!a.dnsh[o] && o!==a.obj){
+          actions.push({p:'P1', action:`Close DNSH ${o} gap on "${a.name}"`, why: DNSH_GENERIC[o]});
         }
-
-        function formatCurrency(value) {
-            const currency = getCurrentCurrency();
-            const symbols = { GBP: "£", USD: "$", EUR: "€" };
-            return symbols[currency] + value.toLocaleString("en-US", { maximumFractionDigits: 0 });
-        }
-
-        function updateDiscountRate() {
-            const geo = document.getElementById("geography").value;
-            const rates = {
-                uk: 3.5,
-                us: 7,
-                eu: 4,
-                south: 8
-            };
-            if (geo && rates[geo]) {
-                document.getElementById("discountRate").value = rates[geo];
-                updateDiscountGuidance();
-            }
-        }
-
-        function updateDiscountGuidance() {
-            const geo = document.getElementById("geography").value;
-            const guidance = {
-                uk: "Standard UK government appraisal discount rate (HM Treasury Green Book)",
-                us: "US standard social discount rate",
-                eu: "European average social discount rate",
-                south: "Higher rate typical for developing economies"
-            };
-            document.getElementById("discountGuidance").textContent = guidance[geo] || "";
-        }
-
-        // ===== MODE SELECTION =====
-        function selectMode(mode) {
-            appMode = mode;
-            if (mode === "quick") {
-                renderTemplateGrid();
-                goToStep("QuickA");
-            } else {
-                goToStep(1);
-            }
-        }
-
-        // STEP NAVIGATION
-        function goToStep(step) {
-            // Validation gates (only for pro path)
-            if (step === 2 && appMode === "pro" && currentStep === 1 && !validateSetup()) return;
-            if (step === 3 && appMode === "pro" && !validateOutcomes()) return;
-
-            document.querySelectorAll(".step-content").forEach(el => el.classList.remove("active"));
-
-            // Resolve target container
-            let targetId;
-            if (step === "QuickA") targetId = "stepQuickA";
-            else if (step === "QuickB") targetId = "stepQuickB";
-            else targetId = "step" + step;
-
-            const targetEl = document.getElementById(targetId);
-            if (targetEl) targetEl.classList.add("active");
-
-            // Step indicator: map quick steps to nominal indicator positions
-            document.querySelectorAll(".step").forEach(el => el.classList.remove("active"));
-            let indicatorStep;
-            if (step === 0) indicatorStep = 0;
-            else if (step === "QuickA") indicatorStep = 1;
-            else if (step === "QuickB") indicatorStep = 2;
-            else indicatorStep = step;
-            const indicatorEl = document.querySelector(`[data-step="${indicatorStep}"]`);
-            if (indicatorEl) indicatorEl.classList.add("active");
-
-            // Progress bar (0..4 scale, with Quick steps mapped in)
-            const progressMap = { 0: 0, 1: 25, 2: 50, 3: 75, 4: 100, "QuickA": 25, "QuickB": 50 };
-            const progress = progressMap[step] ?? 0;
-            document.getElementById("progressFill").style.width = progress + "%";
-
-            currentStep = step;
-
-            if (step === 3) calculateResults();
-            if (step === 4) generateReport();
-        }
-
-        function nextStep() {
-            if (typeof currentStep === "number") {
-                goToStep(currentStep + 1);
-            } else if (currentStep === "QuickA") {
-                goToStep("QuickB");
-            } else if (currentStep === "QuickB") {
-                goToStep(3);
-            }
-        }
-
-        function prevStep() {
-            if (typeof currentStep === "number" && currentStep > 0) {
-                // In pro mode, step 1 goes back to mode picker (step 0)
-                if (currentStep === 1) {
-                    goToStep(0);
-                } else if (currentStep === 3 && appMode === "quick") {
-                    goToStep("QuickB");
-                } else if (currentStep === 4 && appMode === "quick") {
-                    goToStep(3);
-                } else {
-                    goToStep(currentStep - 1);
-                }
-            }
-        }
-
-        // ===== QUICK WIZARD FUNCTIONS =====
-        function renderTemplateGrid() {
-            const grid = document.getElementById("templateGrid");
-            grid.innerHTML = Object.entries(quickTemplates).map(([key, t]) => `
-                <div class="template-card" onclick="applyQuickTemplate('${key}')">
-                    <div class="template-icon">${t.icon}</div>
-                    <h4>${t.name}</h4>
-                    <div class="template-desc">${t.desc}</div>
-                    <div class="template-meta">
-                        <span class="template-tag primary">${t.outcomes.length} outcomes pre-set</span>
-                        ${t.tags.map(tag => `<span class="template-tag">${tag}</span>`).join("")}
-                    </div>
-                </div>
-            `).join("");
-        }
-
-        function applyQuickTemplate(key) {
-            selectedTemplateKey = key;
-            const t = quickTemplates[key];
-            if (!t) return;
-
-            // Pre-fill hidden pro-form fields so calculations reuse the same engine
-            document.getElementById("orgName").value = "";
-            document.getElementById("projectName").value = t.name;
-            document.getElementById("geography").value = t.geography;
-            document.getElementById("currency").value = t.currency;
-            document.getElementById("discountRate").value = t.discountRate;
-            document.getElementById("timeHorizon").value = t.timeHorizon;
-            document.getElementById("investment").value = "";
-            document.getElementById("description").value = t.desc;
-
-            // Sync the Quick screen's visible currency selector with template default
-            document.getElementById("quickCurrency").value = t.currency;
-
-            // Build outcomes array from template
-            outcomes = t.outcomes.map((o, idx) => ({
-                id: idx,
-                name: o.name,
-                category: o.category,
-                beneficiaries: 0,
-                proxyValue: o.proxyValue,
-                customProxy: null,
-                deadweight: o.deadweight,
-                attribution: o.attribution,
-                displacement: o.displacement,
-                duration: o.duration,
-                dropoff: o.dropoff,
-                _proxySource: o.proxySource,
-                _beneficiariesHint: o.beneficiariesHint
-            }));
-
-            renderQuickDetails();
-            goToStep("QuickB");
-        }
-
-        function renderQuickDetails() {
-            const t = quickTemplates[selectedTemplateKey];
-            if (!t) return;
-
-            const geoLabel = { uk: "United Kingdom", us: "United States", eu: "Europe", south: "Global South" }[t.geography];
-
-            document.getElementById("quickSummary").innerHTML = `
-                <h4>${t.icon} ${t.name}</h4>
-                <p><strong>Pre-set for you:</strong> Geography ${geoLabel}, discount rate ${t.discountRate}%, evaluation horizon ${t.timeHorizon} years, ${t.outcomes.length} outcomes with proxy values. ${t.investmentHint}</p>
-            `;
-
-            const container = document.getElementById("quickOutcomesContainer");
-            container.innerHTML = outcomes.map((o, idx) => `
-                <div class="quick-outcome-row">
-                    <div>
-                        <div class="quick-outcome-name">${o.name}</div>
-                        <small>Proxy: ${formatCurrencyForTemplate(o.proxyValue, t.currency)} · ${o._proxySource || ""} · Deadweight ${o.deadweight}% · Attribution ${o.attribution}% · ${o.duration}yr duration</small>
-                        <small style="color: #1a6b6b; margin-top: 4px;">${o._beneficiariesHint || ""}</small>
-                    </div>
-                    <div class="quick-outcome-input">
-                        <input type="number" min="0" step="1" placeholder="# people" value="${o.beneficiaries || ""}" onchange="updateQuickBeneficiaries(${idx}, this.value)">
-                    </div>
-                </div>
-            `).join("");
-        }
-
-        function formatCurrencyForTemplate(value, currency) {
-            const symbols = { GBP: "£", USD: "$", EUR: "€" };
-            return (symbols[currency] || "") + Number(value).toLocaleString("en-US", { maximumFractionDigits: 0 });
-        }
-
-        function updateQuickBeneficiaries(idx, value) {
-            if (outcomes[idx]) {
-                outcomes[idx].beneficiaries = parseFloat(value) || 0;
-            }
-        }
-
-        function submitQuickWizard() {
-            const orgName = document.getElementById("quickOrgName").value.trim();
-            const projectName = document.getElementById("quickProjectName").value.trim();
-            const investment = parseFloat(document.getElementById("quickInvestment").value);
-            const currency = document.getElementById("quickCurrency").value;
-
-            if (!orgName) { alert("Please enter your organisation name."); return; }
-            if (!projectName) { alert("Please enter your programme name."); return; }
-            if (!investment || investment <= 0) { alert("Please enter a total investment amount greater than 0."); return; }
-
-            const filledBeneficiaries = outcomes.some(o => (o.beneficiaries || 0) > 0);
-            if (!filledBeneficiaries) { alert("Please enter beneficiary numbers for at least one outcome."); return; }
-
-            // Sync to the shared pro-form fields so downstream calculations work unchanged
-            document.getElementById("orgName").value = orgName;
-            document.getElementById("projectName").value = projectName;
-            document.getElementById("investment").value = investment;
-            document.getElementById("currency").value = currency;
-
-            // Re-issue stable IDs
-            outcomes = outcomes.map((o, idx) => ({ ...o, id: idx }));
-
-            goToStep(3);
-        }
-
-        function validateSetup() {
-            const form = document.getElementById("setupForm");
-            return form.checkValidity();
-        }
-
-        function validateOutcomes() {
-            if (outcomes.length === 0) {
-                alert("Please add at least one outcome");
-                return false;
-            }
-            return true;
-        }
-
-        // OUTCOME MANAGEMENT
-        function addOutcome() {
-            const id = outcomes.length;
-            outcomes.push({
-                id,
-                name: "",
-                category: "employment",
-                beneficiaries: 0,
-                proxyValue: 0,
-                deadweight: 30,
-                attribution: 100,
-                displacement: 0,
-                duration: parseInt(document.getElementById("timeHorizon").value),
-                dropoff: -20
-            });
-            renderOutcomes();
-        }
-
-        function renderOutcomes() {
-            const container = document.getElementById("outcomesContainer");
-            container.innerHTML = outcomes.map((o, idx) => `
-                <div class="outcome-card">
-                    <h3>Outcome ${idx + 1}</h3>
-                    <div class="outcome-grid">
-                        <div class="form-group">
-                            <label>Outcome Name</label>
-                            <input type="text" value="${o.name || ""}" onchange="updateOutcome(${o.id}, 'name', this.value)" placeholder="e.g., Participants moved to employment">
-                        </div>
-                        <div class="form-group">
-                            <label>Category</label>
-                            <select onchange="updateOutcome(${o.id}, 'category', this.value)">
-                                <option value="employment" ${o.category === "employment" ? "selected" : ""}>Employment & Livelihoods</option>
-                                <option value="health" ${o.category === "health" ? "selected" : ""}>Health & Wellbeing</option>
-                                <option value="education" ${o.category === "education" ? "selected" : ""}>Education</option>
-                                <option value="environment" ${o.category === "environment" ? "selected" : ""}>Environment & Climate</option>
-                                <option value="housing" ${o.category === "housing" ? "selected" : ""}>Housing & Homelessness</option>
-                                <option value="community" ${o.category === "community" ? "selected" : ""}>Community & Social</option>
-                                <option value="financial" ${o.category === "financial" ? "selected" : ""}>Financial Inclusion</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Number of Beneficiaries</label>
-                            <input type="number" value="${o.beneficiaries || ""}" onchange="updateOutcome(${o.id}, 'beneficiaries', parseFloat(this.value))">
-                        </div>
-                        <div class="form-group">
-                            <label>Proxy Value per Beneficiary</label>
-                            <select onchange="updateOutcome(${o.id}, 'proxyValue', parseFloat(this.value))">
-                                <option value="">Select proxy from library...</option>
-                                ${(proxyLibrary[o.category] || []).map(p => `<option value="${p.value}">${p.name}</option>`).join("")}
-                            </select>
-                            <div class="guidance">Enter custom value or select from library. This is the annual or one-off financial benefit per beneficiary.</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Custom Proxy Value (optional)</label>
-                            <input type="number" value="${o.customProxy || ""}" onchange="updateOutcome(${o.id}, 'customProxy', parseFloat(this.value) || null)" placeholder="Override library value">
-                        </div>
-                    </div>
-
-                    <div class="outcome-grid">
-                        <div class="form-group">
-                            <label>Deadweight (%)</label>
-                            <input type="number" value="${o.deadweight}" min="0" max="100" step="5" onchange="updateOutcome(${o.id}, 'deadweight', parseFloat(this.value))">
-                            <div class="guidance">What % would have happened anyway? Typical range: 10-50%</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Attribution (%)</label>
-                            <input type="number" value="${o.attribution}" min="0" max="100" step="5" onchange="updateOutcome(${o.id}, 'attribution', parseFloat(this.value))">
-                            <div class="guidance">What % of outcome is due to your intervention? 100% = full credit</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Displacement (%)</label>
-                            <input type="number" value="${o.displacement}" min="0" max="100" step="5" onchange="updateOutcome(${o.id}, 'displacement', parseFloat(this.value))">
-                            <div class="guidance">Does this displace activity elsewhere? Usually 0% for social outcomes</div>
-                        </div>
-                        <div class="form-group">
-                            <label>Duration (years)</label>
-                            <input type="number" value="${o.duration}" min="1" max="10" onchange="updateOutcome(${o.id}, 'duration', parseFloat(this.value))">
-                        </div>
-                        <div class="form-group">
-                            <label>Annual Drop-off (%)</label>
-                            <input type="number" value="${o.dropoff}" min="-100" max="0" step="5" onchange="updateOutcome(${o.id}, 'dropoff', parseFloat(this.value))">
-                            <div class="guidance">E.g., -20% = benefit reduces 20% each year</div>
-                        </div>
-                    </div>
-
-                    <div class="outcome-value">
-                        <strong>Calculated Annual Value: ${formatCurrency(calculateOutcomeValue(o))}</strong>
-                    </div>
-                    <div class="outcome-delete">
-                        <button type="button" class="btn-danger" onclick="removeOutcome(${o.id})">Delete Outcome</button>
-                    </div>
-                </div>
-            `).join("");
-        }
-
-        function updateOutcome(id, field, value) {
-            const outcome = outcomes.find(o => o.id === id);
-            if (outcome) {
-                outcome[field] = value;
-                renderOutcomes();
-            }
-        }
-
-        function removeOutcome(id) {
-            outcomes = outcomes.filter(o => o.id !== id);
-            renderOutcomes();
-        }
-
-        function calculateOutcomeValue(outcome) {
-            const proxyValue = outcome.customProxy || outcome.proxyValue;
-            if (!proxyValue || !outcome.beneficiaries) return 0;
-
-            const deadweightMultiplier = 1 - (outcome.deadweight / 100);
-            const attributionMultiplier = outcome.attribution / 100;
-            const displacementMultiplier = 1 - (outcome.displacement / 100);
-
-            return outcome.beneficiaries * proxyValue * deadweightMultiplier * attributionMultiplier * displacementMultiplier;
-        }
-
-        // CALCULATIONS
-        function calculateResults() {
-            const timeHorizon = parseInt(document.getElementById("timeHorizon").value);
-            const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
-            const investment = parseFloat(document.getElementById("investment").value) || 0;
-
-            let totalPV = 0;
-            const outcomeResults = outcomes.map(o => {
-                const annualValue = calculateOutcomeValue(o);
-                let pv = 0;
-
-                for (let year = 1; year <= Math.min(o.duration, timeHorizon); year++) {
-                    const dropoffFactor = Math.pow(1 + (o.dropoff / 100), year - 1);
-                    const discountFactor = 1 / Math.pow(1 + discountRate, year - 1);
-                    pv += annualValue * dropoffFactor * discountFactor;
-                }
-
-                totalPV += pv;
-                return {
-                    name: o.name || "Unnamed Outcome",
-                    beneficiaries: o.beneficiaries,
-                    proxyValue: o.customProxy || o.proxyValue,
-                    deadweight: o.deadweight,
-                    attribution: o.attribution,
-                    displacement: o.displacement,
-                    annualValue: annualValue,
-                    pv: pv
-                };
-            });
-
-            const sroiRatio = investment > 0 ? totalPV / investment : 0;
-
-            // Sensitivity Analysis (±20%)
-            const sensitivity = calculateSensitivity(totalPV, investment, discountRate, timeHorizon);
-
-            renderResults(sroiRatio, totalPV, outcomeResults, sensitivity);
-        }
-
-        function calculateSensitivity(baseTotalPV, investment, discountRate, timeHorizon) {
-            // Vary key assumptions by ±20%
-            const adjustedTotalPV_down = baseTotalPV * 0.8;
-            const adjustedTotalPV_up = baseTotalPV * 1.2;
-
-            return {
-                down: investment > 0 ? adjustedTotalPV_down / investment : 0,
-                base: investment > 0 ? baseTotalPV / investment : 0,
-                up: investment > 0 ? adjustedTotalPV_up / investment : 0
-            };
-        }
-
-        function renderResults(sroiRatio, totalPV, outcomeResults, sensitivity) {
-            const container = document.getElementById("resultsContainer");
-
-            let context = "Most credible SROI studies find 3:1–8:1";
-            if (sroiRatio < 1.5) context = "Below typical range – consider strengthening evidence or increasing impact";
-            else if (sroiRatio < 3) context = "Below typical range – focus on scaling or deepening outcomes";
-            else if (sroiRatio > 15) context = "Exceptionally high – validate assumptions and verify attribution";
-
-            const maxOutcome = Math.max(...outcomeResults.map(o => o.pv));
-
-            container.innerHTML = `
-                <div class="results-section">
-                    <div class="sroi-ratio">
-                        <div class="label">Social Return on Investment</div>
-                        <div class="value">${sroiRatio.toFixed(2)}:1</div>
-                        <div class="context">${context}</div>
-                    </div>
-
-                    <div class="section-title">Total Social Value (Present Value)</div>
-                    <div style="background: #f0f8f6; padding: 20px; border-radius: 6px; margin-bottom: 30px; border-left: 4px solid #2d7d46;">
-                        <strong style="color: #2d7d46; font-size: 24px;">${formatCurrency(totalPV)}</strong>
-                        <div style="color: #666; margin-top: 5px;">Generated from ${formatCurrency(parseFloat(document.getElementById("investment").value) || 0)} investment</div>
-                    </div>
-
-                    <div class="section-title">Outcome Breakdown</div>
-                    <div class="bar-chart">
-                        ${outcomeResults.map(o => {
-                            const percentage = maxOutcome > 0 ? (o.pv / maxOutcome) * 100 : 0;
-                            return `
-                                <div class="bar-item">
-                                    <div class="bar-label">
-                                        <strong>${o.name}</strong>
-                                        <span>${formatCurrency(o.pv)}</span>
-                                    </div>
-                                    <div class="bar-container">
-                                        <div class="bar-fill" style="width: ${percentage}%"></div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join("")}
-                    </div>
-
-                    <div class="section-title">Outcome Calculation Details</div>
-                    <table class="breakdown-table">
-                        <thead>
-                            <tr>
-                                <th>Outcome</th>
-                                <th>Beneficiaries</th>
-                                <th>Annual Value</th>
-                                <th>Present Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${outcomeResults.map(o => `
-                                <tr>
-                                    <td>${o.name}</td>
-                                    <td>${o.beneficiaries}</td>
-                                    <td>${formatCurrency(o.annualValue)}</td>
-                                    <td>${formatCurrency(o.pv)}</td>
-                                </tr>
-                            `).join("")}
-                        </tbody>
-                    </table>
-
-                    <div class="section-title">Sensitivity Analysis (What if key assumptions vary?)</div>
-                    <div style="font-size: 13px; color: #666; margin-bottom: 15px;">
-                        This table shows how your SROI ratio changes if social value estimates shift ±20%
-                    </div>
-                    <table class="sensitivity-table">
-                        <thead>
-                            <tr>
-                                <th>Scenario</th>
-                                <th>SROI Ratio</th>
-                                <th>Change</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="scenario-down">20% Lower Estimate</td>
-                                <td class="scenario-down">${sensitivity.down.toFixed(2)}:1</td>
-                                <td class="scenario-down">-${((1 - sensitivity.down / sensitivity.base) * 100).toFixed(1)}%</td>
-                            </tr>
-                            <tr>
-                                <td class="scenario-base">Base Case (Your Assumptions)</td>
-                                <td class="scenario-base">${sensitivity.base.toFixed(2)}:1</td>
-                                <td class="scenario-base">—</td>
-                            </tr>
-                            <tr>
-                                <td class="scenario-up">20% Higher Estimate</td>
-                                <td class="scenario-up">${sensitivity.up.toFixed(2)}:1</td>
-                                <td class="scenario-up">+${((sensitivity.up / sensitivity.base - 1) * 100).toFixed(1)}%</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
-
-        // REPORT GENERATION
-        function generateReport() {
-            const timeHorizon = parseInt(document.getElementById("timeHorizon").value);
-            const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
-            const investment = parseFloat(document.getElementById("investment").value) || 0;
-
-            let totalPV = 0;
-            const outcomeResults = outcomes.map(o => {
-                const annualValue = calculateOutcomeValue(o);
-                let pv = 0;
-
-                for (let year = 1; year <= Math.min(o.duration, timeHorizon); year++) {
-                    const dropoffFactor = Math.pow(1 + (o.dropoff / 100), year - 1);
-                    const discountFactor = 1 / Math.pow(1 + discountRate, year - 1);
-                    pv += annualValue * dropoffFactor * discountFactor;
-                }
-
-                totalPV += pv;
-                return {
-                    name: o.name || "Unnamed Outcome",
-                    beneficiaries: o.beneficiaries,
-                    proxyValue: o.customProxy || o.proxyValue,
-                    deadweight: o.deadweight,
-                    attribution: o.attribution,
-                    displacement: o.displacement,
-                    duration: o.duration,
-                    dropoff: o.dropoff,
-                    annualValue: annualValue,
-                    pv: pv
-                };
-            });
-
-            const sroiRatio = investment > 0 ? totalPV / investment : 0;
-
-            const orgName = document.getElementById("orgName").value;
-            const projectName = document.getElementById("projectName").value;
-            const geography = document.getElementById("geography").value;
-            const currency = getCurrentCurrency();
-
-            const timestamp = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-
-            const container = document.getElementById("reportContainer");
-            container.innerHTML = `
-                <div class="results-section">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h2 style="color: #1a2730; margin-bottom: 10px;">SROI Analysis Report</h2>
-                        <p style="color: #666; font-size: 14px;">${orgName} | ${projectName}</p>
-                        <p style="color: #999; font-size: 12px;">Generated: ${timestamp}</p>
-                    </div>
-
-                    <div class="section-title">Executive Summary</div>
-                    <div style="background: #f9f9f9; padding: 20px; border-radius: 6px; line-height: 1.6; margin-bottom: 25px;">
-                        <p><strong>${orgName}'s ${projectName}</strong> generated a Social Return on Investment (SROI) ratio of <strong>${sroiRatio.toFixed(2)}:1</strong> over a ${timeHorizon}-year evaluation period.</p>
-                        <p style="margin-top: 10px;">This means that for every ${currency} 1 invested, the programme generated ${currency} ${sroiRatio.toFixed(2)} of social and environmental value. The total estimated present value of outcomes was <strong>${formatCurrency(totalPV)}</strong>, compared to an investment of <strong>${formatCurrency(investment)}</strong>.</p>
-                    </div>
-
-                    <div class="section-title">Key Findings</div>
-                    <table class="breakdown-table">
-                        <tr>
-                            <td><strong>SROI Ratio</strong></td>
-                            <td style="text-align: right; color: #2d7d46; font-weight: 600;">${sroiRatio.toFixed(2)}:1</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total Investment</strong></td>
-                            <td style="text-align: right;">${formatCurrency(investment)}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Total Social Value (PV)</strong></td>
-                            <td style="text-align: right; color: #2d7d46; font-weight: 600;">${formatCurrency(totalPV)}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Net Social Value</strong></td>
-                            <td style="text-align: right;">${formatCurrency(totalPV - investment)}</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Evaluation Period</strong></td>
-                            <td style="text-align: right;">${timeHorizon} years</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Discount Rate</strong></td>
-                            <td style="text-align: right;">${document.getElementById("discountRate").value}%</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Geography</strong></td>
-                            <td style="text-align: right;">${{ uk: "United Kingdom", us: "United States", eu: "Europe", south: "Global South" }[geography]}</td>
-                        </tr>
-                    </table>
-
-                    <div class="section-title">Outcomes Analysed</div>
-                    <table class="breakdown-table">
-                        <thead>
-                            <tr>
-                                <th>Outcome</th>
-                                <th>Beneficiaries</th>
-                                <th>Proxy Value</th>
-                                <th>Annual Value</th>
-                                <th>Present Value</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${outcomeResults.map(o => `
-                                <tr>
-                                    <td><strong>${o.name}</strong></td>
-                                    <td>${o.beneficiaries}</td>
-                                    <td>${formatCurrency(o.proxyValue)}</td>
-                                    <td>${formatCurrency(o.annualValue)}</td>
-                                    <td><strong>${formatCurrency(o.pv)}</strong></td>
-                                </tr>
-                            `).join("")}
-                        </tbody>
-                    </table>
-
-                    <div class="section-title">Methodology & Assumptions</div>
-                    <div class="assumptions-list">
-                        <strong style="display: block; margin-bottom: 15px;">This analysis applied the standard SROI methodology with six key adjustments:</strong>
-                        <ul>
-                            ${outcomeResults.map((o, idx) => `
-                                <li><strong>${o.name}</strong>: Deadweight ${o.deadweight}%, Attribution ${o.attribution}%, Displacement ${o.displacement}%, Duration ${o.duration} year(s), Annual drop-off ${o.dropoff}%</li>
-                            `).join("")}
-                            <li><strong>Discount Rate:</strong> ${document.getElementById("discountRate").value}% (applied to convert future values to present value)</li>
-                            <li><strong>Proxy Sources:</strong> Values sourced from UK Government, NHS, DWP, World Bank, and impact measurement literature (2022–2024)</li>
-                            <li><strong>Evaluation Period:</strong> ${timeHorizon} years</li>
-                        </ul>
-                    </div>
-
-                    <div class="section-title">SROI Interpretation & Context</div>
-                    <div style="background: #f0f8f6; padding: 20px; border-radius: 6px; font-size: 13px; line-height: 1.7;">
-                        <strong style="display: block; margin-bottom: 10px;">What does the SROI ratio mean?</strong>
-                        <p>An SROI of ${sroiRatio.toFixed(2)}:1 indicates that the programme returned ${currency} ${sroiRatio.toFixed(2)} in social value for every ${currency} 1 spent.</p>
-                        <p style="margin-top: 10px;"><strong>Credibility Context:</strong> Typical SROI ratios range from 1.5:1 to 15:1. Most rigorous, evidence-based studies find ratios of 3:1–8:1. Higher ratios should be treated with caution and warrant sensitivity testing.</p>
-                        <p style="margin-top: 10px;"><strong>Next Steps:</strong> To strengthen this analysis: (1) triangulate proxy values with programme-specific data; (2) validate deadweight, attribution, and displacement assumptions with comparison groups; (3) conduct interviews with beneficiaries; (4) conduct sensitivity analysis on key variables.</p>
-                    </div>
-
-                    <div class="section-title">Additional Resources</div>
-                    <div style="font-size: 13px; color: #666; line-height: 1.8;">
-                        <p><strong>SROI Network:</strong> www.socialvalueuk.org</p>
-                        <p><strong>UK Government Green Book:</strong> HM Treasury guidance on social discount rates and valuation</p>
-                        <p><strong>What Works Centre:</strong> Evidence on outcome proxies and programme effectiveness</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        // EXPORT FUNCTIONS
-        function exportAsText() {
-            const orgName = document.getElementById("orgName").value;
-            const projectName = document.getElementById("projectName").value;
-            const timestamp = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-
-            const timeHorizon = parseInt(document.getElementById("timeHorizon").value);
-            const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
-            const investment = parseFloat(document.getElementById("investment").value) || 0;
-
-            let totalPV = 0;
-            const outcomeResults = outcomes.map(o => {
-                const annualValue = calculateOutcomeValue(o);
-                let pv = 0;
-                for (let year = 1; year <= Math.min(o.duration, timeHorizon); year++) {
-                    const dropoffFactor = Math.pow(1 + (o.dropoff / 100), year - 1);
-                    const discountFactor = 1 / Math.pow(1 + discountRate, year - 1);
-                    pv += annualValue * dropoffFactor * discountFactor;
-                }
-                totalPV += pv;
-                return { name: o.name || "Unnamed", beneficiaries: o.beneficiaries, proxyValue: o.customProxy || o.proxyValue, annualValue, pv, deadweight: o.deadweight, attribution: o.attribution, displacement: o.displacement, duration: o.duration, dropoff: o.dropoff };
-            });
-
-            const sroiRatio = investment > 0 ? totalPV / investment : 0;
-            const currency = getCurrentCurrency();
-
-            let text = `SROI ANALYSIS REPORT\n`;
-            text += `${orgName} | ${projectName}\n`;
-            text += `Generated: ${timestamp}\n\n`;
-            text += `=====================================\n`;
-            text += `KEY FINDINGS\n`;
-            text += `=====================================\n\n`;
-            text += `SROI Ratio: ${sroiRatio.toFixed(2)}:1\n`;
-            text += `Total Investment: ${currency} ${investment.toLocaleString("en-US", { maximumFractionDigits: 2 })}\n`;
-            text += `Total Social Value (PV): ${currency} ${totalPV.toLocaleString("en-US", { maximumFractionDigits: 0 })}\n`;
-            text += `Net Social Value: ${currency} ${(totalPV - investment).toLocaleString("en-US", { maximumFractionDigits: 0 })}\n`;
-            text += `Evaluation Period: ${timeHorizon} years\n`;
-            text += `Discount Rate: ${document.getElementById("discountRate").value}%\n\n`;
-            text += `=====================================\n`;
-            text += `OUTCOMES ANALYSED\n`;
-            text += `=====================================\n\n`;
-            outcomeResults.forEach((o, idx) => {
-                text += `${idx + 1}. ${o.name}\n`;
-                text += `   Beneficiaries: ${o.beneficiaries}\n`;
-                text += `   Proxy Value: ${currency} ${o.proxyValue.toLocaleString("en-US", { maximumFractionDigits: 2 })}\n`;
-                text += `   Annual Value: ${currency} ${o.annualValue.toLocaleString("en-US", { maximumFractionDigits: 0 })}\n`;
-                text += `   Present Value: ${currency} ${o.pv.toLocaleString("en-US", { maximumFractionDigits: 0 })}\n`;
-                text += `   Adjustments: Deadweight ${o.deadweight}%, Attribution ${o.attribution}%, Displacement ${o.displacement}%, Duration ${o.duration} yrs, Drop-off ${o.dropoff}%/yr\n\n`;
-            });
-            text += `=====================================\n`;
-            text += `INTERPRETATION\n`;
-            text += `=====================================\n\n`;
-            text += `For every ${currency} 1 invested, this programme generated ${currency} ${sroiRatio.toFixed(2)} in social value.\n`;
-            text += `Typical SROI ratios range from 1.5:1 to 15:1. Most rigorous studies find 3:1–8:1.\n\n`;
-            text += `Report generated by SROI Pro Calculator\n`;
-
-            const blob = new Blob([text], { type: "text/plain" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `SROI_Report_${Date.now()}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            alert("Report downloaded as text file");
-        }
-
-        function exportAsCSV() {
-            const timeHorizon = parseInt(document.getElementById("timeHorizon").value);
-            const discountRate = parseFloat(document.getElementById("discountRate").value) / 100;
-            const investment = parseFloat(document.getElementById("investment").value) || 0;
-
-            let totalPV = 0;
-            const outcomeResults = outcomes.map(o => {
-                const annualValue = calculateOutcomeValue(o);
-                let pv = 0;
-                for (let year = 1; year <= Math.min(o.duration, timeHorizon); year++) {
-                    const dropoffFactor = Math.pow(1 + (o.dropoff / 100), year - 1);
-                    const discountFactor = 1 / Math.pow(1 + discountRate, year - 1);
-                    pv += annualValue * dropoffFactor * discountFactor;
-                }
-                totalPV += pv;
-                return { name: o.name || "Unnamed", beneficiaries: o.beneficiaries, proxyValue: o.customProxy || o.proxyValue, annualValue, pv, deadweight: o.deadweight, attribution: o.attribution, displacement: o.displacement };
-            });
-
-            const sroiRatio = investment > 0 ? totalPV / investment : 0;
-
-            let csv = "Outcome,Beneficiaries,Proxy Value,Annual Value,Present Value,Deadweight %,Attribution %,Displacement %\n";
-            outcomeResults.forEach(o => {
-                csv += `"${o.name}",${o.beneficiaries},${o.proxyValue.toFixed(2)},${o.annualValue.toFixed(2)},${o.pv.toFixed(2)},${o.deadweight},${o.attribution},${o.displacement}\n`;
-            });
-            csv += `\nSROI Summary\n`;
-            csv += `SROI Ratio,${sroiRatio.toFixed(2)}:1\n`;
-            csv += `Total Investment,${investment.toFixed(2)}\n`;
-            csv += `Total Social Value (PV),${totalPV.toFixed(2)}\n`;
-
-            const blob = new Blob([csv], { type: "text/csv" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `SROI_Data_${Date.now()}.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            alert("Data exported as CSV");
-        }
-
-        function startOver() {
-            document.getElementById("setupForm").reset();
-            outcomes = [];
-            selectedTemplateKey = null;
-            appMode = null;
-            // Clear Quick inputs
-            ["quickOrgName", "quickProjectName", "quickInvestment"].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.value = "";
-            });
-            goToStep(0);
-        }
-
-        // INITIALIZATION
-        document.addEventListener("DOMContentLoaded", () => {
-            updateDiscountGuidance();
-            // Default mode indicator on load
-            goToStep(0);
-        });
-    </script>
+      });
+    }
+  });
+  // P2 — activities not yet passing SC
+  STATE.activities.forEach(a=>{
+    if(!a.sc){
+      actions.push({p:'P2', action:`Achieve the Substantial Contribution threshold on "${a.name}"`, why: `Threshold: ${a.threshold}. Without passing this the activity remains eligible-only and does not contribute to aligned KPIs.`});
+    }
+  });
+  // P2 — add CSRD linkage
+  if(STATE.flags.csrd){
+    actions.push({p:'P2', action:'Cross-reference taxonomy KPIs to ESRS E1 data-points (E1-1 transition plan, E1-6 targets, E1-7 GHG removals & credits).', why:'ESRS E1 disclosure requirements mandate consistency with Article 8 Delegated Act disclosures for CSRD reporters.'});
+  }
+  // P3 — coverage expansion
+  if(STATE.activities.length < 3){
+    actions.push({p:'P3', action:'Expand activity catalogue screen — map all NACE codes where Group operates against the Climate + Environmental Delegated Acts.', why:'Full eligibility universe may not be captured; Platform on Sustainable Finance Usability Report 2023 found 40% of NFRD reporters under-scope eligibility in year 1.'});
+  }
+  // P3 — enabling activities
+  if(!STATE.activities.some(a=>a.type==='enabling')){
+    actions.push({p:'P3', action:'Investigate enabling activities (Art. 10(1)(i)) — e.g. storage §4.10, infrastructure §6.13-6.15, professional services §9.1.', why:'Enabling activities often accompany core operations and expand aligned KPI coverage without changing operational footprint.'});
+  }
+  // P3 — transition CapEx
+  const transitional = STATE.activities.filter(a=>a.type==='transitional');
+  if(transitional.length){
+    actions.push({p:'P3', action:`Prepare a 5-year CapEx Plan under Annex I §1.1.2.2(b) for your ${transitional.length} transitional activities`, why:'Transitional activities (Art. 10(2)) have time-limited thresholds; disclosed CapEx Plan allows Plan-CapEx to qualify as aligned during the transition window.'});
+  }
+
+  const al = document.getElementById('actions_list');
+  al.innerHTML='';
+  ['P1','P2','P3'].forEach(pr=>{
+    actions.filter(a=>a.p===pr).forEach(a=>{
+      const li = document.createElement('li');
+      li.className = pr.toLowerCase();
+      li.innerHTML = `<span class="pri">${a.p}</span><div><div><strong>${escapeHtml(a.action)}</strong></div><div class="muted small">${escapeHtml(a.why)}</div></div>`;
+      al.appendChild(li);
+    });
+  });
+  if(!actions.length){
+    al.innerHTML = '<li class="p3"><span class="pri">—</span><div><strong>No gap actions identified.</strong> Configuration suggests full alignment; validate with external assurance.</div></li>';
+  }
+
+  // Matrix
+  const matrix = document.getElementById('matrix_box');
+  if(!STATE.activities.length){ matrix.innerHTML='<div class="muted">Add activities to see matrix.</div>'; return; }
+  let html = '<table><thead><tr><th>Activity</th><th>Obj</th><th>SC</th><th>DNSH CCM</th><th>DNSH CCA</th><th>DNSH WTR</th><th>DNSH CE</th><th>DNSH PPC</th><th>DNSH BIO</th><th>MS</th><th>Aligned?</th></tr></thead><tbody>';
+  STATE.activities.forEach(a=>{
+    const cell = (v, self=false)=> self?'<td class="c-na">—</td>':(v?'<td class="c-y">✓</td>':'<td class="c-n">✗</td>');
+    const aligned = a.sc && passDnsh(a) && msPass();
+    html += `<tr><td>${escapeHtml(a.name)}</td><td><span class="badge-obj ${OBJ_META[a.obj].cls}">${a.obj}</span></td>`;
+    html += cell(a.sc);
+    html += cell(a.dnsh.CCM, a.obj==='CCM');
+    html += cell(a.dnsh.CCA, a.obj==='CCA');
+    html += cell(a.dnsh.WTR, a.obj==='WTR');
+    html += cell(a.dnsh.CE, a.obj==='CE');
+    html += cell(a.dnsh.PPC, a.obj==='PPC');
+    html += cell(a.dnsh.BIO, a.obj==='BIO');
+    html += cell(msPass());
+    html += aligned?'<td class="c-y">ALIGNED</td>':'<td class="c-n">NO</td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  matrix.innerHTML = html;
+}
+
+/* =======================================================================
+   PROMPT TAB
+   ======================================================================= */
+function renderPromptTab(){
+  const e = STATE.entity;
+  const aligned = k => STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass()).reduce((s,a)=>s+(a[k]||0),0);
+  const eligible = k => STATE.activities.reduce((s,a)=>s+(a[k]||0),0);
+  const pct = (n,d)=> d>0 ? (100*n/d).toFixed(1):'0.0';
+
+  const actTable = STATE.activities.map(a=>`  • [${a.obj}] ${a.name} — turnover ${a.rev}m, capex ${a.capex}m, opex ${a.opex}m — SC ${a.sc?'PASS':'FAIL'}, DNSH ${passDnsh(a)?'PASS':'FAIL'}`).join('\n')||'  (no activities entered)';
+  const msGaps = Object.keys(STATE.ms).filter(k=>!STATE.ms[k]).length;
+
+  const p = `You are acting as a senior sustainability advisor with deep expertise in the EU Taxonomy, CSRD/ESRS, and SFDR. I am preparing ${e.name||'[Entity]'}'s Article 8 Delegated Act disclosures for FY${e.year}. Please review my analysis and produce publishable, board-ready outputs.
+
+==== CONTEXT ====
+Entity: ${e.name||'[not provided]'}
+Sector: ${e.sector||'[not provided]'}
+Reporting regime: ${e.regime}
+Currency: ${e.cur}
+Reporting flags: CSRD ${STATE.flags.csrd?'✓':'✗'} · SFDR Art 8 ${STATE.flags.sfdr8?'✓':'✗'} · SFDR Art 9 ${STATE.flags.sfdr9?'✓':'✗'} · CCDA nuclear ${STATE.flags.nuclear?'✓':'✗'} · CCDA gas ${STATE.flags.gas?'✓':'✗'} · Voluntary env. objectives ${STATE.flags.voluntary_env?'✓':'✗'}
+
+==== FINANCIALS ====
+Total turnover: ${e.cur} ${fmt(STATE.fin.rev)}m
+Total CapEx:    ${e.cur} ${fmt(STATE.fin.capex)}m
+Total OpEx:     ${e.cur} ${fmt(STATE.fin.opex)}m
+
+==== ACTIVITIES ASSESSED (${STATE.activities.length}) ====
+${actTable}
+
+==== KPI RATIOS (my current calculation) ====
+Eligible turnover:  ${pct(eligible('rev'),STATE.fin.rev)}%
+Aligned turnover:   ${pct(aligned('rev'),STATE.fin.rev)}%
+Eligible CapEx:     ${pct(eligible('capex'),STATE.fin.capex)}%
+Aligned CapEx:      ${pct(aligned('capex'),STATE.fin.capex)}%
+Eligible OpEx:      ${pct(eligible('opex'),STATE.fin.opex)}%
+Aligned OpEx:       ${pct(aligned('opex'),STATE.fin.opex)}%
+
+==== MINIMUM SAFEGUARDS ====
+${Object.values(STATE.ms).filter(Boolean).length}/12 PSF sub-controls in place (${msGaps===0?'PASS':'GAPS: '+msGaps+' open'})
+
+==== WHAT I NEED ====
+Please deliver 8 numbered outputs:
+
+1. Executive summary (≤300 words) fit for my board Sustainability Committee. Position our taxonomy profile versus peers, flag any red lines, and lead with the aligned-turnover headline.
+
+2. Accounting-policy note draft (one paragraph) — publishable word-for-word under Annex II of Delegated Regulation (EU) 2021/2178, naming the denominators, methodology choices, double-counting prevention approach, and CSRD linkage where applicable.
+
+3. Turnover-KPI narrative (publishable) — with objective-level split, enabling/transitional breakdown, and year-on-year commentary if I have prior-year data (if not, call out baseline).
+
+4. CapEx-Plan section — if any of my activities are transitional, draft a 5-year CapEx Plan narrative per Annex I §1.1.2.2(b), including milestone capex percentages, governance (board committee), and trigger events for re-baselining. Otherwise, note why a CapEx Plan is not required.
+
+5. DNSH assumption stress-test — for each activity I've marked SC-pass and DNSH-pass, list the 2-3 most auditor-sensitive DNSH claims and the evidence I need on file (e.g. CR&VA scenario selection, REACH SVHC list date, Annex A-D cross-references).
+
+6. Minimum Safeguards remediation plan — for any PSF sub-area with <100% completion, give me a 12-month closure plan in month × sub-control × action × owner × evidence format. Explicitly test whether the gaps are severe enough to invalidate alignment (per PSF Final Report Oct 2022 materiality guidance).
+
+7. Investor Q&A pack — 10 hostile questions a PRI / SFDR Art 9 analyst / DFI ESG team might ask about my disclosures (e.g. "Why is your aligned-turnover % so different from your eligible %?" / "What methodology did you use for life-cycle GHG?" / "How do you justify Plan CapEx treatment?"), with candid ≤100-word answer scripts.
+
+8. Red-flag scan — what would a CSRD assurance provider (e.g. Big 4 Sustainability Assurance practice) challenge hardest in my current disclosure, and how do I pre-empt it? Reference ISAE 3000 (Rev.) / ISSA 5000 assurance standards where relevant.
+
+Use UK English spellings throughout. Be specific about article/annex citations. If any of my input numbers look implausible or internally inconsistent, flag it before you draft.`;
+
+  document.getElementById('prompt_text').value = p;
+  document.getElementById('prompt_meta').textContent = `${p.length.toLocaleString()} characters · updates automatically`;
+}
+
+/* =======================================================================
+   HELPERS
+   ======================================================================= */
+function passDnsh(a){return DNSH_OBJECTIVES.every(o => o===a.obj || a.dnsh[o]);}
+function msPass(){return Object.values(STATE.ms).filter(Boolean).length >= 10;}
+function msCleanPass(){return Object.values(STATE.ms).every(Boolean);}
+function fmt(n){if(!n||isNaN(n)) return '0'; return Number(n).toLocaleString('en-GB',{maximumFractionDigits:1});}
+function escapeHtml(s){if(s==null) return ''; return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function compute(){
+  // refresh KPI widgets & score that appear on results cards
+  renderKPITab();
+  renderResultsTab();
+  renderDisclosureTab();
+  renderPromptTab();
+  // minimum safeguards composite score badge
+  const n = Object.values(STATE.ms).filter(Boolean).length;
+  const el = document.getElementById('ms_overall_score');
+  if(n===12) el.className='tag ok', el.textContent='12/12 CLEAN PASS';
+  else if(n>=10) el.className='tag warn', el.textContent=`${n}/12 PASS WITH GAPS`;
+  else el.className='tag bad', el.textContent=`${n}/12 FAIL`;
+}
+
+/* =======================================================================
+   EXPORT
+   ======================================================================= */
+function exportCSV(){
+  const e = STATE.entity;
+  const aligned = k => STATE.activities.filter(a=>a.sc && passDnsh(a) && msPass()).reduce((s,a)=>s+(a[k]||0),0);
+  const eligible = k => STATE.activities.reduce((s,a)=>s+(a[k]||0),0);
+  const rows = [];
+  rows.push(['EU Taxonomy Alignment Calculator — CSV memo']);
+  rows.push(['Entity', e.name||'', 'Sector', e.sector||'', 'Regime', e.regime, 'FY', e.year, 'Currency', e.cur]);
+  rows.push([]);
+  rows.push(['== KPI Scorecard ==']);
+  rows.push(['KPI','Eligible (mn)','Aligned (mn)','Eligible %','Aligned %']);
+  const pct = (n,d)=> d>0?(100*n/d).toFixed(2)+'%':'—';
+  rows.push(['Turnover', eligible('rev').toFixed(1), aligned('rev').toFixed(1), pct(eligible('rev'),e.rev||STATE.fin.rev), pct(aligned('rev'),STATE.fin.rev)]);
+  rows.push(['CapEx', eligible('capex').toFixed(1), aligned('capex').toFixed(1), pct(eligible('capex'),STATE.fin.capex), pct(aligned('capex'),STATE.fin.capex)]);
+  rows.push(['OpEx', eligible('opex').toFixed(1), aligned('opex').toFixed(1), pct(eligible('opex'),STATE.fin.opex), pct(aligned('opex'),STATE.fin.opex)]);
+  rows.push([]);
+  rows.push(['== Activities ==']);
+  rows.push(['Activity','Objective','Type','NACE','Threshold','Turnover (mn)','CapEx (mn)','OpEx (mn)','SC','DNSH CCM','DNSH CCA','DNSH WTR','DNSH CE','DNSH PPC','DNSH BIO','MS pass','Aligned']);
+  STATE.activities.forEach(a=>{
+    rows.push([a.name,a.obj,a.type,a.nace,a.threshold,a.rev,a.capex,a.opex, a.sc?'Y':'N',
+      a.obj==='CCM'?'n/a':(a.dnsh.CCM?'Y':'N'),
+      a.obj==='CCA'?'n/a':(a.dnsh.CCA?'Y':'N'),
+      a.obj==='WTR'?'n/a':(a.dnsh.WTR?'Y':'N'),
+      a.obj==='CE'?'n/a':(a.dnsh.CE?'Y':'N'),
+      a.obj==='PPC'?'n/a':(a.dnsh.PPC?'Y':'N'),
+      a.obj==='BIO'?'n/a':(a.dnsh.BIO?'Y':'N'),
+      msPass()?'Y':'N',
+      (a.sc && passDnsh(a) && msPass())?'ALIGNED':'no'
+    ]);
+  });
+  rows.push([]);
+  rows.push(['== Minimum Safeguards ==']);
+  const msLabels = {ms_hr1:'OECD 6-step HRDD',ms_hr2:'Board HR policy',ms_hr3:'UNGP P31 grievance',ms_hr4:'No unresolved NCP/ILO/UN complaints',ms_co1:'OECD Anti-Bribery policy',ms_co2:'No corruption conviction (5y)',ms_co3:'Whistleblower channel',ms_tx1:'Board tax strategy',ms_tx2:'CBCR published',ms_tx3:'No EU-blacklist exposure',ms_fc1:'Competition policy + training',ms_fc2:'No competition conviction (5y)'};
+  rows.push(['Control','Status']);
+  Object.keys(STATE.ms).forEach(k=>rows.push([msLabels[k]||k, STATE.ms[k]?'Pass':'Fail']));
+  rows.push([]);
+  rows.push(['== Claude Prompt ==']);
+  const prompt = document.getElementById('prompt_text').value;
+  prompt.split('\n').forEach(l=>rows.push([l]));
+  // serialise
+  const csv = rows.map(r=>r.map(v=>{
+    v = v==null?'':String(v);
+    if(v.indexOf(',')>=0 || v.indexOf('"')>=0 || v.indexOf('\n')>=0){ v='"'+v.replace(/"/g,'""')+'"';}
+    return v;
+  }).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `eu-taxonomy-${(e.name||'entity').toLowerCase().replace(/[^a-z0-9]+/g,'-')}-FY${e.year}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+function copyPrompt(){
+  const t = document.getElementById('prompt_text');
+  t.select();
+  try{document.execCommand('copy');}catch(e){}
+  if(navigator.clipboard) navigator.clipboard.writeText(t.value);
+}
+
+/* =======================================================================
+   EXAMPLES
+   ======================================================================= */
+function loadExample(key){
+  resetAll(true);
+  if(key==='apparel'){
+    STATE.entity = {name:'Verde Threads Group', sector:'C - Manufacturing', regime:'NFU', year:2025, cur:'EUR', group:'Consolidated group'};
+    STATE.fin = {rev:1450, capex:78, opex:145};
+    STATE.flags.csrd = true;
+    STATE.activities = [
+      {id:'ex1',catId:'3_17',name:'3.17 Manufacture of plastics in primary form',obj:'CCM',type:'subst',nace:'C20.16',threshold:'≥50% LCA GHG savings OR mechanical/chemical recycling',tsc:'Applied to recycled-polyester fibre manufacture at Portugal plant.',ref:'Reg. 2021/2139 Annex I §3.17',rev:95,capex:18,opex:9,sc:true,sc_note:'LCA per ISO 14067 showing 62% GHG savings vs virgin PET.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'REACH SVHC-free; CR&VA completed for Portuguese site; EIA filed 2022.'},
+      {id:'ex2',catId:'7_2',name:'7.2 Renovation of existing buildings',obj:'CCM',type:'subst',nace:'F41;F43',threshold:'≥ 30% PED reduction',tsc:'Milan HQ refit delivering 38% PED reduction verified by EPC certificate.',ref:'Reg. 2021/2139 Annex I §7.2',rev:0,capex:8,opex:3,sc:true,sc_note:'EPC pre-refit Class E / post-refit Class B; 38% PED reduction verified.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'Construction waste plan 76% diverted from landfill; REACH assessment for insulation; no KBA impact.'},
+      {id:'ex3',catId:'4_10',name:'4.10 Storage of electricity',obj:'CCM',type:'enabling',nace:'D35.11',threshold:'Qualitative + CE/PPC DNSH',tsc:'Behind-the-meter battery at manufacturing plant balancing on-site PV.',ref:'Reg. 2021/2139 Annex I §4.10',rev:0,capex:4,opex:1,sc:true,sc_note:'Li-ion 2MWh system coupled with 3MW rooftop solar. End-of-life battery recovery contract with responsible refurbisher.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'RMI-certified cobalt supply chain; HS Code declaration verified.'}
+    ];
+    STATE.ms = {ms_hr1:true,ms_hr2:true,ms_hr3:false,ms_hr4:true,ms_co1:true,ms_co2:true,ms_co3:true,ms_tx1:true,ms_tx2:false,ms_tx3:true,ms_fc1:true,ms_fc2:true};
+  } else if(key==='utility'){
+    STATE.entity = {name:'Nordic Power AB', sector:'D - Electricity, Gas & Steam', regime:'NFU', year:2025, cur:'EUR', group:'Consolidated group'};
+    STATE.fin = {rev:4820, capex:1120, opex:510};
+    STATE.flags.csrd = true;
+    STATE.activities = [
+      {id:'ex1',catId:'4_3',name:'4.3 Electricity generation from wind power',obj:'CCM',type:'subst',nace:'D35.11',threshold:'LCA ≤ 100 gCO₂e/kWh',tsc:'Onshore & offshore wind fleet 3.2 GW.',ref:'Reg. 2021/2139 Annex I §4.3',rev:1680,capex:540,opex:95,sc:true,sc_note:'Fleet-weighted LCA 11.4 gCO₂e/kWh (verified by DNV). All turbines comply with end-of-life recycling obligations per EU WFD.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'All projects subject to EIA (Directive 2011/92/EU); bird/bat mortality monitoring in place; DNSH BIO via pre-construction baseline surveys and offset where applicable.'},
+      {id:'ex2',catId:'4_5',name:'4.5 Electricity generation from hydropower',obj:'CCM',type:'subst',nace:'D35.11',threshold:'Power density > 5 W/m² OR LCA < 100 gCO₂e/kWh',tsc:'Legacy Scandinavian run-of-river assets.',ref:'Reg. 2021/2139 Annex I §4.5',rev:820,capex:38,opex:42,sc:true,sc_note:'Run-of-river, power density 12 W/m². WFD Art. 4(7) assessments on file for each asset.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'Fish-passage infrastructure across all 14 sites; WFD good ecological status maintained.'},
+      {id:'ex3',catId:'4_1',name:'4.1 Electricity generation using solar PV',obj:'CCM',type:'subst',nace:'D35.11',threshold:'LCA ≤ 100 gCO₂e/kWh',tsc:'Utility-scale solar 420 MW.',ref:'Reg. 2021/2139 Annex I §4.1',rev:280,capex:172,opex:11,sc:true,sc_note:'LCA 38.2 gCO₂e/kWh. Panel-waste recovery via WEEE Directive compliant programme.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'Biodiversity sensitive siting — no projects in Natura 2000 areas.'},
+      {id:'ex4',catId:'4_10',name:'4.10 Storage of electricity',obj:'CCM',type:'enabling',nace:'D35.11',threshold:'Qualitative + CE/PPC DNSH',tsc:'Grid-scale BESS 240 MWh.',ref:'Reg. 2021/2139 Annex I §4.10',rev:40,capex:185,opex:14,sc:true,sc_note:'LFP chemistry; RMI cobalt-free supply chain.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'End-of-life plan with battery recycler partner.'}
+    ];
+    STATE.ms = {ms_hr1:true,ms_hr2:true,ms_hr3:true,ms_hr4:true,ms_co1:true,ms_co2:true,ms_co3:true,ms_tx1:true,ms_tx2:true,ms_tx3:true,ms_fc1:true,ms_fc2:true};
+  } else if(key==='realestate'){
+    STATE.entity = {name:'Meridian Property Fund', sector:'L - Real Estate', regime:'AM', year:2025, cur:'EUR', group:'Consolidated group'};
+    STATE.fin = {rev:185, capex:64, opex:41};
+    STATE.flags.sfdr8 = true; STATE.flags.sfdr9 = false;
+    STATE.activities = [
+      {id:'ex1',catId:'7_7',name:'7.7 Acquisition and ownership of buildings',obj:'CCM',type:'subst',nace:'L68',threshold:'EPC A (pre-2020) or §7.1 compliance',tsc:'Prime office & logistics portfolio FR/DE/NL.',ref:'Reg. 2021/2139 Annex I §7.7',rev:92,capex:0,opex:18,sc:true,sc_note:'38 buildings assessed; 12 EPC Class A (pre-2020 vintage) = eligible for alignment. Remainder not aligned.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'CR&VA across portfolio 2024; flood/overheat mitigation plans in place for 7 high-risk assets.'},
+      {id:'ex2',catId:'7_2',name:'7.2 Renovation of existing buildings',obj:'CCM',type:'subst',nace:'F41;F43',threshold:'≥ 30% PED reduction',tsc:'Frankfurt logistics hub deep retrofit.',ref:'Reg. 2021/2139 Annex I §7.2',rev:0,capex:22,opex:4,sc:true,sc_note:'PED pre 168 kWh/m²/yr → post 98 kWh/m²/yr = 42% reduction.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'Construction waste diversion 71%; SVHC-free insulation.'},
+      {id:'ex3',catId:'7_1',name:'7.1 Construction of new buildings',obj:'CCM',type:'subst',nace:'F41.1;F41.2',threshold:'PED ≥ 10% < NZEB',tsc:'Barcelona residential development.',ref:'Reg. 2021/2139 Annex I §7.1',rev:0,capex:42,opex:3,sc:true,sc_note:'PED 14% below NZEB; airtightness test passed; life-cycle GWP disclosed.',dnsh:{CCM:true,CCA:true,WTR:true,CE:true,PPC:true,BIO:true},dnsh_note:'Spanish EIA completed; no IUCN I-VI or Natura 2000 overlap.'}
+    ];
+    STATE.ms = {ms_hr1:true,ms_hr2:true,ms_hr3:true,ms_hr4:true,ms_co1:true,ms_co2:true,ms_co3:true,ms_tx1:true,ms_tx2:true,ms_tx3:false,ms_fc1:true,ms_fc2:true};
+  }
+  // write back to DOM
+  ['name','sector','regime','year','cur','group'].forEach(k=>{const el=document.getElementById('ent_'+k); if(el) el.value = STATE.entity[k];});
+  ['rev','capex','opex'].forEach(k=>{const el=document.getElementById('fin_'+k); if(el) el.value = STATE.fin[k];});
+  ['csrd','sfdr8','sfdr9','nuclear','gas','voluntary_env'].forEach(k=>{const el=document.getElementById('flag_'+k); if(el) el.checked = !!STATE.flags[k];});
+  document.querySelectorAll('input.ms').forEach(el=>{el.checked = !!STATE.ms[el.dataset.id];});
+  renderActivities();
+  compute();
+}
+function resetAll(silent){
+  STATE.entity = {name:'',sector:'',regime:'NFU',year:2025,cur:'EUR',group:'Consolidated group'};
+  STATE.fin = {rev:0,capex:0,opex:0};
+  STATE.flags = {csrd:false, sfdr8:false, sfdr9:false, nuclear:false, gas:false, voluntary_env:false};
+  STATE.activities = [];
+  STATE.ms = {ms_hr1:false,ms_hr2:false,ms_hr3:false,ms_hr4:false,ms_co1:false,ms_co2:false,ms_co3:false,ms_tx1:false,ms_tx2:false,ms_tx3:false,ms_fc1:false,ms_fc2:false};
+  if(!silent){
+    ['name','sector','regime','year','cur','group'].forEach(k=>{const el=document.getElementById('ent_'+k); if(el) el.value = STATE.entity[k];});
+    ['rev','capex','opex'].forEach(k=>{const el=document.getElementById('fin_'+k); if(el) el.value = STATE.fin[k];});
+    ['csrd','sfdr8','sfdr9','nuclear','gas','voluntary_env'].forEach(k=>{const el=document.getElementById('flag_'+k); if(el) el.checked = false;});
+    document.querySelectorAll('input.ms').forEach(el=>{el.checked = false;});
+    renderActivities();
+    compute();
+  }
+}
+
+/* boot */
+document.addEventListener('DOMContentLoaded',init);
+</script>
 </body>
 </html>
