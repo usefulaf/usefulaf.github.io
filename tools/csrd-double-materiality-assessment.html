@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSRD Double Materiality Assessment — Useful AF</title>
+<style>
+:root{
+  --cream:#F5EFE6; --paper:#FBF7EF; --ink:#1F1B16; --ink2:#3B342B;
+  --coral:#E66A4F; --coral-dk:#C84F35; --ochre:#C8973A; --ochre-dk:#A87A23;
+  --moss:#5D7553; --slate:#5D6573; --line:#E0D5C2; --line2:#CFC2A8;
+  --hi:#FFF6E1; --hi2:#FBE4DA; --bad:#B8412E; --warn:#B27A1B; --ok:#3F6B43;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5}
+.wrap{max-width:1280px;margin:0 auto;padding:24px 28px 80px}
+header.top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:18px}
+.brand .mark{font-weight:800;letter-spacing:0.02em;font-size:13px;color:var(--coral-dk);text-transform:uppercase}
+.brand h1{margin:4px 0 6px;font-size:26px;line-height:1.15;letter-spacing:-0.01em}
+.brand .sub{color:var(--ink2);font-size:13px;max-width:780px}
+.score-chip{background:var(--paper);border:1.5px solid var(--ink);padding:10px 14px;border-radius:6px;min-width:200px;text-align:center}
+.score-chip .lbl{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink2)}
+.score-chip .val{font-size:28px;font-weight:800;line-height:1;margin:6px 0 4px}
+.score-chip .grade{display:inline-block;padding:3px 10px;border-radius:4px;font-weight:700;font-size:12px;letter-spacing:0.04em;background:var(--ochre);color:var(--ink)}
+.score-chip .grade.A{background:#5E8A56;color:#fff}
+.score-chip .grade.B{background:#7E9D54;color:#fff}
+.score-chip .grade.C{background:var(--ochre);color:var(--ink)}
+.score-chip .grade.D{background:var(--coral);color:#fff}
+.score-chip .grade.E{background:var(--bad);color:#fff}
+.tabnav{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line2);margin-bottom:18px}
+.tab{padding:9px 14px;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;font-size:13px;color:var(--ink2);font-weight:600;font-family:inherit}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--coral-dk);border-bottom-color:var(--coral)}
+.panel{display:none;animation:fade .2s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--paper);border:1px solid var(--line2);border-radius:6px;padding:16px 18px;margin-bottom:14px}
+.card h2{margin:0 0 6px;font-size:18px;letter-spacing:-0.01em}
+.card h3{margin:14px 0 6px;font-size:14px;color:var(--coral-dk);text-transform:uppercase;letter-spacing:0.05em;font-weight:700}
+.card p{margin:6px 0;color:var(--ink2)}
+.cite{font-size:11.5px;color:var(--slate);font-style:italic;border-left:3px solid var(--ochre);padding:6px 10px;background:#FAEFD7;margin:8px 0}
+.row{display:grid;gap:14px}
+.row.r2{grid-template-columns:repeat(2,1fr)}
+.row.r3{grid-template-columns:repeat(3,1fr)}
+.row.r4{grid-template-columns:repeat(4,1fr)}
+.row.r5{grid-template-columns:repeat(5,1fr)}
+@media(max-width:900px){.row.r3,.row.r4,.row.r5{grid-template-columns:repeat(2,1fr)}.row.r2{grid-template-columns:1fr}}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:4px;letter-spacing:0.02em}
+input[type=text],input[type=number],select,textarea{width:100%;padding:7px 9px;font-size:13px;border:1px solid var(--line2);border-radius:4px;background:#fff;font-family:inherit;color:var(--ink)}
+textarea{resize:vertical;min-height:60px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--coral);outline-offset:-1px}
+.help{font-size:11.5px;color:var(--slate);margin-top:3px;font-style:italic}
+.btn{padding:8px 14px;background:var(--ink);color:var(--cream);border:none;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.02em}
+.btn:hover{background:var(--coral-dk)}
+.btn.sec{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.sec:hover{background:var(--ink);color:var(--cream)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.coral{background:var(--coral);color:#fff}
+.btn.coral:hover{background:var(--coral-dk)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+th{background:var(--ink);color:var(--cream);font-weight:700;padding:8px 9px;text-align:left;font-size:11.5px;letter-spacing:0.04em;text-transform:uppercase}
+td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#FAF5E9}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+.pill.E{background:#D8E5D0;color:#3F6B43}
+.pill.S{background:#FBE4DA;color:var(--bad)}
+.pill.G{background:#E0DAEC;color:#5547A7}
+.pill.high{background:var(--bad);color:#fff}
+.pill.med{background:var(--ochre);color:var(--ink)}
+.pill.low{background:#E5DBC4;color:var(--ink2)}
+.pill.mat{background:var(--coral);color:#fff}
+.pill.notmat{background:var(--line);color:var(--ink2)}
+.muted{color:var(--slate);font-size:12px}
+.bigbox{background:#FBF1DB;border:1.5px dashed var(--ochre-dk);padding:12px 14px;border-radius:6px;margin:10px 0;font-size:13px}
+.matrixwrap{overflow-x:auto;margin-top:14px}
+.iro-row{background:#fff;border:1px solid var(--line2);border-radius:4px;padding:10px;margin-bottom:8px}
+.iro-row .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:10px;flex-wrap:wrap}
+.iro-row .desc{font-size:12.5px;color:var(--ink2);margin:4px 0}
+.iro-row .scoring{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+.iro-row .scoring label{font-size:10.5px}
+.iro-row .scoring select,.iro-row .scoring input{font-size:12px;padding:4px 6px}
+.add-iro{display:grid;grid-template-columns:1fr 2fr 1fr 1fr;gap:8px;margin-top:8px}
+@media(max-width:900px){.iro-row .scoring{grid-template-columns:repeat(3,1fr)}.add-iro{grid-template-columns:1fr 1fr}}
+.bardiv{display:flex;align-items:center;gap:10px;margin:4px 0}
+.bardiv .lbl{font-size:11.5px;font-weight:600;width:230px;flex-shrink:0}
+.bardiv .bar{height:14px;background:#E5DBC4;border-radius:3px;flex:1;overflow:hidden}
+.bardiv .bar-fill{height:100%;background:linear-gradient(90deg,var(--ochre),var(--coral))}
+.bardiv .num{font-weight:700;font-size:12px;width:55px;text-align:right}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+.dot.E{background:#5E8A56}
+.dot.S{background:var(--coral)}
+.dot.G{background:#7B6BA8}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink2);margin-top:8px}
+.action-card{background:#fff;border-left:4px solid var(--coral);padding:10px 12px;margin:6px 0;border-radius:0 4px 4px 0}
+.action-card.p1{border-left-color:var(--bad)}
+.action-card.p2{border-left-color:var(--ochre)}
+.action-card.p3{border-left-color:var(--moss)}
+.action-card .pri{font-weight:800;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink2)}
+.action-card .ttl{font-weight:700;margin:3px 0}
+.action-card .desc{font-size:12.5px;color:var(--ink2)}
+pre{background:var(--paper);border:1px solid var(--line2);border-radius:4px;padding:12px;font-size:12px;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;font-family:'Courier New',monospace;line-height:1.5}
+.footer-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line2);margin-top:18px;align-items:center}
+.subtab-nav{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:10px 0 14px}
+.subtab{padding:6px 11px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:12px;color:var(--ink2);font-weight:600;font-family:inherit}
+.subtab.active{color:var(--ink);border-bottom-color:var(--coral)}
+.disclosure-tile{background:#fff;border:1px solid var(--line2);padding:10px 12px;border-radius:4px;margin:6px 0}
+.disclosure-tile .dp{font-family:monospace;font-size:11px;color:var(--coral-dk);font-weight:700}
+.print-only{display:none}
+@media print{
+  .no-print,.tabnav,.subtab-nav,.btn,.btn-row,.footer-actions{display:none!important}
+  .panel{display:block!important;page-break-after:always}
+  .print-only{display:block}
+  body{background:#fff;color:#000}
+  .card{border:1px solid #999;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="brand">
+    <div class="mark">UsefulAF · Tool #27 of the AI for Impact Library</div>
+    <h1>CSRD Double Materiality Assessment</h1>
+    <div class="sub">An ESRS-aligned double materiality engine that walks you through stakeholder engagement, IRO identification across all topical standards, impact and financial materiality scoring, threshold-setting, and BP-2 / IRO-1 / SBM-3 disclosure drafting. Built around <strong>EFRAG IG 1: Materiality Assessment Implementation Guidance (May 2024)</strong> and ESRS 1 General Requirements (Delegated Regulation (EU) 2023/2772).</div>
+  </div>
+  <div class="score-chip" id="scoreChip">
+    <div class="lbl">Overall DMA Maturity</div>
+    <div class="val" id="overallScore">—</div>
+    <div class="grade" id="overallGrade">Awaiting input</div>
+    <div style="margin-top:6px;font-size:11px;color:var(--slate)" id="overallPhrase">Set up your entity to begin</div>
+  </div>
+</header>
+
+<div class="tabnav no-print">
+  <button class="tab active" data-tab="setup">1 · Setup</button>
+  <button class="tab" data-tab="stake">2 · Stakeholders</button>
+  <button class="tab" data-tab="iro">3 · IROs</button>
+  <button class="tab" data-tab="impact">4 · Impact Materiality</button>
+  <button class="tab" data-tab="fin">5 · Financial Materiality</button>
+  <button class="tab" data-tab="threshold">6 · Thresholds</button>
+  <button class="tab" data-tab="matrix">7 · Materiality Matrix</button>
+  <button class="tab" data-tab="connect">8 · ESRS Connectivity</button>
+  <button class="tab" data-tab="disc">9 · Disclosures</button>
+  <button class="tab" data-tab="claude">10 · Claude Prompt</button>
+</div>
+
+<div class="panel active" data-panel="setup">
+  <div class="card">
+    <h2>Entity Profile & Reporting Scope</h2>
+    <p>Establishes which CSRD wave applies, the value-chain scope of your assessment, and the sector context that shapes IRO identification. Required for ESRS 1 §62-63 (basis of preparation) and BP-1 (general basis).</p>
+    <div class="cite">Reference: ESRS 1 §3 Materiality Assessment; ESRS 1 §62-67 Reporting boundary; EFRAG IG 1 §3.1 Step 1 Understanding the context.</div>
+
+    <div class="row r3" style="margin-top:14px">
+      <div><label>Entity legal name</label><input type="text" id="entName" placeholder="e.g. Verde Threads Group SE"></div>
+      <div><label>Reporting year</label><input type="text" id="entYear" value="FY2025"></div>
+      <div><label>Sector (NACE-aligned)</label><select id="entSector">
+        <option value="manufacturing">Manufacturing (incl. apparel/textiles)</option>
+        <option value="energy">Energy & utilities</option>
+        <option value="extractives">Mining & extractives</option>
+        <option value="agri">Agriculture, food & beverage</option>
+        <option value="finserv">Financial services (banking)</option>
+        <option value="finserv_am">Financial services (asset management)</option>
+        <option value="insurance">Insurance</option>
+        <option value="realestate">Real estate</option>
+        <option value="construction">Construction</option>
+        <option value="transport">Transport & logistics</option>
+        <option value="ict">ICT & technology</option>
+        <option value="retail">Retail & consumer goods</option>
+        <option value="health">Healthcare & pharma</option>
+        <option value="services">Professional services</option>
+        <option value="utilities_water">Utilities (water/waste)</option>
+      </select></div>
+    </div>
+
+    <div class="row r4" style="margin-top:12px">
+      <div><label>Headcount (group)</label><input type="number" id="entHeadcount" value="2400"></div>
+      <div><label>Net turnover (€m)</label><input type="number" id="entTurnover" value="620"></div>
+      <div><label>Balance sheet (€m)</label><input type="number" id="entBalance" value="540"></div>
+      <div><label>Listing status</label><select id="entListing">
+        <option value="listed_eu">Listed on EU regulated market</option>
+        <option value="listed_non_eu">Listed outside EU</option>
+        <option value="non_listed_large">Non-listed (large)</option>
+        <option value="non_listed_sme">Non-listed (SME)</option>
+        <option value="non_eu_parent">Non-EU parent with EU subsidiary</option>
+      </select></div>
+    </div>
+
+    <div class="row r3" style="margin-top:12px">
+      <div><label>CSRD wave (auto-detected)</label><input type="text" id="entWave" readonly style="background:#FAEFD7"></div>
+      <div><label>First reporting year</label><input type="text" id="entFirstYear" readonly style="background:#FAEFD7"></div>
+      <div><label>Assurance level (year 1)</label><input type="text" value="Limited (ISAE 3000 Rev. / ISSA 5000)" readonly style="background:#FAEFD7"></div>
+    </div>
+
+    <h3>Value chain scope</h3>
+    <p>ESRS 1 §63 requires the materiality assessment to cover own operations and the upstream/downstream value chain.</p>
+    <div class="row r3" style="margin-top:8px">
+      <div><label>Upstream tiers covered</label><select id="vcUpstream">
+        <option value="t1">Tier 1 only</option>
+        <option value="t1t2" selected>Tier 1 + Tier 2 (high-risk)</option>
+        <option value="full">Full upstream (all tiers, traceable)</option>
+        <option value="none">Not yet mapped</option>
+      </select></div>
+      <div><label>Downstream coverage</label><select id="vcDownstream">
+        <option value="customers">Direct customers</option>
+        <option value="endusers" selected>End-users & products in use</option>
+        <option value="eol">Including end-of-life / circular</option>
+        <option value="none">Not addressed</option>
+      </select></div>
+      <div><label>Geographies of operation</label><input type="text" id="vcGeog" placeholder="e.g. EU, BGD, VNM"></div>
+    </div>
+
+    <div class="bigbox">
+      <strong>Why this matters for DMA:</strong> The value-chain scope decision drives where you look for IROs. EFRAG IG 1 §3.4 confirms a "tiered approach" based on relative likelihood of severe negative impacts is acceptable, but it must be justified in the BP-2 disclosure. Under-scoping the value chain is the most common audit finding in Wave 1 CSRD reports (per EFRAG Q&A March 2026 Webinar Series).
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Materiality Assessment Process Maturity</h2>
+    <p>Self-rate where you are in EFRAG IG 1's 4-step process. Used in IRO-1 disclosure narrative and the maturity score.</p>
+    <div class="row r2" style="margin-top:10px">
+      <div><label>Step A: Understanding context (sector, value chain, stakeholders)</label><select id="mat_a"><option value="0">Not started</option><option value="1">Initial scoping</option><option value="2" selected>Documented preliminary</option><option value="3">Comprehensive, board-reviewed</option></select></div>
+      <div><label>Step B: IRO identification</label><select id="mat_b"><option value="0">Not started</option><option value="1">Initial long list</option><option value="2" selected>Long list refined</option><option value="3">Long list + value-chain mapping evidence</option></select></div>
+      <div><label>Step C: Materiality assessment (impact + financial)</label><select id="mat_c"><option value="0">Not started</option><option value="1">Impact only</option><option value="2" selected>Both, qualitative</option><option value="3">Both, quantified, threshold defined</option></select></div>
+      <div><label>Step D: Reporting & internal controls</label><select id="mat_d"><option value="0">Not started</option><option value="1">Drafting</option><option value="2" selected>Drafted, control framework forming</option><option value="3">Audit-ready, ICFR-equivalent</option></select></div>
+    </div>
+    <div class="row r2" style="margin-top:10px">
+      <div><label>Governance: board oversight of DMA?</label><select id="mat_gov"><option value="0">No</option><option value="1">Informed only</option><option value="2" selected>Reviewed</option><option value="3">Approved & signed off</option></select></div>
+      <div><label>External engagement: stakeholders consulted?</label><select id="mat_ext"><option value="0">No</option><option value="1">Internal only</option><option value="2" selected>Limited external</option><option value="3">Multi-stakeholder + workforce + value chain</option></select></div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn coral" onclick="loadExample('apparel')">Load Example: Apparel Manufacturer</button>
+    <button class="btn coral" onclick="loadExample('bank')">Load Example: EU Bank</button>
+    <button class="btn coral" onclick="loadExample('food')">Load Example: Food & Ag</button>
+    <button class="btn sec" onclick="resetAll()">Reset all</button>
+  </div>
+</div>
+
+<div class="panel" data-panel="stake">
+  <div class="card">
+    <h2>Stakeholder Engagement Map</h2>
+    <p>ESRS 1 §22 distinguishes <strong>affected stakeholders</strong> (whose interests are or could be affected by your activities or value chain) from <strong>users of sustainability statements</strong> (investors, lenders, business partners). Both must be considered. Engagement evidence directly supports IRO-1 §53(a) and SBM-2 disclosures.</p>
+    <div class="cite">Reference: ESRS 1 §22-23 Stakeholders; §53 IRO-1; ESRS 2 SBM-2 §43-45 Interests and views of stakeholders. EFRAG IG 1 §3.1.2 Stakeholder mapping.</div>
+
+    <h3>Affected stakeholders</h3>
+    <table id="stakeAffectedTbl">
+      <thead><tr><th>Stakeholder group</th><th>Vulnerability</th><th>Engagement method</th><th>Frequency</th><th>Evidence</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="btn-row"><button class="btn sm" onclick="addStakeholder('affected')">+ Add affected stakeholder</button></div>
+
+    <h3>Users of sustainability statements</h3>
+    <table id="stakeUserTbl">
+      <thead><tr><th>User group</th><th>Information needs</th><th>Engagement method</th><th>Frequency</th><th>Coverage</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="btn-row"><button class="btn sm" onclick="addStakeholder('user')">+ Add user group</button></div>
+
+    <div class="bigbox" style="margin-top:14px">
+      <strong>Engagement-quality scorecard:</strong>
+      <div id="engageScore"></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" data-panel="iro">
+  <div class="card">
+    <h2>IRO Long List by ESRS Topic</h2>
+    <p>Identify Impacts (actual/potential, positive/negative), Risks, and Opportunities across all 10 ESRS topical standards. EFRAG IG 1 §3.2 recommends starting from the ESRS sustainability matters list (AR 16) and pre-screening sector-specific issues using ESRS sector standards (where issued) plus SASB Standards as proxy.</p>
+    <div class="cite">Reference: ESRS 1 AR 16 Sustainability matters; EFRAG IG 1 §3.2 Identifying IROs; ESRS topical standards E1-E5, S1-S4, G1.</div>
+
+    <div class="subtab-nav">
+      <button class="subtab active" data-sub="env">Environmental (E1-E5)</button>
+      <button class="subtab" data-sub="soc">Social (S1-S4)</button>
+      <button class="subtab" data-sub="gov">Governance (G1)</button>
+      <button class="subtab" data-sub="ent">Entity-specific</button>
+    </div>
+
+    <div class="iro-section" data-iro-section="env"></div>
+    <div class="iro-section" data-iro-section="soc" style="display:none"></div>
+    <div class="iro-section" data-iro-section="gov" style="display:none"></div>
+    <div class="iro-section" data-iro-section="ent" style="display:none">
+      <p>Entity-specific IROs are sustainability matters not covered by ESRS topical standards. ESRS 1 §11 requires their identification when material.</p>
+      <div id="iroEntList"></div>
+      <div class="add-iro">
+        <select id="entIroType"><option value="impact">Impact</option><option value="risk">Risk</option><option value="opp">Opportunity</option></select>
+        <input type="text" id="entIroDesc" placeholder="Description (e.g. AI ethics in product use)">
+        <select id="entIroPillar"><option value="E">E</option><option value="S">S</option><option value="G">G</option></select>
+        <button class="btn sm" onclick="addEntityIRO()">+ Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="panel" data-panel="impact">
+  <div class="card">
+    <h2>Impact Materiality Scoring</h2>
+    <p>For each IRO, assess the <strong>severity</strong> of the impact (combination of scale × scope × irremediability per ESRS 1 §43-44) and <strong>likelihood</strong>. Negative impacts are scored regardless of probability if they occur; positive impacts use likelihood-weighted scoring. Time horizon: short ≤1y, medium 1-5y, long >5y.</p>
+    <div class="cite">Reference: ESRS 1 §43-44 Impact materiality assessment (severity = scale × scope × irremediability for negative impacts); EFRAG IG 1 §3.3.1.</div>
+    <div class="legend">
+      <span><span class="dot E"></span>Environmental</span>
+      <span><span class="dot S"></span>Social</span>
+      <span><span class="dot G"></span>Governance</span>
+    </div>
+    <div id="impactList" style="margin-top:12px"></div>
+    <p class="muted" style="margin-top:10px">Tip: use the Long List on tab 3 first, then return here to score. Only IROs marked as "Impact" appear in this tab.</p>
+  </div>
+</div>
+
+<div class="panel" data-panel="fin">
+  <div class="card">
+    <h2>Financial Materiality Scoring</h2>
+    <p>For each Risk and Opportunity, assess <strong>magnitude of financial effect</strong> (5-pt scale: ≤€0.1m / 0.1-1m / 1-10m / 10-100m / >€100m), <strong>likelihood</strong>, and <strong>time horizon</strong>. ESRS 1 §50 requires financial effects to cover financial position, financial performance, cash flows, access to finance, or cost of capital.</p>
+    <div class="cite">Reference: ESRS 1 §49-51 Financial materiality assessment; EFRAG IG 1 §3.3.2.</div>
+    <div id="finList" style="margin-top:12px"></div>
+    <p class="muted" style="margin-top:10px">Risks and Opportunities flagged in tab 3 appear here for scoring.</p>
+  </div>
+</div>
+
+<div class="panel" data-panel="threshold">
+  <div class="card">
+    <h2>Materiality Threshold</h2>
+    <p>ESRS 1 §AR 14 requires entities to define and disclose the materiality threshold used. EFRAG IG 1 §3.4 confirms thresholds are set per assessment dimension (impact and financial) and must be justified.</p>
+    <div class="cite">Reference: ESRS 1 §AR 14; EFRAG IG 1 §3.4 Setting and applying thresholds.</div>
+
+    <div class="row r2" style="margin-top:14px">
+      <div>
+        <label>Impact materiality threshold (severity × likelihood, 0-25)</label>
+        <input type="number" id="thrImpact" min="0" max="25" step="0.5" value="9">
+        <div class="help">Default: 9 (e.g., severity 3 × likelihood 3, equivalent to "Medium-High" rating). Lower = more inclusive.</div>
+      </div>
+      <div>
+        <label>Financial materiality threshold (magnitude × likelihood, 0-25)</label>
+        <input type="number" id="thrFin" min="0" max="25" step="0.5" value="9">
+        <div class="help">Default: 9. Some Wave 1 reporters used 12-15; some used 6 to be more inclusive.</div>
+      </div>
+      <div>
+        <label>Combine logic (ESRS 1 §29)</label>
+        <select id="thrLogic">
+          <option value="or" selected>OR — material if either dimension breaches threshold (recommended)</option>
+          <option value="and">AND — material only if both dimensions breach (more restrictive, riskier)</option>
+        </select>
+      </div>
+      <div>
+        <label>Apply lower threshold for severe negative human-rights impacts?</label>
+        <select id="thrHR">
+          <option value="yes" selected>Yes — never excluded regardless of likelihood (ESRS 1 §45)</option>
+          <option value="no">No</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="bigbox" style="margin-top:14px">
+      <strong>Threshold justification (auto-drafted for IRO-1):</strong>
+      <div id="thrJustify" style="margin-top:6px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Quantitative Reference Points</h2>
+    <p class="muted">Use these to anchor your financial materiality threshold. ESRS does not prescribe a specific %; companies typically benchmark against IFRS audit materiality.</p>
+    <table>
+      <thead><tr><th>Reference</th><th>Calculation</th><th>Value (€m)</th><th>Notes</th></tr></thead>
+      <tbody id="thrRefs"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel" data-panel="matrix">
+  <div class="card">
+    <h2>Double Materiality Matrix</h2>
+    <p>Each IRO is plotted on the impact axis (severity × likelihood) and the financial axis (magnitude × likelihood). The threshold lines define the four quadrants per ESRS 1 §29.</p>
+
+    <div id="matrixWrap" class="matrixwrap"></div>
+
+    <h3>Material topics (ESRS topical standards triggered)</h3>
+    <div id="matrixSummary"></div>
+
+    <h3>IRO ranking</h3>
+    <table id="matrixRanking">
+      <thead><tr><th>IRO</th><th>Pillar</th><th>Type</th><th>Impact score</th><th>Financial score</th><th>Materiality</th><th>Time horizon</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel" data-panel="connect">
+  <div class="card">
+    <h2>ESRS Data-Point Connectivity</h2>
+    <p>EFRAG ESRS Set 1 defines ~1,144 datapoints across 12 standards. Once a topic is material, its disclosure requirements (DRs) and datapoints become reportable. This tab maps your material topics to the disclosure requirements you'll need to populate.</p>
+    <div class="cite">Reference: EFRAG ESRS Datapoint Implementation Guidance v3 (2025); EFRAG Set 1 Delegated Reg (EU) 2023/2772.</div>
+    <div id="connectivityList" style="margin-top:12px"></div>
+  </div>
+
+  <div class="card">
+    <h2>Burden Estimate</h2>
+    <p class="muted">Approximate datapoint count and assurance hours, calibrated to PwC EU CSRD 2024 Survey (median 2,400h Year 1) and EY CSRD Pulse Q4 2024.</p>
+    <div id="burdenEst"></div>
+  </div>
+</div>
+
+<div class="panel" data-panel="disc">
+  <div class="card">
+    <h2>Disclosure Drafts (BP-2 / IRO-1 / SBM-3)</h2>
+    <p>Auto-drafted from your DMA inputs. Edit and adapt before publication; these are first drafts to accelerate, not final disclosures.</p>
+
+    <h3>BP-2 §13 — Disclosures in relation to specific circumstances</h3>
+    <pre id="bp2Draft"></pre>
+
+    <h3>IRO-1 §53 — Description of the process to identify and assess material IROs</h3>
+    <pre id="iro1Draft"></pre>
+
+    <h3>SBM-3 §48 — Material IROs and their interaction with strategy and business model</h3>
+    <pre id="sbm3Draft"></pre>
+  </div>
+
+  <div class="card">
+    <h2>Action plan — close gaps before audit</h2>
+    <div id="actionList"></div>
+  </div>
+</div>
+
+<div class="panel" data-panel="claude">
+  <div class="card">
+    <h2>Personalised Claude Prompt</h2>
+    <p>Copy this into Claude.ai (or any AI assistant) to generate audit-defensible draft disclosures, board memos, stakeholder workshop scripts, and a remediation roadmap. The prompt embeds your entity profile, IRO inventory, materiality scores, and threshold logic.</p>
+    <div class="btn-row"><button class="btn coral" onclick="copyPrompt()">Copy prompt to clipboard</button></div>
+    <pre id="claudePrompt" style="margin-top:10px"></pre>
+  </div>
+</div>
+
+<div class="footer-actions no-print">
+  <div>
+    <button class="btn" onclick="exportCSV()">⤓ Export CSV memo</button>
+    <button class="btn sec" onclick="window.print()">⎙ Print / save PDF</button>
+  </div>
+  <div class="muted" style="font-size:11.5px">
+    UsefulAF · Tool #27 · Built with EFRAG IG 1 (May 2024) · ESRS Set 1 (Reg (EU) 2023/2772) · For practitioner use; not legal or audit advice.
+  </div>
+</div>
+
+</div>
+
+<script>
+const ESRS_TOPICS = {
+  E1:{pillar:'E',name:'Climate change',sub:[{id:'E1.1',name:'Climate change mitigation',hint:'GHG emissions Scope 1/2/3, transition plan, energy mix'},{id:'E1.2',name:'Climate change adaptation',hint:'Physical risks, climate resilience analysis'},{id:'E1.3',name:'Energy',hint:'Energy consumption and mix from non-renewable / renewable sources'}]},
+  E2:{pillar:'E',name:'Pollution',sub:[{id:'E2.1',name:'Pollution of air',hint:'NOx, SOx, PM, VOCs from operations'},{id:'E2.2',name:'Pollution of water',hint:'Discharges, eutrophication, hazardous substances'},{id:'E2.3',name:'Pollution of soil',hint:'Contamination, spills, REACH SVHC'},{id:'E2.4',name:'Substances of concern / very high concern',hint:'REACH Annex XIV, POPs Reg 2019/1021'},{id:'E2.5',name:'Microplastics',hint:'Intentional + unintentional release'}]},
+  E3:{pillar:'E',name:'Water & marine resources',sub:[{id:'E3.1',name:'Water consumption',hint:'Water withdrawal in stress areas (WRI Aqueduct H/EH)'},{id:'E3.2',name:'Water discharges',hint:'Quantity, quality, receiving water body'},{id:'E3.3',name:'Marine resources',hint:'Fisheries impacts, ocean ecosystems'}]},
+  E4:{pillar:'E',name:'Biodiversity & ecosystems',sub:[{id:'E4.1',name:'Direct impact drivers',hint:'Land-use change, species exploitation, invasive species'},{id:'E4.2',name:'Impacts on extent/condition of ecosystems',hint:'KBA overlap, IUCN Red List ecosystems'},{id:'E4.3',name:'Impacts and dependencies on ecosystem services',hint:'ENCORE-mapped dependencies (pollination, water, soil)'}]},
+  E5:{pillar:'E',name:'Resource use & circular economy',sub:[{id:'E5.1',name:'Resource inflows incl. resource use',hint:'Virgin vs. secondary materials, sustainable sourcing'},{id:'E5.2',name:'Resource outflows related to products & services',hint:'Recyclability, durability, repairability'},{id:'E5.3',name:'Waste',hint:'Hazardous, non-hazardous, recovered, disposed'}]},
+  S1:{pillar:'S',name:'Own workforce',sub:[{id:'S1.1',name:'Working conditions',hint:'Health & safety, working time, wages, social dialogue'},{id:'S1.2',name:'Equal treatment & opportunities',hint:'Gender equality, diversity, training, accessibility'},{id:'S1.3',name:'Other work-related rights',hint:'Forced labour, child labour, freedom of association, privacy'}]},
+  S2:{pillar:'S',name:'Workers in the value chain',sub:[{id:'S2.1',name:'Working conditions in the value chain',hint:'Tier 1+ supplier wages, hours, OSH'},{id:'S2.2',name:'Equal treatment in the value chain',hint:'Discrimination in supplier workforce'},{id:'S2.3',name:'Other work-related rights in the value chain',hint:'Forced labour, child labour in upstream tiers'}]},
+  S3:{pillar:'S',name:'Affected communities',sub:[{id:'S3.1',name:'Communities economic, social, cultural rights',hint:'Land, livelihoods, housing, food security'},{id:'S3.2',name:'Communities civil & political rights',hint:'Free expression, assembly, FPIC where indigenous lands affected'},{id:'S3.3',name:'Indigenous peoples specific rights',hint:'UNDRIP, ILO C169, FPIC processes'}]},
+  S4:{pillar:'S',name:'Consumers & end-users',sub:[{id:'S4.1',name:'Information-related impacts',hint:'Privacy, data security, marketing ethics, accessibility of info'},{id:'S4.2',name:'Personal safety of consumers',hint:'Product safety, services safety, harm reduction'},{id:'S4.3',name:'Social inclusion of consumers',hint:'Non-discrimination, access to products & services'}]},
+  G1:{pillar:'G',name:'Business conduct',sub:[{id:'G1.1',name:'Corporate culture & whistleblowing',hint:'Code of conduct, training, speak-up'},{id:'G1.2',name:'Management of relationships with suppliers',hint:'Including payment practices'},{id:'G1.3',name:'Corruption & bribery',hint:'Prevention, detection, training, incidents'},{id:'G1.4',name:'Political engagement & lobbying',hint:'Lobbying expenditure, Transparency Register'},{id:'G1.5',name:'Animal welfare',hint:'Where applicable to business model'}]}
+};
+
+const ESRS_DATAPOINTS = {E1:217,E2:47,E3:23,E4:60,E5:36,S1:168,S2:55,S3:47,S4:47,G1:55};
+
+const SECTOR_PRESET_IROS = {
+  manufacturing:[
+    {topic:'E1.1',type:'impact',sign:'neg',desc:'Scope 1+2 GHG from process heat and dyeing/finishing',vc:'own'},
+    {topic:'E1.1',type:'impact',sign:'neg',desc:'Scope 3 Cat 1 (purchased materials) embedded emissions in cotton/synthetics',vc:'upstream'},
+    {topic:'E1.2',type:'risk',sign:'neg',desc:'Physical risk: heat stress and water shortage at upstream production sites',vc:'upstream'},
+    {topic:'E2.2',type:'impact',sign:'neg',desc:'Wastewater discharges from wet processing (BAT not always applied)',vc:'upstream'},
+    {topic:'E2.4',type:'impact',sign:'neg',desc:'Hazardous chemicals (REACH SVHCs, ZDHC MRSL) in dyeing',vc:'upstream'},
+    {topic:'E3.1',type:'impact',sign:'neg',desc:'Water consumption in cotton cultivation (>2,700 L/kg)',vc:'upstream'},
+    {topic:'E5.2',type:'opp',sign:'pos',desc:'Circular product design — repair, recycle, take-back schemes',vc:'downstream'},
+    {topic:'S2.1',type:'impact',sign:'neg',desc:'Excessive overtime and below living-wage payment in Tier 1 garment factories',vc:'upstream'},
+    {topic:'S2.3',type:'impact',sign:'neg',desc:'Forced/child labour risk in Tier 2-3 cotton (UFLPA-exposed regions)',vc:'upstream'},
+    {topic:'S1.1',type:'impact',sign:'neg',desc:'Workplace H&S incidents in own operations',vc:'own'},
+    {topic:'G1.3',type:'risk',sign:'neg',desc:'Bribery exposure in sourcing geographies (CPI score <40)',vc:'upstream'},
+    {topic:'G1.2',type:'impact',sign:'neg',desc:'Late payment to small suppliers',vc:'own'}
+  ],
+  finserv:[
+    {topic:'E1.1',type:'impact',sign:'neg',desc:'Financed Scope 3 Cat 15 emissions across loan/investment portfolio',vc:'downstream'},
+    {topic:'E1.1',type:'risk',sign:'neg',desc:'Transition risk: stranded fossil-fuel assets in lending book',vc:'own'},
+    {topic:'E1.2',type:'risk',sign:'neg',desc:'Physical risk: collateral damage from acute climate events (NGFS Phase IV)',vc:'own'},
+    {topic:'E1.1',type:'opp',sign:'pos',desc:'Sustainable finance growth — green/social/sustainability-linked products',vc:'own'},
+    {topic:'S4.1',type:'impact',sign:'neg',desc:'Misselling, inappropriate product targeting to vulnerable consumers',vc:'own'},
+    {topic:'S4.1',type:'impact',sign:'neg',desc:'Data privacy and cybersecurity (GDPR + DORA)',vc:'own'},
+    {topic:'S2.1',type:'impact',sign:'neg',desc:'Adverse effects through investee companies (workforce in financed portfolio)',vc:'downstream'},
+    {topic:'S3.1',type:'impact',sign:'neg',desc:'Community displacement from financed project finance (IFC PS5)',vc:'downstream'},
+    {topic:'G1.3',type:'impact',sign:'neg',desc:'AML / bribery in correspondent banking',vc:'own'},
+    {topic:'G1.4',type:'impact',sign:'neg',desc:'Lobbying alignment: industry associations vs. Paris commitment',vc:'own'},
+    {topic:'S1.2',type:'impact',sign:'neg',desc:'Gender pay gap and senior representation in own workforce',vc:'own'}
+  ],
+  agri:[
+    {topic:'E1.1',type:'impact',sign:'neg',desc:'FLAG emissions: enteric fermentation, fertiliser, land-use change',vc:'upstream'},
+    {topic:'E4.1',type:'impact',sign:'neg',desc:'Deforestation in soy/palm/cocoa/coffee/cattle supply chain (EUDR-exposed)',vc:'upstream'},
+    {topic:'E4.3',type:'impact',sign:'neg',desc:'Pollinator decline impact on dependent crops (IPBES 2016)',vc:'upstream'},
+    {topic:'E3.1',type:'impact',sign:'neg',desc:'Water use in irrigation in stressed basins',vc:'upstream'},
+    {topic:'E2.2',type:'impact',sign:'neg',desc:'Nutrient runoff and agrochemicals into surface water',vc:'upstream'},
+    {topic:'E5.3',type:'impact',sign:'neg',desc:'Food waste across operations and value chain',vc:'own'},
+    {topic:'S2.3',type:'impact',sign:'neg',desc:'Child labour in cocoa (NORC 2020: 1.56m children)',vc:'upstream'},
+    {topic:'S3.3',type:'impact',sign:'neg',desc:'Indigenous land rights and FPIC in expansion areas',vc:'upstream'},
+    {topic:'S2.1',type:'impact',sign:'neg',desc:'Smallholder farmer livelihoods and income volatility',vc:'upstream'},
+    {topic:'S4.2',type:'impact',sign:'neg',desc:'Food safety incidents (residues, contamination)',vc:'own'},
+    {topic:'G1.1',type:'risk',sign:'neg',desc:'Greenwashing scrutiny under EU Green Claims Directive',vc:'own'}
+  ]
+};
+
+const STAKE_AFFECTED_PRESETS = {
+  manufacturing:[
+    {grp:'Own employees',vuln:'Low',meth:'Annual engagement survey, works council',freq:'Annual + ongoing',evi:'Workforce committee minutes'},
+    {grp:'Tier 1 garment factory workers',vuln:'High',meth:'Worker-voice technology (Ulula/Andwider)',freq:'Quarterly',evi:'Aggregated worker insights'},
+    {grp:'Tier 2-3 cotton/yarn workers',vuln:'Very High',meth:'Multi-stakeholder initiatives (BCI, Fair Wear)',freq:'Annual',evi:'MSI assessments'},
+    {grp:'Communities near production sites',vuln:'High',meth:'Grievance mechanism, community consultations',freq:'As needed',evi:'Grievance log'},
+    {grp:'Consumers',vuln:'Low',meth:'Customer surveys, social media',freq:'Continuous',evi:'NPS data'}
+  ],
+  finserv:[
+    {grp:'Own employees',vuln:'Low',meth:'Engagement survey, employee resource groups',freq:'Annual',evi:'Survey results'},
+    {grp:'Retail customers (incl. vulnerable)',vuln:'High',meth:'Vulnerable customer panel, ombudsman data',freq:'Quarterly',evi:'Complaints data'},
+    {grp:'Communities affected by financed projects',vuln:'High',meth:'IFC PS-aligned engagement (project finance)',freq:'Project lifecycle',evi:'Stakeholder engagement plans'},
+    {grp:'Workforce of investee companies',vuln:'High',meth:'ESG engagement at investee level',freq:'Annual',evi:'Engagement records'},
+    {grp:'Civil society / NGOs',vuln:'Low',meth:'Direct dialogue, ShareAction-style engagement',freq:'Quarterly',evi:'Meeting minutes'}
+  ],
+  agri:[
+    {grp:'Smallholder farmers',vuln:'High',meth:'Cooperative dialogue, farmer surveys',freq:'Seasonal',evi:'Farmer income data'},
+    {grp:'Plantation/farm workers',vuln:'High',meth:'Auditor + worker-voice apps',freq:'Quarterly',evi:'Audit findings'},
+    {grp:'Indigenous communities',vuln:'Very High',meth:'FPIC processes per ILO C169',freq:'Per project',evi:'FPIC documentation'},
+    {grp:'Local communities at processing sites',vuln:'Med',meth:'Community liaison, grievance mech',freq:'Ongoing',evi:'Grievance register'},
+    {grp:'Consumers',vuln:'Low',meth:'Brand research',freq:'Annual',evi:'Survey data'}
+  ]
+};
+
+let state = {iros:[], stakeholders:{affected:[],user:[]}};
+let nextIROId = 1;
+
+function init(){
+  document.querySelectorAll('.tab').forEach(t=>{t.onclick=()=>switchTab(t.dataset.tab)});
+  document.querySelectorAll('.subtab').forEach(t=>{t.onclick=()=>switchSubTab(t.dataset.sub)});
+  document.querySelectorAll('input,select,textarea').forEach(el=>{el.addEventListener('change',recalc);el.addEventListener('input',recalc)});
+  populateIROSections();
+  loadExample('apparel');
+}
+
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));
+  recalc();
+}
+function switchSubTab(name){
+  document.querySelectorAll('.subtab').forEach(t=>t.classList.toggle('active',t.dataset.sub===name));
+  document.querySelectorAll('.iro-section').forEach(p=>p.style.display=p.dataset.iroSection===name?'':'none');
+}
+
+function populateIROSections(){
+  const sections = {env:['E1','E2','E3','E4','E5'],soc:['S1','S2','S3','S4'],gov:['G1']};
+  for(const [key,topics] of Object.entries(sections)){
+    const wrap = document.querySelector(`.iro-section[data-iro-section="${key}"]`);
+    let html = '';
+    for(const t of topics){
+      const tt = ESRS_TOPICS[t];
+      const colorBy = tt.pillar==='E'?'#5E8A56':tt.pillar==='S'?'#C84F35':'#7B6BA8';
+      html += `<div class="card" style="background:#fff;padding:12px"><h3 style="margin-top:0;color:${colorBy}">${t} · ${tt.name}</h3>`;
+      for(const sub of tt.sub){
+        html += `<div style="margin:8px 0 4px;font-weight:600;font-size:12.5px">${sub.id} ${sub.name} <span class="muted">— ${sub.hint}</span></div>`;
+        html += `<div id="iros-${sub.id}" class="iro-list"></div>`;
+        html += `<div class="add-iro" style="margin-top:6px"><select class="iro-type-${sub.id}"><option value="impact">Impact</option><option value="risk">Risk</option><option value="opp">Opportunity</option></select><input type="text" class="iro-desc-${sub.id}" placeholder="Describe IRO..."><select class="iro-vc-${sub.id}"><option value="own">Own ops</option><option value="upstream">Upstream</option><option value="downstream">Downstream</option></select><button class="btn sm" onclick="addIRO('${sub.id}')">+ Add</button></div>`;
+      }
+      html += `</div>`;
+    }
+    wrap.innerHTML = html;
+  }
+}
+
+function addIRO(topicId, presetData){
+  let type, desc, vc, sign;
+  if(presetData){
+    type = presetData.type; desc = presetData.desc; vc = presetData.vc||'own'; sign = presetData.sign||'neg';
+  } else {
+    type = document.querySelector(`.iro-type-${topicId}`).value;
+    desc = document.querySelector(`.iro-desc-${topicId}`).value.trim();
+    vc = document.querySelector(`.iro-vc-${topicId}`).value;
+    sign = type==='impact' ? 'neg' : (type==='opp'?'pos':'neg');
+    if(!desc){alert('Enter IRO description');return}
+  }
+  const t = topicId.split('.')[0];
+  const pillar = ESRS_TOPICS[t].pillar;
+  const iro = {id:'iro_'+(nextIROId++), topicId, topic:t, pillar, type, sign, desc, vc, iScale:3, iScope:3, iIrrem:3, iLik:3, fMag:3, fLik:3, timeHorizon:'medium'};
+  state.iros.push(iro);
+  if(!presetData){document.querySelector(`.iro-desc-${topicId}`).value=''}
+  renderIROs(); recalc();
+}
+
+function addEntityIRO(){
+  const type = document.getElementById('entIroType').value;
+  const desc = document.getElementById('entIroDesc').value.trim();
+  const pillar = document.getElementById('entIroPillar').value;
+  if(!desc){alert('Enter description');return}
+  state.iros.push({id:'iro_'+(nextIROId++), topicId:'EntitySpecific', topic:'ENT', pillar, type, sign: type==='opp'?'pos':'neg', desc, vc:'own', iScale:3, iScope:3, iIrrem:3, iLik:3, fMag:3, fLik:3, timeHorizon:'medium'});
+  document.getElementById('entIroDesc').value='';
+  renderIROs(); recalc();
+}
+
+function removeIRO(id){state.iros = state.iros.filter(i=>i.id!==id); renderIROs(); recalc()}
+
+function updateIRO(id, field, val){
+  const iro = state.iros.find(i=>i.id===id);
+  if(!iro)return;
+  iro[field] = isNaN(parseFloat(val)) ? val : parseFloat(val);
+  recalc();
+}
+
+function renderIROs(){
+  document.querySelectorAll('.iro-list').forEach(el=>el.innerHTML='');
+  document.getElementById('iroEntList').innerHTML='';
+  for(const iro of state.iros){
+    const html = `<div class="iro-row" style="margin:4px 0;background:${iro.sign==='pos'?'#F0F8E8':'#FFF6F2'}">
+      <div class="head"><div><span class="pill ${iro.pillar}">${iro.topic}</span> <strong>${iro.type.toUpperCase()}</strong> <span class="muted">· ${iro.vc}</span></div><button class="btn sm sec" onclick="removeIRO('${iro.id}')">×</button></div>
+      <div class="desc">${iro.desc}</div>
+    </div>`;
+    if(iro.topicId==='EntitySpecific'){
+      document.getElementById('iroEntList').innerHTML += html;
+    } else {
+      const tgt = document.getElementById('iros-'+iro.topicId);
+      if(tgt) tgt.innerHTML += html;
+    }
+  }
+  renderImpactList();
+  renderFinList();
+}
+
+function renderImpactList(){
+  const list = document.getElementById('impactList');
+  const impacts = state.iros.filter(i=>i.type==='impact');
+  if(!impacts.length){list.innerHTML='<p class="muted">No Impacts identified yet — add them on tab 3.</p>';return}
+  list.innerHTML='';
+  for(const iro of impacts){
+    const sev = (parseFloat(iro.iScale)+parseFloat(iro.iScope)+parseFloat(iro.iIrrem))/3;
+    const score = sev * parseFloat(iro.iLik);
+    list.innerHTML += `<div class="iro-row">
+      <div class="head"><div><span class="pill ${iro.pillar}">${iro.topic}</span> <strong>${iro.sign==='pos'?'Positive':'Negative'} Impact</strong> <span class="muted">· ${iro.vc}</span></div><div><strong>Score: ${score.toFixed(1)}</strong></div></div>
+      <div class="desc">${iro.desc}</div>
+      <div class="scoring">
+        <div><label>Scale (1-5)</label><input type="number" min="1" max="5" step="0.5" value="${iro.iScale}" onchange="updateIRO('${iro.id}','iScale',this.value)"></div>
+        <div><label>Scope (1-5)</label><input type="number" min="1" max="5" step="0.5" value="${iro.iScope}" onchange="updateIRO('${iro.id}','iScope',this.value)"></div>
+        <div><label>Irremediability (1-5)</label><input type="number" min="1" max="5" step="0.5" value="${iro.iIrrem}" onchange="updateIRO('${iro.id}','iIrrem',this.value)"></div>
+        <div><label>Likelihood (1-5)</label><input type="number" min="1" max="5" step="0.5" value="${iro.iLik}" onchange="updateIRO('${iro.id}','iLik',this.value)"></div>
+        <div><label>Time horizon</label><select onchange="updateIRO('${iro.id}','timeHorizon',this.value)"><option value="short" ${iro.timeHorizon==='short'?'selected':''}>Short ≤1y</option><option value="medium" ${iro.timeHorizon==='medium'?'selected':''}>Medium 1-5y</option><option value="long" ${iro.timeHorizon==='long'?'selected':''}>Long &gt;5y</option></select></div>
+        <div><label>Severity</label><input type="text" value="${sev.toFixed(2)}" readonly style="background:#FAEFD7"></div>
+      </div>
+    </div>`;
+  }
+}
+
+function renderFinList(){
+  const list = document.getElementById('finList');
+  const fin = state.iros.filter(i=>i.type==='risk'||i.type==='opp');
+  if(!fin.length){list.innerHTML='<p class="muted">No Risks or Opportunities identified yet — add them on tab 3.</p>';return}
+  list.innerHTML='';
+  for(const iro of fin){
+    const score = parseFloat(iro.fMag) * parseFloat(iro.fLik);
+    list.innerHTML += `<div class="iro-row">
+      <div class="head"><div><span class="pill ${iro.pillar}">${iro.topic}</span> <strong>${iro.type.toUpperCase()}</strong> <span class="muted">· ${iro.vc}</span></div><div><strong>Score: ${score.toFixed(1)}</strong></div></div>
+      <div class="desc">${iro.desc}</div>
+      <div class="scoring">
+        <div><label>Magnitude (1-5)</label><input type="number" min="1" max="5" step="0.5" value="${iro.fMag}" onchange="updateIRO('${iro.id}','fMag',this.value)"><div class="help">1=≤€0.1m, 5=&gt;€100m</div></div>
+        <div><label>Likelihood (1-5)</label><input type="number" min="1" max="5" step="0.5" value="${iro.fLik}" onchange="updateIRO('${iro.id}','fLik',this.value)"></div>
+        <div><label>Time horizon</label><select onchange="updateIRO('${iro.id}','timeHorizon',this.value)"><option value="short" ${iro.timeHorizon==='short'?'selected':''}>Short ≤1y</option><option value="medium" ${iro.timeHorizon==='medium'?'selected':''}>Medium 1-5y</option><option value="long" ${iro.timeHorizon==='long'?'selected':''}>Long &gt;5y</option></select></div>
+        <div></div><div></div><div></div>
+      </div>
+    </div>`;
+  }
+}
+
+function addStakeholder(kind, presetData){
+  const stake = presetData || (kind==='affected'?{grp:'New stakeholder',vuln:'Med',meth:'TBD',freq:'Annual',evi:'TBD'}:{grp:'New user',inf:'TBD',meth:'TBD',freq:'TBD',cov:'TBD'});
+  state.stakeholders[kind].push(stake);
+  renderStakeholders(); recalc();
+}
+function removeStake(kind,idx){state.stakeholders[kind].splice(idx,1); renderStakeholders(); recalc()}
+function updateStake(kind,idx,field,val){state.stakeholders[kind][idx][field]=val; recalc()}
+
+function renderStakeholders(){
+  const aff = document.querySelector('#stakeAffectedTbl tbody');
+  aff.innerHTML='';
+  state.stakeholders.affected.forEach((s,i)=>{
+    aff.innerHTML += `<tr>
+      <td><input type="text" value="${s.grp}" onchange="updateStake('affected',${i},'grp',this.value)"></td>
+      <td><select onchange="updateStake('affected',${i},'vuln',this.value)"><option ${s.vuln==='Low'?'selected':''}>Low</option><option ${s.vuln==='Med'?'selected':''}>Med</option><option ${s.vuln==='High'?'selected':''}>High</option><option ${s.vuln==='Very High'?'selected':''}>Very High</option></select></td>
+      <td><input type="text" value="${s.meth}" onchange="updateStake('affected',${i},'meth',this.value)"></td>
+      <td><input type="text" value="${s.freq}" onchange="updateStake('affected',${i},'freq',this.value)"></td>
+      <td><input type="text" value="${s.evi}" onchange="updateStake('affected',${i},'evi',this.value)"></td>
+    </tr>`;
+  });
+  const usr = document.querySelector('#stakeUserTbl tbody');
+  usr.innerHTML='';
+  state.stakeholders.user.forEach((s,i)=>{
+    usr.innerHTML += `<tr>
+      <td><input type="text" value="${s.grp}" onchange="updateStake('user',${i},'grp',this.value)"></td>
+      <td><input type="text" value="${s.inf||''}" onchange="updateStake('user',${i},'inf',this.value)"></td>
+      <td><input type="text" value="${s.meth||''}" onchange="updateStake('user',${i},'meth',this.value)"></td>
+      <td><input type="text" value="${s.freq||''}" onchange="updateStake('user',${i},'freq',this.value)"></td>
+      <td><input type="text" value="${s.cov||''}" onchange="updateStake('user',${i},'cov',this.value)"></td>
+    </tr>`;
+  });
+}
+
+function loadExample(which){
+  state.iros = [];
+  state.stakeholders = {affected:[],user:[]};
+  const setVal=(id,val)=>{const el=document.getElementById(id); if(el)el.value=val};
+  if(which==='apparel'){
+    setVal('entName','Verde Threads Group SE');
+    setVal('entYear','FY2025'); setVal('entSector','manufacturing');
+    setVal('entHeadcount','4200'); setVal('entTurnover','620');
+    setVal('entBalance','540'); setVal('entListing','listed_eu');
+    setVal('vcUpstream','t1t2'); setVal('vcDownstream','endusers');
+    setVal('vcGeog','EU, BGD, VNM, IND');
+    const scoringMatrix = [[3,3,2,4,2,3,'medium'],[4,4,3,4,3,4,'medium'],[3,3,3,4,3,3,'short'],[4,3,3,4,3,3,'medium'],[3,3,4,4,3,3,'medium'],[4,4,3,4,3,3,'medium'],[4,4,2,3,4,3,'medium'],[5,4,4,4,3,3,'short'],[5,4,5,3,4,3,'short'],[3,2,2,3,3,3,'short'],[3,3,3,3,3,3,'medium'],[2,2,2,3,2,3,'short']];
+    SECTOR_PRESET_IROS.manufacturing.forEach((p,idx)=>{
+      const t = p.topic.split('.')[0];
+      const s = scoringMatrix[idx]||[3,3,3,3,3,3,'medium'];
+      state.iros.push({id:'iro_'+(nextIROId++), topicId:p.topic, topic:t, pillar:ESRS_TOPICS[t].pillar, type:p.type, sign:p.sign, desc:p.desc, vc:p.vc||'own', iScale:s[0],iScope:s[1],iIrrem:s[2],iLik:s[3],fMag:s[4],fLik:s[5],timeHorizon:s[6]});
+    });
+    state.stakeholders.affected = STAKE_AFFECTED_PRESETS.manufacturing.map(s=>Object.assign({},s));
+    state.stakeholders.user = [
+      {grp:'Equity investors (PRI signatories)',inf:'ESRS narrative + targets',meth:'IR meetings, ESG roadshow',freq:'Quarterly',cov:'Top 30 holders'},
+      {grp:'Lenders (NZBA banks)',inf:'Climate transition + Article 8 KPIs',meth:'Banking dialogue',freq:'Annual',cov:'5 RCF banks'},
+      {grp:'Major retail customers',inf:'Worker conditions + climate',meth:'Customer ESG questionnaires',freq:'Per RFP',cov:'Top 8 buyers'},
+      {grp:'Rating agencies (MSCI, Sustainalytics, ISS)',inf:'Ratings inputs',meth:'Annual cycles',freq:'Annual',cov:'3 agencies'}
+    ];
+    setVal('mat_a','3'); setVal('mat_b','3'); setVal('mat_c','2'); setVal('mat_d','2'); setVal('mat_gov','2'); setVal('mat_ext','3');
+    setVal('thrImpact','9'); setVal('thrFin','9');
+  } else if(which==='bank'){
+    setVal('entName','Meridian Banking Group plc');
+    setVal('entYear','FY2025'); setVal('entSector','finserv');
+    setVal('entHeadcount','24500'); setVal('entTurnover','5800');
+    setVal('entBalance','198000'); setVal('entListing','listed_eu');
+    setVal('vcUpstream','t1'); setVal('vcDownstream','eol');
+    setVal('vcGeog','EU, UK, US');
+    const scoringMatrix = [[5,5,3,4,5,4,'long'],[3,3,3,4,5,4,'medium'],[3,3,3,3,4,3,'long'],[4,4,3,4,4,4,'medium'],[3,2,2,3,4,3,'short'],[3,4,3,3,4,3,'short'],[4,4,3,3,3,3,'medium'],[4,3,4,3,3,3,'medium'],[2,2,2,2,3,3,'short'],[3,3,2,3,3,3,'medium'],[2,3,2,3,2,3,'short']];
+    SECTOR_PRESET_IROS.finserv.forEach((p,idx)=>{
+      const t = p.topic.split('.')[0];
+      const s = scoringMatrix[idx]||[3,3,3,3,3,3,'medium'];
+      state.iros.push({id:'iro_'+(nextIROId++), topicId:p.topic, topic:t, pillar:ESRS_TOPICS[t].pillar, type:p.type, sign:p.sign, desc:p.desc, vc:p.vc||'own', iScale:s[0],iScope:s[1],iIrrem:s[2],iLik:s[3],fMag:s[4],fLik:s[5],timeHorizon:s[6]});
+    });
+    state.stakeholders.affected = STAKE_AFFECTED_PRESETS.finserv.map(s=>Object.assign({},s));
+    state.stakeholders.user = [
+      {grp:'Institutional investors (NZAM, PRI)',inf:'Climate alignment + financed emissions',meth:'IR roadshow',freq:'Quarterly',cov:'Top 50'},
+      {grp:'Regulators (ECB, EBA, FCA, PRA)',inf:'Pillar 3 ESG + GAR',meth:'Supervisory dialogue',freq:'Continuous',cov:'Group + entities'},
+      {grp:'Rating agencies',inf:'ESG ratings + credit',meth:'Annual reviews',freq:'Annual',cov:'5 agencies'},
+      {grp:'Civil society / NGOs',inf:'Lobbying alignment, fossil financing',meth:'Direct engagement',freq:'Quarterly',cov:'5-10 NGOs'}
+    ];
+    setVal('mat_a','3'); setVal('mat_b','2'); setVal('mat_c','2'); setVal('mat_d','2'); setVal('mat_gov','3'); setVal('mat_ext','2');
+    setVal('thrImpact','9'); setVal('thrFin','12');
+  } else if(which==='food'){
+    setVal('entName','Savanna Harvest Foods Ltd');
+    setVal('entYear','FY2025'); setVal('entSector','agri');
+    setVal('entHeadcount','3100'); setVal('entTurnover','1450');
+    setVal('entBalance','920'); setVal('entListing','listed_eu');
+    setVal('vcUpstream','full'); setVal('vcDownstream','endusers');
+    setVal('vcGeog','EU, GHA, CIV, IDN, KEN');
+    const scoringMatrix = [[5,5,4,4,4,4,'long'],[5,4,5,4,4,3,'medium'],[4,5,4,3,3,3,'long'],[4,4,3,4,3,3,'medium'],[3,4,3,4,3,3,'medium'],[3,3,2,3,3,3,'short'],[4,4,5,3,3,3,'medium'],[5,3,5,3,3,3,'medium'],[4,4,2,4,3,3,'medium'],[3,3,3,2,4,3,'short'],[3,3,2,3,4,3,'short']];
+    SECTOR_PRESET_IROS.agri.forEach((p,idx)=>{
+      const t = p.topic.split('.')[0];
+      const s = scoringMatrix[idx]||[3,3,3,3,3,3,'medium'];
+      state.iros.push({id:'iro_'+(nextIROId++), topicId:p.topic, topic:t, pillar:ESRS_TOPICS[t].pillar, type:p.type, sign:p.sign, desc:p.desc, vc:p.vc||'own', iScale:s[0],iScope:s[1],iIrrem:s[2],iLik:s[3],fMag:s[4],fLik:s[5],timeHorizon:s[6]});
+    });
+    state.stakeholders.affected = STAKE_AFFECTED_PRESETS.agri.map(s=>Object.assign({},s));
+    state.stakeholders.user = [
+      {grp:'Listed equity investors',inf:'EUDR compliance + climate transition',meth:'IR meetings',freq:'Quarterly',cov:'Top 30'},
+      {grp:'Major retail buyers (UK, EU)',inf:'Sustainability scorecard inputs',meth:'Buyer ESG portals',freq:'Annual',cov:'Top 12 buyers'},
+      {grp:'NGOs (Mighty Earth, Rainforest Alliance, SOMO)',inf:'Deforestation, child labour',meth:'Direct dialogue',freq:'Quarterly',cov:'5 NGOs'},
+      {grp:'Lenders + insurers',inf:'Sustainable finance criteria',meth:'Banking dialogue',freq:'Annual',cov:'4 banks'}
+    ];
+    setVal('mat_a','3'); setVal('mat_b','3'); setVal('mat_c','3'); setVal('mat_d','2'); setVal('mat_gov','3'); setVal('mat_ext','3');
+    setVal('thrImpact','9'); setVal('thrFin','9');
+  }
+  renderIROs(); renderStakeholders(); recalc();
+}
+
+function resetAll(){
+  state.iros = []; state.stakeholders = {affected:[],user:[]};
+  document.getElementById('entName').value=''; document.getElementById('vcGeog').value='';
+  renderIROs(); renderStakeholders(); recalc();
+}
+
+function recalc(){
+  detectWave(); computeMaterialityForAll(); renderMatrix(); renderConnectivity();
+  renderDisclosures(); renderActions(); renderClaudePrompt(); renderEngageScore();
+  renderThresholdJustify(); renderQuantRefs(); computeOverallScore(); renderBurden();
+}
+
+function detectVal(id){const el=document.getElementById(id); return el?el.value:''}
+function detectNum(id){const el=document.getElementById(id); return el?parseFloat(el.value)||0:0}
+
+function detectWave(){
+  const headcount = detectNum('entHeadcount');
+  const turnover = detectNum('entTurnover');
+  const balance = detectNum('entBalance');
+  const listing = detectVal('entListing');
+  let wave='Out of scope'; let firstYear='N/A';
+  if(listing==='listed_eu' && headcount>500){
+    wave='Wave 1 (NFRD-grandfathered)'; firstYear='FY2024 → reports filed in 2025';
+  } else if(headcount>=250 || turnover>=50 || balance>=25){
+    if(listing==='non_eu_parent'){
+      wave='Wave 4 (non-EU parent)'; firstYear='FY2028 → reports filed in 2029';
+    } else if(listing==='non_listed_sme'){
+      wave='Wave 3 (listed SME) — deferred per Omnibus'; firstYear='FY2028 → reports filed in 2029';
+    } else {
+      let count=0;
+      if(headcount>=250)count++;
+      if(turnover>=50)count++;
+      if(balance>=25)count++;
+      if(count>=2){wave='Wave 2 (large undertakings)'; firstYear='FY2025 → reports filed in 2026';}
+      else {wave='Out of scope (size threshold not met)';}
+    }
+  }
+  document.getElementById('entWave').value = wave;
+  document.getElementById('entFirstYear').value = firstYear;
+}
+
+function computeMaterialityForAll(){
+  const thrI = detectNum('thrImpact'); const thrF = detectNum('thrFin');
+  const logic = detectVal('thrLogic'); const hr = detectVal('thrHR');
+  for(const iro of state.iros){
+    if(iro.type==='impact'){
+      const sev = (parseFloat(iro.iScale)+parseFloat(iro.iScope)+parseFloat(iro.iIrrem))/3;
+      iro.impactScore = sev * parseFloat(iro.iLik);
+      iro.finScore = 0;
+    } else {
+      iro.impactScore = 0;
+      iro.finScore = parseFloat(iro.fMag) * parseFloat(iro.fLik);
+    }
+    let i_mat = iro.impactScore >= thrI;
+    let f_mat = iro.finScore >= thrF;
+    if(hr==='yes' && iro.type==='impact' && iro.sign==='neg' && iro.pillar==='S'){
+      const sev = (parseFloat(iro.iScale)+parseFloat(iro.iScope)+parseFloat(iro.iIrrem))/3;
+      if(sev>=4) i_mat = true;
+    }
+    iro.material = (logic==='or') ? (i_mat||f_mat) : (i_mat&&f_mat);
+    iro.matDimensions = [];
+    if(i_mat)iro.matDimensions.push('impact');
+    if(f_mat)iro.matDimensions.push('financial');
+  }
+}
+
+function renderMatrix(){
+  const wrap = document.getElementById('matrixWrap');
+  if(!state.iros.length){wrap.innerHTML='<p class="muted">Add IROs on tab 3 to populate the matrix.</p>';document.getElementById('matrixSummary').innerHTML='';document.querySelector('#matrixRanking tbody').innerHTML='';return}
+  const thrI = detectNum('thrImpact'); const thrF = detectNum('thrFin');
+  const w=560, h=440, padL=70, padR=20, padT=20, padB=60;
+  const innerW = w-padL-padR, innerH=h-padT-padB;
+  const x=v=>padL+(v/25)*innerW;
+  const y=v=>padT+(1-v/25)*innerH;
+  let svg = `<svg viewBox="0 0 ${w} ${h}" style="background:#FBF7EF;border:1px solid var(--line2);border-radius:6px;max-width:600px">`;
+  svg += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${h-padB}" stroke="#1F1B16" stroke-width="1.5"/>`;
+  svg += `<line x1="${padL}" y1="${h-padB}" x2="${w-padR}" y2="${h-padB}" stroke="#1F1B16" stroke-width="1.5"/>`;
+  svg += `<line x1="${x(thrI)}" y1="${padT}" x2="${x(thrI)}" y2="${h-padB}" stroke="#E66A4F" stroke-width="1" stroke-dasharray="4 3"/>`;
+  svg += `<line x1="${padL}" y1="${y(thrF)}" x2="${w-padR}" y2="${y(thrF)}" stroke="#E66A4F" stroke-width="1" stroke-dasharray="4 3"/>`;
+  svg += `<text x="${(padL+x(thrI))/2}" y="${y(thrF)+(h-padB-y(thrF))/2}" text-anchor="middle" fill="#888" font-size="10" font-style="italic">Not material</text>`;
+  svg += `<text x="${(x(thrI)+w-padR)/2}" y="${y(thrF)+(h-padB-y(thrF))/2}" text-anchor="middle" fill="#888" font-size="10" font-style="italic">Impact-only</text>`;
+  svg += `<text x="${(padL+x(thrI))/2}" y="${(padT+y(thrF))/2}" text-anchor="middle" fill="#888" font-size="10" font-style="italic">Financial-only</text>`;
+  svg += `<text x="${(x(thrI)+w-padR)/2}" y="${(padT+y(thrF))/2}" text-anchor="middle" fill="#C84F35" font-size="11" font-weight="700">Double material</text>`;
+  svg += `<text x="${padL+innerW/2}" y="${h-padB+30}" text-anchor="middle" font-size="12" font-weight="700">Impact materiality (severity × likelihood)</text>`;
+  svg += `<text transform="rotate(-90, 20, ${padT+innerH/2})" x="20" y="${padT+innerH/2}" text-anchor="middle" font-size="12" font-weight="700">Financial materiality (magnitude × likelihood)</text>`;
+  for(let v=0;v<=25;v+=5){
+    svg += `<line x1="${x(v)}" y1="${h-padB}" x2="${x(v)}" y2="${h-padB+4}" stroke="#1F1B16"/><text x="${x(v)}" y="${h-padB+15}" text-anchor="middle" font-size="10">${v}</text>`;
+    svg += `<line x1="${padL}" y1="${y(v)}" x2="${padL-4}" y2="${y(v)}" stroke="#1F1B16"/><text x="${padL-8}" y="${y(v)+3}" text-anchor="end" font-size="10">${v}</text>`;
+  }
+  for(const iro of state.iros){
+    const ix = x(iro.impactScore || (iro.type!=='impact'?0.5:0));
+    const iy = y(iro.finScore || (iro.type==='impact'?0.5:0));
+    const color = iro.pillar==='E'?'#5E8A56': iro.pillar==='S'?'#E66A4F':'#7B6BA8';
+    const r = iro.material?7:5;
+    const stroke = iro.material?'#1F1B16':'#aaa';
+    svg += `<circle cx="${ix}" cy="${iy}" r="${r}" fill="${color}" fill-opacity="0.7" stroke="${stroke}" stroke-width="${iro.material?2:1}"><title>${iro.topic} ${iro.type}: ${iro.desc.slice(0,80)}</title></circle>`;
+  }
+  svg += `</svg>`;
+  svg += `<div class="legend"><span><span class="dot E"></span>Environmental</span><span><span class="dot S"></span>Social</span><span><span class="dot G"></span>Governance</span><span style="display:inline-block;width:12px;height:12px;border:2px solid #1F1B16;border-radius:50%;background:#fff"></span> Material · <span style="display:inline-block;width:10px;height:10px;border:1px solid #aaa;border-radius:50%;background:#fff"></span> Not material</div>`;
+  wrap.innerHTML = svg;
+
+  const matTopics = [...new Set(state.iros.filter(i=>i.material).map(i=>i.topic))];
+  let summary = '<div style="margin-top:6px">';
+  if(!matTopics.length){
+    summary += '<p class="muted">No topics breach the materiality threshold yet.</p>';
+  } else {
+    summary += '<p>Material topics requiring full ESRS topical-standard reporting:</p><div>';
+    for(const t of matTopics){
+      const tt = ESRS_TOPICS[t];
+      if(tt) summary += `<span class="pill mat" style="margin:3px">${t} ${tt.name}</span> `;
+      else summary += `<span class="pill mat" style="margin:3px">${t}</span> `;
+    }
+    summary += '</div>';
+  }
+  summary += '</div>';
+  document.getElementById('matrixSummary').innerHTML = summary;
+
+  const sorted = [...state.iros].sort((a,b)=>(b.impactScore+b.finScore)-(a.impactScore+a.finScore));
+  let rows = '';
+  for(const iro of sorted){
+    rows += `<tr>
+      <td>${iro.desc.slice(0,90)}</td>
+      <td><span class="pill ${iro.pillar}">${iro.topic}</span></td>
+      <td>${iro.type}</td>
+      <td>${iro.impactScore.toFixed(1)}</td>
+      <td>${iro.finScore.toFixed(1)}</td>
+      <td>${iro.material?'<span class="pill mat">Material</span>':'<span class="pill notmat">Not material</span>'} ${iro.matDimensions.length?('<span class="muted" style="font-size:10px">'+iro.matDimensions.join(', ')+'</span>'):''}</td>
+      <td>${iro.timeHorizon}</td>
+    </tr>`;
+  }
+  document.querySelector('#matrixRanking tbody').innerHTML = rows;
+}
+
+function renderConnectivity(){
+  const matTopics = [...new Set(state.iros.filter(i=>i.material).map(i=>i.topic))];
+  const wrap = document.getElementById('connectivityList');
+  if(!matTopics.length){wrap.innerHTML='<p class="muted">No material topics yet.</p>';return}
+  let html = '';
+  for(const t of matTopics){
+    const tt = ESRS_TOPICS[t]; if(!tt) continue;
+    const dpCount = ESRS_DATAPOINTS[t]||0;
+    const matIros = state.iros.filter(i=>i.material && i.topic===t);
+    html += `<div class="disclosure-tile">
+      <div class="dp">ESRS ${t} · ${tt.name} <span style="float:right">${dpCount} datapoints</span></div>
+      <div style="margin-top:6px;font-size:12px">Triggered by: ${matIros.map(i=>i.desc.slice(0,60)).join(' · ')}</div>
+      <div class="muted" style="margin-top:4px">Required disclosures: Policies (MDR-P), Actions (MDR-A), Targets (MDR-T), Metrics (topic-specific DRs)</div>
+    </div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+function renderBurden(){
+  const matTopics = [...new Set(state.iros.filter(i=>i.material).map(i=>i.topic))];
+  let dpTotal = 0;
+  for(const t of matTopics) dpTotal += (ESRS_DATAPOINTS[t]||0);
+  dpTotal += 99;
+  const hoursLow = Math.round(dpTotal * 1.5);
+  const hoursHigh = Math.round(dpTotal * 4);
+  const assuranceLow = Math.round(dpTotal * 0.4);
+  const assuranceHigh = Math.round(dpTotal * 1.0);
+  document.getElementById('burdenEst').innerHTML = `
+    <table>
+      <tr><th>Category</th><th>Estimate</th></tr>
+      <tr><td>Material datapoints (incl. ESRS 2 mandatory ~99)</td><td><strong>${dpTotal.toLocaleString()}</strong></td></tr>
+      <tr><td>Internal preparation hours (Year 1)</td><td><strong>${hoursLow.toLocaleString()} – ${hoursHigh.toLocaleString()} hrs</strong></td></tr>
+      <tr><td>Limited assurance hours (Year 1)</td><td><strong>${assuranceLow.toLocaleString()} – ${assuranceHigh.toLocaleString()} hrs</strong></td></tr>
+      <tr><td>Internal headcount equivalent (Year 1)</td><td><strong>${(hoursLow/1700).toFixed(1)} – ${(hoursHigh/1700).toFixed(1)} FTE</strong></td></tr>
+    </table>
+    <p class="muted" style="margin-top:8px">Calibrated to PwC EU CSRD 2024 Survey (median 2,400h Year 1; N=189 EU large companies) and EY CSRD Pulse Q4 2024. Year 2-3 typically 50-65% of Year 1 effort as systems mature.</p>
+  `;
+}
+
+function renderEngageScore(){
+  const aff = state.stakeholders.affected.length;
+  const usr = state.stakeholders.user.length;
+  const externalScore = parseFloat(detectVal('mat_ext')||'0');
+  let pct = Math.min(100, (aff>=4?40:aff*10) + (usr>=3?30:usr*10) + externalScore*10);
+  let lbl = pct>=70?'Robust':pct>=40?'Developing':'Weak';
+  document.getElementById('engageScore').innerHTML = `
+    <div class="bardiv"><div class="lbl">Affected stakeholders mapped</div><div class="bar"><div class="bar-fill" style="width:${Math.min(100,aff*20)}%"></div></div><div class="num">${aff}</div></div>
+    <div class="bardiv"><div class="lbl">User groups mapped</div><div class="bar"><div class="bar-fill" style="width:${Math.min(100,usr*25)}%"></div></div><div class="num">${usr}</div></div>
+    <div class="bardiv"><div class="lbl">External engagement maturity</div><div class="bar"><div class="bar-fill" style="width:${externalScore*33}%"></div></div><div class="num">${externalScore}/3</div></div>
+    <div style="margin-top:6px"><strong>Overall engagement quality: ${pct.toFixed(0)}/100 — ${lbl}</strong></div>
+  `;
+}
+
+function renderThresholdJustify(){
+  const thrI = detectNum('thrImpact');
+  const thrF = detectNum('thrFin');
+  const logic = detectVal('thrLogic');
+  const hr = detectVal('thrHR');
+  const turnover = detectNum('entTurnover');
+  const finPct = ((thrF/25)*100).toFixed(1);
+  const finEur = (turnover * (thrF/25) * 0.005).toFixed(2);
+  document.getElementById('thrJustify').innerHTML = `
+The materiality assessment applies a combined threshold of <strong>${thrI}/25 on the impact dimension</strong> (severity × likelihood, where severity is the average of scale, scope and irremediability per ESRS 1 §43) and <strong>${thrF}/25 on the financial dimension</strong> (magnitude × likelihood). Combined logic: an IRO is treated as material if it breaches the threshold in <strong>${logic==='or'?'either dimension':'both dimensions'}</strong>. ${hr==='yes'?'Severe negative human-rights impacts (severity ≥4) are treated as material regardless of likelihood per ESRS 1 §45.':''} The financial threshold corresponds approximately to the <strong>${finPct}% upper-bound of our 5-pt magnitude scale</strong>, equivalent to potential financial effects of approximately <strong>€${finEur}m for a €${turnover.toFixed(0)}m turnover entity</strong> — calibrated against external audit materiality benchmarks (typically 0.5-1% of turnover) but applied with broader-than-financial-statements lens.
+  `;
+}
+
+function renderQuantRefs(){
+  const turnover = detectNum('entTurnover');
+  const balance = detectNum('entBalance');
+  const refs = [
+    {ref:'IFRS audit materiality (planning)',calc:'~0.5% × turnover',val:(turnover*0.005).toFixed(1),notes:'Typical PCAOB / ISA 320 benchmark'},
+    {ref:'IFRS audit materiality (performance)',calc:'~0.75% × turnover',val:(turnover*0.0075).toFixed(1),notes:'Used for procedure scoping'},
+    {ref:'CSRD-specific qualitative threshold',calc:'~5% × pre-tax profit (asset-heavy: ~1% × balance)',val:(balance*0.01).toFixed(1),notes:'Heuristic — no formal CSRD prescription'},
+    {ref:'EFRAG IG 1 §3.4 – no fixed ratio',calc:'Entity-specific, justified',val:'—',notes:'Sustainability matter materiality ≠ financial-statement materiality'},
+    {ref:'UK/EU listed peer-group benchmark',calc:'Median ~€10m financial threshold',val:'10.0',notes:'Wave 1 reporters (Bloomberg ESG 2025)'}
+  ];
+  document.getElementById('thrRefs').innerHTML = refs.map(r=>`<tr><td>${r.ref}</td><td>${r.calc}</td><td>${r.val}</td><td>${r.notes}</td></tr>`).join('');
+}
+
+function renderDisclosures(){
+  const name = detectVal('entName')||'[Entity name]';
+  const year = detectVal('entYear')||'FY2025';
+  const wave = detectVal('entWave');
+  const matIros = state.iros.filter(i=>i.material);
+  const matTopics = [...new Set(matIros.map(i=>i.topic))];
+  const thrI = detectNum('thrImpact'); const thrF = detectNum('thrFin');
+  const logic = detectVal('thrLogic');
+
+  const bp2 = `BP-2 — Disclosures in relation to specific circumstances (${year})
+
+Materiality assessment scope: This sustainability statement reflects the ${year} double materiality assessment conducted by ${name}, performed in accordance with ESRS 1 §3 and EFRAG IG 1: Materiality Assessment Implementation Guidance (May 2024). The assessment covers our own operations and the upstream and downstream value chain, applying a tiered approach based on relative likelihood of severe negative impacts as permitted by EFRAG IG 1 §3.4.
+
+Time horizons: Short term ≤1 year; medium term 1-5 years; long term >5 years (per ESRS 1 §77).
+
+Use of estimates: ${state.iros.filter(i=>i.timeHorizon==='long').length} of the ${state.iros.length} IROs assessed include long-term effects subject to estimation. Where applicable, key sources of estimation uncertainty are disclosed alongside the relevant metric (per ESRS 1 §94-95).
+
+Phased-in disclosures: First-year reporters (${wave}) may apply transitional reliefs in ESRS 1 Appendix C, including [list any relied-upon reliefs, e.g. ESRS E4 phase-in for first three years].
+
+Value chain reliefs: Where data is not collectible from the upstream/downstream value chain, the entity has applied ESRS 1 §132 (best-efforts approach) and disclosed where estimates substitute for collected data.
+
+Comparative information: This is the first year of CSRD reporting for ${name}; restated comparatives are not provided per ESRS 1 §82.`;
+
+  const iroProcessSteps = [
+    `Step A — Understanding the context: We mapped the entity boundary, value chain, sectoral context, and stakeholder landscape using NACE classification, an internal value-chain map covering [${state.iros.filter(i=>i.vc==='upstream').length} upstream, ${state.iros.filter(i=>i.vc==='own').length} own-ops, ${state.iros.filter(i=>i.vc==='downstream').length} downstream] IROs in scope.`,
+    `Step B — Identifying actual and potential IROs: We generated a long list of ${state.iros.length} IROs by combining (i) ESRS 1 AR 16 sustainability matters list, (ii) sector-specific issues from SASB Standards as proxy where ESRS sector standards are not yet issued, (iii) external sources (NGO reports, regulator commentary), and (iv) internal management accounts and risk registers. The long list was reviewed by ${state.stakeholders.affected.length} affected-stakeholder groups via the engagement methods described under SBM-2.`,
+    `Step C — Assessing materiality: Each IRO was scored on impact materiality (severity = avg(scale, scope, irremediability) × likelihood, on a 5-pt scale per dimension; ESRS 1 §43-44) and financial materiality (magnitude × likelihood, where magnitude is anchored to a 5-tier €-band scale calibrated to our turnover; ESRS 1 §49-51). Time horizons were assigned to each IRO. Severe negative human-rights impacts (severity ≥4/5) were treated as material regardless of likelihood per ESRS 1 §45.`,
+    `Step D — Reporting and internal controls: Material topics were reviewed and approved by [the Board / Audit Committee / Sustainability Committee] in [month/year]. Underlying datapoints were sourced from [ERP / EHS system / supplier portal / commercial reporting platform]. The DMA process is subject to internal control review and limited assurance under ISAE 3000 Rev. (transitioning to ISSA 5000 from FY2026 per Reg (EU) 2024/2811).`
+  ];
+
+  const iro1 = `IRO-1 — Description of the process to identify and assess material IROs (${year})
+
+${name} conducted its double materiality assessment for ${year} reporting in accordance with ESRS 1 §3 and EFRAG IG 1 (May 2024). The four-step process undertaken was:
+
+${iroProcessSteps.map((s,i)=>`(${'abcd'[i]}) ${s}`).join('\n\n')}
+
+Threshold: An IRO is treated as material if its score breaches a threshold of ${thrI}/25 on the impact dimension (severity × likelihood) or ${thrF}/25 on the financial dimension (magnitude × likelihood); combined ${logic==='or'?'OR-logic':'AND-logic'} as described under BP-2. The financial threshold corresponds to financial effects of approximately €${(detectNum('entTurnover')*0.005).toFixed(1)}m and is benchmarked against IFRS audit materiality (~0.5% of turnover).
+
+Stakeholder engagement: ${state.stakeholders.affected.length} affected-stakeholder groups and ${state.stakeholders.user.length} user groups were consulted via the methods listed in SBM-2. Vulnerable groups (workers in upstream tiers, communities near operations, indigenous peoples where relevant) received targeted engagement consistent with UNGP §18 commentary.
+
+Outcome: ${matIros.length} of ${state.iros.length} IROs were determined to be material, triggering full reporting under ${matTopics.length} ESRS topical standards (${matTopics.join(', ')}).
+
+Frequency: This assessment will be refreshed annually with a substantive review at least every three years per ESRS 1 §93.
+
+Limitations: [Describe any limitations, e.g. data quality scoring on Tier 2-3 supplier IROs, use of proxies for scope-3-Cat-1 emissions estimates.]`;
+
+  const sbm3lines = matIros.slice(0,15).map(i=>`• ${i.topic} (${i.type}, ${i.vc}, ${i.timeHorizon}-term): ${i.desc} — Impact score ${i.impactScore.toFixed(1)}/25; Financial score ${i.finScore.toFixed(1)}/25.`).join('\n');
+
+  const sbm3 = `SBM-3 — Material IROs and their interaction with strategy and business model (${year})
+
+${name}'s ${year} DMA identified ${matIros.length} material IROs across ${matTopics.length} ESRS topical standards. The most material IROs and their connection to the business model are summarised below; full disclosure follows in each topical standard.
+
+Material IROs (top 15 by combined score):
+${sbm3lines}
+
+Strategic response: [Insert the company's strategy and business model response — typically a short paragraph per material IRO referring to the topical standard's Policies (MDR-P), Actions (MDR-A), Targets (MDR-T) disclosures.]
+
+Resilience analysis (per ESRS 1 §40 and ESRS 2 SBM-3 §48(g)): The entity has assessed the resilience of its strategy and business model to the material IROs above. [Describe scenario analysis methodology, key assumptions, and conclusions on strategic resilience.]
+
+Anticipated effects on financial position, performance and cash flows are quantified where reasonable in the topical-standard disclosures (E1-9, E2-6, E3-5, E4-6, E5-6, S1-S4 SBM-3-equivalents, G1) per ESRS 1 §49(c).`;
+
+  document.getElementById('bp2Draft').textContent = bp2;
+  document.getElementById('iro1Draft').textContent = iro1;
+  document.getElementById('sbm3Draft').textContent = sbm3;
+}
+
+function renderActions(){
+  const wrap = document.getElementById('actionList');
+  let acts = [];
+  if(parseFloat(detectVal('mat_ext')||'0') < 2){
+    acts.push({pri:'p1',ttl:'Run external stakeholder engagement before sign-off',desc:'EFRAG IG 1 §3.1.2 makes affected-stakeholder engagement a foundational requirement. Internal-only DMAs typically fail at limited-assurance review. Plan a 2-month engagement programme using worker-voice tools (for workforce/value chain), community grievance channels (for affected communities), and investor surveys (for users).'});
+  }
+  if(parseFloat(detectVal('mat_a')||'0') < 2){
+    acts.push({pri:'p1',ttl:'Document the value-chain map',desc:'Without an evidenced value-chain map, the IRO long list cannot be defended in audit. Produce a documented map of upstream tiers (T1, T2, T3-where-feasible) and downstream segments (direct customer, end-user, end-of-life), with relative weights by financial exposure or activity volume.'});
+  }
+  if(parseFloat(detectVal('mat_b')||'0') < 2){
+    acts.push({pri:'p1',ttl:'Refine the IRO long list against ESRS AR 16 + SASB',desc:'Long lists must demonstrably cover ESRS 1 AR 16 sustainability matters and sector-typical issues. Cross-walk the current long list against AR 16 and SASB and disclose any matters explicitly excluded with rationale.'});
+  }
+  const hrUnflagged = state.iros.filter(i=>i.type==='impact'&&i.sign==='neg'&&i.pillar==='S'&&!i.material);
+  if(hrUnflagged.length){
+    acts.push({pri:'p1',ttl:'Re-test severe human-rights impacts',desc:`${hrUnflagged.length} negative social impacts are currently below threshold. ESRS 1 §45 requires severe negative human-rights impacts to be treated as material regardless of likelihood. Confirm severity scoring on each — particularly for value-chain tiers — and consider lowering the impact threshold or applying the §45 override.`});
+  }
+  if(parseFloat(detectVal('mat_c')||'0') < 3){
+    acts.push({pri:'p2',ttl:'Quantify financial-magnitude bands',desc:'Assurors prefer numerical magnitude bands (e.g. €0.1m / 1m / 10m / 100m) anchored to the entity\'s P&L over qualitative judgement. Document the band calibration in the BP-2 disclosure.'});
+  }
+  if(parseFloat(detectVal('mat_d')||'0') < 3){
+    acts.push({pri:'p2',ttl:'Build the DMA control framework',desc:'Limited assurance under ISAE 3000 Rev. requires evidenced internal controls over the DMA process: input controls (data sources), processing controls (scoring methodology consistency), output controls (board sign-off, version control). Map these to the COSO ICFR framework or equivalent.'});
+  }
+  if(parseFloat(detectVal('mat_gov')||'0') < 3){
+    acts.push({pri:'p2',ttl:'Secure board sign-off on the DMA',desc:'GOV-1 and SBM-3 disclosures require board awareness and oversight evidence. A board minute or written sign-off on the materiality assessment is the simplest control to demonstrate this.'});
+  }
+  const matTopics = [...new Set(state.iros.filter(i=>i.material).map(i=>i.topic))];
+  if(matTopics.length>=4){
+    acts.push({pri:'p2',ttl:'Build connectivity matrix to ESRS data points',desc:`With ${matTopics.length} material topics triggered, build the topic × disclosure-requirement × datapoint matrix early. EFRAG ESRS Datapoint Implementation Guidance v3 (2025) is the authoritative source.`});
+  }
+  acts.push({pri:'p3',ttl:'Plan for ESRS sector standards (when issued)',desc:'EFRAG paused sector-specific ESRS development pending the EU Omnibus simplification, but draft sector standards are expected to resume. Pre-emptively use SASB sector standards as proxy now to ease transition.'});
+  acts.push({pri:'p3',ttl:'Refresh DMA on a 3-year substantive cycle',desc:'ESRS 1 §93 requires annual review and substantive refresh at least every 3 years. Plan the refresh cadence and trigger events (e.g., M&A, major regulatory change, severe stakeholder feedback).'});
+  acts.push({pri:'p3',ttl:'Map DMA outputs to other regimes (TNFD, IFRS S1/S2, GRI)',desc:'A single DMA artefact can serve multiple frameworks if structured well — TNFD LEAP shares 70%+ of the methodology; IFRS S1 financial materiality maps directly; GRI uses a single-materiality but inwards lens.'});
+
+  wrap.innerHTML = acts.map(a=>`<div class="action-card ${a.pri}">
+    <div class="pri">${a.pri.toUpperCase()} priority</div>
+    <div class="ttl">${a.ttl}</div>
+    <div class="desc">${a.desc}</div>
+  </div>`).join('');
+}
+
+function computeOverallScore(){
+  const matA = parseFloat(detectVal('mat_a')||'0');
+  const matB = parseFloat(detectVal('mat_b')||'0');
+  const matC = parseFloat(detectVal('mat_c')||'0');
+  const matD = parseFloat(detectVal('mat_d')||'0');
+  const matGov = parseFloat(detectVal('mat_gov')||'0');
+  const matExt = parseFloat(detectVal('mat_ext')||'0');
+  const procMat = ((matA+matB+matC+matD+matGov+matExt)/18)*100;
+  const iroCount = state.iros.length;
+  const iroCoverage = Math.min(100, iroCount * 4);
+  const stakeAff = state.stakeholders.affected.length;
+  const stakeUsr = state.stakeholders.user.length;
+  const engagement = Math.min(100, stakeAff*15 + stakeUsr*10 + matExt*15);
+  const thrI = detectNum('thrImpact'); const thrF = detectNum('thrFin');
+  const thrLogic = detectVal('thrLogic'); const thrHR = detectVal('thrHR');
+  let thrScore = 50;
+  if(thrI>0 && thrI<=12) thrScore += 20;
+  if(thrF>0 && thrF<=12) thrScore += 15;
+  if(thrLogic==='or') thrScore += 10;
+  if(thrHR==='yes') thrScore += 5;
+  thrScore = Math.min(100, thrScore);
+  const matIros = state.iros.filter(i=>i.material);
+  const discReady = matIros.length>0 ? 50 + Math.min(50, matIros.length*5) : 30;
+  const overall = procMat*0.4 + iroCoverage*0.2 + engagement*0.2 + thrScore*0.1 + discReady*0.1;
+  let grade='E', phrase='Absent / Nascent';
+  if(overall>=80){grade='A';phrase='Audit-ready & investor-grade';}
+  else if(overall>=65){grade='B';phrase='Advancing';}
+  else if(overall>=50){grade='C';phrase='Developing';}
+  else if(overall>=30){grade='D';phrase='Early-stage';}
+  document.getElementById('overallScore').textContent = overall.toFixed(0)+'/100';
+  const ge = document.getElementById('overallGrade');
+  ge.textContent = 'Grade '+grade;
+  ge.className = 'grade '+grade;
+  document.getElementById('overallPhrase').textContent = phrase;
+}
+
+function renderClaudePrompt(){
+  const name = detectVal('entName')||'[Entity]';
+  const sector = detectVal('entSector');
+  const wave = detectVal('entWave');
+  const turnover = detectNum('entTurnover');
+  const headcount = detectNum('entHeadcount');
+  const matIros = state.iros.filter(i=>i.material);
+  const matTopics = [...new Set(matIros.map(i=>i.topic))];
+  const thrI = detectNum('thrImpact'); const thrF = detectNum('thrFin');
+  const iroLines = matIros.slice(0,20).map(i=>
+    `  • [${i.topic}/${i.type}/${i.vc}/${i.timeHorizon}] ${i.desc.slice(0,120)} (impact ${i.impactScore.toFixed(1)}, fin ${i.finScore.toFixed(1)})`
+  ).join('\n');
+  const stakeAff = state.stakeholders.affected.map(s=>`  • ${s.grp} (vulnerability: ${s.vuln})`).join('\n');
+  const stakeUsr = state.stakeholders.user.map(s=>`  • ${s.grp}`).join('\n');
+
+  const prompt = `You are a senior CSRD/ESRS reporting practitioner with 10+ years of experience advising EU listed companies on double materiality assessments and limited-assurance readiness under ISAE 3000 Rev. / ISSA 5000.
+
+## Entity context
+- Name: ${name}
+- Sector: ${sector}
+- Headcount: ${headcount.toLocaleString()}
+- Net turnover: €${turnover.toLocaleString()}m
+- CSRD wave: ${wave}
+- Reporting year: ${detectVal('entYear')}
+- Value chain: upstream ${detectVal('vcUpstream')}; downstream ${detectVal('vcDownstream')}; geographies ${detectVal('vcGeog')}
+
+## Current DMA status
+- IROs identified: ${state.iros.length}
+- Material IROs (above threshold): ${matIros.length}
+- Material ESRS topics: ${matTopics.join(', ')}
+- Impact threshold: ${thrI}/25 (severity × likelihood)
+- Financial threshold: ${thrF}/25 (magnitude × likelihood)
+- Combine logic: ${detectVal('thrLogic')}
+- Severe human-rights override: ${detectVal('thrHR')}
+
+## Top material IROs
+${iroLines}
+
+## Stakeholders engaged
+Affected:
+${stakeAff}
+
+Users:
+${stakeUsr}
+
+## Process maturity (each 0-3)
+- Step A Context: ${detectVal('mat_a')}
+- Step B IROs: ${detectVal('mat_b')}
+- Step C Materiality: ${detectVal('mat_c')}
+- Step D Reporting: ${detectVal('mat_d')}
+- Board oversight: ${detectVal('mat_gov')}
+- External engagement: ${detectVal('mat_ext')}
+
+## Your deliverables (please produce ALL eight)
+1. **Board executive summary (≤300 words)** — DMA outcome, top 5 material IROs ranked by combined materiality, sectoral peer positioning (cite Wave 1 reporters where useful), top 3 audit-readiness risks, recommended decisions for the next board meeting.
+
+2. **Publishable BP-2, IRO-1 and SBM-3 narrative** — 600 words combined, drafted to ISAE 3000 Rev. assurance standard with explicit citation of ESRS 1 paragraphs and EFRAG IG 1 (May 2024) sections. Include specifics on the four-step process, threshold rationale, stakeholder engagement evidence, and the Article 8 phased-in disclosure reliefs we are relying upon (if any).
+
+3. **Threshold defence memo (≤500 words)** — anticipating an external auditor's challenge. Address: (a) is the threshold calibrated to a credible reference such as IFRS audit materiality? (b) does the OR-logic capture more risk than AND-logic and is that defensible? (c) does the human-rights override comply with ESRS 1 §45? (d) what is the rationale for the financial-magnitude band scaling against turnover/balance sheet?
+
+4. **Stakeholder workshop script for value-chain engagement (≤700 words)** — a runnable agenda for a 4-hour workshop with the affected-stakeholder groups listed above. Include: opening framing, IRO walk-through methodology, severity-scoring exercise, breakout questions per pillar (E/S/G), workshop outputs and how they feed back into the DMA. Calibrate the script to the cultural and language context of our value-chain geographies.
+
+5. **12-month DMA gap-closure workplan** — formatted as a table with columns: month × workstream × concrete output × accountable owner × evidence trail × ESRS 1 paragraph reference. Sequence the P1 / P2 / P3 priority actions identified by the tool. Include audit milestones (auditor pre-clearance, walkthrough, dry-run sign-off).
+
+6. **Connectivity matrix** — for each material topic, list the ESRS Disclosure Requirements (DRs) triggered (e.g., for E1: E1-1 transition plan, E1-2 policies, E1-3 actions, E1-4 targets, E1-5 energy, E1-6 GHG, E1-7 removals & credits, E1-8 internal carbon prices, E1-9 financial effects), the data systems likely required, and the dependency on Phase-1 vs Phase-2 (Reg (EU) 2024/1306 phase-in) reliefs.
+
+7. **10-question investor Q&A pack** — anticipated investor questions on the DMA outcome (PRI signatory analysts, NZAM/NZAOA members, SFDR Article 9 fund analysts, DFI ESG teams). Each answer ≤120 words and should reference the specific IRO data point and the ESRS DR that will host the answer in the published statement.
+
+8. **Red-flag scan for the audit dry-run** — top 8 areas where the limited-assurance auditor is most likely to challenge our DMA, scored High/Medium/Low risk with the specific evidence we need to have ready (e.g. Step-A value-chain map docs, Step-B SASB cross-walk, Step-C scoring rubric, stakeholder engagement records, board sign-off minute). Cite the relevant ISAE 3000 Rev. / ISSA 5000 procedures.
+
+Use ESRS terminology precisely. Where you cite EFRAG IG 1, cite the section number. Where you cite ESRS 1, cite the paragraph. Be candid about the residual audit risk and where Wave 1 reporters have struggled (per AccountancyEurope CSRD Pulse and ESMA Wave 1 oversight findings 2026).`;
+
+  document.getElementById('claudePrompt').textContent = prompt;
+}
+
+function copyPrompt(){
+  const txt = document.getElementById('claudePrompt').textContent;
+  navigator.clipboard.writeText(txt).then(()=>alert('Copied to clipboard'));
+}
+
+function exportCSV(){
+  const lines = [];
+  lines.push('CSRD Double Materiality Assessment — Memo');
+  lines.push('Generated: '+new Date().toISOString().slice(0,10));
+  lines.push('');
+  lines.push('## ENTITY PROFILE');
+  lines.push('Name,'+detectVal('entName'));
+  lines.push('Year,'+detectVal('entYear'));
+  lines.push('Sector,'+detectVal('entSector'));
+  lines.push('Headcount,'+detectVal('entHeadcount'));
+  lines.push('Turnover (EUR m),'+detectVal('entTurnover'));
+  lines.push('Balance sheet (EUR m),'+detectVal('entBalance'));
+  lines.push('Listing,'+detectVal('entListing'));
+  lines.push('CSRD wave,'+detectVal('entWave'));
+  lines.push('First reporting year,'+detectVal('entFirstYear'));
+  lines.push('Value chain upstream,'+detectVal('vcUpstream'));
+  lines.push('Value chain downstream,'+detectVal('vcDownstream'));
+  lines.push('Geographies,'+detectVal('vcGeog'));
+  lines.push('');
+  lines.push('## OVERALL DMA MATURITY');
+  lines.push('Score,'+document.getElementById('overallScore').textContent);
+  lines.push('Grade,'+document.getElementById('overallGrade').textContent);
+  lines.push('Process Step A,'+detectVal('mat_a'));
+  lines.push('Process Step B,'+detectVal('mat_b'));
+  lines.push('Process Step C,'+detectVal('mat_c'));
+  lines.push('Process Step D,'+detectVal('mat_d'));
+  lines.push('Board oversight,'+detectVal('mat_gov'));
+  lines.push('External engagement,'+detectVal('mat_ext'));
+  lines.push('');
+  lines.push('## THRESHOLDS');
+  lines.push('Impact threshold,'+detectVal('thrImpact'));
+  lines.push('Financial threshold,'+detectVal('thrFin'));
+  lines.push('Logic,'+detectVal('thrLogic'));
+  lines.push('HR override,'+detectVal('thrHR'));
+  lines.push('');
+  lines.push('## IRO INVENTORY');
+  lines.push('ID,Topic,Pillar,Type,Sign,Value chain,Description,Impact score,Financial score,Material,Time horizon,Scale,Scope,Irrem,Lik(impact),Mag,Lik(fin)');
+  for(const i of state.iros){
+    const desc = '"'+(i.desc||'').replace(/"/g,'""')+'"';
+    lines.push([i.id,i.topicId,i.pillar,i.type,i.sign,i.vc,desc,(i.impactScore||0).toFixed(1),(i.finScore||0).toFixed(1),i.material?'YES':'No',i.timeHorizon,i.iScale,i.iScope,i.iIrrem,i.iLik,i.fMag,i.fLik].join(','));
+  }
+  lines.push('');
+  lines.push('## STAKEHOLDERS — AFFECTED');
+  lines.push('Group,Vulnerability,Method,Frequency,Evidence');
+  for(const s of state.stakeholders.affected){
+    lines.push(['"'+(s.grp||'').replace(/"/g,'""')+'"',s.vuln,'"'+(s.meth||'').replace(/"/g,'""')+'"','"'+(s.freq||'').replace(/"/g,'""')+'"','"'+(s.evi||'').replace(/"/g,'""')+'"'].join(','));
+  }
+  lines.push('');
+  lines.push('## STAKEHOLDERS — USERS');
+  lines.push('Group,Information needs,Method,Frequency,Coverage');
+  for(const s of state.stakeholders.user){
+    lines.push(['"'+(s.grp||'').replace(/"/g,'""')+'"','"'+(s.inf||'').replace(/"/g,'""')+'"','"'+(s.meth||'').replace(/"/g,'""')+'"','"'+(s.freq||'').replace(/"/g,'""')+'"','"'+(s.cov||'').replace(/"/g,'""')+'"'].join(','));
+  }
+  lines.push('');
+  lines.push('## MATERIAL TOPICS');
+  const matTopics = [...new Set(state.iros.filter(i=>i.material).map(i=>i.topic))];
+  for(const t of matTopics){
+    const tt=ESRS_TOPICS[t]; if(tt) lines.push(t+','+tt.name+','+(ESRS_DATAPOINTS[t]||0)+' datapoints');
+    else lines.push(t+',Entity-specific,N/A');
+  }
+  lines.push('');
+  lines.push('## DISCLOSURE DRAFT — BP-2');
+  lines.push('"'+document.getElementById('bp2Draft').textContent.replace(/"/g,'""').replace(/\n/g,'\\n')+'"');
+  lines.push('');
+  lines.push('## DISCLOSURE DRAFT — IRO-1');
+  lines.push('"'+document.getElementById('iro1Draft').textContent.replace(/"/g,'""').replace(/\n/g,'\\n')+'"');
+  lines.push('');
+  lines.push('## DISCLOSURE DRAFT — SBM-3');
+  lines.push('"'+document.getElementById('sbm3Draft').textContent.replace(/"/g,'""').replace(/\n/g,'\\n')+'"');
+  lines.push('');
+  lines.push('## CLAUDE PROMPT');
+  lines.push('"'+document.getElementById('claudePrompt').textContent.replace(/"/g,'""').replace(/\n/g,'\\n')+'"');
+
+  const blob = new Blob([lines.join('\n')],{type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'csrd-dma-memo-'+(detectVal('entName')||'entity').toLowerCase().replace(/[^a-z0-9]/g,'-')+'.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+init();
+</script>
+</body>
+</html>
+                                                                                                                                                                                                
