@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SFDR Article 8/9 Disclosure Builder — Useful AF</title>
+<style>
+:root{
+  --cream:#F5EFE6; --paper:#FBF7EF; --ink:#1F1B16; --ink2:#3B342B;
+  --coral:#E66A4F; --coral-dk:#C84F35; --ochre:#C8973A; --ochre-dk:#A87A23;
+  --moss:#5D7553; --slate:#5D6573; --line:#E0D5C2; --line2:#CFC2A8;
+  --hi:#FFF6E1; --hi2:#FBE4DA; --bad:#B8412E; --warn:#B27A1B; --ok:#3F6B43;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5}
+.wrap{max-width:1280px;margin:0 auto;padding:24px 28px 80px}
+header.top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:18px;flex-wrap:wrap}
+.brand .mark{font-weight:800;letter-spacing:0.02em;font-size:13px;color:var(--coral-dk);text-transform:uppercase}
+.brand h1{margin:4px 0 6px;font-size:26px;line-height:1.15;letter-spacing:-0.01em}
+.brand .sub{color:var(--ink2);font-size:13px;max-width:780px}
+.score-chip{background:var(--paper);border:1.5px solid var(--ink);padding:10px 14px;border-radius:6px;min-width:200px;text-align:center}
+.score-chip .lbl{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink2)}
+.score-chip .val{font-size:28px;font-weight:800;line-height:1;margin:6px 0 4px}
+.score-chip .grade{display:inline-block;padding:3px 10px;border-radius:4px;font-weight:700;font-size:12px;letter-spacing:0.04em;background:var(--ochre);color:var(--ink)}
+.score-chip .grade.A{background:#5E8A56;color:#fff}
+.score-chip .grade.B{background:#7E9D54;color:#fff}
+.score-chip .grade.C{background:var(--ochre);color:var(--ink)}
+.score-chip .grade.D{background:var(--coral);color:#fff}
+.score-chip .grade.E{background:var(--bad);color:#fff}
+.tabnav{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line2);margin-bottom:18px}
+.tab{padding:9px 14px;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;font-size:13px;color:var(--ink2);font-weight:600;font-family:inherit}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--coral-dk);border-bottom-color:var(--coral)}
+.panel{display:none;animation:fade .2s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--paper);border:1px solid var(--line2);border-radius:6px;padding:16px 18px;margin-bottom:14px}
+.card h2{margin:0 0 6px;font-size:18px;letter-spacing:-0.01em}
+.card h3{margin:14px 0 6px;font-size:14px;color:var(--coral-dk);text-transform:uppercase;letter-spacing:0.05em;font-weight:700}
+.card p{margin:6px 0;color:var(--ink2)}
+.cite{font-size:11.5px;color:var(--slate);font-style:italic;border-left:3px solid var(--ochre);padding:6px 10px;background:#FAEFD7;margin:8px 0}
+.row{display:grid;gap:14px}
+.row.r2{grid-template-columns:repeat(2,1fr)}
+.row.r3{grid-template-columns:repeat(3,1fr)}
+.row.r4{grid-template-columns:repeat(4,1fr)}
+.row.r5{grid-template-columns:repeat(5,1fr)}
+@media(max-width:900px){.row.r3,.row.r4,.row.r5{grid-template-columns:repeat(2,1fr)}.row.r2{grid-template-columns:1fr}}
+label{display:block;font-size:12px;font-weight:600;color:var(--ink2);margin-bottom:4px;letter-spacing:0.02em}
+input[type=text],input[type=number],select,textarea{width:100%;padding:7px 9px;font-size:13px;border:1px solid var(--line2);border-radius:4px;background:#fff;font-family:inherit;color:var(--ink)}
+textarea{resize:vertical;min-height:60px}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--coral);outline-offset:-1px}
+.help{font-size:11.5px;color:var(--slate);margin-top:3px;font-style:italic}
+.btn{padding:8px 14px;background:var(--ink);color:var(--cream);border:none;border-radius:4px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;letter-spacing:0.02em}
+.btn:hover{background:var(--coral-dk)}
+.btn.sec{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.sec:hover{background:var(--ink);color:var(--cream)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn.coral{background:var(--coral);color:#fff}
+.btn.coral:hover{background:var(--coral-dk)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:10px}
+th{background:var(--ink);color:var(--cream);font-weight:700;padding:8px 9px;text-align:left;font-size:11.5px;letter-spacing:0.04em;text-transform:uppercase}
+td{padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#FAF5E9}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase}
+.pill.E{background:#D8E5D0;color:#3F6B43}
+.pill.S{background:#FBE4DA;color:var(--bad)}
+.pill.G{background:#E0DAEC;color:#5547A7}
+.pill.high{background:var(--bad);color:#fff}
+.pill.med{background:var(--ochre);color:var(--ink)}
+.pill.low{background:#E5DBC4;color:var(--ink2)}
+.pill.art6{background:#E5DBC4;color:var(--ink2)}
+.pill.art8{background:var(--ochre);color:var(--ink)}
+.pill.art9{background:#5E8A56;color:#fff}
+.pill.mand{background:var(--coral);color:#fff}
+.pill.opt{background:var(--line);color:var(--ink2)}
+.muted{color:var(--slate);font-size:12px}
+.bigbox{background:#FBF1DB;border:1.5px dashed var(--ochre-dk);padding:12px 14px;border-radius:6px;margin:10px 0;font-size:13px}
+.warnbox{background:#FBE4DA;border:1.5px dashed var(--coral-dk);padding:12px 14px;border-radius:6px;margin:10px 0;font-size:13px;color:var(--ink2)}
+.okbox{background:#DCE9D5;border:1.5px dashed #5E8A56;padding:12px 14px;border-radius:6px;margin:10px 0;font-size:13px;color:#2F4D32}
+.action-card{background:#fff;border-left:4px solid var(--coral);padding:10px 12px;margin:6px 0;border-radius:0 4px 4px 0}
+.action-card.p1{border-left-color:var(--bad)}
+.action-card.p2{border-left-color:var(--ochre)}
+.action-card.p3{border-left-color:var(--moss)}
+.action-card .pri{font-weight:800;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink2)}
+.action-card .ttl{font-weight:700;margin:3px 0}
+.action-card .desc{font-size:12.5px;color:var(--ink2)}
+pre{background:var(--paper);border:1px solid var(--line2);border-radius:4px;padding:12px;font-size:12px;overflow-x:auto;white-space:pre-wrap;word-wrap:break-word;font-family:'Courier New',monospace;line-height:1.5}
+.footer-actions{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line2);margin-top:18px;align-items:center}
+.subtab-nav{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:10px 0 14px;flex-wrap:wrap}
+.subtab{padding:6px 11px;background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:12px;color:var(--ink2);font-weight:600;font-family:inherit}
+.subtab.active{color:var(--ink);border-bottom-color:var(--coral)}
+.subpanel{display:none}
+.subpanel.active{display:block}
+.pai-row{background:#fff;border:1px solid var(--line2);border-radius:4px;padding:10px;margin-bottom:8px}
+.pai-row.mandatory{border-left:4px solid var(--coral)}
+.pai-row .head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:10px;flex-wrap:wrap}
+.pai-row .desc{font-size:12.5px;color:var(--ink2);margin:4px 0}
+.pai-row .scoring{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+.pai-row .scoring label{font-size:10.5px}
+.pai-row .scoring select,.pai-row .scoring input{font-size:12px;padding:4px 6px}
+@media(max-width:900px){.pai-row .scoring{grid-template-columns:repeat(2,1fr)}}
+.gate{background:#fff;border:1px solid var(--line2);border-radius:4px;padding:10px 12px;margin:6px 0}
+.gate.passed{border-left:4px solid #5E8A56;background:#F2F8EE}
+.gate.failed{border-left:4px solid var(--bad);background:#FBE4DA}
+.gate .gtitle{font-weight:700;margin-bottom:4px}
+.gate .gstatus{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em}
+.gate.passed .gstatus{background:#5E8A56;color:#fff}
+.gate.failed .gstatus{background:var(--bad);color:#fff}
+.bardiv{display:flex;align-items:center;gap:10px;margin:4px 0}
+.bardiv .lbl{font-size:11.5px;font-weight:600;width:240px;flex-shrink:0}
+.bardiv .bar{height:14px;background:#E5DBC4;border-radius:3px;flex:1;overflow:hidden}
+.bardiv .bar-fill{height:100%;background:linear-gradient(90deg,var(--ochre),var(--coral))}
+.bardiv .num{font-weight:700;font-size:12px;width:55px;text-align:right}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+.dot.E{background:#5E8A56}
+.dot.S{background:var(--coral)}
+.dot.G{background:#7B6BA8}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink2);margin-top:8px}
+.disclosure-tile{background:#fff;border:1px solid var(--line2);padding:10px 12px;border-radius:4px;margin:6px 0}
+.disclosure-tile .dp{font-family:monospace;font-size:11px;color:var(--coral-dk);font-weight:700}
+.example-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.example-row .btn{font-size:12px}
+.product-card{background:#fff;border:1px solid var(--line2);border-radius:4px;padding:12px;margin-bottom:10px}
+.product-card .product-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px}
+.product-card .product-fields{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:900px){.product-card .product-fields{grid-template-columns:repeat(2,1fr)}}
+.print-only{display:none}
+@media print{
+  .no-print,.tabnav,.subtab-nav,.btn,.btn-row,.footer-actions{display:none!important}
+  .panel{display:block!important;page-break-after:always}
+  .print-only{display:block}
+  body{background:#fff;color:#000}
+  .card{border:1px solid #999;page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="brand">
+    <div class="mark">UsefulAF · Tool #28 of the AI for Impact Library</div>
+    <h1>SFDR Article 8 / Article 9 Disclosure Builder</h1>
+    <div class="sub">A Sustainable Finance Disclosure Regulation engine that classifies your product (Art 6 / 8 / 9), runs the Principal Adverse Impact entity-level statement and product-level disclosures, applies the three-prong sustainable investment test (positive contribution, DNSH, good governance), and drafts publishable Annex II/III pre-contractual and Annex IV/V periodic templates. Built around <strong>Reg (EU) 2019/2088 (SFDR)</strong>, <strong>Reg (EU) 2022/1288 RTS (Level 2)</strong>, and the <strong>ESAs Joint Committee Final Report JC 2024 27 (Dec 2024)</strong> on RTS amendments.</div>
+  </div>
+  <div class="score-chip" id="scoreChip">
+    <div class="lbl">SFDR Disclosure Readiness</div>
+    <div class="val" id="overallScore">—</div>
+    <div class="grade" id="overallGrade">Awaiting input</div>
+    <div style="margin-top:6px;font-size:11px;color:var(--slate)" id="overallPhrase">Set up your FMP and product to begin</div>
+  </div>
+</header>
+
+<div class="tabnav no-print">
+  <button class="tab active" data-tab="setup">1 · Setup</button>
+  <button class="tab" data-tab="classify">2 · Classification</button>
+  <button class="tab" data-tab="pai">3 · PAI Indicators</button>
+  <button class="tab" data-tab="si">4 · Sustainable Investment Test</button>
+  <button class="tab" data-tab="pre">5 · Pre-contractual</button>
+  <button class="tab" data-tab="periodic">6 · Periodic Report</button>
+  <button class="tab" data-tab="taxo">7 · Taxonomy Cross-walk</button>
+  <button class="tab" data-tab="results">8 · Scorecard & Actions</button>
+  <button class="tab" data-tab="claude">9 · Claude Prompt</button>
+</div>
+
+<!-- TAB 1: SETUP -->
+<div class="panel active" data-panel="setup">
+  <div class="card">
+    <h2>Financial Market Participant & Product Setup</h2>
+    <p>SFDR applies to <strong>Financial Market Participants (FMPs)</strong> per Art 2(1) — AIFMs, UCITS management companies, MiFID portfolio managers, IORPs, insurance undertakings offering IBIPs, EuVECA/EuSEF managers — and <strong>financial advisers</strong> per Art 2(11). Each FMP discloses at entity level (Art 3, 4, 5) and at product level (Art 6, 7, 8, 9, 10, 11).</p>
+    <div class="cite">Reference: Reg (EU) 2019/2088 Art 2(1) FMPs; Art 2(11) Financial Advisers; Art 4 entity-level adverse impacts; Art 8 promotion of E/S characteristics; Art 9 sustainable investment objective.</div>
+
+    <h3>Pre-loaded examples</h3>
+    <div class="example-row">
+      <button class="btn coral sm" onclick="loadExample('verde9')">Verde Climate Fund (Art 9, climate)</button>
+      <button class="btn coral sm" onclick="loadExample('eu8')">European Sustainable Equities (Art 8, light green)</button>
+      <button class="btn coral sm" onclick="loadExample('africa9')">Impact Africa SME Debt (Art 9, SDG 8)</button>
+      <button class="btn sec sm" onclick="resetAll()">Reset all</button>
+    </div>
+
+    <h3>Entity profile</h3>
+    <div class="row r3" style="margin-top:8px">
+      <div><label>FMP legal name</label><input type="text" id="fmpName" placeholder="e.g. Verde Asset Management S.A."></div>
+      <div><label>FMP type (Art 2(1))</label><select id="fmpType">
+        <option value="aifm">AIFM (Dir 2011/61/EU)</option>
+        <option value="ucits_mc">UCITS Management Company (Dir 2009/65/EC)</option>
+        <option value="mifid_pm">MiFID Portfolio Manager (Dir 2014/65/EU)</option>
+        <option value="iorp">IORP (Dir 2016/2341)</option>
+        <option value="insurance">Insurance undertaking (IBIP)</option>
+        <option value="euvecaesef">EuVECA / EuSEF manager</option>
+        <option value="adviser">Financial adviser (Art 2(11))</option>
+      </select></div>
+      <div><label>Domicile</label><select id="fmpDomicile">
+        <option value="lu">Luxembourg</option>
+        <option value="ie">Ireland</option>
+        <option value="nl">Netherlands</option>
+        <option value="fr">France</option>
+        <option value="de">Germany</option>
+        <option value="other_eu">Other EU</option>
+        <option value="non_eu_marketing">Non-EU FMP marketing into EU</option>
+      </select></div>
+    </div>
+    <div class="row r3" style="margin-top:12px">
+      <div><label>AUM (€m, group)</label><input type="number" id="fmpAum" value="450"></div>
+      <div><label>Headcount (Art 4(4) threshold = 500 employees)</label><input type="number" id="fmpHeadcount" value="65"></div>
+      <div><label>Reporting year</label><input type="text" id="fmpYear" value="FY2025"></div>
+    </div>
+
+    <div class="bigbox" id="art4Status"><strong>Article 4 trigger:</strong> Set headcount above to detect whether mandatory PAI consideration applies (≥500 employees) or comply-or-explain.</div>
+
+    <h3>Product profile (the financial product being disclosed)</h3>
+    <div class="row r3" style="margin-top:8px">
+      <div><label>Product legal name</label><input type="text" id="prodName" placeholder="e.g. Verde Climate Transition Fund"></div>
+      <div><label>Product ISIN / share class</label><input type="text" id="prodIsin" placeholder="e.g. LU2783451234"></div>
+      <div><label>Product structure</label><select id="prodStructure">
+        <option value="ucits">UCITS</option>
+        <option value="aif">AIF (closed-end)</option>
+        <option value="aif_open">AIF (open-end)</option>
+        <option value="sma">Segregated Mandate</option>
+        <option value="ibip">IBIP (insurance-based)</option>
+        <option value="iorp">IORP scheme</option>
+        <option value="ltif">ELTIF</option>
+      </select></div>
+    </div>
+    <div class="row r3" style="margin-top:12px">
+      <div><label>Asset class</label><select id="prodAsset">
+        <option value="equity_listed">Listed Equity</option>
+        <option value="equity_pe">Private Equity</option>
+        <option value="debt_listed">Listed Debt / Bonds</option>
+        <option value="debt_private">Private Debt</option>
+        <option value="real_estate">Real Estate</option>
+        <option value="infra">Infrastructure</option>
+        <option value="multi">Multi-asset</option>
+      </select></div>
+      <div><label>Product AUM (€m)</label><input type="number" id="prodAum" value="80"></div>
+      <div><label>Investee count</label><input type="number" id="prodInvestees" value="12"></div>
+    </div>
+    <div class="row r3" style="margin-top:12px">
+      <div><label>Geographic focus</label><select id="prodGeo">
+        <option value="global">Global</option>
+        <option value="eu_developed">EU / Developed</option>
+        <option value="em">Emerging Markets</option>
+        <option value="frontier_em">Frontier / Africa-LatAm</option>
+        <option value="dual">EU + EM dual mandate</option>
+      </select></div>
+      <div><label>Investor base</label><select id="prodInvestor">
+        <option value="institutional">Institutional only</option>
+        <option value="retail">Retail-eligible</option>
+        <option value="professional">Professional only (Art 5(1) MiFID)</option>
+        <option value="dfi_anchor">DFI/IFI-anchored</option>
+      </select></div>
+      <div><label>Strategy</label><select id="prodStrategy">
+        <option value="esg_integration">ESG Integration only</option>
+        <option value="best_in_class">Best-in-Class / Tilt</option>
+        <option value="thematic_e">Thematic — Environmental</option>
+        <option value="thematic_s">Thematic — Social</option>
+        <option value="impact">Impact / Outcomes-focused</option>
+        <option value="exclusion">Exclusion-only</option>
+        <option value="paris_aligned">Paris-Aligned (PAB) / Climate Transition (CTB)</option>
+      </select></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: CLASSIFICATION -->
+<div class="panel" data-panel="classify">
+  <div class="card">
+    <h2>Article 6 / 8 / 9 Classification</h2>
+    <p>SFDR creates three product-disclosure regimes. The choice is operational (driven by what the product actually does) <em>not</em> a marketing label — the ESMA Supervisory Briefing on Sustainability Risks (May 2024) confirms competent authorities will challenge inconsistent classification. <strong>The Commission Q&A (May 2022 §1) is explicit: there is no "Art 8+" or "dark green Art 8" sub-category in the regulation.</strong></p>
+    <div class="cite">Reference: Reg (EU) 2019/2088 Art 6 (sustainability risk integration baseline); Art 8 (E/S characteristic promotion); Art 9 (sustainable investment objective); Commission Q&A C(2022) 3051 final May 2022 §1; ESMA Public Statement ESMA34-1244747569-1864 (Aug 2024) on fund names with ESG terms.</div>
+
+    <h3>Classification decision</h3>
+    <p>Walk through the four gating questions below to confirm classification. Each gate must be passed (in order) for the higher classification.</p>
+
+    <div class="gate" id="gate1">
+      <div class="gtitle">Gate 1 · Sustainability risk integration in investment decisions <span class="gstatus">Required for all</span></div>
+      <p class="muted">Art 6 baseline: every product must integrate "sustainability risk" — defined in Art 2(22) as an ESG event/condition that could cause a material negative impact on investment value.</p>
+      <div class="row r2"><div><label>Have you documented sustainability risk integration in your investment process?</label>
+        <select id="g1_int" onchange="renderClassification()">
+          <option value="0">No — only financial risk considered</option>
+          <option value="1">Partial — informal/ad-hoc</option>
+          <option value="2">Yes — documented in IPS / risk policy with examples</option>
+        </select></div>
+        <div><label>Likely impact of sustainability risk on returns disclosed?</label>
+        <select id="g1_imp" onchange="renderClassification()">
+          <option value="0">Not disclosed</option>
+          <option value="1">Generic statement</option>
+          <option value="2">Quantified / scenario-based per Art 6(1)(b)</option>
+        </select></div>
+      </div>
+    </div>
+
+    <div class="gate" id="gate2">
+      <div class="gtitle">Gate 2 · Promotion of environmental and/or social characteristics (Art 8)</div>
+      <p class="muted">Art 8 attaches when the product "promotes" E or S characteristics in pre-contractual material — but does <strong>not</strong> have a binding sustainable investment objective. Investee companies must follow good governance practices.</p>
+      <div class="row r2"><div><label>Does pre-contractual material reference environmental or social characteristics?</label>
+        <select id="g2_promo" onchange="renderClassification()">
+          <option value="0">No</option>
+          <option value="1">Yes — at least one E or S characteristic</option>
+        </select></div>
+        <div><label>Are good governance practices of investees assessed (Art 2(17))?</label>
+        <select id="g2_gov" onchange="renderClassification()">
+          <option value="0">No</option>
+          <option value="1">Yes — sound mgmt structures, employee relations, remuneration, tax compliance screened</option>
+        </select></div>
+      </div>
+    </div>
+
+    <div class="gate" id="gate3">
+      <div class="gtitle">Gate 3 · Sustainable investment objective (Art 9)</div>
+      <p class="muted">Art 9 attaches only when the product has a binding "sustainable investment" objective per Art 2(17). Sustainable investment = (a) contributes to E or S objective + (b) does no significant harm + (c) good governance. Commission Q&A (Apr 2023 §III.1) clarifies Art 9 funds must invest 100% in sustainable investments (subject to liquidity/hedging exclusions per the Q&A).</p>
+      <div class="row r2"><div><label>Does the product have a binding sustainable investment objective?</label>
+        <select id="g3_obj" onchange="renderClassification()">
+          <option value="0">No</option>
+          <option value="1">Yes — explicit, binding, in IPS and pre-contractual</option>
+        </select></div>
+        <div><label>Target % sustainable investments (Art 2(17))</label>
+        <select id="g3_pct" onchange="renderClassification()">
+          <option value="0">&lt;30%</option>
+          <option value="50">30-79%</option>
+          <option value="80">80-99%</option>
+          <option value="100">100% (subject to Q&A liquidity/hedging exclusions)</option>
+        </select></div>
+      </div>
+    </div>
+
+    <div class="gate" id="gate4">
+      <div class="gtitle">Gate 4 · PAB / CTB or Reduction of carbon emissions (Art 9(3))</div>
+      <p class="muted">Art 9(3) applies where the product has a reduction of carbon emissions objective. Such products must have an EU Climate Transition Benchmark (CTB) or EU Paris-Aligned Benchmark (PAB) as a reference per Reg 2016/1011 amendments — or, in their absence, document a 1.5°C-aligned glide path.</p>
+      <div class="row r2"><div><label>Carbon emissions reduction objective?</label>
+        <select id="g4_co" onchange="renderClassification()">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select></div>
+        <div><label>EU CTB / PAB reference?</label>
+        <select id="g4_pab" onchange="renderClassification()">
+          <option value="0">N/A</option>
+          <option value="1">CTB (EU Climate Transition Benchmark)</option>
+          <option value="2">PAB (EU Paris-Aligned Benchmark)</option>
+          <option value="3">Custom 1.5°C glide path (no CTB/PAB available)</option>
+        </select></div>
+      </div>
+    </div>
+
+    <div class="card" style="background:#fff;margin-top:14px">
+      <h3>Auto-classified outcome</h3>
+      <div id="classOutcome">Set the gates above.</div>
+    </div>
+
+    <div class="warnbox" id="downgradeWarn" style="display:none"></div>
+  </div>
+</div>
+
+<!-- TAB 3: PAI -->
+<div class="panel" data-panel="pai">
+  <div class="card">
+    <h2>Principal Adverse Impact (PAI) Indicators</h2>
+    <p>Article 4 of SFDR requires entity-level disclosure of how the FMP considers principal adverse impacts (PAIs) of investment decisions on sustainability factors. RTS Annex I Table 1 enumerates <strong>14 mandatory indicators</strong> (9 Environmental, 5 Social) that must be reported by any FMP that considers PAIs (mandatory if ≥500 employees per Art 4(3)-(4); comply-or-explain otherwise). Tables 2 and 3 list <strong>opt-in indicators</strong> — at least <strong>one additional environmental</strong> and <strong>one additional social</strong> must be reported.</p>
+    <div class="cite">Reference: Reg (EU) 2019/2088 Art 4; Reg (EU) 2022/1288 Art 6 + Annex I Tables 1, 2, 3; ESAs JC 2024 27 (Dec 2024) §3 amendments to mandatory PAIs and product-level Art 7 disclosure templates.</div>
+
+    <div class="subtab-nav">
+      <button class="subtab active" data-sub="mand">Mandatory (14)</button>
+      <button class="subtab" data-sub="opt_e">Opt-in Environmental (16)</button>
+      <button class="subtab" data-sub="opt_s">Opt-in Social (18)</button>
+      <button class="subtab" data-sub="prod">Product-level (Art 7)</button>
+    </div>
+
+    <div class="subpanel active" data-sub="mand">
+      <p class="help">Score each indicator: data availability and disclosure status. Per RTS Annex I Tab 1, all 14 are mandatory if you "consider" PAIs.</p>
+      <div id="paiMandList"></div>
+    </div>
+    <div class="subpanel" data-sub="opt_e">
+      <p class="help">At least one additional environmental indicator must be selected and disclosed (RTS Art 6(1)(b)).</p>
+      <div id="paiOptEList"></div>
+    </div>
+    <div class="subpanel" data-sub="opt_s">
+      <p class="help">At least one additional social indicator must be selected and disclosed.</p>
+      <div id="paiOptSList"></div>
+    </div>
+    <div class="subpanel" data-sub="prod">
+      <div class="bigbox">
+        <strong>Article 7 product-level PAI consideration.</strong> Each product separately discloses whether it considers PAIs. Art 8/9 products that consider PAIs at product level must disclose the indicators in Annex II/III pre-contractual templates. Products that do <em>not</em> consider PAIs at product level must explain why prominently — and Wave 1 ESMA reviews flagged inconsistent FMP/product PAI scoping as a top finding.
+      </div>
+      <div class="row r2" style="margin-top:8px">
+        <div><label>Does this product consider PAIs at product level (Art 7)?</label>
+          <select id="prodPaiConsiders" onchange="recompute()">
+            <option value="1">Yes — selected indicators listed in Annex II/III</option>
+            <option value="0">No — explanation provided in pre-contractual</option>
+          </select>
+        </div>
+        <div><label>If "no", explanation rationale</label>
+          <input type="text" id="prodPaiExplanation" placeholder="e.g. data unavailable, market gap…">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: SI Test -->
+<div class="panel" data-panel="si">
+  <div class="card">
+    <h2>Sustainable Investment 3-Prong Test (Art 2(17))</h2>
+    <p>Every investment counted toward "% sustainable investment" disclosed in Art 8/9 templates must pass <strong>three cumulative tests</strong> per Art 2(17): (a) <strong>contribution</strong> to an environmental or social objective, (b) <strong>do no significant harm (DNSH)</strong>, and (c) <strong>good governance</strong>. Commission Q&A (Apr 2023 §III.1) confirms the FMP must define and disclose its methodology — there is no prescribed method, but the methodology must be applied consistently and documented.</p>
+    <div class="cite">Reference: Reg (EU) 2019/2088 Art 2(17); Reg (EU) 2022/1288 Art 16-18; Commission Q&A C(2023) 2849 final (April 2023) §III.1; ESAs Joint Q&A JC 2022 47 (Nov 2022) §IV; ESMA Supervisory Briefing on Sustainability Risks (May 2024).</div>
+
+    <h3>Prong 1 — Contribution methodology</h3>
+    <div class="row r2">
+      <div><label>How do you measure positive contribution?</label>
+        <select id="siContrib" onchange="recompute()">
+          <option value="0">Not yet defined</option>
+          <option value="1">Activity-based: revenue threshold (e.g. ≥X% from positive-contribution activities)</option>
+          <option value="2">EU Taxonomy alignment (CCM/CCA)</option>
+          <option value="3">SDG-mapped revenue ≥ threshold</option>
+          <option value="4">IRIS+ / GIIN COMPASS metric thresholds (real-economy outcomes)</option>
+          <option value="5">Multi-method (Taxonomy + revenue threshold + outcome metric)</option>
+        </select>
+      </div>
+      <div><label>Threshold or evidence requirement</label>
+        <input type="text" id="siContribThreshold" placeholder="e.g. ≥20% of revenue from CCM activities OR Taxonomy-aligned">
+      </div>
+    </div>
+    <div class="cite" style="margin-top:8px">A "<em>de minimis</em>" or activity-based approach with no revenue threshold is the highest greenwashing risk per ESMA briefing; ESAs JC 2024 27 §4.2 reinforces the need for a quantitative threshold.</div>
+
+    <h3>Prong 2 — DNSH methodology</h3>
+    <p class="help">DNSH must consider <em>at minimum</em> the indicators in Annex I that are relevant — RTS Art 17(1)(b) defines this as the PAI indicators in Tables 1, 2 and 3 — and must be applied with quantitative or activity thresholds.</p>
+    <div class="row r3">
+      <div><label>DNSH approach for environmental harm</label>
+        <select id="siDnshE" onchange="recompute()">
+          <option value="0">Not yet defined</option>
+          <option value="1">Norm-based screen only (e.g. UN Global Compact)</option>
+          <option value="2">PAI threshold (1+ indicator with red-line)</option>
+          <option value="3">Multi-PAI screen with thresholds (3+ indicators)</option>
+          <option value="4">Taxonomy-DNSH cross-walk + Multi-PAI (gold-standard)</option>
+        </select>
+      </div>
+      <div><label>DNSH approach for social harm</label>
+        <select id="siDnshS" onchange="recompute()">
+          <option value="0">Not yet defined</option>
+          <option value="1">UNGC / OECD MNE breach screen only</option>
+          <option value="2">PAI 10/11 (UNGC violations + monitoring) + controversies</option>
+          <option value="3">Multi-PAI social + UNGP rights-respect screen</option>
+          <option value="4">Multi-PAI + UNGP + sector-specific salient-issue diligence</option>
+        </select>
+      </div>
+      <div><label>DNSH evidence/cadence</label>
+        <select id="siDnshCadence" onchange="recompute()">
+          <option value="0">Pre-investment only</option>
+          <option value="1">Annual review</option>
+          <option value="2">Quarterly + event-driven</option>
+          <option value="3">Continuous (data-feed or controversy alert + annual deep-dive)</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>Prong 3 — Good governance</h3>
+    <p class="help">Art 2(17) requires sound management structures, employee relations, remuneration, and tax compliance to be considered for every investee.</p>
+    <div class="row r4">
+      <div><label>Sound management screen</label>
+        <select id="siGov1" onchange="recompute()">
+          <option value="0">Not assessed</option>
+          <option value="1">Director-independence check</option>
+          <option value="2">Director-independence + audit-committee + AGM disclosures</option>
+          <option value="3">Full governance scorecard with red-flags</option>
+        </select>
+      </div>
+      <div><label>Employee relations</label>
+        <select id="siGov2" onchange="recompute()">
+          <option value="0">Not assessed</option>
+          <option value="1">Reported H&S incidents only</option>
+          <option value="2">PAI 13 + ILO core conventions</option>
+          <option value="3">Full S1 / SA8000-style screen</option>
+        </select>
+      </div>
+      <div><label>Remuneration policy</label>
+        <select id="siGov3" onchange="recompute()">
+          <option value="0">Not assessed</option>
+          <option value="1">Disclosure of director remuneration</option>
+          <option value="2">CEO pay-ratio + remuneration linked to ESG</option>
+          <option value="3">Full Say-on-Pay + ESG-linked variable</option>
+        </select>
+      </div>
+      <div><label>Tax compliance</label>
+        <select id="siGov4" onchange="recompute()">
+          <option value="0">Not assessed</option>
+          <option value="1">Tax-haven jurisdiction screen</option>
+          <option value="2">CBCR + tax-haven screen</option>
+          <option value="3">Full tax transparency (GRI 207) + IRMI risk screen</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>Test outcome at portfolio level</h3>
+    <div class="row r3">
+      <div><label>Min % sustainable investment (Annex II/III commitment)</label><input type="number" id="siMinPct" value="30"></div>
+      <div><label>% with E objective</label><input type="number" id="siEPct" value="20"></div>
+      <div><label>% with S objective</label><input type="number" id="siSPct" value="10"></div>
+    </div>
+    <div id="siGateBlock" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- TAB 5: Pre-contractual -->
+<div class="panel" data-panel="pre">
+  <div class="card">
+    <h2>Pre-contractual Annex II / III Template Builder</h2>
+    <p>Every Art 8 product attaches Annex II to its prospectus / pre-contractual disclosure; every Art 9 attaches Annex III. The RTS standardises the layout — 9 mandatory sections covering objectives, investment strategy, sustainable investment proportion, monitoring, methodologies, data, due diligence, engagement, and (where applicable) reference benchmark.</p>
+    <div class="cite">Reference: Reg (EU) 2022/1288 Annex II (Art 8) and Annex III (Art 9); ESAs JC 2024 27 §6.1 amendments; ESMA Q&A on UCITS prospectus and KIID Section IX.</div>
+
+    <h3>Section inputs</h3>
+    <div class="row r2">
+      <div><label>What environmental and/or social characteristics are promoted? (Art 8) <em>or</em> What is the sustainable investment objective? (Art 9)</label>
+        <textarea id="preObj" placeholder="Describe the specific E/S characteristics or the binding objective"></textarea>
+      </div>
+      <div><label>What sustainability indicators are used to measure the attainment of these characteristics/objective?</label>
+        <textarea id="preIndicators" placeholder="List the 4-8 specific indicators with sources"></textarea>
+      </div>
+    </div>
+    <div class="row r2" style="margin-top:10px">
+      <div><label>Investment strategy — binding elements</label>
+        <textarea id="preStrategy" placeholder="What binding elements of the strategy ensure the characteristic/objective is met?"></textarea>
+      </div>
+      <div><label>Engagement / stewardship policy</label>
+        <textarea id="preEngagement" placeholder="How does engagement contribute to the strategy? Cite the FMP's stewardship policy and SRD II compliance"></textarea>
+      </div>
+    </div>
+    <div class="row r3" style="margin-top:10px">
+      <div><label>Reference benchmark designated?</label>
+        <select id="preBenchmark"><option value="no">No reference benchmark designated</option><option value="ctb">EU Climate Transition Benchmark (CTB)</option><option value="pab">EU Paris-Aligned Benchmark (PAB)</option><option value="custom">Custom benchmark — index name…</option></select>
+      </div>
+      <div><label>Asset allocation: minimum % sustainable investments</label><input type="number" id="preMinSI" value="30"></div>
+      <div><label>Of which: minimum % EU Taxonomy-aligned</label><input type="number" id="preMinTaxo" value="0"></div>
+    </div>
+    <div class="row r3" style="margin-top:10px">
+      <div><label>Minimum % E sustainable investments</label><input type="number" id="preE" value="20"></div>
+      <div><label>Minimum % S sustainable investments</label><input type="number" id="preS" value="10"></div>
+      <div><label>Minimum % NOT aligned with E/S characteristics (#2 Other)</label><input type="number" id="preOther" value="20"></div>
+    </div>
+
+    <div class="btn-row"><button class="btn coral" onclick="renderPreContractual()">Generate Annex II/III narrative</button></div>
+    <div id="preOutput" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- TAB 6: Periodic -->
+<div class="panel" data-panel="periodic">
+  <div class="card">
+    <h2>Periodic Disclosure Annex IV / V Template Builder</h2>
+    <p>Annex IV (Art 8) and Annex V (Art 9) are appended to the annual report (UCITS) or annual financial report (AIF) and disclose <strong>actual attainment</strong> over the reporting period — not commitments. ESAs JC 2024 27 §7 sharpens the requirement for actual vs. minimum/target reporting and adds GHG emissions reduction performance metrics.</p>
+    <div class="cite">Reference: Reg (EU) 2022/1288 Annex IV (Art 8) and Annex V (Art 9); ESAs JC 2024 27 §7 amendments on actual attainment + GHG performance.</div>
+
+    <div class="row r3" style="margin-top:8px">
+      <div><label>Actual % sustainable investments achieved</label><input type="number" id="perActualSI" value="32"></div>
+      <div><label>Actual % EU Taxonomy-aligned (turnover)</label><input type="number" id="perActualTaxoT" value="6"></div>
+      <div><label>Actual % EU Taxonomy-aligned (capex)</label><input type="number" id="perActualTaxoC" value="11"></div>
+    </div>
+    <div class="row r3" style="margin-top:10px">
+      <div><label>Actual % E sustainable investments</label><input type="number" id="perActualE" value="22"></div>
+      <div><label>Actual % S sustainable investments</label><input type="number" id="perActualS" value="10"></div>
+      <div><label>Actual GHG intensity reduction vs PY (%)</label><input type="number" id="perGHGRed" value="-7"></div>
+    </div>
+
+    <h3>How did the financial product attain its E/S characteristics or objective during this period?</h3>
+    <textarea id="perAttainment" style="min-height:80px" placeholder="Describe with specific data: how each indicator performed, examples of investee progress, % of portfolio meeting the threshold, comparison to prior year"></textarea>
+
+    <h3>What were the top 5 investments? (RTS Annex IV/V mandatory)</h3>
+    <textarea id="perTop5" style="min-height:80px" placeholder="List 5 largest holdings with sector, country, and % of portfolio"></textarea>
+
+    <h3>Were there any actions taken on principal adverse impacts during the period?</h3>
+    <textarea id="perPaiActions" style="min-height:80px" placeholder="Describe engagement, divestment, or threshold-breach responses with specific examples"></textarea>
+
+    <div class="btn-row"><button class="btn coral" onclick="renderPeriodic()">Generate Annex IV/V narrative</button></div>
+    <div id="perOutput" style="margin-top:14px"></div>
+  </div>
+</div>
+
+<!-- TAB 7: Taxonomy -->
+<div class="panel" data-panel="taxo">
+  <div class="card">
+    <h2>EU Taxonomy Cross-walk (SFDR Art 5/6 + Reg 2020/852)</h2>
+    <p>SFDR Art 5 and Art 6 require disclosure, for products that promote E characteristics (Art 8) or have E objectives (Art 9), of <strong>how and to what extent</strong> the underlying investments are in environmentally-sustainable economic activities under the EU Taxonomy Regulation. Annex II/III/IV/V templates require both turnover-based and capex-based ratios, computed at <em>weighted-portfolio</em> level.</p>
+    <div class="cite">Reference: Reg (EU) 2019/2088 Art 5, 6; Reg (EU) 2020/852 Art 9 (six environmental objectives); Reg (EU) 2021/2178 Art 8 Disclosures Delegated Act; Reg (EU) 2023/2486 Annexes I-IV (objectives 3-6 technical screening criteria).</div>
+
+    <h3>Portfolio Taxonomy alignment by objective</h3>
+    <p class="help">Enter weighted-portfolio % aligned to each of the six environmental objectives. CCM = Climate Change Mitigation, CCA = Climate Change Adaptation, WTR = Water/Marine Resources, CE = Circular Economy, PPC = Pollution Prevention, BIO = Biodiversity & Ecosystems.</p>
+    <table>
+      <thead><tr><th>Objective</th><th>Eligible (%)</th><th>Aligned — Turnover (%)</th><th>Aligned — CapEx (%)</th><th>Enabling / Transitional</th></tr></thead>
+      <tbody id="taxoTable"></tbody>
+    </table>
+
+    <h3>Optional: nuclear & fossil gas (Reg 2022/1214 CCDA)</h3>
+    <div class="row r2">
+      <div><label>Nuclear activities (% of portfolio)</label><input type="number" id="taxoNuc" value="0" oninput="recompute()"></div>
+      <div><label>Fossil gas activities (% of portfolio)</label><input type="number" id="taxoGas" value="0" oninput="recompute()"></div>
+    </div>
+
+    <h3>Aggregate ratios (auto-computed)</h3>
+    <div id="taxoSummary"></div>
+  </div>
+</div>
+
+<!-- TAB 8: Results -->
+<div class="panel" data-panel="results">
+  <div class="card">
+    <h2>SFDR Disclosure Readiness Scorecard</h2>
+    <p>Composite score across six pillars: Classification consistency (15%), PAI completeness (20%), Sustainable Investment methodology rigour (20%), Pre-contractual completeness (15%), Periodic disclosure quality (10%), Taxonomy & Governance integrity (20%).</p>
+    <div id="scoreBars"></div>
+
+    <h3>Sequenced gap-closure plan</h3>
+    <div id="actionList"></div>
+
+    <h3>Peer benchmark</h3>
+    <div id="benchmarkBox" class="bigbox"></div>
+  </div>
+</div>
+
+<!-- TAB 9: Claude Prompt -->
+<div class="panel" data-panel="claude">
+  <div class="card">
+    <h2>Personalised Claude Prompt for Deeper Analysis</h2>
+    <p>Copy this prompt into Claude (or any LLM) to get a publishable SFDR disclosure pack, gap analysis, and investor Q&A tailored to your product. Refresh after every input change.</p>
+    <div class="btn-row">
+      <button class="btn coral" onclick="copyPrompt()">Copy prompt to clipboard</button>
+      <button class="btn sec" onclick="downloadCSV()">Export CSV memo</button>
+      <button class="btn sec" onclick="window.print()">Print to PDF</button>
+    </div>
+    <pre id="claudePrompt" style="margin-top:14px;max-height:500px;overflow-y:auto"></pre>
+  </div>
+</div>
+
+<div class="footer-actions no-print">
+  <div class="muted">UsefulAF · SFDR Article 8/9 Disclosure Builder · Reg 2019/2088 + RTS 2022/1288 + JC 2024 27</div>
+  <div><button class="btn sec sm" onclick="resetAll()">Reset all inputs</button></div>
+</div>
+</div>
+
+<script>
+// ===== KNOWLEDGE BASE =====
+
+// PAI Annex I Table 1 — 14 Mandatory Indicators (9 ENV + 5 SOC)
+const PAI_MANDATORY = [
+  {id:"pai1", num:"1.1", cat:"E", title:"GHG emissions (Scope 1, 2, 3, total)", desc:"Investee Scope 1 + 2 + 3 emissions in tCO2e, plus aggregate. RTS Annex I Tab 1 #1. Scope 3 mandatory from 1 Jan 2023 reporting."},
+  {id:"pai2", num:"1.2", cat:"E", title:"Carbon footprint", desc:"Total Scope 1+2+3 GHG / portfolio EVIC. PCAF-aligned attribution."},
+  {id:"pai3", num:"1.3", cat:"E", title:"GHG intensity of investee companies", desc:"Weighted GHG / weighted EVIC. (Carbon footprint differs in normalisation.)"},
+  {id:"pai4", num:"1.4", cat:"E", title:"Exposure to companies active in fossil fuel sector", desc:"% of portfolio in companies deriving any revenue from exploration/extraction/processing/storage of fossil fuels."},
+  {id:"pai5", num:"1.5", cat:"E", title:"Share of non-renewable energy consumption and production", desc:"Investee non-renewable energy as % of total energy consumed/produced."},
+  {id:"pai6", num:"1.6", cat:"E", title:"Energy consumption intensity per high-impact climate sector", desc:"GWh / €m revenue across NACE A-H + L (per Annex I §2 high-impact sectors)."},
+  {id:"pai7", num:"1.7", cat:"E", title:"Activities negatively affecting biodiversity-sensitive areas", desc:"% of portfolio with operations affecting Natura 2000 / KBA / IUCN Cat I-IV areas."},
+  {id:"pai8", num:"1.8", cat:"E", title:"Emissions to water", desc:"Tonnes of emissions to water per €m EVIC, weighted-average across portfolio."},
+  {id:"pai9", num:"1.9", cat:"E", title:"Hazardous waste and radioactive waste ratio", desc:"Tonnes hazardous + radioactive waste per €m EVIC, weighted-average."},
+  {id:"pai10", num:"2.10", cat:"S", title:"Violations of UN Global Compact / OECD MNE Guidelines", desc:"% of portfolio in companies with documented violations during reporting year."},
+  {id:"pai11", num:"2.11", cat:"S", title:"Lack of processes to monitor compliance with UNGC / OECD MNE", desc:"% of portfolio in companies WITHOUT due diligence processes."},
+  {id:"pai12", num:"2.12", cat:"S", title:"Unadjusted gender pay gap", desc:"Weighted-average unadjusted gender pay gap of investee companies (Art 8(2) Pay Transparency Dir 2023/970)."},
+  {id:"pai13", num:"2.13", cat:"S", title:"Board gender diversity", desc:"Weighted-average % of female board members."},
+  {id:"pai14", num:"2.14", cat:"S", title:"Exposure to controversial weapons (anti-personnel mines, cluster, biological, chemical)", desc:"% of portfolio in companies involved in manufacture or selling of controversial weapons. Treaties: Ottawa, Oslo, BWC, CWC."}
+];
+
+// PAI Annex I Table 2 — Opt-in Environmental (16 indicators, abbreviated catalogue)
+const PAI_OPT_E = [
+  {id:"oe1", num:"4", cat:"E", title:"Investments in companies without carbon emission reduction initiatives", desc:"% of portfolio without Paris-aligned reduction targets"},
+  {id:"oe2", num:"5", cat:"E", title:"Breakdown of energy consumption by type of non-renewable sources", desc:"Coal/oil/gas/peat/nuclear breakdown"},
+  {id:"oe3", num:"6", cat:"E", title:"Water usage and recycling", desc:"Avg water consumption (m³) per €m revenue + % recycled"},
+  {id:"oe4", num:"7", cat:"E", title:"Investments in companies without water management policies", desc:"% in companies without policy"},
+  {id:"oe5", num:"8", cat:"E", title:"Exposure to areas of high water stress", desc:"% in companies operating in WRI Aqueduct high/extremely-high stress basins without water mgmt"},
+  {id:"oe6", num:"9", cat:"E", title:"Investments in companies producing chemicals (Annex I Reg 1907/2006 / SVHC)", desc:"% in companies producing chemicals on REACH SVHC list"},
+  {id:"oe7", num:"10", cat:"E", title:"Land degradation, desertification, soil sealing", desc:"% of portfolio with related operations"},
+  {id:"oe8", num:"11", cat:"E", title:"Investments in companies without sustainable land/agriculture practices", desc:"% in companies without sustainability certification (RSPO/RTRS/Bonsucro/4C/UTZ etc.)"},
+  {id:"oe9", num:"12", cat:"E", title:"Investments in companies without sustainable oceans/seas practices", desc:"% in companies without MSC / ASC / aquaculture cert"},
+  {id:"oe10", num:"13", cat:"E", title:"Non-recycled waste ratio", desc:"Non-recycled waste / total waste"},
+  {id:"oe11", num:"14", cat:"E", title:"Natural species and protected areas", desc:"% in companies whose activities affect threatened species"},
+  {id:"oe12", num:"15", cat:"E", title:"Deforestation", desc:"% in companies without deforestation policy + EUDR exposure"},
+  {id:"oe13", num:"17", cat:"E", title:"Greenhouse gas intensity (sovereigns)", desc:"GHG intensity weighted-average GDP for sovereign exposure"},
+  {id:"oe14", num:"18", cat:"E", title:"Investee countries subject to social violations", desc:"% of sovereign portfolio in countries with documented violations"}
+];
+
+// PAI Annex I Table 3 — Opt-in Social (18 indicators, abbreviated catalogue)
+const PAI_OPT_S = [
+  {id:"os1", num:"4", cat:"S", title:"Lack of supplier code of conduct", desc:"% in companies without UNGC-aligned code"},
+  {id:"os2", num:"5", cat:"S", title:"Lack of grievance/complaint mechanism on human rights", desc:"% without UNGP P31-aligned grievance"},
+  {id:"os3", num:"6", cat:"S", title:"Insufficient whistleblower protection", desc:"% without procedure aligned with Whistleblower Dir 2019/1937"},
+  {id:"os4", num:"7", cat:"S", title:"Incidents of discrimination", desc:"# of discrimination incidents reported / weighted average"},
+  {id:"os5", num:"8", cat:"S", title:"Excessive CEO pay ratio", desc:"CEO total comp / median employee comp; weighted-average"},
+  {id:"os6", num:"9", cat:"S", title:"Lack of human rights policy", desc:"% of portfolio without UNGP-aligned HR policy"},
+  {id:"os7", num:"10", cat:"S", title:"Lack of due diligence", desc:"% without OECD-aligned DD on human rights"},
+  {id:"os8", num:"11", cat:"S", title:"Lack of processes & measures for preventing trafficking", desc:"% without anti-trafficking measures"},
+  {id:"os9", num:"12", cat:"S", title:"Operations and suppliers at significant risk of incidents of child labour", desc:"% in high-child-labour-risk geographies/sectors"},
+  {id:"os10", num:"13", cat:"S", title:"Operations and suppliers at significant risk of incidents of forced or compulsory labour", desc:"% in UFLPA / ILO-flagged sectors"},
+  {id:"os11", num:"14", cat:"S", title:"Number of identified cases of severe human rights issues and incidents", desc:"Total # cases per €m AUM"},
+  {id:"os12", num:"15", cat:"S", title:"Insufficient action on cases of severe human rights issues", desc:"% of identified cases without remediation"},
+  {id:"os13", num:"16", cat:"S", title:"Lack of anti-corruption and anti-bribery policies", desc:"% without OECD Anti-Bribery-aligned policy"},
+  {id:"os14", num:"17", cat:"S", title:"Cases of insufficient action taken to address breaches of standards of anti-corruption and anti-bribery", desc:"% of breach cases without remediation"}
+];
+
+// EU Taxonomy 6 environmental objectives
+const TAXO_OBJ = [
+  {code:"CCM", name:"Climate Change Mitigation", reg:"DR 2021/2139 Annex I"},
+  {code:"CCA", name:"Climate Change Adaptation", reg:"DR 2021/2139 Annex II"},
+  {code:"WTR", name:"Water & Marine Resources", reg:"DR 2023/2486 Annex I"},
+  {code:"CE", name:"Circular Economy", reg:"DR 2023/2486 Annex II"},
+  {code:"PPC", name:"Pollution Prevention & Control", reg:"DR 2023/2486 Annex III"},
+  {code:"BIO", name:"Biodiversity & Ecosystems", reg:"DR 2023/2486 Annex IV"}
+];
+
+// Sector benchmark (Morningstar SFDR Landscape 2025; ESAs Wave 1 review JC 2024 03)
+const PEER_BENCHMARK = {
+  art8: {
+    siActual: {leader:48, median:18, laggard:5, source:"Morningstar Q4 2024: median Art 8 product reports 18% sustainable investments — wide variance reflects methodology divergence"},
+    paiCompleteness: {leader:14, median:11, laggard:6, source:"ESAs Wave 1 review (Jan 2024): median Art 8 PAI completeness 11/14 mandatory + 1.4 opt-in"},
+    taxoTurnover: {leader:8, median:1.2, laggard:0, source:"Morningstar 2025: median Art 8 turnover-based Taxonomy alignment 1.2% — reflects portfolio-wide screening rather than thematic"}
+  },
+  art9: {
+    siActual: {leader:99, median:91, laggard:60, source:"ESAs JC 2024 27 §1 review: post-Q&A 2023 reclassification, Art 9 median 91% sustainable investments (target = 100% net of Q&A exclusions)"},
+    paiCompleteness: {leader:14, median:13, laggard:9, source:"ESAs JC 2024 03 (Q1 2024): Art 9 median PAI completeness 13/14 — full mandatory expected"},
+    taxoTurnover: {leader:42, median:8, laggard:2, source:"Morningstar 2025: median Art 9 turnover-based Taxonomy alignment 8% — climate-thematic Art 9 funds 30-50% range"}
+  }
+};
+
+// ===== STATE =====
+let state = {
+  // entity
+  fmpName:"", fmpType:"aifm", fmpDomicile:"lu", fmpAum:450, fmpHeadcount:65, fmpYear:"FY2025",
+  // product
+  prodName:"", prodIsin:"", prodStructure:"aif", prodAsset:"equity_listed",
+  prodAum:80, prodInvestees:12, prodGeo:"em", prodInvestor:"institutional", prodStrategy:"impact",
+  // classification gates
+  g1_int:"2", g1_imp:"1", g2_promo:"1", g2_gov:"1", g3_obj:"0", g3_pct:"0", g4_co:"0", g4_pab:"0",
+  // PAI
+  paiMand: {}, paiOptE: {}, paiOptS: {},
+  prodPaiConsiders:"1", prodPaiExplanation:"",
+  // SI test
+  siContrib:"0", siContribThreshold:"", siDnshE:"0", siDnshS:"0", siDnshCadence:"0",
+  siGov1:"0", siGov2:"0", siGov3:"0", siGov4:"0",
+  siMinPct:30, siEPct:20, siSPct:10,
+  // pre-contractual
+  preObj:"", preIndicators:"", preStrategy:"", preEngagement:"", preBenchmark:"no",
+  preMinSI:30, preMinTaxo:0, preE:20, preS:10, preOther:20,
+  // periodic
+  perActualSI:32, perActualTaxoT:6, perActualTaxoC:11, perActualE:22, perActualS:10, perGHGRed:-7,
+  perAttainment:"", perTop5:"", perPaiActions:"",
+  // taxonomy
+  taxo: {CCM:{elig:0,turn:0,cap:0,enab:0}, CCA:{elig:0,turn:0,cap:0,enab:0}, WTR:{elig:0,turn:0,cap:0,enab:0}, CE:{elig:0,turn:0,cap:0,enab:0}, PPC:{elig:0,turn:0,cap:0,enab:0}, BIO:{elig:0,turn:0,cap:0,enab:0}},
+  taxoNuc:0, taxoGas:0,
+  // computed
+  classification:"unset"
+};
+
+// ===== EXAMPLES =====
+const EXAMPLES = {
+  verde9: {
+    fmpName:"Verde Asset Management S.A.", fmpType:"aifm", fmpDomicile:"lu", fmpAum:1850, fmpHeadcount:78, fmpYear:"FY2025",
+    prodName:"Verde Climate Transition Fund", prodIsin:"LU2783451234", prodStructure:"aif", prodAsset:"equity_listed",
+    prodAum:450, prodInvestees:38, prodGeo:"global", prodInvestor:"professional", prodStrategy:"paris_aligned",
+    g1_int:"2", g1_imp:"2", g2_promo:"1", g2_gov:"1", g3_obj:"1", g3_pct:"100", g4_co:"1", g4_pab:"2",
+    siContrib:"5", siContribThreshold:"≥30% revenue from CCM Taxonomy-aligned activities OR ≥7% YoY GHG intensity reduction OR ≥20% revenue from SBTi-validated 1.5°C-aligned pathway", siDnshE:"4", siDnshS:"3", siDnshCadence:"3",
+    siGov1:"3", siGov2:"3", siGov3:"3", siGov4:"3",
+    siMinPct:100, siEPct:90, siSPct:10,
+    preObj:"The Fund's sustainable investment objective is climate change mitigation through investments in EU companies on a credible 1.5°C-aligned transition pathway, measured through Paris-Aligned Benchmark methodology and SBTi-validated targets.",
+    preIndicators:"(1) Weighted-average GHG intensity reduction ≥7% p.a. vs PAB methodology (Reg 2019/2089 amendment); (2) % portfolio with SBTi-validated 1.5°C pathway ≥80%; (3) % portfolio Taxonomy-aligned (CCM) ≥30% turnover-based; (4) % portfolio with Climate Transition Plan disclosed ≥90%; (5) Scope 1+2 GHG emissions absolute reduction trajectory; (6) Fossil fuel revenue ≤2%.",
+    preStrategy:"Binding elements: PAB-aligned construction (decarbonisation trajectory ≥7% p.a.); minimum 80% portfolio with SBTi-validated targets; minimum 30% Taxonomy-aligned (CCM); fossil-fuel revenue cap 2%; no investee with ICVCM-non-CCP carbon offset reliance >10% of stated reductions; mandatory engagement on Climate Transition Plans annually.",
+    preEngagement:"Stewardship policy aligned to UK Stewardship Code 2020, EFAMA Stewardship Code, and SRD II. 100% engagement coverage on portfolio investees with ≥1 climate-related milestone p.a.; quarterly proxy voting; bilateral 1:1 with investee CFOs/CSOs annually.",
+    preBenchmark:"pab", preMinSI:100, preMinTaxo:30, preE:90, preS:10, preOther:0,
+    perActualSI:96, perActualTaxoT:34, perActualTaxoC:48, perActualE:88, perActualS:8, perGHGRed:-9,
+    perAttainment:"During FY2025, the Fund attained a weighted-average GHG intensity reduction of 9% versus FY2024 (target: ≥7%), exceeding the PAB methodology decarbonisation pathway. 88% of portfolio holdings carried SBTi-validated 1.5°C targets (vs. 80% target). Average portfolio Taxonomy-aligned turnover reached 34% (vs. 30% commitment) and 48% capex-aligned (reflecting transition CapEx Plans under Annex I §1.1.2.2(b)). Two investees were divested following SBTi target downgrade events.",
+    perTop5:"(1) Iberdrola — Utilities, Spain — 5.8% (2) Schneider Electric — Industrials, France — 5.2% (3) Ørsted — Utilities, Denmark — 4.9% (4) Vestas Wind Systems — Industrials, Denmark — 4.7% (5) Verbund — Utilities, Austria — 4.4%",
+    perPaiActions:"Engaged 12 investees on PAI 1.4 (fossil fuel exposure) and PAI 1.5 (non-renewable share); two divestments triggered (1 on validated SBTi withdrawal, 1 on UNGC violation per PAI 2.10). Voted against 4 director re-elections at AGMs over weak climate governance per CA100+ Indicator 6.",
+    paiMand: Object.fromEntries(PAI_MANDATORY.map(p=>[p.id,{cov:"3",disc:"3"}])),
+    paiOptE: {oe1:{cov:"3",disc:"3"}, oe7:{cov:"3",disc:"3"}, oe12:{cov:"3",disc:"2"}},
+    paiOptS: {os6:{cov:"3",disc:"3"}, os13:{cov:"3",disc:"3"}},
+    prodPaiConsiders:"1", prodPaiExplanation:"",
+    taxo: {CCM:{elig:62,turn:34,cap:48,enab:18}, CCA:{elig:14,turn:4,cap:8,enab:2}, WTR:{elig:6,turn:1,cap:2,enab:0}, CE:{elig:8,turn:2,cap:3,enab:0}, PPC:{elig:4,turn:1,cap:1,enab:0}, BIO:{elig:2,turn:0,cap:0,enab:0}},
+    taxoNuc:0, taxoGas:0
+  },
+  eu8: {
+    fmpName:"Continental Sustainable Investments AG", fmpType:"ucits_mc", fmpDomicile:"de", fmpAum:14500, fmpHeadcount:520, fmpYear:"FY2025",
+    prodName:"European Sustainable Equities Fund", prodIsin:"DE000A2H7E12", prodStructure:"ucits", prodAsset:"equity_listed",
+    prodAum:1200, prodInvestees:62, prodGeo:"eu_developed", prodInvestor:"retail", prodStrategy:"best_in_class",
+    g1_int:"2", g1_imp:"1", g2_promo:"1", g2_gov:"1", g3_obj:"0", g3_pct:"50", g4_co:"0", g4_pab:"0",
+    siContrib:"3", siContribThreshold:"≥20% revenue from SDG-mapped activities (using MSCI SDG Net Alignment) plus best-in-class top-30% MSCI ESG Rating in sector",
+    siDnshE:"3", siDnshS:"2", siDnshCadence:"2",
+    siGov1:"3", siGov2:"2", siGov3:"3", siGov4:"2",
+    siMinPct:30, siEPct:20, siSPct:10,
+    preObj:"The Fund promotes environmental and social characteristics, namely climate transition (decarbonisation), responsible labour practices, and good governance, via best-in-class screening of European equities and a binding minimum 30% sustainable investment commitment.",
+    preIndicators:"(1) Weighted-average MSCI ESG Rating ≥AA; (2) % SDG-aligned revenue ≥20%; (3) Coal, oil & gas, tobacco, controversial weapons exclusion ≥99%; (4) Companies with UNGC violations: 0%; (5) Carbon intensity vs MSCI Europe parent index: -30%; (6) Board gender diversity: ≥35%.",
+    preStrategy:"Binding elements: top-30% best-in-class MSCI ESG Rating per sector; norm-based exclusion (UNGC violators); product exclusion (coal >5% revenue, tobacco >5%, controversial weapons 0%); minimum 30% sustainable investments per Art 2(17); engagement on bottom-quartile companies in portfolio.",
+    preEngagement:"Stewardship policy aligned to UK Stewardship Code, EFAMA Stewardship Code, SRD II, and UN PRI. 100% proxy voting coverage on European holdings; collaborative engagement via Climate Action 100+ and PRI signatories.",
+    preBenchmark:"no", preMinSI:30, preMinTaxo:1, preE:20, preS:10, preOther:30,
+    perActualSI:36, perActualTaxoT:1.2, perActualTaxoC:3.8, perActualE:24, perActualS:12, perGHGRed:-6,
+    perAttainment:"During FY2025 the Fund attained 36% sustainable investments (commitment ≥30%), with weighted-average MSCI ESG Rating reaching AA+. Carbon intensity 32% below MSCI Europe parent. Eight engagements led to revised Climate Transition Plan disclosures by Q4. UNGC violators remained at 0%. SDG-aligned revenue averaged 24% across the portfolio.",
+    perTop5:"(1) ASML — Tech, Netherlands — 4.8% (2) LVMH — Consumer, France — 4.2% (3) Novo Nordisk — Healthcare, Denmark — 3.9% (4) SAP — Tech, Germany — 3.6% (5) Allianz — Financials, Germany — 3.3%",
+    perPaiActions:"PAI 1.4 (fossil fuel exposure) reduced from 4.8% to 1.2% via active reweighting; PAI 2.13 (board gender diversity) engagements delivered 2 new female directors; one company was divested following PAI 2.10 (UNGC violation) flagged by RepRisk in Q3.",
+    paiMand: Object.fromEntries(PAI_MANDATORY.map(p=>[p.id,{cov:"3",disc:"2"}])),
+    paiOptE: {oe1:{cov:"2",disc:"2"}, oe5:{cov:"2",disc:"1"}},
+    paiOptS: {os6:{cov:"3",disc:"2"}, os13:{cov:"3",disc:"2"}},
+    prodPaiConsiders:"1", prodPaiExplanation:"",
+    taxo: {CCM:{elig:18,turn:1.2,cap:3.8,enab:0.4}, CCA:{elig:6,turn:0.2,cap:0.8,enab:0}, WTR:{elig:2,turn:0,cap:0,enab:0}, CE:{elig:3,turn:0.1,cap:0.3,enab:0}, PPC:{elig:1,turn:0,cap:0,enab:0}, BIO:{elig:0.5,turn:0,cap:0,enab:0}},
+    taxoNuc:0, taxoGas:0.4
+  },
+  africa9: {
+    fmpName:"Sahel Impact Capital Partners L.P.", fmpType:"euvecaesef", fmpDomicile:"lu", fmpAum:185, fmpHeadcount:14, fmpYear:"FY2025",
+    prodName:"Impact Africa SME Debt Fund", prodIsin:"LU2456789012", prodStructure:"aif", prodAsset:"debt_private",
+    prodAum:80, prodInvestees:24, prodGeo:"frontier_em", prodInvestor:"dfi_anchor", prodStrategy:"impact",
+    g1_int:"2", g1_imp:"2", g2_promo:"1", g2_gov:"1", g3_obj:"1", g3_pct:"100", g4_co:"0", g4_pab:"0",
+    siContrib:"4", siContribThreshold:"100% of investees on IRIS+ COMPASS metrics: minimum jobs created (PI4874), median wage at or above living wage benchmark, ≥30% women employees or ≥20% female ownership/leadership; mapped to SDG 8 (decent work) + SDG 5 (gender)",
+    siDnshE:"3", siDnshS:"4", siDnshCadence:"2",
+    siGov1:"3", siGov2:"3", siGov3:"2", siGov4:"3",
+    siMinPct:100, siEPct:5, siSPct:95,
+    preObj:"The Fund has a sustainable investment objective of advancing decent work and economic growth (SDG 8) and gender equality (SDG 5) by financing growth-stage SMEs in Sub-Saharan Africa that create quality jobs paying at-or-above the WageIndicator/Anker living wage and that maintain ≥30% female workforce participation.",
+    preIndicators:"(1) Net jobs created (IRIS+ PI4874) — target ≥6,000 over fund life; (2) % investees paying ≥WageIndicator living wage (sector + country) — target 100%; (3) % female employees in investee workforces (weighted-average) — target ≥40%; (4) % investees with female founder/CEO — target ≥30%; (5) IFC PS Tier 1 environmental & social management system — 100% within 24 months; (6) UNGC adherence — 100%.",
+    preStrategy:"Binding elements: 100% sustainable investment commitment per Art 2(17); IFC PS environmental & social management system requirement at Tier 1 within 24 months of disbursement; living-wage covenant in all financing agreements; gender-lens investment criteria (2X Challenge alignment); IRIS+ PI4874 mandatory annual reporting by all investees; UNGC alignment per PAI 2.10 / 2.11.",
+    preEngagement:"DFI-style portfolio support: pre-investment ESG Action Plan (ESAP) under IFC PS framework, post-investment quarterly ESG reporting, biennial third-party audit verification by Synergy Global Consulting, FMO/Norfund-aligned grievance mechanism per UNGP P31.",
+    preBenchmark:"no", preMinSI:100, preMinTaxo:0, preE:5, preS:95, preOther:0,
+    perActualSI:100, perActualTaxoT:0, perActualTaxoC:0, perActualE:5, perActualS:95, perGHGRed:0,
+    perAttainment:"During FY2025 the Fund deployed €18m across 6 new investees and reported 100% sustainable investment attainment. Aggregate net jobs created reached 1,840 (year cumulative); 87% of portfolio investees paid ≥living wage (5 of 24 below threshold are on 18-month remediation plans); weighted-average female employment reached 44%; 8 of 24 investees have female founder/CEO. Two investees received third-party UNGP/IFC PS audit verification.",
+    perTop5:"(1) Kazi Solar Kenya — Energy access SME, Kenya — 7.2% (2) Bizimana Coffee Cooperative — Agri-processing, Rwanda — 6.5% (3) Tela Health Senegal — Primary care, Senegal — 6.0% (4) Lagos EcoLogistics — E-commerce logistics, Nigeria — 5.8% (5) Mama Africa Foods — Food processing, Tanzania — 5.4%",
+    perPaiActions:"PAI 2.10 (UNGC violations) — zero. PAI 2.13 (board gender diversity) — weighted-average 38% (above target). Engaged 5 investees on living-wage gap (PAI 2.12 unadjusted gender pay gap signal); 3 closed gap by year-end. One material grievance lodged via FMO-aligned mechanism, remediated within 6 months.",
+    paiMand: Object.fromEntries(PAI_MANDATORY.map(p=>[p.id,{cov:"2",disc:"2"}])),
+    paiOptE: {oe7:{cov:"3",disc:"2"}},
+    paiOptS: {os6:{cov:"3",disc:"3"}, os9:{cov:"3",disc:"3"}, os10:{cov:"3",disc:"3"}, os13:{cov:"3",disc:"3"}},
+    prodPaiConsiders:"1", prodPaiExplanation:"",
+    taxo: {CCM:{elig:8,turn:0,cap:0,enab:0}, CCA:{elig:4,turn:0,cap:0,enab:0}, WTR:{elig:2,turn:0,cap:0,enab:0}, CE:{elig:1,turn:0,cap:0,enab:0}, PPC:{elig:0,turn:0,cap:0,enab:0}, BIO:{elig:0,turn:0,cap:0,enab:0}},
+    taxoNuc:0, taxoGas:0
+  }
+};
+
+// ===== INIT =====
+function init(){
+  initPaiList("paiMandList", PAI_MANDATORY, "paiMand", true);
+  initPaiList("paiOptEList", PAI_OPT_E, "paiOptE", false);
+  initPaiList("paiOptSList", PAI_OPT_S, "paiOptS", false);
+  initTaxoTable();
+  bindInputs();
+  bindTabs();
+  bindSubtabs();
+  recompute();
+}
+
+function initPaiList(containerId, list, stateKey, mandatory){
+  const c = document.getElementById(containerId);
+  if(!c) return;
+  c.innerHTML = list.map(p => `
+    <div class="pai-row${mandatory?' mandatory':''}">
+      <div class="head">
+        <div><span class="pill ${p.cat}">${p.cat==='E'?'ENV':'SOC'}</span> <strong>PAI ${p.num}</strong> · ${p.title} ${mandatory?'<span class="pill mand">Mandatory</span>':'<span class="pill opt">Opt-in</span>'}</div>
+      </div>
+      <div class="desc">${p.desc}</div>
+      <div class="scoring">
+        <div><label>Data coverage (% portfolio with data)</label>
+          <select data-pai="${stateKey}" data-id="${p.id}" data-field="cov">
+            <option value="0">Not measured</option>
+            <option value="1">&lt;25%</option>
+            <option value="2">25-75%</option>
+            <option value="3">&gt;75%</option>
+          </select>
+        </div>
+        <div><label>Disclosure status</label>
+          <select data-pai="${stateKey}" data-id="${p.id}" data-field="disc">
+            <option value="0">Not disclosed</option>
+            <option value="1">Internal only</option>
+            <option value="2">Annual statement</option>
+            <option value="3">Annual statement + product templates</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  `).join("");
+  c.querySelectorAll('[data-pai]').forEach(el => {
+    el.addEventListener("change", e => {
+      const k = e.target.dataset.pai, id = e.target.dataset.id, f = e.target.dataset.field;
+      if(!state[k][id]) state[k][id] = {cov:"0",disc:"0"};
+      state[k][id][f] = e.target.value;
+      recompute();
+    });
+  });
+}
+
+function initTaxoTable(){
+  const tbody = document.getElementById("taxoTable");
+  if(!tbody) return;
+  tbody.innerHTML = TAXO_OBJ.map(o => `
+    <tr>
+      <td><strong>${o.code}</strong> · ${o.name}<br><span class="muted">${o.reg}</span></td>
+      <td><input type="number" data-taxo="${o.code}" data-field="elig" value="0" style="width:70px"></td>
+      <td><input type="number" data-taxo="${o.code}" data-field="turn" value="0" style="width:70px"></td>
+      <td><input type="number" data-taxo="${o.code}" data-field="cap" value="0" style="width:70px"></td>
+      <td><input type="number" data-taxo="${o.code}" data-field="enab" value="0" style="width:70px"></td>
+    </tr>
+  `).join("");
+  tbody.querySelectorAll('[data-taxo]').forEach(el => {
+    el.addEventListener("input", e => {
+      const code = e.target.dataset.taxo, f = e.target.dataset.field;
+      state.taxo[code][f] = parseFloat(e.target.value) || 0;
+      recompute();
+    });
+  });
+}
+
+function bindInputs(){
+  const ids = ["fmpName","fmpType","fmpDomicile","fmpAum","fmpHeadcount","fmpYear",
+    "prodName","prodIsin","prodStructure","prodAsset","prodAum","prodInvestees","prodGeo","prodInvestor","prodStrategy",
+    "g1_int","g1_imp","g2_promo","g2_gov","g3_obj","g3_pct","g4_co","g4_pab",
+    "prodPaiConsiders","prodPaiExplanation",
+    "siContrib","siContribThreshold","siDnshE","siDnshS","siDnshCadence",
+    "siGov1","siGov2","siGov3","siGov4","siMinPct","siEPct","siSPct",
+    "preObj","preIndicators","preStrategy","preEngagement","preBenchmark","preMinSI","preMinTaxo","preE","preS","preOther",
+    "perActualSI","perActualTaxoT","perActualTaxoC","perActualE","perActualS","perGHGRed","perAttainment","perTop5","perPaiActions",
+    "taxoNuc","taxoGas"];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    const evt = (el.tagName === "SELECT") ? "change" : "input";
+    el.addEventListener(evt, () => {
+      state[id] = (el.type === "number") ? (parseFloat(el.value) || 0) : el.value;
+      recompute();
+    });
+  });
+}
+
+function bindTabs(){
+  document.querySelectorAll(".tab").forEach(t => {
+    t.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+      document.querySelectorAll(".panel").forEach(x => x.classList.remove("active"));
+      t.classList.add("active");
+      document.querySelector(`.panel[data-panel="${t.dataset.tab}"]`).classList.add("active");
+    });
+  });
+}
+
+function bindSubtabs(){
+  document.querySelectorAll(".subtab").forEach(t => {
+    t.addEventListener("click", () => {
+      const parent = t.closest(".panel");
+      parent.querySelectorAll(".subtab").forEach(x => x.classList.remove("active"));
+      parent.querySelectorAll(".subpanel").forEach(x => x.classList.remove("active"));
+      t.classList.add("active");
+      parent.querySelector(`.subpanel[data-sub="${t.dataset.sub}"]`).classList.add("active");
+    });
+  });
+}
+
+// ===== EXAMPLES LOAD =====
+function loadExample(key){
+  const ex = EXAMPLES[key];
+  if(!ex) return;
+  Object.keys(ex).forEach(k => state[k] = JSON.parse(JSON.stringify(ex[k])));
+  // hydrate inputs
+  Object.keys(state).forEach(k => {
+    const el = document.getElementById(k);
+    if(el && (el.tagName==="INPUT" || el.tagName==="SELECT" || el.tagName==="TEXTAREA")){
+      el.value = state[k];
+    }
+  });
+  // hydrate PAI selects
+  ["paiMand","paiOptE","paiOptS"].forEach(grp => {
+    Object.keys(state[grp]).forEach(id => {
+      ["cov","disc"].forEach(f => {
+        const el = document.querySelector(`[data-pai="${grp}"][data-id="${id}"][data-field="${f}"]`);
+        if(el) el.value = state[grp][id][f];
+      });
+    });
+  });
+  // hydrate taxonomy
+  Object.keys(state.taxo).forEach(code => {
+    ["elig","turn","cap","enab"].forEach(f => {
+      const el = document.querySelector(`[data-taxo="${code}"][data-field="${f}"]`);
+      if(el) el.value = state.taxo[code][f];
+    });
+  });
+  recompute();
+}
+
+function resetAll(){
+  if(typeof confirm === "function" && !confirm("Reset all inputs?")) return;
+  state = {
+    fmpName:"", fmpType:"aifm", fmpDomicile:"lu", fmpAum:0, fmpHeadcount:0, fmpYear:"FY2025",
+    prodName:"", prodIsin:"", prodStructure:"aif", prodAsset:"equity_listed",
+    prodAum:0, prodInvestees:0, prodGeo:"global", prodInvestor:"institutional", prodStrategy:"esg_integration",
+    g1_int:"0", g1_imp:"0", g2_promo:"0", g2_gov:"0", g3_obj:"0", g3_pct:"0", g4_co:"0", g4_pab:"0",
+    paiMand:{}, paiOptE:{}, paiOptS:{},
+    prodPaiConsiders:"0", prodPaiExplanation:"",
+    siContrib:"0", siContribThreshold:"", siDnshE:"0", siDnshS:"0", siDnshCadence:"0",
+    siGov1:"0", siGov2:"0", siGov3:"0", siGov4:"0", siMinPct:0, siEPct:0, siSPct:0,
+    preObj:"", preIndicators:"", preStrategy:"", preEngagement:"", preBenchmark:"no",
+    preMinSI:0, preMinTaxo:0, preE:0, preS:0, preOther:0,
+    perActualSI:0, perActualTaxoT:0, perActualTaxoC:0, perActualE:0, perActualS:0, perGHGRed:0,
+    perAttainment:"", perTop5:"", perPaiActions:"",
+    taxo: {CCM:{elig:0,turn:0,cap:0,enab:0}, CCA:{elig:0,turn:0,cap:0,enab:0}, WTR:{elig:0,turn:0,cap:0,enab:0}, CE:{elig:0,turn:0,cap:0,enab:0}, PPC:{elig:0,turn:0,cap:0,enab:0}, BIO:{elig:0,turn:0,cap:0,enab:0}},
+    taxoNuc:0, taxoGas:0,
+    classification:"unset"
+  };
+  Object.keys(state).forEach(k => {
+    const el = document.getElementById(k);
+    if(el && (el.tagName==="INPUT" || el.tagName==="SELECT" || el.tagName==="TEXTAREA")) el.value = state[k];
+  });
+  document.querySelectorAll('[data-pai]').forEach(el => el.value = "0");
+  document.querySelectorAll('[data-taxo]').forEach(el => el.value = "0");
+  recompute();
+}
+
+// ===== CLASSIFICATION ENGINE =====
+function classify(){
+  const g1 = (parseInt(state.g1_int)||0) + (parseInt(state.g1_imp)||0); // 0-4
+  const g2 = (parseInt(state.g2_promo)||0) * (parseInt(state.g2_gov)||0); // 0 or 1
+  const g3 = (parseInt(state.g3_obj)||0) * ((parseInt(state.g3_pct)||0) >= 50 ? 1 : 0); // 0 or 1 (≥50% threshold)
+  const g3Strict = (parseInt(state.g3_obj)||0) * ((parseInt(state.g3_pct)||0) >= 80 ? 1 : 0);
+  let cls = "art6";
+  if(g1 >= 1 && g2 >= 1) cls = "art8";
+  if(g1 >= 1 && g2 >= 1 && g3Strict >= 1) cls = "art9";
+  if(cls === "art9" && parseInt(state.g4_co)) cls = "art9_3";
+  state.classification = cls;
+  return cls;
+}
+
+function classLabel(c){
+  return {art6:"Article 6", art8:"Article 8", art9:"Article 9", art9_3:"Article 9(3) — carbon reduction"}[c] || c;
+}
+function classPill(c){
+  return {art6:"art6", art8:"art8", art9:"art9", art9_3:"art9"}[c] || "art6";
+}
+
+// ===== SCORING ENGINE =====
+function scorePai(){
+  // mandatory completeness
+  let mandTotal = 0;
+  PAI_MANDATORY.forEach(p => {
+    const e = state.paiMand[p.id] || {cov:"0",disc:"0"};
+    mandTotal += (parseInt(e.cov)||0) + (parseInt(e.disc)||0);
+  });
+  const mandPct = mandTotal / (PAI_MANDATORY.length * 6) * 100;
+  // opt-in count
+  const optECount = Object.values(state.paiOptE).filter(e => parseInt(e.disc)||0 >= 1).length;
+  const optSCount = Object.values(state.paiOptS).filter(e => parseInt(e.disc)||0 >= 1).length;
+  const optBonus = (optECount >= 1 ? 50 : 0) + (optSCount >= 1 ? 50 : 0); // 0-100
+  return Math.round(mandPct * 0.7 + optBonus * 0.3);
+}
+
+function scoreSI(){
+  const c = parseInt(state.siContrib)||0;       // 0-5
+  const dE = parseInt(state.siDnshE)||0;        // 0-4
+  const dS = parseInt(state.siDnshS)||0;        // 0-4
+  const cad = parseInt(state.siDnshCadence)||0; // 0-3
+  const g = (parseInt(state.siGov1)||0) + (parseInt(state.siGov2)||0) + (parseInt(state.siGov3)||0) + (parseInt(state.siGov4)||0); // 0-12
+  const score = (c/5 * 30) + ((dE+dS)/8 * 35) + (cad/3 * 10) + (g/12 * 25);
+  return Math.round(score);
+}
+
+function scoreClassification(){
+  // is the chosen classification consistent with the gates?
+  const cls = state.classification;
+  // simple coherence test:
+  if(cls === "art6") return 100;
+  if(cls === "art8") {
+    let s = 100;
+    if(parseInt(state.g2_promo)===0) s -= 50;
+    if(parseInt(state.g2_gov)===0) s -= 30;
+    return Math.max(0, s);
+  }
+  if(cls === "art9" || cls === "art9_3"){
+    let s = 100;
+    if(parseInt(state.g3_obj)===0) s -= 50;
+    if((parseInt(state.g3_pct)||0) < 80) s -= 25;
+    if(scoreSI() < 40) s -= 20;
+    return Math.max(0, s);
+  }
+  return 0;
+}
+
+function scorePreContractual(){
+  const fields = [state.preObj, state.preIndicators, state.preStrategy, state.preEngagement];
+  const filled = fields.filter(f => f && f.length > 60).length; // 0-4
+  const numerics = [state.preMinSI, state.preMinTaxo, state.preE, state.preS].filter(n => n > 0).length;
+  const sumCheck = Math.abs((parseFloat(state.preE)||0) + (parseFloat(state.preS)||0) - (parseFloat(state.preMinSI)||0)) < 5 ? 20 : 0;
+  return Math.round((filled/4 * 50) + (numerics/4 * 30) + sumCheck);
+}
+
+function scorePeriodic(){
+  const fields = [state.perAttainment, state.perTop5, state.perPaiActions];
+  const filled = fields.filter(f => f && f.length > 50).length;
+  const meets = (parseFloat(state.perActualSI)||0) >= (parseFloat(state.preMinSI)||0) ? 30 : 0;
+  return Math.round((filled/3 * 50) + meets + 20);
+}
+
+function scoreTaxo(){
+  let total=0; Object.values(state.taxo).forEach(o => total += (o.turn||0));
+  const govScore = ((parseInt(state.siGov1)||0)+(parseInt(state.siGov2)||0)+(parseInt(state.siGov3)||0)+(parseInt(state.siGov4)||0))/12*100;
+  // For Art 9: high taxonomy alignment matters more; for Art 8 we just need accurate disclosure
+  const cls = state.classification;
+  if(cls === "art6") return Math.round(govScore);
+  if(cls === "art8") return Math.round(0.4 * Math.min(100, total*5) + 0.6 * govScore);
+  if(cls === "art9" || cls === "art9_3") return Math.round(0.55 * Math.min(100, total*2.5) + 0.45 * govScore);
+  return Math.round(govScore);
+}
+
+function overallScore(){
+  return Math.round(
+    scoreClassification()*0.15 +
+    scorePai()*0.20 +
+    scoreSI()*0.20 +
+    scorePreContractual()*0.15 +
+    scorePeriodic()*0.10 +
+    scoreTaxo()*0.20
+  );
+}
+
+function gradeForScore(s){
+  if(s >= 80) return {g:"A", t:"Audit-ready · investor-grade"};
+  if(s >= 65) return {g:"B", t:"Advancing · minor gaps"};
+  if(s >= 50) return {g:"C", t:"Developing · several gaps"};
+  if(s >= 30) return {g:"D", t:"Early-stage · material gaps"};
+  return {g:"E", t:"Absent · significant build required"};
+}
+
+// ===== RENDER =====
+function recompute(){
+  classify();
+  renderHeader();
+  renderArt4Status();
+  renderClassification();
+  renderSiGate();
+  renderTaxoSummary();
+  renderScorecard();
+  renderActions();
+  renderBenchmark();
+  renderClaudePrompt();
+}
+
+function renderHeader(){
+  const s = overallScore();
+  const {g,t} = gradeForScore(s);
+  document.getElementById("overallScore").textContent = s;
+  const ge = document.getElementById("overallGrade");
+  ge.textContent = g;
+  ge.className = "grade " + g;
+  document.getElementById("overallPhrase").textContent = t;
+}
+
+function renderArt4Status(){
+  const box = document.getElementById("art4Status");
+  if(!box) return;
+  const hc = parseInt(state.fmpHeadcount)||0;
+  if(hc >= 500){
+    box.className = "warnbox";
+    box.innerHTML = `<strong>Art 4(3)-(4) trigger applies.</strong> FMP has ≥500 employees — entity-level Statement of PAI is <strong>mandatory</strong> per RTS Art 4 + Annex I. All 14 mandatory PAIs + ≥1 opt-in environmental + ≥1 opt-in social must be disclosed.`;
+  } else {
+    box.className = "bigbox";
+    box.innerHTML = `<strong>Art 4(1) "comply or explain" applies.</strong> FMP has <500 employees — may either consider PAIs (with full disclosure) or publish a clear explanation of why not. The Joint ESAs Q&A JC 2022 47 §III makes clear "strategic" reasons (e.g. mandate, asset class) are acceptable but must be specific.`;
+  }
+}
+
+function renderClassification(){
+  const cls = classify();
+  const box = document.getElementById("classOutcome");
+  if(!box) return;
+  box.innerHTML = `
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <span class="pill ${classPill(cls)}" style="font-size:14px;padding:6px 14px">${classLabel(cls)}</span>
+      <div style="font-size:13px;color:var(--ink2)">${classDescription(cls)}</div>
+    </div>
+  `;
+  // gate visual feedback
+  const g1 = (parseInt(state.g1_int)||0) + (parseInt(state.g1_imp)||0);
+  const g2 = (parseInt(state.g2_promo)||0) * (parseInt(state.g2_gov)||0);
+  const g3 = (parseInt(state.g3_obj)||0) * ((parseInt(state.g3_pct)||0) >= 80 ? 1 : 0);
+  setGate("gate1", g1 >= 1);
+  setGate("gate2", g2 >= 1);
+  setGate("gate3", g3 >= 1);
+  setGate("gate4", parseInt(state.g4_co) >= 1);
+
+  // downgrade warnings
+  const dw = document.getElementById("downgradeWarn");
+  if(!dw) return;
+  let warnings = [];
+  // Greenwashing risk: classified Art 9 but contribution methodology weak
+  if((cls==="art9"||cls==="art9_3") && (parseInt(state.siContrib)||0) < 3){
+    warnings.push("⚠️ <strong>Greenwashing risk — Article 9 classification with weak contribution methodology.</strong> ESMA Supervisory Briefing (May 2024) and ESAs Wave 1 review (Jan 2024) explicitly flag Art 9 funds with activity-only or de minimis contribution as the highest reclassification risk. Consider downgrade to Art 8 or strengthen the contribution test.");
+  }
+  // Art 9 with <80% sustainable investments
+  if((cls==="art9"||cls==="art9_3") && (parseInt(state.g3_pct)||0) < 80){
+    warnings.push("⚠️ <strong>Article 9 funds typically commit 100% sustainable investments per Commission Q&A (Apr 2023 §III.1).</strong> Below 80% suggests Article 8 is the more accurate classification.");
+  }
+  // Art 8 with ≥80% sustainable investments
+  if(cls==="art8" && (parseInt(state.g3_pct)||0) >= 80){
+    warnings.push("ℹ️ Product targets ≥80% sustainable investments but classified Art 8 — consider whether Art 9 with a binding objective is the more accurate classification.");
+  }
+  if(warnings.length){
+    dw.style.display = "block";
+    dw.innerHTML = warnings.join("<br><br>");
+  } else {
+    dw.style.display = "none";
+  }
+}
+
+function setGate(id, passed){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.remove("passed","failed");
+  el.classList.add(passed ? "passed" : "failed");
+  let st = el.querySelector(".gstatus");
+  if(st){
+    st.textContent = passed ? "Pass" : "Not yet";
+  }
+}
+
+function classDescription(cls){
+  switch(cls){
+    case "art6": return "Sustainability-risk integration only. Pre-contractual disclosure under Art 6(1) required. No Annex II/III templates.";
+    case "art8": return "Promotes E and/or S characteristics. Annex II pre-contractual disclosure + Annex IV periodic disclosure. Investee good-governance practices required (Art 8(1) read with Art 2(17)).";
+    case "art9": return "Sustainable investment objective. Annex III pre-contractual + Annex V periodic disclosure. Per Commission Q&A (Apr 2023 §III.1), 100% sustainable investments expected (subject to liquidity/hedging exclusions).";
+    case "art9_3": return "Carbon emissions reduction objective per Art 9(3). EU CTB or PAB reference required (or 1.5°C-aligned glide path documented). Annex III + Annex V templates with carbon-target performance disclosure.";
+    default: return "";
+  }
+}
+
+function renderSiGate(){
+  const box = document.getElementById("siGateBlock");
+  if(!box) return;
+  const minPct = parseFloat(state.siMinPct)||0;
+  const ePct = parseFloat(state.siEPct)||0;
+  const sPct = parseFloat(state.siSPct)||0;
+  const sumOK = Math.abs(ePct + sPct - minPct) < 1;
+  const cls = state.classification;
+  const html = [];
+  if(cls==="art9"||cls==="art9_3"){
+    html.push(`<div class="gate ${minPct>=99?'passed':'failed'}"><div class="gtitle">Art 9 SI commitment ≥100% (Commission Q&A Apr 2023 §III.1) <span class="gstatus">${minPct>=99?'OK':'Gap'}</span></div><div class="muted">Currently committed: ${minPct}%</div></div>`);
+  } else if(cls==="art8"){
+    html.push(`<div class="gate ${minPct>=10?'passed':'failed'}"><div class="gtitle">Art 8 SI commitment disclosed (any level) <span class="gstatus">${minPct>=10?'OK':'Low'}</span></div><div class="muted">Currently committed: ${minPct}% — wave-1 ESAs review found median Art 8 SI commitment 18%</div></div>`);
+  }
+  html.push(`<div class="gate ${sumOK?'passed':'failed'}"><div class="gtitle">E + S split sums to total SI <span class="gstatus">${sumOK?'OK':'Mismatch'}</span></div><div class="muted">${ePct}% E + ${sPct}% S = ${ePct+sPct}% (target: ${minPct}%)</div></div>`);
+  const c = parseInt(state.siContrib)||0;
+  html.push(`<div class="gate ${c>=3?'passed':'failed'}"><div class="gtitle">Contribution methodology has quantitative threshold <span class="gstatus">${c>=3?'OK':'Weak'}</span></div><div class="muted">${c<3?'ESMA briefing flags activity-only contribution as greenwashing risk':'Quantitative threshold satisfies ESAs JC 2024 27 §4.2'}</div></div>`);
+  const dE = parseInt(state.siDnshE)||0;
+  const dS = parseInt(state.siDnshS)||0;
+  html.push(`<div class="gate ${(dE+dS)>=5?'passed':'failed'}"><div class="gtitle">DNSH covers both E and S harm with multi-PAI screening <span class="gstatus">${(dE+dS)>=5?'OK':'Weak'}</span></div><div class="muted">E score: ${dE}/4, S score: ${dS}/4. RTS Art 17(1)(b) requires PAI-anchored DNSH.</div></div>`);
+  const g = (parseInt(state.siGov1)||0)+(parseInt(state.siGov2)||0)+(parseInt(state.siGov3)||0)+(parseInt(state.siGov4)||0);
+  html.push(`<div class="gate ${g>=8?'passed':'failed'}"><div class="gtitle">Good governance (Art 2(17)) covers all four pillars <span class="gstatus">${g>=8?'OK':'Weak'}</span></div><div class="muted">${g}/12 across mgmt structures + employees + remuneration + tax</div></div>`);
+  box.innerHTML = html.join("");
+}
+
+function renderTaxoSummary(){
+  const box = document.getElementById("taxoSummary");
+  if(!box) return;
+  let totalElig=0, totalTurn=0, totalCap=0, totalEnab=0;
+  Object.values(state.taxo).forEach(o => { totalElig += (o.elig||0); totalTurn += (o.turn||0); totalCap += (o.cap||0); totalEnab += (o.enab||0); });
+  box.innerHTML = `
+    <div class="row r4">
+      <div class="card" style="margin:0"><h3>Total Eligible</h3><div style="font-size:24px;font-weight:800">${totalElig.toFixed(1)}%</div><div class="muted">Activities listed in DR 2021/2139 / 2023/2486 Annexes</div></div>
+      <div class="card" style="margin:0"><h3>Aligned (Turnover)</h3><div style="font-size:24px;font-weight:800;color:var(--coral-dk)">${totalTurn.toFixed(1)}%</div><div class="muted">SC + DNSH + MS satisfied</div></div>
+      <div class="card" style="margin:0"><h3>Aligned (CapEx)</h3><div style="font-size:24px;font-weight:800;color:var(--coral-dk)">${totalCap.toFixed(1)}%</div><div class="muted">Includes transitional CapEx Plans (Annex I §1.1.2.2(b))</div></div>
+      <div class="card" style="margin:0"><h3>Of which Enabling/Transitional</h3><div style="font-size:24px;font-weight:800">${totalEnab.toFixed(1)}%</div><div class="muted">Per Reg 2020/852 Art 10(2) + Art 16</div></div>
+    </div>
+    ${(state.taxoNuc>0||state.taxoGas>0)?`<div class="warnbox" style="margin-top:10px"><strong>Reg 2022/1214 CCDA disclosure required.</strong> Nuclear ${state.taxoNuc}% + fossil gas ${state.taxoGas}% — supplementary CCDA template (Annex XII) must be appended to Annex II/III/IV/V with do-no-significant-harm justifications under §4.26-4.31 technical screening criteria.</div>`:""}
+  `;
+}
+
+function renderScorecard(){
+  const box = document.getElementById("scoreBars");
+  if(!box) return;
+  const items = [
+    {l:"Classification consistency", v:scoreClassification(), w:15},
+    {l:"PAI completeness (Art 4 + 7)", v:scorePai(), w:20},
+    {l:"Sustainable Investment methodology rigour", v:scoreSI(), w:20},
+    {l:"Pre-contractual completeness", v:scorePreContractual(), w:15},
+    {l:"Periodic disclosure quality", v:scorePeriodic(), w:10},
+    {l:"Taxonomy & governance integrity", v:scoreTaxo(), w:20}
+  ];
+  box.innerHTML = items.map(i => `
+    <div class="bardiv">
+      <div class="lbl">${i.l} <span class="muted">(${i.w}%)</span></div>
+      <div class="bar"><div class="bar-fill" style="width:${i.v}%"></div></div>
+      <div class="num">${i.v}</div>
+    </div>
+  `).join("");
+}
+
+// ===== ACTION ENGINE =====
+function buildActions(){
+  const actions = [];
+  const cls = state.classification;
+  const hc = parseInt(state.fmpHeadcount)||0;
+
+  // P1 — disqualifying / mandatory gaps
+  // PAI mandatory completeness
+  let mandMissing = 0;
+  PAI_MANDATORY.forEach(p => {
+    const e = state.paiMand[p.id] || {cov:"0",disc:"0"};
+    if((parseInt(e.disc)||0) < 2) mandMissing++;
+  });
+  if(hc >= 500 && mandMissing > 0){
+    actions.push({p:1, t:`Close ${mandMissing} mandatory PAI disclosure gap${mandMissing>1?'s':''}`, d:`Art 4(3) requires the entity-level Statement of PAI to disclose all 14 indicators. Currently ${PAI_MANDATORY.length-mandMissing}/${PAI_MANDATORY.length} disclosed at annual-statement level. ESAs Wave 1 review found this is the most-cited deficiency. Action: source data for missing indicators (PCAF Cat 15, Equileap, MSCI ESG, S&P SAM, Sustainalytics, RepRisk, ISS-ESG, Bloomberg ESG) and disclose by next reporting date.`});
+  } else if(hc < 500 && mandMissing > 0 && state.prodPaiConsiders === "1"){
+    actions.push({p:1, t:`Close ${mandMissing} PAI gap or formalise comply-or-explain`, d:`FMP is below 500-employee threshold (Art 4(1) C-or-E). However, the product (Art 7) considers PAIs — the underlying disclosure expectations apply. Either complete coverage or formally explain non-consideration in the entity-level statement (Joint ESAs Q&A JC 2022 47 §III).`});
+  }
+  // Opt-in PAI
+  const optECount = Object.values(state.paiOptE).filter(e => parseInt(e.disc)||0 >= 1).length;
+  const optSCount = Object.values(state.paiOptS).filter(e => parseInt(e.disc)||0 >= 1).length;
+  if(optECount === 0){
+    actions.push({p:1, t:"Select and disclose ≥1 opt-in environmental PAI (RTS Art 6(1)(b))", d:"RTS Article 6(1)(b) requires at minimum one indicator from Annex I Table 2 to be disclosed in addition to the 14 mandatory. Recommended: PAI 5 Coal/oil/gas exposure breakdown, PAI 8 Water stress exposure, or PAI 15 Deforestation given materiality across most portfolios."});
+  }
+  if(optSCount === 0){
+    actions.push({p:1, t:"Select and disclose ≥1 opt-in social PAI (RTS Art 6(1)(b))", d:"RTS Article 6(1)(b) requires at minimum one indicator from Annex I Table 3. Recommended: PAI 9 Lack of human rights policy, PAI 12 Operations in high-child-labour-risk geographies, or PAI 13 Operations in forced-labour high-risk sectors."});
+  }
+  // SI methodology weakness for Art 9
+  if((cls==="art9"||cls==="art9_3") && (parseInt(state.siContrib)||0) < 3){
+    actions.push({p:1, t:"Strengthen Art 9 contribution methodology (greenwashing risk)", d:"ESMA Supervisory Briefing (May 2024) and ESAs Wave 1 review explicitly flag Art 9 funds without quantitative contribution thresholds. Replace activity-only screen with: (a) Taxonomy-aligned revenue threshold (e.g. ≥30% CCM-aligned), (b) SDG-mapped revenue threshold, or (c) Taxonomy + SBTi + outcome-metric multi-method. Document threshold in IPS and pre-contractual."});
+  }
+  if((cls==="art9"||cls==="art9_3") && (parseFloat(state.siMinPct)||0) < 80){
+    actions.push({p:1, t:"Raise minimum sustainable investment commitment toward 100%", d:`Commission Q&A C(2023) 2849 final §III.1 confirms Art 9 funds invest 100% in sustainable investments (subject to Q&A liquidity/hedging exclusions). Current commitment ${state.siMinPct}% suggests a downgrade to Art 8 may be more accurate, OR scale-up of SI is required. Recommend formal product committee decision documented in board minutes.`});
+  }
+  // Article 9 with no Taxonomy alignment commitment for E objective
+  if((cls==="art9"||cls==="art9_3") && (parseFloat(state.preMinTaxo)||0) === 0 && (parseFloat(state.preE)||0) > 0){
+    actions.push({p:1, t:"Set explicit Taxonomy-aligned minimum commitment for E objective", d:`Annex III field on Taxonomy alignment requires a numerical commitment for Art 9 products with E objectives. Currently 0% — set realistic minimum (e.g. 30% turnover-based for climate-thematic) backed by portfolio-level data.`});
+  }
+  // DNSH multi-PAI requirement
+  if((parseInt(state.siDnshE)||0) < 2 && (parseFloat(state.siMinPct)||0) > 10){
+    actions.push({p:1, t:"Adopt multi-PAI DNSH for environmental harm", d:"RTS Art 17(1)(b) requires DNSH 'taking into account' the indicators in Annex I. A norm-based-only approach (UNGC) does not satisfy the regulation. Implement minimum 3 environmental PAI red-line thresholds (e.g. PAI 4 fossil fuel >5%; PAI 7 biodiversity-sensitive area exposure; PAI 9 hazardous waste intensity >sector benchmark)."});
+  }
+
+  // P2 — quality / robustness
+  if((parseInt(state.siGov1)||0) + (parseInt(state.siGov2)||0) + (parseInt(state.siGov3)||0) + (parseInt(state.siGov4)||0) < 8){
+    actions.push({p:2, t:"Strengthen good governance screen across all four pillars", d:"Art 2(17) requires sound mgmt structures + employee relations + remuneration + tax compliance. A weak screen in any single pillar disqualifies investments from the SI count. Implement: independent-director check, ILO core conventions, Say-on-Pay disclosure, GRI 207 tax transparency. Target full scorecard."});
+  }
+  if((parseInt(state.siDnshCadence)||0) < 2){
+    actions.push({p:2, t:"Move DNSH from pre-investment-only to continuous monitoring", d:"Quarterly + event-driven controversy alerts (RepRisk, Sustainalytics Controversies, ISS Norm-Based Research) catch DNSH breaches between annual reviews. Document cadence in DD policy. Mandatory for Art 9 products per ESAs Q&A JC 2022 47 §IV."});
+  }
+  if(scorePreContractual() < 70){
+    actions.push({p:2, t:"Complete the 4 mandatory pre-contractual narrative sections", d:"Annex II/III templates require: (a) E/S characteristics or objective definition with specific indicators; (b) binding investment strategy elements; (c) % allocation tables; (d) engagement/stewardship description. Gaps in any section trigger competent-authority follow-up under ESMA SupBriefing."});
+  }
+  if(scorePeriodic() < 70 && cls !== "art6"){
+    actions.push({p:2, t:"Pre-flight the Annex IV/V periodic report shell", d:"Even if outside annual reporting cycle, the periodic disclosure should be drafted continuously with running data. Failure to disclose actual attainment (vs. minimum) on each indicator is the most-cited periodic deficiency in Wave 1 reviews."});
+  }
+  // Taxonomy alignment vs claim
+  let totalTurn=0; Object.values(state.taxo).forEach(o => totalTurn += (o.turn||0));
+  if((cls==="art9"||cls==="art9_3") && (parseFloat(state.preMinTaxo)||0) > 0 && totalTurn < (parseFloat(state.preMinTaxo)||0)){
+    actions.push({p:2, t:`Close Taxonomy alignment gap to commitment`, d:`Pre-contractual minimum Taxonomy alignment ${state.preMinTaxo}%, but actual portfolio-weighted turnover-aligned ${totalTurn.toFixed(1)}%. Close gap or revise commitment downward at next prospectus update.`});
+  }
+
+  // P3 — best-practice / future-readiness
+  if(state.preBenchmark === "no" && (cls==="art9"||cls==="art9_3") && parseInt(state.g4_co)){
+    actions.push({p:3, t:"Designate EU CTB or PAB as reference benchmark", d:"For carbon-reduction products under Art 9(3), Reg 2016/1011 amendments establish CTB/PAB as the natural reference. Designation simplifies disclosure under Annex III field 'reference benchmark designated'."});
+  }
+  actions.push({p:3, t:"Cross-walk SFDR PAIs to CSRD ESRS data points", d:"Wave 2 CSRD reporters now publishing FY2025 ESRS reports — investee data quality should improve materially. Pre-build the SFDR↔ESRS cross-walk so PAI completeness rises automatically. EFRAG ESRS Datapoint Implementation Guidance v3 (2025) is the canonical source."});
+  actions.push({p:3, t:"Stress-test under SFDR 2.0 review (proposals expected H1 2026)", d:"Commission's SFDR review consultations (Sep 2023 + Sep 2024) suggest categorical labels (e.g. 'Sustainable', 'Transition', 'ESG Collection') may replace the Art 8/9 architecture. Document the product's strongest claim on each axis (Sustainable Investment %, Taxonomy alignment, GHG performance) so it maps cleanly to whichever label-set emerges."});
+
+  return actions;
+}
+
+function renderActions(){
+  const list = document.getElementById("actionList");
+  if(!list) return;
+  const acts = buildActions();
+  if(acts.length === 0){
+    list.innerHTML = `<div class="okbox">No critical gaps detected — strong SFDR posture across all six pillars.</div>`;
+    return;
+  }
+  acts.sort((a,b) => a.p - b.p);
+  list.innerHTML = acts.map(a => `
+    <div class="action-card p${a.p}">
+      <div class="pri">Priority ${a.p}${a.p===1?' · disqualifying':a.p===2?' · quality':' · best practice'}</div>
+      <div class="ttl">${a.t}</div>
+      <div class="desc">${a.d}</div>
+    </div>
+  `).join("");
+}
+
+function renderBenchmark(){
+  const box = document.getElementById("benchmarkBox");
+  if(!box) return;
+  const cls = state.classification;
+  if(cls === "art6"){
+    box.innerHTML = `<strong>Art 6 baseline.</strong> No Annex II/III/IV/V templates. Sustainability risk integration disclosure required in pre-contractual under Art 6(1).`;
+    return;
+  }
+  const peers = (cls === "art8") ? PEER_BENCHMARK.art8 : PEER_BENCHMARK.art9;
+  const yourSI = parseFloat(state.perActualSI) || parseFloat(state.siMinPct) || 0;
+  const yourPaiMand = PAI_MANDATORY.filter(p => {
+    const e = state.paiMand[p.id] || {disc:"0"};
+    return parseInt(e.disc) >= 2;
+  }).length;
+  let yourTaxoTurn=0; Object.values(state.taxo).forEach(o => yourTaxoTurn += (o.turn||0));
+  const lbl = cls === "art9" || cls === "art9_3" ? "Article 9" : "Article 8";
+  box.innerHTML = `
+    <strong>${lbl} peer-set benchmark</strong>
+    <table style="margin-top:8px;font-size:12px">
+      <thead><tr><th>Metric</th><th>Your product</th><th>Leader</th><th>Median</th><th>Laggard</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td>Sustainable investment %</td><td><strong>${yourSI.toFixed(1)}%</strong></td><td>${peers.siActual.leader}%</td><td>${peers.siActual.median}%</td><td>${peers.siActual.laggard}%</td><td><span class="muted">${peers.siActual.source}</span></td></tr>
+        <tr><td>Mandatory PAI completeness</td><td><strong>${yourPaiMand}/14</strong></td><td>${peers.paiCompleteness.leader}/14</td><td>${peers.paiCompleteness.median}/14</td><td>${peers.paiCompleteness.laggard}/14</td><td><span class="muted">${peers.paiCompleteness.source}</span></td></tr>
+        <tr><td>Taxonomy turnover-aligned %</td><td><strong>${yourTaxoTurn.toFixed(1)}%</strong></td><td>${peers.taxoTurnover.leader}%</td><td>${peers.taxoTurnover.median}%</td><td>${peers.taxoTurnover.laggard}%</td><td><span class="muted">${peers.taxoTurnover.source}</span></td></tr>
+      </tbody>
+    </table>
+  `;
+}
+
+// ===== Pre-contractual / Periodic narrative =====
+function renderPreContractual(){
+  const cls = state.classification;
+  const annex = (cls==="art9"||cls==="art9_3") ? "III" : "II";
+  const heading = (cls==="art9"||cls==="art9_3") ? "Sustainable Investment Objective" : "E/S Characteristics Promoted";
+  const out = document.getElementById("preOutput");
+  if(!out) return;
+  if(cls === "art6"){
+    out.innerHTML = `<div class="warnbox">Art 6 baseline product — no Annex II/III template applies. Prospectus discloses sustainability-risk integration only under Art 6(1).</div>`;
+    return;
+  }
+  let totalSplit = (parseFloat(state.preE)||0) + (parseFloat(state.preS)||0);
+  const splitNote = Math.abs(totalSplit - (parseFloat(state.preMinSI)||0)) > 1 ? ` <span class="pill high">⚠ E+S sum ${totalSplit}% does not match SI ${state.preMinSI}%</span>` : "";
+  out.innerHTML = `
+    <div class="card" style="background:#fff">
+      <h3>Annex ${annex} — Pre-contractual disclosure narrative for ${state.prodName||"the product"}</h3>
+      <p><strong>What is the ${heading.toLowerCase()}?</strong> ${state.preObj || `[Provide objective for Art ${cls.includes('9')?'9':'8'} per RTS Annex ${annex}.]`}</p>
+      <p><strong>What sustainability indicators are used to measure attainment?</strong> ${state.preIndicators || "[List indicators with sources.]"}</p>
+      <p><strong>What is the binding strategy?</strong> ${state.preStrategy || "[Describe binding elements of the strategy.]"}</p>
+      <p><strong>What is the engagement / stewardship policy?</strong> ${state.preEngagement || "[Describe stewardship and SRD II compliance.]"}</p>
+      <h3>Asset allocation</h3>
+      <table><thead><tr><th>Field</th><th>Minimum %</th></tr></thead><tbody>
+        <tr><td>#1 Aligned with E/S characteristics${cls==="art9"||cls==="art9_3"?" / objective":""}</td><td><strong>${state.preMinSI}%</strong></td></tr>
+        <tr><td>&nbsp;&nbsp;of which #1A Sustainable</td><td>${state.preMinSI}%</td></tr>
+        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;of which Environmental</td><td>${state.preE}%${splitNote}</td></tr>
+        <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;of which Social</td><td>${state.preS}%</td></tr>
+        <tr><td>&nbsp;&nbsp;of which EU Taxonomy-aligned</td><td>${state.preMinTaxo}%</td></tr>
+        <tr><td>#2 Other</td><td>${state.preOther}%</td></tr>
+      </tbody></table>
+      <h3>Reference benchmark</h3>
+      <p>${benchmarkText(state.preBenchmark)}</p>
+      <p class="muted" style="margin-top:8px">Citations: Reg (EU) 2022/1288 Annex ${annex}; ESAs JC 2024 27 §6.1.</p>
+    </div>
+  `;
+}
+
+function benchmarkText(b){
+  return {
+    no:"No specific reference benchmark has been designated for the purpose of attaining the E/S characteristics or sustainable investment objective.",
+    ctb:"The product references the EU Climate Transition Benchmark methodology per Regulation (EU) 2016/1011 as amended by Regulation (EU) 2019/2089. Decarbonisation pathway: ≥7% p.a. and -30% versus parent index baseline.",
+    pab:"The product references the EU Paris-Aligned Benchmark methodology per Regulation (EU) 2016/1011 as amended. Decarbonisation pathway: ≥7% p.a. and -50% versus parent index baseline; explicit fossil-fuel exclusions.",
+    custom:"The product references a custom benchmark — full methodology and how it is consistent with the E/S characteristics or objective is described in the prospectus."
+  }[b] || "";
+}
+
+function renderPeriodic(){
+  const cls = state.classification;
+  const annex = (cls==="art9"||cls==="art9_3") ? "V" : "IV";
+  const out = document.getElementById("perOutput");
+  if(!out) return;
+  if(cls === "art6"){
+    out.innerHTML = `<div class="warnbox">Art 6 baseline product — no Annex IV/V periodic disclosure applies.</div>`;
+    return;
+  }
+  const meets = (parseFloat(state.perActualSI)||0) >= (parseFloat(state.preMinSI)||0);
+  out.innerHTML = `
+    <div class="card" style="background:#fff">
+      <h3>Annex ${annex} — Periodic disclosure narrative for ${state.fmpYear||"the period"}</h3>
+      <p><strong>To what extent were the E/S characteristics${(cls==="art9"||cls==="art9_3")?" / sustainable investment objective":""} met during this period?</strong> ${state.perAttainment || "[Describe with specific data.]"}</p>
+      <h3>Performance against commitments</h3>
+      <table><thead><tr><th>Metric</th><th>Commitment</th><th>Actual</th><th>Status</th></tr></thead><tbody>
+        <tr><td>% Sustainable investments</td><td>${state.preMinSI}%</td><td><strong>${state.perActualSI}%</strong></td><td>${meets?"<span class=\"pill\" style=\"background:#5E8A56;color:#fff\">Met</span>":"<span class=\"pill high\">Missed</span>"}</td></tr>
+        <tr><td>% E sustainable</td><td>${state.preE}%</td><td>${state.perActualE}%</td><td>${(parseFloat(state.perActualE)||0)>=(parseFloat(state.preE)||0)?"<span class=\"pill\" style=\"background:#5E8A56;color:#fff\">Met</span>":"<span class=\"pill high\">Missed</span>"}</td></tr>
+        <tr><td>% S sustainable</td><td>${state.preS}%</td><td>${state.perActualS}%</td><td>${(parseFloat(state.perActualS)||0)>=(parseFloat(state.preS)||0)?"<span class=\"pill\" style=\"background:#5E8A56;color:#fff\">Met</span>":"<span class=\"pill high\">Missed</span>"}</td></tr>
+        <tr><td>% Taxonomy-aligned (turnover)</td><td>${state.preMinTaxo}%</td><td>${state.perActualTaxoT}%</td><td>${(parseFloat(state.perActualTaxoT)||0)>=(parseFloat(state.preMinTaxo)||0)?"<span class=\"pill\" style=\"background:#5E8A56;color:#fff\">Met</span>":"<span class=\"pill high\">Missed</span>"}</td></tr>
+        <tr><td>GHG intensity reduction (vs PY)</td><td>≤0% (improvement)</td><td>${state.perGHGRed}%</td><td>${(parseFloat(state.perGHGRed)||0)<=0?"<span class=\"pill\" style=\"background:#5E8A56;color:#fff\">Improving</span>":"<span class=\"pill high\">Worsening</span>"}</td></tr>
+      </tbody></table>
+      <h3>Top 5 holdings</h3>
+      <pre style="background:#FAF5E9;font-size:11.5px">${state.perTop5||"[Enter top-5 with sector + country + %]"}</pre>
+      <h3>Actions on principal adverse impacts</h3>
+      <p>${state.perPaiActions || "[Describe engagement, divestment, or threshold-breach responses.]"}</p>
+      <p class="muted" style="margin-top:8px">Citations: Reg (EU) 2022/1288 Annex ${annex}; ESAs JC 2024 27 §7 actual-attainment + GHG performance.</p>
+    </div>
+  `;
+}
+
+// ===== CLAUDE PROMPT =====
+function renderClaudePrompt(){
+  const el = document.getElementById("claudePrompt");
+  if(!el) return;
+  const cls = state.classification;
+  const annex = (cls==="art9"||cls==="art9_3") ? "III/V" : (cls==="art8" ? "II/IV" : "n/a");
+  const lblCls = classLabel(cls);
+  const score = overallScore();
+  const grade = gradeForScore(score).g;
+  let totalTaxoTurn=0; Object.values(state.taxo).forEach(o => totalTaxoTurn += (o.turn||0));
+  const optEList = Object.keys(state.paiOptE).filter(k => parseInt((state.paiOptE[k]||{}).disc||"0")>=1).map(k=>{
+    const p = PAI_OPT_E.find(x=>x.id===k); return p?`${p.num} ${p.title}`:"";
+  }).filter(Boolean);
+  const optSList = Object.keys(state.paiOptS).filter(k => parseInt((state.paiOptS[k]||{}).disc||"0")>=1).map(k=>{
+    const p = PAI_OPT_S.find(x=>x.id===k); return p?`${p.num} ${p.title}`:"";
+  }).filter(Boolean);
+
+  const acts = buildActions();
+  const p1count = acts.filter(a=>a.p===1).length;
+
+  const txt = `You are advising a Sustainable Finance Disclosure Regulation (SFDR) compliance team preparing a publishable Annex ${annex} disclosure pack and 12-month gap-closure programme. Use only the inputs below as facts; flag assumptions clearly. Cite Reg (EU) 2019/2088 (SFDR), Reg (EU) 2022/1288 (RTS), the ESAs Joint Committee Final Report JC 2024 27 (Dec 2024) on RTS amendments, and Commission Q&A C(2022) 3051 / C(2023) 2849 wherever relevant.
+
+ENTITY & PRODUCT
+- FMP: ${state.fmpName || "[unset]"} (${state.fmpType.toUpperCase()}, ${state.fmpDomicile.toUpperCase()}, AUM €${state.fmpAum}m, headcount ${state.fmpHeadcount})
+- Art 4 trigger: ${parseInt(state.fmpHeadcount)>=500 ? "MANDATORY (≥500 emp)" : "Comply-or-explain (<500 emp)"}
+- Product: ${state.prodName || "[unset]"} ISIN ${state.prodIsin || "n/a"}
+- Structure: ${state.prodStructure.toUpperCase()} · Asset class: ${state.prodAsset.replace(/_/g,' ')} · AUM €${state.prodAum}m · ${state.prodInvestees} investees
+- Geography: ${state.prodGeo.replace(/_/g,' ')} · Investor base: ${state.prodInvestor.replace(/_/g,' ')} · Strategy: ${state.prodStrategy.replace(/_/g,' ')}
+
+SFDR CLASSIFICATION
+- Auto-classified: ${lblCls}
+- Art 6 sustainability-risk integration score: ${(parseInt(state.g1_int)||0)+(parseInt(state.g1_imp)||0)}/4
+- Art 8 promotion + governance: ${parseInt(state.g2_promo)?"Yes":"No"} promotion / ${parseInt(state.g2_gov)?"Yes":"No"} good-gov
+- Art 9 binding objective: ${parseInt(state.g3_obj)?"Yes":"No"} (target SI ${state.g3_pct}%)
+- Art 9(3) carbon objective: ${parseInt(state.g4_co)?"Yes":"No"} ${parseInt(state.g4_co)?` (benchmark: ${({"0":"none","1":"CTB","2":"PAB","3":"custom 1.5°C path"})[state.g4_pab]})`:""}
+
+PAI POSTURE
+- Mandatory disclosed (annual statement+): ${PAI_MANDATORY.filter(p => parseInt((state.paiMand[p.id]||{}).disc||"0")>=2).length}/14
+- Opt-in environmental selected: ${optEList.length} ${optEList.length?`(${optEList.slice(0,3).join("; ")}${optEList.length>3?` +${optEList.length-3} more`:""})`:""}
+- Opt-in social selected: ${optSList.length} ${optSList.length?`(${optSList.slice(0,3).join("; ")}${optSList.length>3?` +${optSList.length-3} more`:""})`:""}
+- Product Art 7 PAI consideration: ${parseInt(state.prodPaiConsiders)?"Yes":"No"}${parseInt(state.prodPaiConsiders)?"":" — explanation: " + (state.prodPaiExplanation||"none provided")}
+
+SUSTAINABLE INVESTMENT (Art 2(17)) METHODOLOGY
+- Contribution method (0-5): ${state.siContrib} — threshold: "${state.siContribThreshold||"[unset]"}"
+- DNSH (E): ${state.siDnshE}/4 · DNSH (S): ${state.siDnshS}/4 · cadence ${state.siDnshCadence}/3
+- Good governance (sum 0-12): ${(parseInt(state.siGov1)||0)+(parseInt(state.siGov2)||0)+(parseInt(state.siGov3)||0)+(parseInt(state.siGov4)||0)}
+- Commitment: min ${state.siMinPct}% SI = ${state.siEPct}% E + ${state.siSPct}% S
+
+PRE-CONTRACTUAL (Annex ${(cls==="art9"||cls==="art9_3")?"III":"II"})
+- Objective/characteristic: ${state.preObj || "[unset]"}
+- Indicators: ${state.preIndicators || "[unset]"}
+- Binding strategy: ${state.preStrategy || "[unset]"}
+- Engagement: ${state.preEngagement || "[unset]"}
+- Reference benchmark: ${state.preBenchmark}
+- Asset allocation #1 ${state.preMinSI}% / E ${state.preE}% / S ${state.preS}% / Taxonomy ${state.preMinTaxo}% / #2 Other ${state.preOther}%
+
+PERIODIC (Annex ${(cls==="art9"||cls==="art9_3")?"V":"IV"})
+- Actual SI ${state.perActualSI}% (commitment ${state.preMinSI}%); E ${state.perActualE}% / S ${state.perActualS}%
+- Taxonomy actual: turnover ${state.perActualTaxoT}% / capex ${state.perActualTaxoC}%
+- GHG intensity reduction YoY: ${state.perGHGRed}%
+
+TAXONOMY CROSS-WALK
+- Total turnover-aligned: ${totalTaxoTurn.toFixed(1)}%
+- Nuclear: ${state.taxoNuc}% / fossil gas: ${state.taxoGas}% (CCDA disclosure ${(state.taxoNuc>0||state.taxoGas>0)?"REQUIRED":"not required"})
+
+DISCLOSURE READINESS
+- Composite score: ${score}/100 — Grade ${grade}
+- Priority-1 (disqualifying) gaps: ${p1count}
+- Top action: ${acts[0]?acts[0].t:"none"}
+
+DELIVERABLES (produce all eight, in order, with citations)
+
+1. **Board executive summary (≤300 words)**: explain in plain English what classification we hold, what greenwashing risk this creates if any, where we sit relative to the Art ${cls.includes('9')?'9':'8'} peer median (Morningstar Q4 2024 / ESAs Wave 1 review), and whether the FY${state.fmpYear?.replace(/[^0-9]/g,'')||"2025"} disclosure cycle should be expected to clear competent-authority review.
+
+2. **Publishable Annex ${(cls==="art9"||cls==="art9_3")?"III":"II"} draft (Pre-contractual)** — populate every mandatory section in the RTS template, in proper regulatory English, with paragraph-level citations to Reg 2022/1288 articles. Cover the 9 mandatory sections (objective/characteristic, no significant harm rationale, sustainable investment definition, investment strategy binding elements, asset allocation, sustainability indicators, monitoring, methodologies, data sources & limitations${(cls==="art9"||cls==="art9_3")?", reference benchmark":""}). 800-1200 words.
+
+3. **Publishable Annex ${(cls==="art9"||cls==="art9_3")?"V":"IV"} draft (Periodic)** — show actual attainment vs. commitment for each indicator with the entity's specific data; include the top-5 holdings table, the actions on principal adverse impacts during the period, and (per ESAs JC 2024 27 §7) the GHG emissions reduction performance metric. 600-1000 words.
+
+4. **Sustainable Investment methodology defence memo (≤500 words)**: anticipate competent-authority challenge on the contribution test, DNSH operationalisation, and good-governance screen. Cite ESMA Supervisory Briefing on Sustainability Risks (May 2024), ESAs Wave 1 review JC 2024 03, Commission Q&A C(2023) 2849 §III. Identify the three weakest defences and what evidence we should have before next regulatory inspection.
+
+5. **12-month SFDR gap-closure workplan** — month × workstream × output × owner × evidence × RTS-paragraph format. Workstreams: PAI build-out, SI methodology hardening, pre-contractual revision, periodic data systems, board sign-off, third-party assurance preparation. Address all priority-1 gaps and key priority-2 gaps. Cite which Reg 2022/1288 article each workstream resolves.
+
+6. **PAI cross-walk to CSRD ESRS data points** — mandatory PAIs to ESRS S1/S2/E1-E5 datapoints per EFRAG ESRS Datapoint Implementation Guidance v3 (2025), so investee data quality (where Wave 1/2 CSRD reporters publish) auto-feeds our PAI statement. Surface 6-10 specific PAI ↔ ESRS pairings (e.g. PAI 1.1 → ESRS E1-6 §44; PAI 2.13 → ESRS S1-9 §66). 400-600 words.
+
+7. **10-question investor Q&A pack (PRI / SFDR Art 9 analyst / DFI ESG team)** — ≤120 words each, candid, evidence-backed answers. Cover: contribution methodology, DNSH operationalisation, good-governance screen, periodic underperformance scenario, comparison to PAB/CTB, Taxonomy-alignment trajectory, value-chain data quality, climate-transition exposure, controversy-response protocol, SFDR 2.0 readiness.
+
+8. **ESAs / NCA inspection red-flag scan** — top 8 specific risk areas with H/M/L scoring against ESMA's May 2024 Supervisory Briefing greenwashing risk taxonomy (overstated objective, weak threshold, insufficient DNSH, name/strategy mismatch, periodic non-attainment, PAI omission, Taxonomy mis-claim, governance gap). Each item: risk description, evidence we should have, escalation pathway.
+
+Use British English. Mark every numerical claim with its source. Where data is missing, state "ASSUMPTION: [your assumption]" rather than fabricating values. Format as numbered sections matching deliverables 1-8.`;
+
+  el.textContent = txt;
+}
+
+function copyPrompt(){
+  const t = document.getElementById("claudePrompt").textContent;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(t).then(()=>alert("Prompt copied. Paste into Claude or any LLM."));
+  } else {
+    const ta = document.createElement("textarea"); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand("copy"); ta.remove();
+    alert("Prompt copied.");
+  }
+}
+
+// ===== CSV EXPORT =====
+function downloadCSV(){
+  const cls = state.classification;
+  const lines = [];
+  lines.push("UsefulAF · SFDR Article 8/9 Disclosure Builder — Memo Export");
+  lines.push("Tool #28 of the AI for Impact Library");
+  lines.push("");
+
+  // Section 1: Entity & Product
+  lines.push("=== 1. ENTITY & PRODUCT ===");
+  lines.push(`FMP,${state.fmpName||""}`);
+  lines.push(`Type,${state.fmpType}`);
+  lines.push(`Domicile,${state.fmpDomicile}`);
+  lines.push(`Group AUM (€m),${state.fmpAum}`);
+  lines.push(`Headcount,${state.fmpHeadcount}`);
+  lines.push(`Art 4 trigger,${(parseInt(state.fmpHeadcount)||0)>=500?"Mandatory":"Comply-or-explain"}`);
+  lines.push(`Product,${state.prodName||""}`);
+  lines.push(`ISIN,${state.prodIsin||""}`);
+  lines.push(`Structure,${state.prodStructure}`);
+  lines.push(`Asset class,${state.prodAsset}`);
+  lines.push(`Product AUM (€m),${state.prodAum}`);
+  lines.push(`Investees,${state.prodInvestees}`);
+  lines.push(`Geography,${state.prodGeo}`);
+  lines.push(`Strategy,${state.prodStrategy}`);
+  lines.push("");
+
+  // Section 2: Classification
+  lines.push("=== 2. CLASSIFICATION ===");
+  lines.push(`Classification,${classLabel(cls)}`);
+  lines.push(`Art 6 sustainability risk integration,${(parseInt(state.g1_int)||0)+(parseInt(state.g1_imp)||0)}/4`);
+  lines.push(`Art 8 promotion (E/S),${parseInt(state.g2_promo)?"Yes":"No"}`);
+  lines.push(`Art 8 good governance,${parseInt(state.g2_gov)?"Yes":"No"}`);
+  lines.push(`Art 9 binding objective,${parseInt(state.g3_obj)?"Yes":"No"}`);
+  lines.push(`Art 9 target SI %,${state.g3_pct}`);
+  lines.push(`Art 9(3) carbon-reduction,${parseInt(state.g4_co)?"Yes":"No"}`);
+  lines.push("");
+
+  // Section 3: PAI Mandatory
+  lines.push("=== 3. PAI MANDATORY (14) ===");
+  lines.push("Indicator,Cat,Coverage,Disclosure");
+  PAI_MANDATORY.forEach(p => {
+    const e = state.paiMand[p.id]||{cov:"0",disc:"0"};
+    lines.push(`PAI ${p.num} ${p.title.replace(/,/g," —")},${p.cat},${e.cov},${e.disc}`);
+  });
+  lines.push("");
+
+  // Section 4: PAI Opt-in
+  lines.push("=== 4. PAI OPT-IN ===");
+  lines.push("Indicator,Cat,Disclosure");
+  Object.keys(state.paiOptE).forEach(k => {
+    const p = PAI_OPT_E.find(x => x.id===k); if(!p) return;
+    lines.push(`PAI ${p.num} ${p.title.replace(/,/g," —")},E,${(state.paiOptE[k]||{}).disc||"0"}`);
+  });
+  Object.keys(state.paiOptS).forEach(k => {
+    const p = PAI_OPT_S.find(x => x.id===k); if(!p) return;
+    lines.push(`PAI ${p.num} ${p.title.replace(/,/g," —")},S,${(state.paiOptS[k]||{}).disc||"0"}`);
+  });
+  lines.push("");
+
+  // Section 5: Sustainable Investment Test
+  lines.push("=== 5. SUSTAINABLE INVESTMENT TEST ===");
+  lines.push(`Contribution method (0-5),${state.siContrib}`);
+  lines.push(`Contribution threshold,"${(state.siContribThreshold||"").replace(/"/g,"'")}"`);
+  lines.push(`DNSH E (0-4),${state.siDnshE}`);
+  lines.push(`DNSH S (0-4),${state.siDnshS}`);
+  lines.push(`DNSH cadence (0-3),${state.siDnshCadence}`);
+  lines.push(`Governance — mgmt structures (0-3),${state.siGov1}`);
+  lines.push(`Governance — employee relations (0-3),${state.siGov2}`);
+  lines.push(`Governance — remuneration (0-3),${state.siGov3}`);
+  lines.push(`Governance — tax (0-3),${state.siGov4}`);
+  lines.push(`Min SI %,${state.siMinPct}`);
+  lines.push(`E SI %,${state.siEPct}`);
+  lines.push(`S SI %,${state.siSPct}`);
+  lines.push("");
+
+  // Section 6: Pre-contractual
+  lines.push("=== 6. PRE-CONTRACTUAL (Annex II/III) ===");
+  lines.push(`Objective,"${(state.preObj||"").replace(/"/g,"'")}"`);
+  lines.push(`Indicators,"${(state.preIndicators||"").replace(/"/g,"'")}"`);
+  lines.push(`Binding strategy,"${(state.preStrategy||"").replace(/"/g,"'")}"`);
+  lines.push(`Engagement,"${(state.preEngagement||"").replace(/"/g,"'")}"`);
+  lines.push(`Reference benchmark,${state.preBenchmark}`);
+  lines.push(`Min SI %,${state.preMinSI}`);
+  lines.push(`Min Taxonomy-aligned %,${state.preMinTaxo}`);
+  lines.push(`Min E %,${state.preE}`);
+  lines.push(`Min S %,${state.preS}`);
+  lines.push(`#2 Other %,${state.preOther}`);
+  lines.push("");
+
+  // Section 7: Periodic
+  lines.push("=== 7. PERIODIC (Annex IV/V) ===");
+  lines.push(`Actual SI %,${state.perActualSI}`);
+  lines.push(`Actual E %,${state.perActualE}`);
+  lines.push(`Actual S %,${state.perActualS}`);
+  lines.push(`Actual Taxonomy turnover %,${state.perActualTaxoT}`);
+  lines.push(`Actual Taxonomy capex %,${state.perActualTaxoC}`);
+  lines.push(`GHG reduction YoY %,${state.perGHGRed}`);
+  lines.push(`Attainment narrative,"${(state.perAttainment||"").replace(/"/g,"'")}"`);
+  lines.push(`Top 5,"${(state.perTop5||"").replace(/"/g,"'")}"`);
+  lines.push(`PAI actions,"${(state.perPaiActions||"").replace(/"/g,"'")}"`);
+  lines.push("");
+
+  // Section 8: Taxonomy
+  lines.push("=== 8. TAXONOMY CROSS-WALK ===");
+  lines.push("Objective,Eligible %,Aligned (Turnover) %,Aligned (CapEx) %,Enabling/Transitional %");
+  TAXO_OBJ.forEach(o => {
+    const t = state.taxo[o.code];
+    lines.push(`${o.code} ${o.name},${t.elig},${t.turn},${t.cap},${t.enab}`);
+  });
+  lines.push(`Nuclear %,${state.taxoNuc}`);
+  lines.push(`Fossil gas %,${state.taxoGas}`);
+  lines.push("");
+
+  // Section 9: Scorecard
+  lines.push("=== 9. DISCLOSURE READINESS SCORECARD ===");
+  lines.push(`Classification consistency,${scoreClassification()}`);
+  lines.push(`PAI completeness,${scorePai()}`);
+  lines.push(`SI methodology rigour,${scoreSI()}`);
+  lines.push(`Pre-contractual completeness,${scorePreContractual()}`);
+  lines.push(`Periodic disclosure quality,${scorePeriodic()}`);
+  lines.push(`Taxonomy & governance integrity,${scoreTaxo()}`);
+  lines.push(`OVERALL,${overallScore()}`);
+  lines.push(`GRADE,${gradeForScore(overallScore()).g} — ${gradeForScore(overallScore()).t}`);
+  lines.push("");
+
+  // Section 10: Actions
+  lines.push("=== 10. SEQUENCED ACTIONS ===");
+  buildActions().forEach(a => {
+    lines.push(`P${a.p},"${a.t.replace(/"/g,"'")}","${a.d.replace(/"/g,"'")}"`);
+  });
+  lines.push("");
+
+  // Section 11: Claude prompt
+  lines.push("=== 11. CLAUDE PROMPT ===");
+  lines.push(`"${(document.getElementById("claudePrompt").textContent||"").replace(/"/g,"'")}"`);
+  lines.push("");
+
+  const csv = lines.join("\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `sfdr-disclosure-${(state.prodName||"product").replace(/[^a-z0-9]/gi,"-").toLowerCase()}-${state.fmpYear||"FY"}.csv`;
+  document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+}
+
+// ===== BOOT =====
+window._sfdrInit = init;
+window._sfdrState = () => state;
+function _boot() {
+  try { init(); } catch(e) { console.error("init error:", e); }
+}
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", _boot);
+} else {
+  _boot();
+}
+</script>
+</body>
+</html>
+                                                                                                                                                     
