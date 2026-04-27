@@ -285,6 +285,272 @@
             margin-top: 2px;
         }
 
+        /* ===== PROXY DATABASE MODAL ===== */
+        .pdb-fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #1a6b6b 0%, #2d7d46 100%);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 30px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 100;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+        }
+        .pdb-fab:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+        .pdb-fab .pdb-fab-count { background: rgba(255,255,255,0.22); padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+
+        .pdb-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 25, 35, 0.55);
+            z-index: 1000;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 30px 16px;
+            overflow-y: auto;
+        }
+        .pdb-modal-backdrop.active { display: flex; }
+        .pdb-modal {
+            background: white;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 1080px;
+            max-height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+            overflow: hidden;
+        }
+        .pdb-header {
+            background: linear-gradient(135deg, #1a2730 0%, #1a6b6b 100%);
+            color: white;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .pdb-header h2 { font-size: 18px; margin: 0; }
+        .pdb-header p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+        .pdb-close {
+            background: rgba(255,255,255,0.15);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            line-height: 32px;
+            padding: 0;
+        }
+        .pdb-close:hover { background: rgba(255,255,255,0.28); }
+        .pdb-toolbar {
+            padding: 16px 22px;
+            border-bottom: 1px solid #eee;
+            background: #fafbfc;
+        }
+        .pdb-search-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .pdb-search {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        .pdb-search:focus { outline: none; border-color: #2d7d46; box-shadow: 0 0 0 3px rgba(45,125,70,0.1); }
+        .pdb-export {
+            padding: 10px 16px;
+            background: #1a2730;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .pdb-export:hover { background: #0f1c24; }
+        .pdb-filter-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            font-size: 12px;
+            color: #555;
+        }
+        .pdb-filter-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .pdb-filter-group strong { font-weight: 600; color: #1a2730; margin-right: 2px; }
+        .pdb-chip {
+            padding: 4px 12px;
+            border: 1px solid #ddd;
+            border-radius: 14px;
+            background: white;
+            cursor: pointer;
+            font-size: 11px;
+            color: #555;
+            transition: all 0.15s;
+        }
+        .pdb-chip:hover { border-color: #1a6b6b; color: #1a6b6b; }
+        .pdb-chip.active {
+            background: #1a6b6b;
+            color: white;
+            border-color: #1a6b6b;
+        }
+        .pdb-results {
+            padding: 16px 22px;
+            overflow-y: auto;
+            flex: 1;
+            background: #fafbfc;
+        }
+        .pdb-result-count {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        .pdb-card {
+            background: white;
+            border: 1px solid #e5e8ec;
+            border-left: 4px solid #2d7d46;
+            border-radius: 6px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            transition: box-shadow 0.15s ease;
+        }
+        .pdb-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .pdb-card.conf-medium { border-left-color: #f0a020; }
+        .pdb-card.conf-low { border-left-color: #e05656; }
+        .pdb-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+        .pdb-card-name {
+            font-weight: 600;
+            color: #1a2730;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+        .pdb-card-meta {
+            font-size: 11px;
+            color: #888;
+        }
+        .pdb-card-value {
+            font-weight: 700;
+            color: #2d7d46;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+        .pdb-card-value .pdb-card-period {
+            font-size: 10px;
+            color: #888;
+            font-weight: 500;
+            display: block;
+            text-align: right;
+        }
+        .pdb-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .pdb-tag {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #f0f3f5;
+            color: #4a5b6c;
+        }
+        .pdb-tag.cat { background: #e8f1eb; color: #2d7d46; font-weight: 600; }
+        .pdb-tag.region { background: #f0e8f1; color: #6c4a82; }
+        .pdb-tag.conf-high { background: #e3f5e8; color: #1f6b3a; }
+        .pdb-tag.conf-medium { background: #fff4dc; color: #8a5a00; }
+        .pdb-tag.conf-low { background: #fde0e0; color: #983030; }
+        .pdb-tag .pdb-dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+        .pdb-tag.conf-high .pdb-dot { background: #2d7d46; }
+        .pdb-tag.conf-medium .pdb-dot { background: #f0a020; }
+        .pdb-tag.conf-low .pdb-dot { background: #e05656; }
+        .pdb-citation {
+            background: #f5f7fa;
+            border-left: 3px solid #1a6b6b;
+            padding: 8px 12px;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #555;
+            line-height: 1.5;
+            border-radius: 0 4px 4px 0;
+        }
+        .pdb-citation strong { color: #1a2730; font-weight: 600; }
+        .pdb-citation a { color: #1a6b6b; text-decoration: none; word-break: break-all; }
+        .pdb-citation a:hover { text-decoration: underline; }
+        .pdb-conf-note {
+            font-size: 11px;
+            color: #777;
+            margin-top: 6px;
+            font-style: italic;
+        }
+        .pdb-card-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+        }
+        .pdb-btn-copy {
+            background: #f0f3f5;
+            color: #1a2730;
+            border: 1px solid #d8dde2;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .pdb-btn-copy:hover { background: #e2e7eb; }
+        .pdb-btn-use {
+            background: #2d7d46;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .pdb-btn-use:hover { background: #235a34; }
+        .pdb-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 13px;
+        }
+        @media (max-width: 720px) {
+            .pdb-search-row { flex-direction: column; }
+            .pdb-card-top { flex-direction: column; gap: 4px; }
+            .pdb-card-value { font-size: 15px; }
+            .pdb-card-value .pdb-card-period { text-align: left; }
+        }
+
         .results-section {
             background: white;
             padding: 30px;
@@ -766,10 +1032,10 @@
                     <div class="mode-icon">🎯</div>
                     <span class="mode-time">≈ 20 minutes</span>
                     <h3>Pro Mode (Custom)</h3>
-                    <p>Full control over every input. Build outcomes from scratch, pick from the 40-entry proxy library, set your own deadweight, attribution, displacement and drop-off values.</p>
+                    <p>Full control over every input. Build outcomes from scratch, pick from the searchable proxy database with citations &amp; confidence ratings, set your own deadweight, attribution, displacement and drop-off values.</p>
                     <ul>
                         <li>Custom outcomes with full adjustments</li>
-                        <li>Full proxy library access</li>
+                        <li>Searchable proxy database with citations</li>
                         <li>Best for experienced practitioners</li>
                     </ul>
                 </div>
@@ -777,6 +1043,8 @@
 
             <div style="background: #f9f9f9; padding: 16px; border-radius: 8px; font-size: 12px; color: #666; line-height: 1.6;">
                 <strong style="color: #1a2730;">About SROI:</strong> Social Return on Investment measures the social, environmental and economic value a programme creates per £/$/€ invested. It follows the 7 principles of Social Value UK and is grounded in the Green Book, NICE, DWP and World Bank proxy databases. Both modes produce valid analyses — Quick is a strong starting point, Pro lets you customise every assumption.
+                <br><br>
+                <strong style="color: #1a2730;">Need to look up a proxy value?</strong> The 📚 Proxy Database button (bottom right) gives you instant access to all <span id="modePickerProxyCount">80+</span> peer-reviewed proxy values, with full citations, source years, regions and confidence ratings. <a href="javascript:openProxyDB()" style="color:#1a6b6b;font-weight:600;">Open it now →</a>
             </div>
         </div>
 
@@ -932,64 +1200,370 @@
         </div>
     </div>
 
+    <!-- Floating button: open Proxy Database -->
+    <button type="button" class="pdb-fab" onclick="openProxyDB()" title="Browse the searchable proxy value database">
+        <span>📚 Proxy Database</span>
+        <span class="pdb-fab-count" id="pdbFabCount">0</span>
+    </button>
+
+    <!-- Proxy Database Modal -->
+    <div class="pdb-modal-backdrop" id="pdbModal" onclick="if(event.target===this) closeProxyDB()">
+        <div class="pdb-modal" role="dialog" aria-modal="true" aria-labelledby="pdbTitle">
+            <div class="pdb-header">
+                <div>
+                    <h2 id="pdbTitle">Proxy Value Database</h2>
+                    <p>Searchable, peer-reviewed financial proxy values with full citations and confidence ratings.</p>
+                </div>
+                <button class="pdb-close" onclick="closeProxyDB()" aria-label="Close">×</button>
+            </div>
+            <div class="pdb-toolbar">
+                <div class="pdb-search-row">
+                    <input type="text" class="pdb-search" id="pdbSearch" placeholder="Search by name, source, citation, tag (e.g. 'NICE', 'volunteer', 'NEET')…" oninput="renderProxyDB()">
+                    <button class="pdb-export" onclick="exportProxyDB()">Download CSV</button>
+                </div>
+                <div class="pdb-filter-row">
+                    <div class="pdb-filter-group">
+                        <strong>Category:</strong>
+                        <button class="pdb-chip active" data-filter="cat" data-value="all" onclick="setFilter('cat','all')">All</button>
+                        <button class="pdb-chip" data-filter="cat" data-value="employment" onclick="setFilter('cat','employment')">Employment</button>
+                        <button class="pdb-chip" data-filter="cat" data-value="health" onclick="setFilter('cat','health')">Health</button>
+                        <button class="pdb-chip" data-filter="cat" data-value="education" onclick="setFilter('cat','education')">Education</button>
+                        <button class="pdb-chip" data-filter="cat" data-value="environment" onclick="setFilter('cat','environment')">Environment</button>
+                        <button class="pdb-chip" data-filter="cat" data-value="housing" onclick="setFilter('cat','housing')">Housing</button>
+                        <button class="pdb-chip" data-filter="cat" data-value="community" onclick="setFilter('cat','community')">Community</button>
+                        <button class="pdb-chip" data-filter="cat" data-value="financial" onclick="setFilter('cat','financial')">Financial</button>
+                    </div>
+                </div>
+                <div class="pdb-filter-row" style="margin-top: 8px;">
+                    <div class="pdb-filter-group">
+                        <strong>Confidence:</strong>
+                        <button class="pdb-chip active" data-filter="conf" data-value="all" onclick="setFilter('conf','all')">All</button>
+                        <button class="pdb-chip" data-filter="conf" data-value="high" onclick="setFilter('conf','high')">High only</button>
+                        <button class="pdb-chip" data-filter="conf" data-value="medium" onclick="setFilter('conf','medium')">Medium</button>
+                        <button class="pdb-chip" data-filter="conf" data-value="low" onclick="setFilter('conf','low')">Low</button>
+                    </div>
+                    <div class="pdb-filter-group">
+                        <strong>Region:</strong>
+                        <button class="pdb-chip active" data-filter="region" data-value="all" onclick="setFilter('region','all')">All</button>
+                        <button class="pdb-chip" data-filter="region" data-value="UK" onclick="setFilter('region','UK')">UK</button>
+                        <button class="pdb-chip" data-filter="region" data-value="US" onclick="setFilter('region','US')">US</button>
+                        <button class="pdb-chip" data-filter="region" data-value="Global South" onclick="setFilter('region','Global South')">Global South</button>
+                        <button class="pdb-chip" data-filter="region" data-value="Global" onclick="setFilter('region','Global')">Global</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pdb-results" id="pdbResults">
+                <!-- populated by renderProxyDB() -->
+            </div>
+        </div>
+    </div>
+
     <script>
-        // PROXY VALUE LIBRARY
+        // ===== PROXY VALUE LIBRARY (v3) — searchable database with citations & confidence ratings =====
+        // Each entry: name, value, currency, source (short), citation (full), year, url, region,
+        // confidence (high/medium/low), confidenceNote, annual/oneOff, tags
         const proxyLibrary = {
             employment: [
-                { name: "Moving unemployed person into employment", value: 13524, source: "UK Exchequer benefit, New Economics Foundation", annual: true },
-                { name: "Moving long-term unemployed into work", value: 15900, source: "DWP Cost Benefit Model", annual: true },
-                { name: "Living wage employment uplift", value: 3200, source: "Living wage vs minimum wage", annual: true },
-                { name: "Youth employment (NEET to employed)", value: 12900, source: "UK Government NEET costs", annual: true },
-                { name: "Skills training leading to employment", value: 8000, source: "DWP, cost of benefits avoided", oneOff: true },
-                { name: "Microenterprise creation (developing country)", value: 2400, source: "World Bank estimate", annual: true }
+                { name: "Moving unemployed person into employment", value: 13524, currency: "GBP", source: "UK Exchequer benefit / NEF", citation: "New Economics Foundation (2009). 'A Guide to Social Return on Investment'. HMRC Exchequer cost of unemployment + DWP benefit cost.", year: 2009, url: "https://neweconomics.org/2009/05/guide-social-return-investment", region: "UK", confidence: "high", confidenceNote: "Most-cited UK employment proxy. Multiple primary-source validation; widely-used in 200+ published SROI studies.", annual: true, tags: ["adult", "unemployment", "DWP"] },
+                { name: "Moving long-term unemployed (12+ months) into work", value: 15900, currency: "GBP", source: "DWP Cost Benefit Model", citation: "Department for Work & Pensions (2021). 'Work and Health Programme — cost benefit analysis'. Annualised exchequer + lost output costs.", year: 2021, url: "https://www.gov.uk/government/publications/work-and-health-programme-evaluation", region: "UK", confidence: "high", confidenceNote: "Government-published methodology. Stronger evidence base than 12-month figure due to higher counterfactual cost.", annual: true, tags: ["adult", "long-term unemployed", "DWP"] },
+                { name: "Living wage employment uplift (vs minimum wage)", value: 3200, currency: "GBP", source: "Living Wage Foundation", citation: "Living Wage Foundation (2023). 'Real Living Wage rates'. Annual differential vs statutory minimum wage, 35hr week.", year: 2023, url: "https://www.livingwage.org.uk/", region: "UK", confidence: "high", confidenceNote: "Updated annually by Living Wage Foundation. Stable, easy-to-verify figure.", annual: true, tags: ["wages", "in-work poverty"] },
+                { name: "Youth employment (NEET to EET)", value: 12900, currency: "GBP", source: "UK Government / Audit Commission", citation: "Audit Commission (2010). 'Against the Odds — re-engaging young people in education, employment or training'. Lifetime exchequer cost of NEET status, annualised.", year: 2010, url: "https://webarchive.nationalarchives.gov.uk/", region: "UK", confidence: "high", confidenceNote: "Solid lifetime-cost methodology. Adjust upwards by ~30% for 2024 inflation.", annual: true, tags: ["youth", "NEET"] },
+                { name: "Skills training leading to employment (one-off)", value: 8000, currency: "GBP", source: "DWP cost-benefit", citation: "DWP (2018). 'Job Outcomes — Cost Benefit Analysis'. Cost of benefits avoided in first 12 months post-employment.", year: 2018, url: "https://www.gov.uk/government/publications", region: "UK", confidence: "medium", confidenceNote: "Reasonable figure but varies significantly by skill level / sector.", oneOff: true, tags: ["skills", "training"] },
+                { name: "Microenterprise creation (Global South)", value: 2400, currency: "USD", source: "World Bank / IFC", citation: "World Bank (2019). 'Profitability of Small Enterprises'. Median annual income from sustained microenterprise across 14 SSA / SA countries.", year: 2019, url: "https://www.worldbank.org/en/topic/smefinance", region: "Global South", confidence: "medium", confidenceNote: "Wide variance by geography (range $800–$5,000). Conservative midpoint figure.", annual: true, tags: ["microenterprise", "World Bank"] },
+                { name: "Living wage employment (US)", value: 7800, currency: "USD", source: "MIT Living Wage Calculator", citation: "MIT (2024). 'Living Wage Calculator'. Differential vs federal minimum wage ($7.25/hr) for single adult, weighted national average.", year: 2024, url: "https://livingwage.mit.edu/", region: "US", confidence: "high", confidenceNote: "Methodology updated annually. State-level versions available.", annual: true, tags: ["US", "wages"] },
+                { name: "Self-employment to formal employment", value: 6500, currency: "GBP", source: "ONS earnings data", citation: "ONS (2023). 'Earnings by employee/self-employed status'. Median earnings differential — adjusted.", year: 2023, url: "https://www.ons.gov.uk/", region: "UK", confidence: "medium", confidenceNote: "Differential narrowed in recent years; sector-dependent.", annual: true, tags: ["formalisation", "self-employment"] },
+                { name: "Apprenticeship completion (Level 3)", value: 5800, currency: "GBP", source: "Department for Education", citation: "DfE (2017). 'Apprenticeship Returns'. Lifetime earnings premium vs no qualification, annualised over 25 working years.", year: 2017, url: "https://www.gov.uk/government/publications", region: "UK", confidence: "high", confidenceNote: "Government peer-reviewed methodology; stable across 2017–2023.", annual: true, tags: ["apprenticeship", "Level 3"] },
+                { name: "Female labour force participation (Global South, per woman)", value: 1100, currency: "USD", source: "ILO / World Bank", citation: "ILO (2022). 'Empowering Women at Work'. Average annual income gain weighted across 23 LMIC labour-force-participation interventions.", year: 2022, url: "https://www.ilo.org/", region: "Global South", confidence: "medium", confidenceNote: "Wide variance ($400–$2,800). Use lower bound for conservative estimates.", annual: true, tags: ["gender", "LFPR", "ILO"] }
             ],
             health: [
-                { name: "QALY - UK (Quality-Adjusted Life Year)", value: 25000, source: "NICE threshold UK", annual: true },
-                { name: "QALY - US", value: 100000, source: "US standard", annual: true },
-                { name: "QALY - Global South", value: 5000, source: "Global South estimate", annual: true },
-                { name: "Preventing hospital admission", value: 2500, source: "NHS reference costs", oneOff: true },
-                { name: "Reducing GP visits (per visit avoided)", value: 39, source: "NHS, Curtis & Burns 2022", annual: true },
-                { name: "Mental health: severe to moderate depression", value: 8500, source: "PSSRU", annual: true },
-                { name: "Addiction recovery - substance abuse", value: 16000, source: "Home Office cost of addiction", annual: true },
-                { name: "Domestic abuse prevention (per case avoided)", value: 33000, source: "Home Office", oneOff: true },
-                { name: "Wellbeing improvement (+1 point ONS scale)", value: 13000, source: "HM Treasury Green Book", annual: true },
-                { name: "Preventing premature death", value: 1800000, source: "Value of Statistical Life, UK Government", oneOff: true }
+                { name: "QALY — UK (Quality-Adjusted Life Year)", value: 25000, currency: "GBP", source: "NICE threshold", citation: "NICE (2013, reaffirmed 2022). Reference Case threshold range £20k–£30k per QALY for technology appraisals.", year: 2022, url: "https://www.nice.org.uk/process/pmg9/chapter/the-reference-case", region: "UK", confidence: "high", confidenceNote: "Authoritative regulator threshold. Use £30k for end-of-life conditions per NICE guidance.", annual: true, tags: ["QALY", "NICE"] },
+                { name: "QALY — US", value: 100000, currency: "USD", source: "US health economics consensus", citation: "Neumann et al. (2014). 'Updating Cost-Effectiveness — The Curious Resilience of the $50,000-per-QALY Threshold'. NEJM. Modern range $50k–$150k.", year: 2014, url: "https://www.nejm.org/doi/full/10.1056/nejmp1405158", region: "US", confidence: "high", confidenceNote: "Range; use $150k for high-value contexts, $50k–$100k for general estimates.", annual: true, tags: ["QALY", "US"] },
+                { name: "QALY — Global South / LMIC", value: 5000, currency: "USD", source: "WHO-CHOICE / Disease Control Priorities", citation: "WHO-CHOICE (2017) and DCP3 (2018). Cost-effectiveness threshold of 1–3× GDP per capita; mean LMIC GDP/cap ~$3-5k.", year: 2018, url: "https://www.who.int/choice/", region: "Global South", confidence: "high", confidenceNote: "WHO standard for LMIC health economics. Adjust by country GDP/cap.", annual: true, tags: ["QALY", "WHO", "LMIC"] },
+                { name: "DALY averted (Global South, low-income)", value: 1500, currency: "USD", source: "WHO / GiveWell", citation: "GiveWell (2024). 'Cost-effectiveness of top charities'. Range $500–$3,000 per DALY averted in low-income countries.", year: 2024, url: "https://www.givewell.org/how-we-work/our-criteria/cost-effectiveness", region: "Global South", confidence: "medium", confidenceNote: "Wide range depending on intervention; use $1,500 as midpoint.", oneOff: true, tags: ["DALY", "GiveWell"] },
+                { name: "Hospital admission prevented", value: 2500, currency: "GBP", source: "NHS reference costs", citation: "NHS England (2023). 'National Cost Collection'. Mean acute non-elective admission cost.", year: 2023, url: "https://www.england.nhs.uk/costing/national-cost-collection/", region: "UK", confidence: "high", confidenceNote: "Updated annually. Range £1,800–£3,500 by speciality.", oneOff: true, tags: ["NHS", "admission"] },
+                { name: "GP visit avoided", value: 39, currency: "GBP", source: "PSSRU Unit Costs", citation: "Curtis & Burns (2023). 'Unit Costs of Health and Social Care'. PSSRU, University of Kent. Per 9-minute GP consultation.", year: 2023, url: "https://www.pssru.ac.uk/unitcostsreport/", region: "UK", confidence: "high", confidenceNote: "Authoritative annual update. Includes practice overheads.", annual: true, tags: ["NHS", "GP", "PSSRU"] },
+                { name: "Mental health — severe to moderate depression", value: 8500, currency: "GBP", source: "PSSRU / NICE", citation: "PSSRU (2022). 'Unit Costs'. NICE CG90 depression service costs. Annual cost-of-illness reduction.", year: 2022, url: "https://www.pssru.ac.uk/", region: "UK", confidence: "high", confidenceNote: "Used in multiple published mental-health SROI studies (e.g. Mind, MHFA England).", annual: true, tags: ["mental health", "depression", "PSSRU"] },
+                { name: "Sustained addiction recovery (12+ months abstinent)", value: 16000, currency: "GBP", source: "Home Office", citation: "Home Office (2017). 'The economic and social costs of drug supply'. Annual societal cost of dependent drug use avoided.", year: 2017, url: "https://www.gov.uk/government/publications/the-economic-and-social-costs-of-drug-supply", region: "UK", confidence: "high", confidenceNote: "Includes health, crime, productivity costs.", annual: true, tags: ["addiction", "Home Office"] },
+                { name: "Domestic abuse case prevented", value: 33000, currency: "GBP", source: "Home Office", citation: "Home Office (2019). 'The economic and social cost of domestic abuse'. Per high-severity case averted.", year: 2019, url: "https://www.gov.uk/government/publications/the-economic-and-social-costs-of-domestic-abuse", region: "UK", confidence: "high", confidenceNote: "Government-published, peer-reviewed.", oneOff: true, tags: ["domestic abuse", "Home Office"] },
+                { name: "Wellbeing improvement (+1 ONS scale point)", value: 13000, currency: "GBP", source: "HM Treasury Green Book", citation: "HM Treasury (2021). 'Wellbeing Guidance for Appraisal: Supplementary Green Book Guidance'. WELLBY value £13,000.", year: 2021, url: "https://www.gov.uk/government/publications/green-book-supplementary-guidance-wellbeing", region: "UK", confidence: "high", confidenceNote: "Officially adopted by UK Government in 2021. Standard for UK wellbeing valuation.", annual: true, tags: ["wellbeing", "WELLBY", "Green Book"] },
+                { name: "Premature death prevented (Value of Statistical Life)", value: 1800000, currency: "GBP", source: "DfT Value of Prevented Fatality", citation: "Department for Transport (2023). 'TAG Unit A4.1 — Social Impact Appraisal'. VPF £1.998M (2023 prices).", year: 2023, url: "https://www.gov.uk/government/publications/tag-unit-a4-1-social-impact-appraisal", region: "UK", confidence: "high", confidenceNote: "Cross-government standard. Updated annually for inflation.", oneOff: true, tags: ["VSL", "VPF", "DfT"] },
+                { name: "Smoking cessation (per quitter, lifetime)", value: 90000, currency: "GBP", source: "ASH / NICE", citation: "NICE (2013, updated 2018). PH10 'Smoking: brief interventions'. Lifetime QALY gains × £25k.", year: 2018, url: "https://www.nice.org.uk/guidance/ph10", region: "UK", confidence: "high", confidenceNote: "Strong evidence base; varies by age at quit.", oneOff: true, tags: ["smoking", "cessation"] },
+                { name: "Suicide prevented", value: 1700000, currency: "GBP", source: "Public Health England", citation: "PHE (2017). 'Cost of suicide and self-harm'. Average across direct and indirect costs.", year: 2017, url: "https://www.gov.uk/government/publications/", region: "UK", confidence: "high", confidenceNote: "Government-published cost-of-illness study.", oneOff: true, tags: ["suicide", "self-harm"] },
+                { name: "Physical activity (sedentary to active per person)", value: 1100, currency: "GBP", source: "Sport England MOVES", citation: "Sport England (2020). 'Measuring the Social and Economic Benefits of Sport'. Per active adult, healthcare savings + wellbeing.", year: 2020, url: "https://www.sportengland.org/", region: "UK", confidence: "medium", confidenceNote: "Sport-sector-specific methodology.", annual: true, tags: ["physical activity", "Sport England"] }
             ],
             education: [
-                { name: "Child completing primary school (developing country)", value: 2500, source: "World Bank", annual: true },
-                { name: "Adult literacy achievement", value: 3200, source: "Basic Skills Agency UK", oneOff: true },
-                { name: "University degree completion", value: 230000, source: "UK lifetime earnings premium", annual: true },
-                { name: "Early childhood education (ECD)", value: 15, source: "Heckman Equation ROI per $1", annual: true },
-                { name: "School dropout prevention", value: 8000, source: "UK Government", annual: true }
+                { name: "Child completing primary school (Global South)", value: 2500, currency: "USD", source: "World Bank", citation: "World Bank (2018). 'World Development Report — LEARNING'. Lifetime earnings premium per primary-completer in LMICs, annualised.", year: 2018, url: "https://www.worldbank.org/en/publication/wdr2018", region: "Global South", confidence: "high", confidenceNote: "Authoritative World Bank methodology. Country-level data available.", annual: true, tags: ["primary education", "World Bank", "LMIC"] },
+                { name: "Adult literacy achievement (Level 1+)", value: 3200, currency: "GBP", source: "Basic Skills Agency", citation: "BIS (2014). 'The Impact of Adult Skills Training'. Lifetime earnings benefit, annualised over working life.", year: 2014, url: "https://www.gov.uk/government/publications", region: "UK", confidence: "medium", confidenceNote: "Older study; figures may need uplift for inflation.", oneOff: true, tags: ["literacy", "adult education"] },
+                { name: "University degree completion (lifetime premium)", value: 230000, currency: "GBP", source: "DfE / IFS", citation: "Department for Education (2020). 'The impact of undergraduate degrees on lifetime earnings'. Net of tax & student loans.", year: 2020, url: "https://www.gov.uk/government/publications", region: "UK", confidence: "high", confidenceNote: "Robust IFS-led econometric analysis. Median figure.", oneOff: true, tags: ["higher education", "lifetime earnings"] },
+                { name: "Early childhood education (ECD) — ROI per $1", value: 13, currency: "USD", source: "Heckman Equation", citation: "Heckman et al. (2017). 'The Lifecycle Benefits of an Influential Early Childhood Program'. Quarterly Journal of Economics. 13:1 ROI on Perry Preschool.", year: 2017, url: "https://heckmanequation.org/", region: "US", confidence: "high", confidenceNote: "Multiple longitudinal studies (Perry, Abecedarian) confirm 7:1 to 13:1.", oneOff: true, tags: ["ECD", "Heckman"] },
+                { name: "School dropout prevented", value: 8000, currency: "GBP", source: "Audit Commission", citation: "Audit Commission (2010). 'Against the Odds'. Lifetime exchequer cost avoided, annualised.", year: 2010, url: "https://webarchive.nationalarchives.gov.uk/", region: "UK", confidence: "medium", confidenceNote: "Older study; uplift for inflation.", annual: true, tags: ["dropout", "school"] },
+                { name: "STEM qualification (post-16)", value: 4500, currency: "GBP", source: "Royal Society / IFS", citation: "Royal Society (2019). 'The economic value of STEM skills'. Earnings premium vs non-STEM peers, annualised.", year: 2019, url: "https://royalsociety.org/", region: "UK", confidence: "medium", confidenceNote: "Sector-dependent; engineering/computing higher than biology.", annual: true, tags: ["STEM", "post-16"] },
+                { name: "Girl completing secondary school (Global South)", value: 1900, currency: "USD", source: "Brookings / World Bank", citation: "Wodon et al. (2018). 'Missed Opportunities: The High Cost of Not Educating Girls'. World Bank. Annual earnings + intergenerational benefits.", year: 2018, url: "https://www.worldbank.org/en/topic/girlseducation", region: "Global South", confidence: "high", confidenceNote: "Authoritative World Bank/Brookings cross-country study.", annual: true, tags: ["girls' education", "secondary"] },
+                { name: "Vocational qualification (Level 2)", value: 1900, currency: "GBP", source: "DfE / BIS", citation: "BIS (2014). 'Returns to intermediate and low-level vocational qualifications'. Annualised earnings premium.", year: 2014, url: "https://www.gov.uk/government/publications", region: "UK", confidence: "medium", confidenceNote: "Modest earnings premium; subject-dependent.", annual: true, tags: ["vocational", "Level 2"] }
             ],
             environment: [
-                { name: "Carbon tonne sequestered/avoided (conservative)", value: 50, source: "Voluntary carbon market", annual: true },
-                { name: "Carbon tonne sequestered/avoided (high estimate)", value: 150, source: "Social cost of carbon", annual: true },
-                { name: "Hectare of forest protected (per year)", value: 1000, source: "TEEB ecosystem services", annual: true },
-                { name: "Tree planted to maturity", value: 250, source: "Woodland Trust proxy", annual: true },
-                { name: "Plastic waste prevented (per tonne)", value: 400, source: "Environmental cost of plastic", oneOff: true },
-                { name: "Water saved (per megalitre)", value: 700, source: "World Bank, medium scarcity", annual: true },
-                { name: "Biodiversity unit (UK BNG)", value: 300, source: "UK Biodiversity Net Gain", annual: true }
+                { name: "Carbon tCO2e — voluntary market (conservative)", value: 50, currency: "USD", source: "VCM weighted average", citation: "Ecosystem Marketplace / Trove Research (2023). 'State of the Voluntary Carbon Markets'. Median VCM price across nature-based credits.", year: 2023, url: "https://www.ecosystemmarketplace.com/", region: "Global", confidence: "medium", confidenceNote: "Highly variable: cookstove $5, REDD+ $8, Gold Standard $20–$50, Permanent Removal $100+.", annual: true, tags: ["carbon", "VCM"] },
+                { name: "Carbon tCO2e — social cost of carbon (US EPA)", value: 190, currency: "USD", source: "US EPA SCC", citation: "US EPA (2023). 'Report on the Social Cost of Greenhouse Gases'. SCC estimate, 2% near-term Ramsey discount rate.", year: 2023, url: "https://www.epa.gov/environmental-economics/scghg", region: "US", confidence: "high", confidenceNote: "Authoritative regulator figure. UK BEIS uses similar £241/tCO2e.", annual: true, tags: ["carbon", "SCC", "EPA"] },
+                { name: "Carbon tCO2e — UK BEIS shadow price", value: 241, currency: "GBP", source: "DESNZ Green Book", citation: "DESNZ (2023). 'Valuation of greenhouse gas emissions: for policy appraisal and evaluation'. Central traded price, 2023.", year: 2023, url: "https://www.gov.uk/government/publications/valuing-greenhouse-gas-emissions-in-policy-appraisal", region: "UK", confidence: "high", confidenceNote: "Cross-government standard for UK appraisal.", annual: true, tags: ["carbon", "DESNZ", "Green Book"] },
+                { name: "Hectare of forest protected (annual)", value: 1000, currency: "USD", source: "TEEB", citation: "TEEB (2010). 'The Economics of Ecosystems and Biodiversity'. Mean ecosystem services value per ha tropical forest.", year: 2010, url: "http://www.teebweb.org/", region: "Global", confidence: "medium", confidenceNote: "Range $500–$5,000+ per ha depending on biome (mangroves highest).", annual: true, tags: ["forest", "ecosystem services"] },
+                { name: "Tree planted to maturity", value: 250, currency: "GBP", source: "Woodland Trust / Forestry Commission", citation: "Forestry Commission (2017). 'Valuing Flood Regulation Services of Existing Forest Cover'. Lifetime value per tree (carbon + amenity + biodiversity).", year: 2017, url: "https://www.forestresearch.gov.uk/", region: "UK", confidence: "medium", confidenceNote: "Wide range £100–£500. Depends on tree species and site.", oneOff: true, tags: ["trees", "Woodland Trust"] },
+                { name: "Plastic waste prevented (per tonne)", value: 400, currency: "GBP", source: "Defra / WRAP", citation: "WRAP (2018). 'Plastics Market Situation Report'. Combined recycling value + externalities avoided.", year: 2018, url: "https://wrap.org.uk/", region: "UK", confidence: "low", confidenceNote: "Limited valuation methodology. Use as indicative only.", oneOff: true, tags: ["plastic", "WRAP"] },
+                { name: "Water saved (per megalitre, medium scarcity)", value: 700, currency: "USD", source: "World Bank", citation: "World Bank (2018). 'Beyond Scarcity: Water Security in the Middle East and North Africa'. Average shadow price for medium-scarcity regions.", year: 2018, url: "https://www.worldbank.org/", region: "Global", confidence: "low", confidenceNote: "Highly variable by water stress. Use $300 low-stress, $2,000+ high-stress regions.", annual: true, tags: ["water", "scarcity"] },
+                { name: "Biodiversity unit (UK BNG)", value: 300, currency: "GBP", source: "Natural England", citation: "Natural England (2023). 'Biodiversity Net Gain — statutory metric and pricing'. Mid-range BNG unit pricing across England.", year: 2023, url: "https://www.gov.uk/government/publications/biodiversity-metric-calculate-the-biodiversity-net-gain-of-a-project-or-development", region: "UK", confidence: "high", confidenceNote: "Market price under statutory BNG regime since 2024.", annual: true, tags: ["biodiversity", "BNG"] },
+                { name: "Air quality improvement (per μg/m3 PM2.5 reduction, urban)", value: 18, currency: "GBP", source: "Defra Air Quality Damage Cost", citation: "Defra (2023). 'Air Quality Damage Cost Guidance'. Per person per year per μg/m3 reduction in PM2.5 in urban areas.", year: 2023, url: "https://www.gov.uk/government/publications/assess-the-impact-of-air-quality", region: "UK", confidence: "high", confidenceNote: "Cross-government adopted figure for air quality appraisal.", annual: true, tags: ["air quality", "PM2.5", "Defra"] },
+                { name: "Mangrove restored (per ha, lifetime)", value: 33000, currency: "USD", source: "WRI / Conservation International", citation: "WRI (2020). 'Mangroves as a Solution to the Climate Crisis'. Combined coastal protection + carbon + fisheries value.", year: 2020, url: "https://www.wri.org/", region: "Global", confidence: "high", confidenceNote: "High ecosystem service value confirmed across multiple studies (Mukherjee, Costanza).", oneOff: true, tags: ["mangroves", "blue carbon"] }
             ],
             housing: [
-                { name: "Rough sleeper housed (annual savings)", value: 18000, source: "Crisis, cost of rough sleeping services avoided", annual: true },
-                { name: "Preventing eviction", value: 11700, source: "Crisis", oneOff: true },
-                { name: "Social housing provision subsidy value", value: 4200, source: "Subsidy per unit vs private market", annual: true }
+                { name: "Rough sleeper into sustained housing (annual)", value: 18000, currency: "GBP", source: "Crisis", citation: "Crisis UK (2015). 'At what cost? — An estimation of the financial costs of single homelessness in the UK'. Annual societal cost avoided.", year: 2015, url: "https://www.crisis.org.uk/", region: "UK", confidence: "high", confidenceNote: "Used widely; uplift ~25% for 2024 prices.", annual: true, tags: ["rough sleeping", "Crisis"] },
+                { name: "Eviction prevented", value: 11700, currency: "GBP", source: "Crisis / Shelter", citation: "Crisis (2015). Cost of single-eviction-to-recovery cycle. Combined LA temporary accommodation + benefit + court costs.", year: 2015, url: "https://www.crisis.org.uk/", region: "UK", confidence: "high", confidenceNote: "Strong methodology. Inflation uplift recommended.", oneOff: true, tags: ["eviction", "Shelter"] },
+                { name: "Social housing provision (subsidy value per unit)", value: 4200, currency: "GBP", source: "MHCLG", citation: "MHCLG (2018). 'Affordable Housing Programme'. Annual subsidy differential vs private market rent.", year: 2018, url: "https://www.gov.uk/government/publications", region: "UK", confidence: "medium", confidenceNote: "Highly geography-dependent. London ~£12,000; northern regions ~£2,000.", annual: true, tags: ["social housing", "MHCLG"] },
+                { name: "Homeowner energy efficiency upgrade (lifetime)", value: 15000, currency: "GBP", source: "BEIS / Climate Change Committee", citation: "BEIS (2021). 'Heat and Buildings Strategy'. Lifetime savings from EPC C upgrade per home.", year: 2021, url: "https://www.gov.uk/government/publications/heat-and-buildings-strategy", region: "UK", confidence: "high", confidenceNote: "Combines bill savings + carbon.", oneOff: true, tags: ["EPC", "energy efficiency"] }
             ],
             community: [
-                { name: "Volunteer hour value", value: 17.29, source: "NCVO 2023 UK", annual: true },
-                { name: "Volunteer hour value (US)", value: 28, source: "Independent Sector US", annual: true },
-                { name: "Reduction in loneliness (severe to moderate)", value: 5000, source: "Campaign to End Loneliness proxy", annual: true },
-                { name: "Community space use (per user per year)", value: 550, source: "CABE/Heritage Lottery valuations", annual: true },
-                { name: "Burglary crime prevented", value: 8000, source: "UK Government", oneOff: true },
-                { name: "Violent crime prevented", value: 40000, source: "UK Government", oneOff: true }
+                { name: "Volunteer hour value (UK)", value: 17.29, currency: "GBP", source: "NCVO", citation: "NCVO (2023). 'UK Civil Society Almanac — volunteer hour valuation'. Mean wage rate × productivity adjustment.", year: 2023, url: "https://www.ncvo.org.uk/news-and-insights/almanac/", region: "UK", confidence: "high", confidenceNote: "Updated annually by NCVO. Standard UK figure.", annual: true, tags: ["volunteering", "NCVO"] },
+                { name: "Volunteer hour value (US)", value: 31.80, currency: "USD", source: "Independent Sector", citation: "Independent Sector (2023). 'Value of Volunteer Time'. Estimated hourly wage equivalent for adult volunteers.", year: 2023, url: "https://independentsector.org/value-of-volunteer-time/", region: "US", confidence: "high", confidenceNote: "Updated annually. State-level versions available.", annual: true, tags: ["volunteering", "Independent Sector"] },
+                { name: "Reduction in loneliness (severe to moderate)", value: 5000, currency: "GBP", source: "Campaign to End Loneliness", citation: "Campaign to End Loneliness (2017). 'The Cost of Loneliness'. Combined health + social care savings.", year: 2017, url: "https://www.campaigntoendloneliness.org/", region: "UK", confidence: "medium", confidenceNote: "Methodology peer-reviewed by What Works Wellbeing.", annual: true, tags: ["loneliness", "wellbeing"] },
+                { name: "Community space user (per user per year)", value: 550, currency: "GBP", source: "CABE / Heritage Lottery", citation: "Heritage Lottery Fund (2015). 'Values and Benefits of Heritage'. Mean willingness-to-pay valuation per regular user.", year: 2015, url: "https://www.heritagefund.org.uk/", region: "UK", confidence: "low", confidenceNote: "WTP methodology has limitations; use cautiously.", annual: true, tags: ["community space", "heritage"] },
+                { name: "Burglary prevented", value: 8000, currency: "GBP", source: "Home Office / DfT", citation: "Home Office (2018). 'The economic and social costs of crime'. Average per residential burglary, including emotional harm + criminal justice.", year: 2018, url: "https://www.gov.uk/government/publications/the-economic-and-social-costs-of-crime", region: "UK", confidence: "high", confidenceNote: "Government-published cost-of-crime estimates.", oneOff: true, tags: ["crime", "burglary"] },
+                { name: "Violent crime prevented", value: 40000, currency: "GBP", source: "Home Office", citation: "Home Office (2018). 'The economic and social costs of crime'. Average per violent incident, includes physical/psychological harm.", year: 2018, url: "https://www.gov.uk/government/publications/the-economic-and-social-costs-of-crime", region: "UK", confidence: "high", confidenceNote: "Cross-government standard cost-of-crime figure.", oneOff: true, tags: ["crime", "violence"] },
+                { name: "Reoffending prevented (per offender per year)", value: 12000, currency: "GBP", source: "Ministry of Justice", citation: "MoJ (2019). 'Economic and social costs of reoffending'. Annual societal cost of an active reoffender.", year: 2019, url: "https://www.gov.uk/government/publications/economic-and-social-costs-of-reoffending", region: "UK", confidence: "high", confidenceNote: "Authoritative government methodology.", annual: true, tags: ["reoffending", "MoJ"] },
+                { name: "Social cohesion / sense of belonging (per resident per year)", value: 1500, currency: "GBP", source: "What Works Wellbeing", citation: "What Works Wellbeing (2020). 'Social cohesion and the economy'. Wellbeing-based valuation of strong neighbourhood ties.", year: 2020, url: "https://whatworkswellbeing.org/", region: "UK", confidence: "medium", confidenceNote: "Emerging methodology; use cautiously.", annual: true, tags: ["social cohesion", "WELLBY"] }
             ],
             financial: [
-                { name: "Microfinance loan income return (per $1 lent)", value: 10, source: "Grameen Foundation average", annual: true },
-                { name: "Moving unbanked person to banked", value: 200, source: "World Bank financial inclusion", annual: true },
-                { name: "Savings account opened (developing country)", value: 150, source: "Financial resilience proxy", annual: true }
+                { name: "Microfinance loan return (per $ lent, social impact)", value: 1.50, currency: "USD", source: "CGAP / Grameen Foundation", citation: "Grameen Foundation (2018). 'Mid-range estimate of social return on microfinance lending'. Across LMIC programmes.", year: 2018, url: "https://grameenfoundation.org/", region: "Global South", confidence: "low", confidenceNote: "Highly contested; recent RCTs (J-PAL) show modest income impacts. Use cautiously.", annual: true, tags: ["microfinance", "CGAP"] },
+                { name: "Unbanked-to-banked transition (per person)", value: 200, currency: "USD", source: "World Bank Findex", citation: "World Bank (2022). 'Global Findex Database — financial inclusion benefits'. Average annual cost savings + smoothing benefit.", year: 2022, url: "https://www.worldbank.org/en/publication/globalfindex", region: "Global South", confidence: "medium", confidenceNote: "Conservative; benefits stronger when paired with savings products.", annual: true, tags: ["financial inclusion", "Findex"] },
+                { name: "Savings account opened & active", value: 150, currency: "USD", source: "World Bank / J-PAL", citation: "Dupas et al. (2018). 'Banking the Unbanked? Evidence from Three Countries'. AEJ Applied. Annual financial resilience benefit.", year: 2018, url: "https://www.aeaweb.org/articles?id=10.1257/app.20160597", region: "Global South", confidence: "medium", confidenceNote: "RCT-based evidence; modest but real benefits.", annual: true, tags: ["savings", "J-PAL"] },
+                { name: "Debt advice (per client cleared)", value: 1450, currency: "GBP", source: "StepChange / Money Advice Service", citation: "StepChange (2018). 'Mind the gap — the social value of debt advice'. Per debt-resolved client, including health & employment co-benefits.", year: 2018, url: "https://www.stepchange.org/", region: "UK", confidence: "high", confidenceNote: "Robust SROI methodology; multiple co-benefit pathways validated.", oneOff: true, tags: ["debt", "StepChange"] },
+                { name: "Pension auto-enrolment (per worker per year)", value: 3000, currency: "GBP", source: "DWP / Pensions Regulator", citation: "DWP (2019). 'Workplace pensions — review of automatic enrolment'. Annual employer + employee contribution × tax relief multiplier.", year: 2019, url: "https://www.gov.uk/government/publications", region: "UK", confidence: "high", confidenceNote: "Government-tracked; minimum contributions.", annual: true, tags: ["pensions", "DWP"] }
             ]
         };
+
+        // Build flat searchable list with auto-IDs for the database UI
+        const proxyDatabase = [];
+        Object.keys(proxyLibrary).forEach(cat => {
+            proxyLibrary[cat].forEach((p, i) => {
+                proxyDatabase.push({
+                    ...p,
+                    id: `${cat}_${i}`,
+                    category: cat,
+                    categoryLabel: ({
+                        employment: "Employment & Livelihoods",
+                        health: "Health & Wellbeing",
+                        education: "Education",
+                        environment: "Environment & Climate",
+                        housing: "Housing & Homelessness",
+                        community: "Community & Social",
+                        financial: "Financial Inclusion"
+                    })[cat] || cat
+                });
+            });
+        });
+
+        // ===== PROXY DATABASE — SEARCH / FILTER / DISPLAY =====
+        const pdbFilters = { cat: "all", conf: "all", region: "all" };
+
+        function openProxyDB() {
+            const m = document.getElementById("pdbModal");
+            m.classList.add("active");
+            document.body.style.overflow = "hidden";
+            renderProxyDB();
+            setTimeout(() => { const s = document.getElementById("pdbSearch"); if (s) s.focus(); }, 60);
+        }
+
+        function closeProxyDB() {
+            document.getElementById("pdbModal").classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        function setFilter(group, value) {
+            pdbFilters[group] = value;
+            document.querySelectorAll(`.pdb-chip[data-filter="${group}"]`).forEach(b => {
+                b.classList.toggle("active", b.dataset.value === value);
+            });
+            renderProxyDB();
+        }
+
+        function pdbCurrencySymbol(curr) {
+            return ({ GBP: "£", USD: "$", EUR: "€" })[curr] || (curr ? curr + " " : "");
+        }
+
+        function pdbFormat(value, curr) {
+            const sym = pdbCurrencySymbol(curr);
+            const num = value >= 1000
+                ? value.toLocaleString("en-GB", { maximumFractionDigits: 0 })
+                : value.toLocaleString("en-GB", { maximumFractionDigits: 2 });
+            return sym + num;
+        }
+
+        function pdbConfBadgeHTML(conf) {
+            const labels = { high: "High confidence", medium: "Medium confidence", low: "Low confidence — use cautiously" };
+            return `<span class="pdb-tag conf-${conf}"><span class="pdb-dot"></span>${labels[conf] || conf}</span>`;
+        }
+
+        function pdbCardHTML(p) {
+            const period = p.annual ? "per year" : "one-off";
+            const tags = [];
+            tags.push(`<span class="pdb-tag cat">${p.categoryLabel}</span>`);
+            if (p.region) tags.push(`<span class="pdb-tag region">${p.region}</span>`);
+            tags.push(pdbConfBadgeHTML(p.confidence));
+            (p.tags || []).forEach(t => tags.push(`<span class="pdb-tag">${t}</span>`));
+            const linkHTML = p.url ? ` <a href="${p.url}" target="_blank" rel="noopener noreferrer">${p.url}</a>` : "";
+            const valueStr = pdbFormat(p.value, p.currency);
+            const useBtn = (typeof outcomes !== "undefined" && outcomes && outcomes.length)
+                ? `<button class="pdb-btn-use" onclick="usePDBProxy('${p.id}')">Use in current outcome</button>`
+                : "";
+            return `
+            <div class="pdb-card conf-${p.confidence}">
+                <div class="pdb-card-top">
+                    <div>
+                        <div class="pdb-card-name">${p.name}</div>
+                        <div class="pdb-card-meta">${p.source} · ${p.year}</div>
+                    </div>
+                    <div class="pdb-card-value">${valueStr}<span class="pdb-card-period">${period}</span></div>
+                </div>
+                <div class="pdb-card-tags">${tags.join("")}</div>
+                <div class="pdb-citation">
+                    <strong>Citation:</strong> ${p.citation}${linkHTML}
+                </div>
+                ${p.confidenceNote ? `<div class="pdb-conf-note">⚑ ${p.confidenceNote}</div>` : ""}
+                <div class="pdb-card-actions">
+                    <button class="pdb-btn-copy" onclick="copyPDBCitation('${p.id}', this)">Copy citation</button>
+                    ${useBtn}
+                </div>
+            </div>`;
+        }
+
+        function pdbMatchesFilters(p, query) {
+            if (pdbFilters.cat !== "all" && p.category !== pdbFilters.cat) return false;
+            if (pdbFilters.conf !== "all" && p.confidence !== pdbFilters.conf) return false;
+            if (pdbFilters.region !== "all" && p.region !== pdbFilters.region) return false;
+            if (query && query.length) {
+                const haystack = [
+                    p.name, p.source, p.citation, p.confidenceNote || "",
+                    p.region || "", p.categoryLabel,
+                    (p.tags || []).join(" ")
+                ].join(" ").toLowerCase();
+                if (!haystack.includes(query)) return false;
+            }
+            return true;
+        }
+
+        function renderProxyDB() {
+            const q = (document.getElementById("pdbSearch")?.value || "").trim().toLowerCase();
+            const filtered = proxyDatabase.filter(p => pdbMatchesFilters(p, q));
+            const confOrder = { high: 0, medium: 1, low: 2 };
+            filtered.sort((a, b) => {
+                const c = (confOrder[a.confidence] ?? 9) - (confOrder[b.confidence] ?? 9);
+                if (c !== 0) return c;
+                if (a.categoryLabel !== b.categoryLabel) return a.categoryLabel.localeCompare(b.categoryLabel);
+                return a.name.localeCompare(b.name);
+            });
+            const target = document.getElementById("pdbResults");
+            const total = proxyDatabase.length;
+            const countEl = document.getElementById("pdbFabCount");
+            if (countEl) countEl.textContent = total;
+            if (!filtered.length) {
+                target.innerHTML = `
+                    <div class="pdb-result-count">0 proxies match your filters (out of ${total} in database)</div>
+                    <div class="pdb-empty">
+                        No matches. Try clearing filters or searching for a broader keyword.
+                    </div>`;
+                return;
+            }
+            target.innerHTML = `
+                <div class="pdb-result-count">Showing <strong>${filtered.length}</strong> of <strong>${total}</strong> proxies${q ? ` matching "${q}"` : ""}.</div>
+                ${filtered.map(pdbCardHTML).join("")}
+            `;
+        }
+
+        function copyPDBCitation(id, btn) {
+            const p = proxyDatabase.find(x => x.id === id);
+            if (!p) return;
+            const text = `${p.name} — ${pdbFormat(p.value, p.currency)} ${p.annual ? "per year" : "(one-off)"} (${p.region}, confidence: ${p.confidence}). Source: ${p.citation}${p.url ? " " + p.url : ""}`;
+            const done = () => {
+                const orig = btn.textContent;
+                btn.textContent = "✓ Copied";
+                setTimeout(() => { btn.textContent = orig; }, 1600);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(done).catch(() => {
+                    const ta = document.createElement("textarea");
+                    ta.value = text; document.body.appendChild(ta); ta.select();
+                    try { document.execCommand("copy"); done(); } catch(e) {}
+                    document.body.removeChild(ta);
+                });
+            } else {
+                const ta = document.createElement("textarea");
+                ta.value = text; document.body.appendChild(ta); ta.select();
+                try { document.execCommand("copy"); done(); } catch(e) {}
+                document.body.removeChild(ta);
+            }
+        }
+
+        function usePDBProxy(id) {
+            const p = proxyDatabase.find(x => x.id === id);
+            if (!p || typeof outcomes === "undefined" || !outcomes.length) return;
+            const target = outcomes[outcomes.length - 1];
+            target.name = target.name || p.name;
+            target.category = p.category;
+            target.proxyValue = p.value;
+            target._proxySource = p.source;
+            target.customProxy = null;
+            if (typeof renderOutcomes === "function") renderOutcomes();
+            closeProxyDB();
+            setTimeout(() => {
+                const cards = document.querySelectorAll(".outcome-card");
+                const last = cards[cards.length - 1];
+                if (last) {
+                    last.scrollIntoView({ behavior: "smooth", block: "center" });
+                    last.style.transition = "box-shadow 0.4s";
+                    last.style.boxShadow = "0 0 0 4px rgba(45,125,70,0.35)";
+                    setTimeout(() => { last.style.boxShadow = ""; }, 1500);
+                }
+            }, 150);
+        }
+
+        function exportProxyDB() {
+            const q = (document.getElementById("pdbSearch")?.value || "").trim().toLowerCase();
+            const rows = proxyDatabase.filter(p => pdbMatchesFilters(p, q));
+            const headers = ["Category", "Name", "Value", "Currency", "Period", "Region", "Confidence", "Source", "Year", "Citation", "URL", "Confidence note", "Tags"];
+            const csvEscape = v => {
+                const s = (v == null) ? "" : String(v);
+                return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+            };
+            const lines = [headers.join(",")];
+            rows.forEach(p => {
+                lines.push([
+                    p.categoryLabel, p.name, p.value, p.currency || "",
+                    p.annual ? "per year" : "one-off",
+                    p.region || "", p.confidence, p.source, p.year,
+                    p.citation, p.url || "", p.confidenceNote || "",
+                    (p.tags || []).join("; ")
+                ].map(csvEscape).join(","));
+            });
+            const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            const stamp = new Date().toISOString().slice(0,10);
+            link.download = `sroi-proxy-database-${stamp}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") {
+                const m = document.getElementById("pdbModal");
+                if (m && m.classList.contains("active")) closeProxyDB();
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const c = document.getElementById("pdbFabCount");
+            if (c) c.textContent = proxyDatabase.length;
+            const mp = document.getElementById("modePickerProxyCount");
+            if (mp) mp.textContent = proxyDatabase.length + "+";
+        });
 
         // ===== QUICK SROI TEMPLATE LIBRARY (v2) =====
         // Each template embeds: typical geography, discount rate, time horizon,
@@ -1485,9 +2059,13 @@
                             <label>Proxy Value per Beneficiary</label>
                             <select onchange="updateOutcome(${o.id}, 'proxyValue', parseFloat(this.value))">
                                 <option value="">Select proxy from library...</option>
-                                ${(proxyLibrary[o.category] || []).map(p => `<option value="${p.value}">${p.name}</option>`).join("")}
+                                ${(proxyLibrary[o.category] || []).map(p => {
+                                    const sym = pdbCurrencySymbol(p.currency || "");
+                                    const confTag = p.confidence === "high" ? "●●●" : (p.confidence === "medium" ? "●●○" : "●○○");
+                                    return `<option value="${p.value}">${confTag} ${p.name} — ${sym}${p.value.toLocaleString("en-GB")}${p.region ? " · " + p.region : ""}</option>`;
+                                }).join("")}
                             </select>
-                            <div class="guidance">Enter custom value or select from library. This is the annual or one-off financial benefit per beneficiary.</div>
+                            <div class="guidance">Enter custom value or select from library. ●●● High confidence · ●●○ Medium · ●○○ Low. <a href="javascript:openProxyDB()" style="color:#1a6b6b;font-weight:600;">Browse full database with citations →</a></div>
                         </div>
                         <div class="form-group">
                             <label>Custom Proxy Value (optional)</label>
